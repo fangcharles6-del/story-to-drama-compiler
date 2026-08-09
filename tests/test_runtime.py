@@ -71,5 +71,5 @@ async def test_activity_cannot_make_third_call_after_restart(tmp_path: Path) -> 
     provider = FakeProvider()
     activity = RuntimeActivities(store, provider, tmp_path)
     result = await activity.generate("run_a", job())
-    assert result == result.__class__(RunState.STOP_2, None, 2)
+    assert result == result.__class__(state=RunState.STOP_2, path=None, attempts=2)
     assert store.finished == []

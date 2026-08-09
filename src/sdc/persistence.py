@@ -24,7 +24,7 @@ class RunRecord(Base):
 
 class EventRecord(Base):
     __tablename__ = "run_events"
-    __table_args__ = (UniqueConstraint("idempotency_key"),)
+    __table_args__ = (UniqueConstraint("run_id", "idempotency_key"),)
     id: Mapped[str] = mapped_column(String, primary_key=True)
     run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
     event_type: Mapped[str] = mapped_column(String, nullable=False)
@@ -37,15 +37,17 @@ class EventRecord(Base):
 class ArtifactRecord(Base):
     __tablename__ = "artifacts"
     __table_args__ = (
-        UniqueConstraint("idempotency_key"),
+        UniqueConstraint("run_id", "idempotency_key"),
         Index(
             "uq_artifacts_one_current_per_job",
+            "run_id",
             "job_id",
             unique=True,
             postgresql_where=text("is_current = true"),
         ),
     )
     id: Mapped[str] = mapped_column(String, primary_key=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
     job_id: Mapped[str] = mapped_column(String, nullable=False)
     attempt: Mapped[int] = mapped_column(Integer, nullable=False)
     idempotency_key: Mapped[str] = mapped_column(String, nullable=False)
@@ -57,7 +59,7 @@ class AttemptRecord(Base):
     """A provider attempt reserved before the non-idempotent remote operation starts."""
 
     __tablename__ = "generation_attempts"
-    __table_args__ = (UniqueConstraint("job_id", "attempt"),)
+    __table_args__ = (UniqueConstraint("run_id", "job_id", "attempt"),)
     id: Mapped[str] = mapped_column(String, primary_key=True)
     run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
     job_id: Mapped[str] = mapped_column(String, nullable=False)

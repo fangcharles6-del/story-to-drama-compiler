@@ -6,6 +6,7 @@ from pathlib import Path
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from temporalio.client import Client
+from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
 from sdc.provider import FakeProvider
@@ -27,7 +28,7 @@ async def run() -> None:
         FakeProvider(),
         Path(os.environ.get("SDC_OUTPUT_ROOT", ".artifacts/runtime")),
     )
-    client = await Client.connect(temporal_address)
+    client = await Client.connect(temporal_address, data_converter=pydantic_data_converter)
     try:
         await Worker(
             client,

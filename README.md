@@ -12,6 +12,7 @@ Requirements / 依赖: Python 3.12, [uv](https://docs.astral.sh/uv/), FFmpeg/ffp
 ```bash
 make bootstrap       # install the exact locked environment / 安装锁定依赖
 make lint typecheck test
+make integration      # PostgreSQL 16 + local Temporal, migrations and runtime tests
 make demo            # offline end-to-end run / 离线端到端运行
 make verify-demo     # independently re-check output / 再次验证产物
 ```
@@ -42,3 +43,9 @@ and `SDC_OUTPUT_ROOT` configure its boundaries. Provider attempts are reserved t
 before generation, so activity redelivery or a worker restart cannot create an automatic third
 attempt. The bundled worker deliberately uses the offline `FakeProvider`; a deployment injects its
 own provider adapter without changing workflow code.
+
+Submit a real execution with `uv run python -m sdc.client examples/minimal_story.json`. Every
+submission creates a unique `run_id`, uses it verbatim as the Temporal workflow ID, and passes it
+beside the deterministic `JobGraph`; repeated compilation therefore preserves content IDs without
+colliding durable runtime state. Both the submitting client and worker use Temporal's Pydantic v2
+payload converter. See `docs/adr/SDC-ADR-009.md` for the accepted identity and retry decisions.

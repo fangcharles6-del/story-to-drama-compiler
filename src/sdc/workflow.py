@@ -7,10 +7,11 @@ from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 
 from sdc.contracts import GenerationJob, JobGraph
+from sdc.payloads import DurableResult
 
 
 @activity.defn(name="generate")
-async def generate_activity(run_id: str, job: GenerationJob) -> str:
+async def generate_activity(run_id: str, job: GenerationJob) -> DurableResult:
     """Workflow signature only; workers register ``RuntimeActivities.generate``."""
     raise RuntimeError(f"activity {run_id}/{job.id} was not replaced by a worker adapter")
 
@@ -18,10 +19,10 @@ async def generate_activity(run_id: str, job: GenerationJob) -> str:
 @workflow.defn
 class DramaWorkflow:
     @workflow.run
-    async def run(self, graph: JobGraph) -> list[str]:
+    async def run(self, run_id: str, graph: JobGraph) -> list[DurableResult]:
         pending = {job.id: job for job in graph.jobs}
         done: set[str] = set()
-        outputs: list[str] = []
+        outputs: list[DurableResult] = []
         while pending:
             ready = sorted(
                 (j for j in pending.values() if set(j.depends_on) <= done), key=lambda j: j.id
@@ -32,7 +33,7 @@ class DramaWorkflow:
                 *(
                     workflow.execute_activity(
                         generate_activity,
-                        args=[graph.id, job],
+                        args=[run_id, job],
                         start_to_close_timeout=timedelta(minutes=15),
                         # The gateway owns the two attempts and STOP-2. Temporal must not
                         # silently turn them into a third generation attempt.

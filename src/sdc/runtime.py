@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Protocol
@@ -14,23 +13,15 @@ from temporalio import activity
 
 from sdc.compiler import stable_id
 from sdc.contracts import GenerationJob, RunState
+from sdc.payloads import DurableResult
 from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
 from sdc.provider import GenerationError, Provider
-
-
-@dataclass(frozen=True)
-class DurableResult:
-    state: RunState
-    path: str | None
-    attempts: int
 
 
 class RuntimeStore(Protocol):
     async def ensure_run(self, run_id: str) -> None: ...
 
-    async def reserve_attempt(
-        self, run_id: str, job_id: str, maximum: int = 2
-    ) -> int | None: ...
+    async def reserve_attempt(self, run_id: str, job_id: str, maximum: int = 2) -> int | None: ...
 
     async def finish_attempt(
         self, run_id: str, job: GenerationJob, attempt: int, state: RunState, path: Path | None
@@ -62,7 +53,7 @@ class PostgresRuntimeStore:
             used = await session.scalar(
                 select(func.count())
                 .select_from(AttemptRecord)
-                .where(AttemptRecord.job_id == job_id)
+                .where(AttemptRecord.run_id == run_id, AttemptRecord.job_id == job_id)
             )
             attempt = int(used or 0) + 1
             if attempt > maximum:
@@ -85,19 +76,28 @@ class PostgresRuntimeStore:
         async with self._sessions.begin() as session:
             await session.execute(
                 update(AttemptRecord)
-                .where(AttemptRecord.job_id == job.id, AttemptRecord.attempt == attempt)
+                .where(
+                    AttemptRecord.run_id == run_id,
+                    AttemptRecord.job_id == job.id,
+                    AttemptRecord.attempt == attempt,
+                )
                 .values(state=state.value)
             )
             if path is not None:
                 await session.execute(
                     update(ArtifactRecord)
-                    .where(ArtifactRecord.job_id == job.id, ArtifactRecord.is_current.is_(True))
+                    .where(
+                        ArtifactRecord.run_id == run_id,
+                        ArtifactRecord.job_id == job.id,
+                        ArtifactRecord.is_current.is_(True),
+                    )
                     .values(is_current=False)
                 )
                 await session.execute(
                     insert(ArtifactRecord)
                     .values(
-                        id=stable_id("artifact", [job.id, attempt]),
+                        id=stable_id("artifact", [run_id, job.id, attempt]),
+                        run_id=run_id,
                         job_id=job.id,
                         attempt=attempt,
                         idempotency_key=f"{job.idempotency_key}:candidate:{attempt}",
@@ -105,14 +105,14 @@ class PostgresRuntimeStore:
                         is_current=True,
                     )
                     .on_conflict_do_update(
-                        index_elements=[ArtifactRecord.idempotency_key],
+                        index_elements=[ArtifactRecord.run_id, ArtifactRecord.idempotency_key],
                         set_={"path": str(path), "is_current": True},
                     )
                 )
             await session.execute(
                 insert(EventRecord)
                 .values(
-                    id=stable_id("event", event_key),
+                    id=stable_id("event", [run_id, event_key]),
                     run_id=run_id,
                     event_type="candidate.generated" if path else "candidate.failed",
                     state=state.value,
@@ -120,7 +120,9 @@ class PostgresRuntimeStore:
                     idempotency_key=event_key,
                     payload={"job_id": job.id, "attempt": attempt},
                 )
-                .on_conflict_do_nothing(index_elements=[EventRecord.idempotency_key])
+                .on_conflict_do_nothing(
+                    index_elements=[EventRecord.run_id, EventRecord.idempotency_key]
+                )
             )
 
 
@@ -145,8 +147,8 @@ class RuntimeActivities:
                 state = RunState.STOP_2 if attempt == job.max_attempts else RunState.RETRYING
                 await self.store.finish_attempt(run_id, job, attempt, state, None)
                 if state is RunState.STOP_2:
-                    return DurableResult(state, None, attempt)
+                    return DurableResult(state=state, path=None, attempts=attempt)
             else:
                 await self.store.finish_attempt(run_id, job, attempt, RunState.SUCCEEDED, path)
-                return DurableResult(RunState.SUCCEEDED, str(path), attempt)
-        return DurableResult(RunState.STOP_2, None, job.max_attempts)
+                return DurableResult(state=RunState.SUCCEEDED, path=str(path), attempts=attempt)
+        return DurableResult(state=RunState.STOP_2, path=None, attempts=job.max_attempts)
