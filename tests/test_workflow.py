@@ -8,7 +8,6 @@ from sdc.contracts import GenerationJob, JobGraph, RunState
 from sdc.payloads import DurableResult
 from sdc.workflow import (
     DramaWorkflow,
-    generate_activity,
     set_run_state_activity,
 )
 
