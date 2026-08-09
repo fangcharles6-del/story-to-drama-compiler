@@ -21,6 +21,8 @@ from sdc.provider import GenerationError, Provider
 class RuntimeStore(Protocol):
     async def ensure_run(self, run_id: str) -> None: ...
 
+    async def set_run_state(self, run_id: str, state: RunState) -> None: ...
+
     async def reserve_attempt(self, run_id: str, job_id: str, maximum: int = 2) -> int | None: ...
 
     async def finish_attempt(
@@ -40,6 +42,13 @@ class PostgresRuntimeStore:
                 insert(RunRecord)
                 .values(id=run_id, state=RunState.RUNNING.value)
                 .on_conflict_do_nothing(index_elements=[RunRecord.id])
+            )
+
+    async def set_run_state(self, run_id: str, state: RunState) -> None:
+        """Persist the workflow-level state for operational queries and human gates."""
+        async with self._sessions.begin() as session:
+            await session.execute(
+                update(RunRecord).where(RunRecord.id == run_id).values(state=state.value)
             )
 
     async def reserve_attempt(self, run_id: str, job_id: str, maximum: int = 2) -> int | None:
@@ -133,6 +142,12 @@ class RuntimeActivities:
         self.store = store
         self.provider = provider
         self.output_root = output_root
+
+    @activity.defn(name="set_run_state")
+    async def set_run_state(self, run_id: str, state: RunState) -> None:
+        """Create the run if needed and persist a workflow-owned state transition."""
+        await self.store.ensure_run(run_id)
+        await self.store.set_run_state(run_id, state)
 
     @activity.defn(name="generate")
     async def generate(self, run_id: str, job: GenerationJob) -> DurableResult:
