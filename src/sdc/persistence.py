@@ -1,8 +1,13 @@
-"""PostgreSQL persistence models: run state plus append-only events and artifacts."""
+"""PostgreSQL persistence models for durable runtime state.
+
+The database is not the workflow engine, but it is the durable, queryable boundary used by
+activities.  In particular, attempt reservations are unique so activity redelivery cannot turn
+into an unrecorded third provider call.
+"""
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Index, String, UniqueConstraint, event, text
+from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, UniqueConstraint, event, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -42,9 +47,22 @@ class ArtifactRecord(Base):
     )
     id: Mapped[str] = mapped_column(String, primary_key=True)
     job_id: Mapped[str] = mapped_column(String, nullable=False)
+    attempt: Mapped[int] = mapped_column(Integer, nullable=False)
     idempotency_key: Mapped[str] = mapped_column(String, nullable=False)
     path: Mapped[str] = mapped_column(String, nullable=False)
     is_current: Mapped[bool] = mapped_column(default=True)
+
+
+class AttemptRecord(Base):
+    """A provider attempt reserved before the non-idempotent remote operation starts."""
+
+    __tablename__ = "generation_attempts"
+    __table_args__ = (UniqueConstraint("job_id", "attempt"),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
+    job_id: Mapped[str] = mapped_column(String, nullable=False)
+    attempt: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String, nullable=False)
 
 
 @event.listens_for(EventRecord, "before_update")

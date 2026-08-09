@@ -33,3 +33,12 @@ offline demo and unit suite do not require Docker. Temporal owns workflow state;
 queryable run state, immutable events, and uniquely keyed generation artifacts. Creative jobs have
 one current candidate and exactly two possible automatic attempts; exhaustion transitions to
 `STOP-2`, requiring a human gate rather than a hidden third try.
+
+## Durable worker
+
+Apply migrations with `uv run alembic upgrade head`, then start the replaceable runtime worker
+with `uv run python -m sdc.worker`. `SDC_DATABASE_URL`, `SDC_TEMPORAL_ADDRESS`, `SDC_TASK_QUEUE`,
+and `SDC_OUTPUT_ROOT` configure its boundaries. Provider attempts are reserved transactionally
+before generation, so activity redelivery or a worker restart cannot create an automatic third
+attempt. The bundled worker deliberately uses the offline `FakeProvider`; a deployment injects its
+own provider adapter without changing workflow code.

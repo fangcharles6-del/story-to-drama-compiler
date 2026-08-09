@@ -9,10 +9,10 @@ from temporalio.common import RetryPolicy
 from sdc.contracts import GenerationJob, JobGraph
 
 
-@activity.defn
-async def generate_activity(job: GenerationJob) -> str:
-    """Gateway integration seam; workers inject the concrete provider implementation."""
-    return job.id
+@activity.defn(name="generate")
+async def generate_activity(run_id: str, job: GenerationJob) -> str:
+    """Workflow signature only; workers register ``RuntimeActivities.generate``."""
+    raise RuntimeError(f"activity {run_id}/{job.id} was not replaced by a worker adapter")
 
 
 @workflow.defn
@@ -32,7 +32,7 @@ class DramaWorkflow:
                 *(
                     workflow.execute_activity(
                         generate_activity,
-                        job,
+                        args=[graph.id, job],
                         start_to_close_timeout=timedelta(minutes=15),
                         # The gateway owns the two attempts and STOP-2. Temporal must not
                         # silently turn them into a third generation attempt.

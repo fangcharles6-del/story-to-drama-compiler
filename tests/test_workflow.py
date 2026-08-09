@@ -15,10 +15,9 @@ async def test_temporal_activity_has_single_attempt(monkeypatch: pytest.MonkeyPa
     async def result(job_id: str) -> str:
         return job_id
 
-    def execute_activity(
-        _activity: object, job: GenerationJob, **kwargs: Any
-    ) -> Coroutine[Any, Any, str]:
+    def execute_activity(_activity: object, **kwargs: Any) -> Coroutine[Any, Any, str]:
         policies.append(kwargs["retry_policy"])
+        _, job = kwargs["args"]
         return result(job.id)
 
     monkeypatch.setattr("sdc.workflow.workflow.execute_activity", execute_activity)
