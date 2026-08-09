@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "title": "The Last Lantern",
+  "seed": 7,
+  "beats": [
+    {"schema_version": "1.0.0", "text": "A lantern wakes in a rainy alley.", "duration_ms": 2000},
+    {"schema_version": "1.0.0", "text": "Its light guides a lost traveler home.", "duration_ms": 2000}
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "depends_on": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Depends On",
+      "type": "array"
+    },
+    "duration_ms": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "max_attempts": {
+      "const": 2,
+      "default": 2,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "prompt": {
+      "title": "Prompt",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shot_id": {
+      "title": "Shot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "shot_id",
+    "prompt",
+    "duration_ms",
+    "idempotency_key"
+  ],
+  "title": "GenerationJob",
+  "type": "object"
+}
