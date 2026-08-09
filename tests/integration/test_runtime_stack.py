@@ -1,20 +1,25 @@
+import asyncio
 import os
 import uuid
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from temporalio.client import Client
+from temporalio import workflow
+from temporalio.client import Client, WorkflowHandle
+from temporalio.common import RetryPolicy
 from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
 from sdc.compiler import compile_story
-from sdc.contracts import StoryBeat, StoryInput
-from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord
+from sdc.contracts import GenerationJob, RunState, StoryBeat, StoryInput
+from sdc.payloads import DurableResult
+from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
 from sdc.provider import GenerationError
 from sdc.runtime import PostgresRuntimeStore, RuntimeActivities
-from sdc.workflow import DramaWorkflow
+from sdc.workflow import DramaWorkflow, generate_activity
 
 DATABASE_URL = os.environ.get("SDC_DATABASE_URL", "postgresql+asyncpg://sdc:sdc@localhost:5432/sdc")
 TEMPORAL_ADDRESS = os.environ.get("SDC_TEMPORAL_ADDRESS", "localhost:7233")
@@ -32,8 +37,65 @@ class FailingProvider:
         raise GenerationError("planned integration failure")
 
 
+class NoCallProvider:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def generate(self, _job: object, _output: Path, _attempt: int) -> Path:
+        self.calls += 1
+        raise AssertionError("durable exhaustion must prevent a provider call after restart")
+
+
+@workflow.defn
+class RestartProbeWorkflow:
+    def __init__(self) -> None:
+        self._phase = "starting"
+        self._resume = False
+
+    @workflow.run
+    async def run(self, run_id: str, job: GenerationJob) -> list[DurableResult]:
+        first = await workflow.execute_activity(
+            generate_activity,
+            args=[run_id, job],
+            start_to_close_timeout=timedelta(seconds=30),
+            retry_policy=RetryPolicy(maximum_attempts=1),
+        )
+        self._phase = "waiting"
+        await workflow.wait_condition(lambda: self._resume)
+        second = await workflow.execute_activity(
+            generate_activity,
+            args=[run_id, job],
+            start_to_close_timeout=timedelta(seconds=30),
+            retry_policy=RetryPolicy(maximum_attempts=1),
+        )
+        return [first, second]
+
+    @workflow.query
+    def phase(self) -> str:
+        return self._phase
+
+    @workflow.signal
+    async def resume(self) -> None:
+        self._resume = True
+
+
+async def wait_until_waiting(
+    handle: WorkflowHandle[RestartProbeWorkflow, list[DurableResult]],
+) -> None:
+    for _ in range(100):
+        try:
+            if await handle.query(RestartProbeWorkflow.phase) == "waiting":
+                return
+        except Exception:
+            pass
+        await asyncio.sleep(0.05)
+    raise AssertionError("workflow did not reach the restart boundary")
+
+
 @pytest.mark.asyncio
-async def test_two_same_story_runs_are_isolated_and_survive_worker_restart(tmp_path: Path) -> None:
+async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
+    tmp_path: Path,
+) -> None:
     engine = create_async_engine(DATABASE_URL)
     sessions = async_sessionmaker(engine, expire_on_commit=False)
     graph = compile_story(
@@ -42,10 +104,13 @@ async def test_two_same_story_runs_are_isolated_and_survive_worker_restart(tmp_p
     queue = f"integration-{uuid.uuid4().hex}"
     client = await Client.connect(TEMPORAL_ADDRESS, data_converter=pydantic_data_converter)
 
-    async def execute(run_id: str) -> list[str]:
+    async def execute(run_id: str) -> list[DurableResult]:
         activities = RuntimeActivities(PostgresRuntimeStore(sessions), LocalProvider(), tmp_path)  # type: ignore[arg-type]
         async with Worker(
-            client, task_queue=queue, workflows=[DramaWorkflow], activities=[activities.generate]
+            client,
+            task_queue=queue,
+            workflows=[DramaWorkflow],
+            activities=[activities.generate, activities.set_run_state],
         ):
             return await client.execute_workflow(
                 DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue
@@ -53,7 +118,6 @@ async def test_two_same_story_runs_are_isolated_and_survive_worker_restart(tmp_p
 
     run_one, run_two = f"run_{uuid.uuid4().hex}", f"run_{uuid.uuid4().hex}"
     first = await execute(run_one)
-    # A fresh Worker instance demonstrates that no process-local attempt state is required.
     second = await execute(run_two)
     assert first and second
 
@@ -76,6 +140,12 @@ async def test_two_same_story_runs_are_isolated_and_survive_worker_restart(tmp_p
             (run_one, graph.jobs[0].id, True),
             (run_two, graph.jobs[0].id, True),
         }
+        states = (
+            await session.scalars(
+                select(RunRecord.state).where(RunRecord.id.in_([run_one, run_two]))
+            )
+        ).all()
+        assert states == [RunState.SUCCEEDED.value, RunState.SUCCEEDED.value]
     await engine.dispose()
 
 
@@ -90,15 +160,76 @@ async def test_stop_2_is_durable_and_never_calls_a_third_attempt(tmp_path: Path)
     client = await Client.connect(TEMPORAL_ADDRESS, data_converter=pydantic_data_converter)
     activities = RuntimeActivities(PostgresRuntimeStore(sessions), FailingProvider(), tmp_path)  # type: ignore[arg-type]
     async with Worker(
-        client, task_queue=queue, workflows=[DramaWorkflow], activities=[activities.generate]
+        client,
+        task_queue=queue,
+        workflows=[DramaWorkflow],
+        activities=[activities.generate, activities.set_run_state],
     ):
         results = await client.execute_workflow(
             DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue
         )
-    assert results[0].state.value == "STOP-2"
-    # Redelivery/restart sees two reservations and returns STOP-2 without provider work.
+    assert results[0].state is RunState.STOP_2
     result = await activities.generate(run_id, graph.jobs[0])
-    assert result.state.value == "STOP-2"
+    assert result.state is RunState.STOP_2
+    async with sessions() as session:
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(AttemptRecord)
+                .where(AttemptRecord.run_id == run_id)
+            )
+            == 2
+        )
+        assert await session.scalar(select(RunRecord.state).where(RunRecord.id == run_id)) == (
+            RunState.STOP_2.value
+        )
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_same_workflow_resumes_on_fresh_worker_without_third_provider_call(
+    tmp_path: Path,
+) -> None:
+    engine = create_async_engine(DATABASE_URL)
+    sessions = async_sessionmaker(engine, expire_on_commit=False)
+    graph = compile_story(
+        StoryInput(title="restart", beats=(StoryBeat(text="beat", duration_ms=40),))
+    )[3]
+    run_id, queue = f"run_{uuid.uuid4().hex}", f"integration-{uuid.uuid4().hex}"
+    client = await Client.connect(TEMPORAL_ADDRESS, data_converter=pydantic_data_converter)
+    first_activities = RuntimeActivities(
+        PostgresRuntimeStore(sessions), FailingProvider(), tmp_path
+    )  # type: ignore[arg-type]
+
+    async with Worker(
+        client,
+        task_queue=queue,
+        workflows=[RestartProbeWorkflow],
+        activities=[first_activities.generate],
+    ):
+        handle = await client.start_workflow(
+            RestartProbeWorkflow.run,
+            args=[run_id, graph.jobs[0]],
+            id=run_id,
+            task_queue=queue,
+        )
+        await wait_until_waiting(handle)
+
+    no_call_provider = NoCallProvider()
+    second_activities = RuntimeActivities(
+        PostgresRuntimeStore(sessions), no_call_provider, tmp_path
+    )  # type: ignore[arg-type]
+    async with Worker(
+        client,
+        task_queue=queue,
+        workflows=[RestartProbeWorkflow],
+        activities=[second_activities.generate],
+    ):
+        await handle.signal(RestartProbeWorkflow.resume)
+        results = await handle.result()
+
+    assert [item.state for item in results] == [RunState.STOP_2, RunState.STOP_2]
+    assert no_call_provider.calls == 0
     async with sessions() as session:
         assert (
             await session.scalar(
