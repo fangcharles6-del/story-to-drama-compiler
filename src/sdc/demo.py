@@ -57,7 +57,14 @@ async def run() -> None:
     release = manifest(output, clock.duration_ms)
     dump(root / "release_manifest.json", release)
     report = await verify(
-        output, clock, release, len(paths), len(graph.jobs), [p.name for p in paths], max(attempts)
+        output,
+        clock,
+        release,
+        len(paths),
+        len(graph.jobs),
+        [job.id for job in graph.jobs],
+        {job.id: [path.name] for job, path in zip(graph.jobs, paths, strict=True)},
+        max(attempts),
     )
     dump(root / "qc_report.json", report)
     dump(root / "run_events.json", [e.model_dump(mode="json") for e in events])

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, UniqueConstraint, event
+from sqlalchemy import DateTime, ForeignKey, Index, String, UniqueConstraint, event, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -33,7 +33,12 @@ class ArtifactRecord(Base):
     __tablename__ = "artifacts"
     __table_args__ = (
         UniqueConstraint("idempotency_key"),
-        UniqueConstraint("job_id", "is_current"),
+        Index(
+            "uq_artifacts_one_current_per_job",
+            "job_id",
+            unique=True,
+            postgresql_where=text("is_current = true"),
+        ),
     )
     id: Mapped[str] = mapped_column(String, primary_key=True)
     job_id: Mapped[str] = mapped_column(String, nullable=False)

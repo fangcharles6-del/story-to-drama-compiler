@@ -36,7 +36,8 @@ async def verify(
     release: ReleaseManifest,
     segment_count: int,
     expected_segments: int,
-    current_candidates: list[str],
+    expected_job_ids: list[str],
+    current_candidates: dict[str, list[str]],
     max_attempt: int,
 ) -> QCReport:
     probe = await inspect(media)
@@ -85,11 +86,7 @@ async def verify(
             actual_hash == release.sha256,
             {"actual": actual_hash, "expected": release.sha256},
         ),
-        (
-            "single_current_candidate",
-            len(current_candidates) == len(set(current_candidates)),
-            {"count": len(current_candidates)},
-        ),
+        *current_candidate_facts(expected_job_ids, current_candidates),
         ("no_third_attempt", max_attempt <= 2, {"max_attempt": max_attempt}),
     ]
     evidence = tuple(QCEvidence(check=n, passed=p, details=d) for n, p, d in facts)
@@ -99,3 +96,33 @@ async def verify(
         evidence=evidence,
         ffprobe=probe,
     )
+
+
+def current_candidate_facts(
+    expected_job_ids: list[str], current_candidates: dict[str, list[str]]
+) -> list[tuple[str, bool, dict[str, str | int | bool]]]:
+    """Prove that every and only expected job has exactly one current candidate."""
+    expected = set(expected_job_ids)
+    actual = set(current_candidates)
+    facts: list[tuple[str, bool, dict[str, str | int | bool]]] = [
+        (
+            "current_candidate_job_set",
+            actual == expected,
+            {
+                "expected_jobs": len(expected),
+                "actual_jobs": len(actual),
+                "missing_jobs": ",".join(sorted(expected - actual)),
+                "unexpected_jobs": ",".join(sorted(actual - expected)),
+            },
+        )
+    ]
+    for job_id in sorted(expected):
+        candidates = current_candidates.get(job_id, [])
+        facts.append(
+            (
+                f"one_current_candidate:{job_id}",
+                len(candidates) == 1,
+                {"job_id": job_id, "current_count": len(candidates)},
+            )
+        )
+    return facts

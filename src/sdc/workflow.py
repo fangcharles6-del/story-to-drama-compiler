@@ -4,6 +4,7 @@ import asyncio
 from datetime import timedelta
 
 from temporalio import activity, workflow
+from temporalio.common import RetryPolicy
 
 from sdc.contracts import GenerationJob, JobGraph
 
@@ -33,7 +34,9 @@ class DramaWorkflow:
                         generate_activity,
                         job,
                         start_to_close_timeout=timedelta(minutes=15),
-                        retry_policy=None,
+                        # The gateway owns the two attempts and STOP-2. Temporal must not
+                        # silently turn them into a third generation attempt.
+                        retry_policy=RetryPolicy(maximum_attempts=1),
                     )
                     for job in ready
                 )
