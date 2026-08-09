@@ -19,7 +19,9 @@ async def generate_activity(run_id: str, job: GenerationJob) -> DurableResult:
 @activity.defn(name="set_run_state")
 async def set_run_state_activity(run_id: str, state: RunState) -> None:
     """Workflow signature only; workers register ``RuntimeActivities.set_run_state``."""
-    raise RuntimeError(\n        f"state activity {run_id}/{state.value} was not replaced by a worker adapter"\n    )
+    raise RuntimeError(
+        f"state activity {run_id}/{state.value} was not replaced by a worker adapter"
+    )
 
 
 @workflow.defn
