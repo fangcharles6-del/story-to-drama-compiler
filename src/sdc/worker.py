@@ -34,7 +34,7 @@ async def run() -> None:
             client,
             task_queue=task_queue,
             workflows=[DramaWorkflow],
-            activities=[activities.generate],
+            activities=[activities.generate, activities.set_run_state],
         ).run()
     finally:
         await engine.dispose()
