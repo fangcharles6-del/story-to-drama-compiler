@@ -1,0 +1,16 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {version: "0.8.8", enable-cache: true}
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: make bootstrap
+      - run: make lint
+      - run: make typecheck
+      - run: make test
+      - run: make demo
+      - run: make verify-demo
