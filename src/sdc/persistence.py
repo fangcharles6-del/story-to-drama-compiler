@@ -6,8 +6,19 @@ into an unrecorded third provider call.
 """
 
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, UniqueConstraint, event, text
+from sqlalchemy import (
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+    event,
+    text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -88,7 +99,28 @@ class AttemptRecord(Base):
     artifact_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
 
+class LiveAuthorizationUseRecord(Base):
+    """Append-only proof that a one-POST authorization was consumed before submit."""
+
+    __tablename__ = "live_authorization_uses"
+    authorization_id: Mapped[str] = mapped_column(String, primary_key=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
+    job_id: Mapped[str] = mapped_column(String, nullable=False)
+    attempt: Mapped[int] = mapped_column(Integer, nullable=False)
+    request_fingerprint: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    capability_snapshot_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    pricing_snapshot_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    max_cost_cny: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
+    consumed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
 @event.listens_for(EventRecord, "before_update")
 @event.listens_for(EventRecord, "before_delete")
 def prohibit_event_mutation(*_: object) -> None:
     raise ValueError("run events are append-only")
+
+
+@event.listens_for(LiveAuthorizationUseRecord, "before_update")
+@event.listens_for(LiveAuthorizationUseRecord, "before_delete")
+def prohibit_authorization_use_mutation(*_: object) -> None:
+    raise ValueError("live authorization uses are append-only")

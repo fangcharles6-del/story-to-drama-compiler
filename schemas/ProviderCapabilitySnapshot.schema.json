@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "SnapshotStatus": {
+      "enum": [
+        "CURRENT",
+        "STALE",
+        "REVOKED"
+      ],
+      "title": "SnapshotStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "aspect_ratios": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Aspect Ratios",
+      "type": "array"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "evidence_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Sha256",
+      "type": "string"
+    },
+    "fps": {
+      "exclusiveMinimum": 0,
+      "title": "Fps",
+      "type": "integer"
+    },
+    "max_duration_ms": {
+      "exclusiveMinimum": 0,
+      "title": "Max Duration Ms",
+      "type": "integer"
+    },
+    "min_duration_ms": {
+      "exclusiveMinimum": 0,
+      "title": "Min Duration Ms",
+      "type": "integer"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "resolutions": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Resolutions",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_revision": {
+      "title": "Snapshot Revision",
+      "type": "string"
+    },
+    "source_updated_at": {
+      "format": "date-time",
+      "title": "Source Updated At",
+      "type": "string"
+    },
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SnapshotStatus"
+    },
+    "valid_until": {
+      "format": "date-time",
+      "title": "Valid Until",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_revision",
+    "status",
+    "provider",
+    "model",
+    "aspect_ratios",
+    "resolutions",
+    "fps",
+    "min_duration_ms",
+    "max_duration_ms",
+    "source_url",
+    "source_updated_at",
+    "captured_at",
+    "valid_until",
+    "evidence_sha256"
+  ],
+  "title": "ProviderCapabilitySnapshot",
+  "type": "object"
+}

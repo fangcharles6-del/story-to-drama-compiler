@@ -1,0 +1,144 @@
+{
+  "$defs": {
+    "PricingInputMode": {
+      "enum": [
+        "WITHOUT_VIDEO",
+        "WITH_VIDEO"
+      ],
+      "title": "PricingInputMode",
+      "type": "string"
+    },
+    "SnapshotStatus": {
+      "enum": [
+        "CURRENT",
+        "STALE",
+        "REVOKED"
+      ],
+      "title": "SnapshotStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "billing_unit": {
+      "title": "Billing Unit",
+      "type": "string"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "currency": {
+      "const": "CNY",
+      "default": "CNY",
+      "title": "Currency",
+      "type": "string"
+    },
+    "evidence_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Sha256",
+      "type": "string"
+    },
+    "input_mode": {
+      "$ref": "#/$defs/PricingInputMode"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "resolution": {
+      "title": "Resolution",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_revision": {
+      "title": "Snapshot Revision",
+      "type": "string"
+    },
+    "source_updated_at": {
+      "format": "date-time",
+      "title": "Source Updated At",
+      "type": "string"
+    },
+    "source_url": {
+      "title": "Source Url",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SnapshotStatus"
+    },
+    "unit_price_cny": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Unit Price Cny"
+    },
+    "valid_until": {
+      "format": "date-time",
+      "title": "Valid Until",
+      "type": "string"
+    },
+    "worst_case_cost_cny": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Worst Case Cost Cny"
+    },
+    "worst_case_units": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Worst Case Units"
+    }
+  },
+  "required": [
+    "snapshot_revision",
+    "status",
+    "provider",
+    "model",
+    "resolution",
+    "input_mode",
+    "billing_unit",
+    "unit_price_cny",
+    "worst_case_units",
+    "worst_case_cost_cny",
+    "source_url",
+    "source_updated_at",
+    "captured_at",
+    "valid_until",
+    "evidence_sha256"
+  ],
+  "title": "ProviderPricingSnapshot",
+  "type": "object"
+}

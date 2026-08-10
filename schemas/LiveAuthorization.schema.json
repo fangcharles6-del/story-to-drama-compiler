@@ -1,0 +1,70 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "authorization_id": {
+      "title": "Authorization Id",
+      "type": "string"
+    },
+    "capability_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Capability Snapshot Sha256",
+      "type": "string"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "max_cost_cny": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Max Cost Cny"
+    },
+    "max_posts": {
+      "const": 1,
+      "default": 1,
+      "title": "Max Posts",
+      "type": "integer"
+    },
+    "nonce": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Nonce",
+      "type": "string"
+    },
+    "pricing_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pricing Snapshot Sha256",
+      "type": "string"
+    },
+    "request_fingerprint": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Fingerprint",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "authorization_id",
+    "request_fingerprint",
+    "capability_snapshot_sha256",
+    "pricing_snapshot_sha256",
+    "max_cost_cny",
+    "expires_at",
+    "nonce"
+  ],
+  "title": "LiveAuthorization",
+  "type": "object"
+}

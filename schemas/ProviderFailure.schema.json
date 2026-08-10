@@ -10,7 +10,10 @@
         "CONFIGURATION",
         "INVALID_INPUT",
         "SENSITIVE_CONTENT",
-        "TRANSIENT"
+        "TRANSIENT",
+        "LIVE_NOT_AUTHORIZED",
+        "CAPABILITY_DRIFT",
+        "COST_LIMIT"
       ],
       "title": "ProviderFailureClass",
       "type": "string"

@@ -7,8 +7,6 @@ worker entry point, keeping Temporal workflow sandbox imports free of HTTP libra
 from __future__ import annotations
 
 import asyncio
-import hashlib
-import json
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Protocol
@@ -18,10 +16,12 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from temporalio import activity
 
+from sdc.canary import LiveGateError, LiveSubmissionGuard
 from sdc.compiler import stable_id
 from sdc.contracts import (
     DownloadedArtifact,
     GenerationJob,
+    LiveAuthorization,
     ProviderAttemptState,
     ProviderFailureClass,
     ProviderProfile,
@@ -31,13 +31,20 @@ from sdc.contracts import (
     RunState,
 )
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
-from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
+from sdc.persistence import (
+    ArtifactRecord,
+    AttemptRecord,
+    EventRecord,
+    LiveAuthorizationUseRecord,
+    RunRecord,
+)
 from sdc.provider import (
     GenerationError,
     LegacyProvider,
     Provider,
     ProviderOperationError,
     SubmissionUnknown,
+    request_fingerprint,
 )
 
 
@@ -71,6 +78,16 @@ class RuntimeStore(Protocol):
     async def record_download(
         self, run_id: str, job: GenerationJob, attempt: int, artifact: DownloadedArtifact
     ) -> None: ...
+    async def consume_live_authorization(
+        self,
+        request: ProviderRequest,
+        authorization: LiveAuthorization,
+        capability_snapshot_sha256: str,
+        pricing_snapshot_sha256: str,
+    ) -> bool: ...
+    async def record_live_gate_failure(
+        self, request: ProviderRequest, failure_class: ProviderFailureClass
+    ) -> None: ...
 
 
 class PostgresRuntimeStore:
@@ -94,6 +111,55 @@ class PostgresRuntimeStore:
         async with self._sessions.begin() as session:
             await session.execute(
                 update(RunRecord).where(RunRecord.id == run_id).values(state=state.value)
+            )
+
+    async def consume_live_authorization(
+        self,
+        request: ProviderRequest,
+        authorization: LiveAuthorization,
+        capability_snapshot_sha256: str,
+        pricing_snapshot_sha256: str,
+    ) -> bool:
+        async with self._sessions.begin() as session:
+            consumed = await session.scalar(
+                insert(LiveAuthorizationUseRecord)
+                .values(
+                    authorization_id=authorization.authorization_id,
+                    run_id=request.run_id,
+                    job_id=request.job_id,
+                    attempt=request.attempt,
+                    request_fingerprint=request.request_fingerprint,
+                    capability_snapshot_sha256=capability_snapshot_sha256,
+                    pricing_snapshot_sha256=pricing_snapshot_sha256,
+                    max_cost_cny=authorization.max_cost_cny,
+                    consumed_at=datetime.now(UTC),
+                )
+                .on_conflict_do_nothing()
+                .returning(LiveAuthorizationUseRecord.authorization_id)
+            )
+            return consumed is not None
+
+    async def record_live_gate_failure(
+        self, request: ProviderRequest, failure_class: ProviderFailureClass
+    ) -> None:
+        async with self._sessions.begin() as session:
+            await session.execute(
+                update(RunRecord)
+                .where(RunRecord.id == request.run_id)
+                .values(state=RunState.HUMAN_GATE.value)
+            )
+            await self._event(
+                session,
+                request.run_id,
+                "provider.live_gate_blocked",
+                RunState.HUMAN_GATE,
+                f"{request.job_id}:{request.attempt}:live-gate:{failure_class.value}",
+                {
+                    "job_id": request.job_id,
+                    "attempt": request.attempt,
+                    "failure_class": failure_class.value,
+                    "request_fingerprint": request.request_fingerprint,
+                },
             )
 
     async def freeze_profile(self, run_id: str, profile: ProviderProfile) -> None:
@@ -479,29 +545,16 @@ class RuntimeActivities:
         provider: Provider | LegacyProvider,
         output_root: Path,
         profile: ProviderProfile | None = None,
+        live_guard: LiveSubmissionGuard | None = None,
     ) -> None:
         self.store, self.provider, self.output_root = store, provider, output_root
         self.profile = profile or ProviderProfile(
             provider="fake", model="fake-v1", min_duration_ms=1, max_duration_ms=60_000
         )
+        self.live_guard = live_guard
 
     def _request(self, run_id: str, job: GenerationJob, attempt: int) -> ProviderRequest:
-        fingerprint_inputs = {
-            "run_id": run_id,
-            "job_id": job.id,
-            "attempt": attempt,
-            "provider": self.profile.provider,
-            "model": self.profile.model,
-            "prompt": job.prompt,
-            "duration_ms": job.duration_ms,
-            "aspect_ratio": self.profile.aspect_ratio,
-            "resolution": self.profile.resolution,
-            "input_materials": (),
-        }
-        fingerprint = hashlib.sha256(
-            json.dumps(fingerprint_inputs, sort_keys=True, separators=(",", ":")).encode()
-        ).hexdigest()
-        return ProviderRequest(
+        request = ProviderRequest(
             run_id=run_id,
             job_id=job.id,
             attempt=attempt,
@@ -512,8 +565,9 @@ class RuntimeActivities:
             aspect_ratio=self.profile.aspect_ratio,
             resolution=self.profile.resolution,
             input_materials=(),
-            request_fingerprint=fingerprint,
+            request_fingerprint="0" * 64,
         )
+        return request.model_copy(update={"request_fingerprint": request_fingerprint(request)})
 
     @activity.defn(name="set_run_state")
     async def set_run_state(self, run_id: str, state: RunState) -> None:
@@ -527,10 +581,39 @@ class RuntimeActivities:
         await self.store.ensure_run(run_id)
         await self.store.freeze_profile(run_id, self.profile)
         request = self._request(run_id, job, attempt)
+        if self.profile.provider == "volcengine_ark":
+            try:
+                if self.live_guard is None:
+                    raise LiveGateError(
+                        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+                        "live Ark submission requires a separate one-use authorization",
+                    )
+                self.live_guard.validate(request)
+            except LiveGateError as exc:
+                await self.store.record_live_gate_failure(request, exc.failure_class)
+                return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         reserved = await self.store.reserve_provider_attempt(request)
         if reserved.provider_task_id or reserved.state is RunState.HUMAN_GATE:
             return reserved
-        for explicit_rejection in range(3):
+        if self.profile.provider == "volcengine_ark":
+            try:
+                assert self.live_guard is not None
+                consumed = await self.store.consume_live_authorization(
+                    request,
+                    self.live_guard.authorization,
+                    self.live_guard.capability_sha256,
+                    self.live_guard.pricing_sha256,
+                )
+                if not consumed:
+                    raise LiveGateError(
+                        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+                        "live authorization was already consumed",
+                    )
+            except LiveGateError as exc:
+                await self.store.record_submission_failure(request, exc.failure_class)
+                return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
+        maximum_submit_calls = 1 if self.live_guard is not None else 3
+        for explicit_rejection in range(maximum_submit_calls):
             try:
                 submission = await self.provider.submit(request)  # type: ignore[union-attr]
                 break
@@ -542,7 +625,7 @@ class RuntimeActivities:
             except ProviderOperationError as exc:
                 # Only an explicit response proving no task was accepted may retry this POST.
                 # Transport ambiguity is SubmissionUnknown and can never enter this branch.
-                if exc.retryable and explicit_rejection < 2:
+                if exc.retryable and explicit_rejection + 1 < maximum_submit_calls:
                     await asyncio.sleep(2**explicit_rejection)
                     continue
                 await self.store.record_submission_failure(request, exc.failure_class)

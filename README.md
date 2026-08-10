@@ -69,3 +69,16 @@ provider. See `docs/adr/SDC-ADR-010.md` for submission-unknown and two-Attempt s
 The Ark HTTP implementation is worker-only and is not imported into Temporal's deterministic
 workflow sandbox. Result downloads use a separate credential-free HTTP client, are verified in a
 temporary file, and are atomically published only after SHA-256, size, and ffprobe evidence pass.
+
+## Zero-spend live readiness
+
+SDC-ADR-011 adds a second, fail-closed boundary in front of Ark submission. A live worker requires
+versioned capability and pricing snapshots plus a separately approved, exact-request
+`LiveAuthorization`. Consumption is persisted before POST and is globally one-use, so worker
+restart cannot replay a paid authorization. Missing, stale, mismatched, reused, or over-budget
+evidence enters `HUMAN_GATE` without a provider request.
+
+`uv run python -m sdc.canary` creates a zero-network plan and frozen request. Its output is always
+`NOT_AUTHORIZED` with zero allowed POSTs; it cannot create a live authorization or call Ark. See
+`docs/runbooks/ARK-CANARY-001.md`. BUILD-004 still authorizes no credentials, service activation,
+purchase, recharge, paid generation, or live canary; that requires a separate SDC-CANARY approval.

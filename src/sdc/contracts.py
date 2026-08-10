@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from decimal import Decimal
 from enum import StrEnum
 from typing import Annotated, Final, Literal
 
@@ -115,6 +117,9 @@ class ProviderFailureClass(StrEnum):
     INVALID_INPUT = "INVALID_INPUT"
     SENSITIVE_CONTENT = "SENSITIVE_CONTENT"
     TRANSIENT = "TRANSIENT"
+    LIVE_NOT_AUTHORIZED = "LIVE_NOT_AUTHORIZED"
+    CAPABILITY_DRIFT = "CAPABILITY_DRIFT"
+    COST_LIMIT = "COST_LIMIT"
 
 
 class ProviderTaskState(StrEnum):
@@ -145,6 +150,78 @@ class ProviderProfile(Contract):
     min_duration_ms: int = 4000
     max_duration_ms: int = 15000
     max_in_flight: int = 2
+
+
+class SnapshotStatus(StrEnum):
+    CURRENT = "CURRENT"
+    STALE = "STALE"
+    REVOKED = "REVOKED"
+
+
+class PricingInputMode(StrEnum):
+    WITHOUT_VIDEO = "WITHOUT_VIDEO"
+    WITH_VIDEO = "WITH_VIDEO"
+
+
+class ProviderCapabilitySnapshot(Contract):
+    snapshot_revision: str
+    status: SnapshotStatus
+    provider: str
+    model: str
+    aspect_ratios: tuple[str, ...] = Field(min_length=1)
+    resolutions: tuple[str, ...] = Field(min_length=1)
+    fps: Annotated[int, Field(gt=0)]
+    min_duration_ms: Annotated[int, Field(gt=0)]
+    max_duration_ms: Annotated[int, Field(gt=0)]
+    source_url: str
+    source_updated_at: datetime
+    captured_at: datetime
+    valid_until: datetime
+    evidence_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class ProviderPricingSnapshot(Contract):
+    snapshot_revision: str
+    status: SnapshotStatus
+    provider: str
+    model: str
+    resolution: str
+    input_mode: PricingInputMode
+    currency: Literal["CNY"] = "CNY"
+    billing_unit: str
+    unit_price_cny: Annotated[Decimal, Field(gt=0)]
+    worst_case_units: Annotated[Decimal, Field(gt=0)]
+    worst_case_cost_cny: Annotated[Decimal, Field(gt=0)]
+    source_url: str
+    source_updated_at: datetime
+    captured_at: datetime
+    valid_until: datetime
+    evidence_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+class LiveAuthorization(Contract):
+    authorization_id: str
+    request_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    capability_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pricing_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    max_cost_cny: Annotated[Decimal, Field(gt=0)]
+    expires_at: datetime
+    nonce: str = Field(pattern=r"^[0-9a-f]{64}$")
+    max_posts: Literal[1] = 1
+
+
+class CanaryPlan(Contract):
+    state: Literal["NOT_AUTHORIZED"] = "NOT_AUTHORIZED"
+    run_id: str
+    job_id: str
+    attempt: Literal[1] = 1
+    request_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    capability_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pricing_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    worst_case_cost_cny: Annotated[Decimal, Field(gt=0)]
+    approved_cost_ceiling_cny: Annotated[Decimal, Field(gt=0)]
+    planned_at: datetime
+    posts_allowed: Literal[0] = 0
 
 
 class InputMaterial(Contract):
