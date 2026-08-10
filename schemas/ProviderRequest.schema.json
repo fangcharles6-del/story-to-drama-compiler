@@ -44,6 +44,10 @@
       "title": "Duration Ms",
       "type": "integer"
     },
+    "generate_audio": {
+      "title": "Generate Audio",
+      "type": "boolean"
+    },
     "input_materials": {
       "default": [],
       "items": {
@@ -98,6 +102,7 @@
     "duration_ms",
     "aspect_ratio",
     "resolution",
+    "generate_audio",
     "request_fingerprint"
   ],
   "title": "ProviderRequest",

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import httpx
@@ -19,6 +20,7 @@ def request(duration_ms: int = 4000) -> ProviderRequest:
         duration_ms=duration_ms,
         aspect_ratio="9:16",
         resolution="1080p",
+        generate_audio=False,
         request_fingerprint="a" * 64,
     )
 
@@ -31,6 +33,7 @@ async def test_ark_submit_inspect_uses_official_boundary() -> None:
         calls.append(req)
         if req.method == "POST":
             assert req.headers["authorization"] == "Bearer secret"
+            assert json.loads(req.content)["generate_audio"] is False
             return httpx.Response(200, json={"id": "task-1", "status": "queued"})
         return httpx.Response(
             200,
@@ -101,7 +104,7 @@ async def test_input_materials_map_to_image_url_without_hash_in_request() -> Non
     bodies: list[dict[str, object]] = []
 
     def handler(req: httpx.Request) -> httpx.Response:
-        bodies.append(__import__("json").loads(req.content))
+        bodies.append(json.loads(req.content))
         return httpx.Response(200, json={"id": "task", "status": "queued"})
 
     client = httpx.AsyncClient(

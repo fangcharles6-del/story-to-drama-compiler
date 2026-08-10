@@ -20,6 +20,7 @@ from sdc.contracts import (
     ProviderTaskSnapshot,
     ProviderTaskState,
     RunState,
+    provider_request_fingerprint,
 )
 
 ARK_MODEL = "doubao-seedance-2-0-260128"
@@ -68,10 +69,7 @@ class AttemptResult:
 
 def request_fingerprint(request: ProviderRequest) -> str:
     """Fingerprint stable request inputs (never adapter commands or credentials)."""
-    body = request.model_dump(exclude={"request_fingerprint"}, mode="json")
-    return hashlib.sha256(
-        json.dumps(body, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
+    return provider_request_fingerprint(request)
 
 
 async def _probe(path: Path) -> dict[str, object]:

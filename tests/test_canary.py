@@ -9,10 +9,16 @@ from sdc.canary import (
     LiveGateError,
     LiveSubmissionGuard,
     build_canary_plan,
+    build_live_authorization,
     contract_sha256,
+    freeze_canary_execution,
     main,
 )
+from sdc.canary_authorize import main as authorize_main
 from sdc.contracts import (
+    CanaryExecution,
+    GenerationJob,
+    JobGraph,
     LiveAuthorization,
     PricingInputMode,
     ProviderCapabilitySnapshot,
@@ -38,6 +44,7 @@ def frozen_request(*, attempt: int = 1, duration_ms: int = 4000) -> ProviderRequ
         duration_ms=duration_ms,
         aspect_ratio="9:16",
         resolution="1080p",
+        generate_audio=False,
         request_fingerprint="0" * 64,
     )
     return value.model_copy(update={"request_fingerprint": request_fingerprint(value)})
@@ -94,13 +101,40 @@ def authorization(request: ProviderRequest) -> LiveAuthorization:
     )
 
 
-def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
-    plan = build_canary_plan(
-        capability(), pricing(), frozen_request(), Decimal("0.20"), now=NOW
+def graph(*jobs: GenerationJob) -> JobGraph:
+    values = jobs or (
+        GenerationJob(
+            id="canary-job",
+            shot_id="canary-shot",
+            prompt="one safe canary",
+            duration_ms=4000,
+            idempotency_key="canary-generate",
+        ),
     )
+    return JobGraph(id="canary-graph", jobs=values)
+
+
+def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
+    plan = build_canary_plan(capability(), pricing(), frozen_request(), Decimal("0.20"), now=NOW)
     assert plan.state == "NOT_AUTHORIZED"
     assert plan.posts_allowed == 0
     assert plan.worst_case_cost_cny == Decimal("0.10")
+
+
+def test_exact_execution_freezes_single_job_and_request_fingerprint() -> None:
+    execution = freeze_canary_execution("canary-run", graph())
+    assert execution.run_id == execution.request.run_id == "canary-run"
+    assert execution.graph.jobs[0].id == execution.request.job_id
+    assert execution.request.duration_ms == 4000
+    assert execution.request.generate_audio is False
+    assert execution.request.input_materials == ()
+    assert request_fingerprint(execution.request) == execution.request.request_fingerprint
+
+
+def test_exact_execution_rejects_multiple_jobs_before_workflow() -> None:
+    extra = graph().jobs[0].model_copy(update={"id": "second-job"})
+    with pytest.raises(LiveGateError, match="exactly one Job"):
+        freeze_canary_execution("canary-run", graph(graph().jobs[0], extra))
 
 
 @pytest.mark.parametrize(
@@ -109,6 +143,7 @@ def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
         (frozen_request(attempt=2), Decimal("0.20"), ProviderFailureClass.LIVE_NOT_AUTHORIZED),
         (frozen_request(duration_ms=15001), Decimal("0.20"), ProviderFailureClass.CAPABILITY_DRIFT),
         (frozen_request(), Decimal("0.09"), ProviderFailureClass.COST_LIMIT),
+        (frozen_request(), Decimal("15.01"), ProviderFailureClass.COST_LIMIT),
     ],
 )
 def test_plan_fails_closed_before_live_submission(
@@ -124,7 +159,30 @@ def test_authorization_is_bound_to_exact_snapshots_and_request() -> None:
     guard = LiveSubmissionGuard(capability(), pricing(), authorization(request))
     guard.validate(request, now=NOW)
     with pytest.raises(LiveGateError, match="fingerprint"):
-        guard.validate(frozen_request(duration_ms=5000), now=NOW)
+        guard.validate(request.model_copy(update={"prompt": "different"}), now=NOW)
+
+
+def test_authorization_generation_is_offline_and_capped() -> None:
+    plan = build_canary_plan(capability(), pricing(), frozen_request(), Decimal("15"), now=NOW)
+    execution = freeze_canary_execution("canary-run", graph())
+    value = build_live_authorization(
+        plan,
+        execution,
+        authorization_id="SDC-CANARY-001",
+        max_cost_cny=Decimal("15"),
+        expires_at=VALID_UNTIL,
+        nonce="d" * 64,
+    )
+    assert value.request_fingerprint == plan.request_fingerprint
+    with pytest.raises(LiveGateError, match="CNY 15"):
+        build_live_authorization(
+            plan,
+            execution,
+            authorization_id="SDC-CANARY-001",
+            max_cost_cny=Decimal("15.01"),
+            expires_at=VALID_UNTIL,
+            nonce="d" * 64,
+        )
 
 
 def test_cli_dry_run_performs_no_network_calls(
@@ -164,3 +222,68 @@ def test_cli_dry_run_performs_no_network_calls(
     )
     assert '"state": "NOT_AUTHORIZED"' in output.read_text()
     assert '"posts_allowed": 0' in output.read_text()
+
+
+def test_story_planner_and_authorizer_are_separate_zero_network_steps(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def forbidden(*_: object, **__: object) -> None:
+        raise AssertionError("canary preparation must not touch the network")
+
+    monkeypatch.setattr(socket, "create_connection", forbidden)
+    capability_path = tmp_path / "capability.json"
+    pricing_path = tmp_path / "pricing.json"
+    story_path = tmp_path / "story.json"
+    capability_path.write_text(capability().model_dump_json())
+    pricing_path.write_text(pricing().model_dump_json())
+    story_path.write_text(
+        '{"title":"canary","beats":[{"text":"one safe canary","duration_ms":4000}]}'
+    )
+    plan_path = tmp_path / "plan.json"
+    execution_path = tmp_path / "execution.json"
+    assert (
+        main(
+            [
+                "--capability",
+                str(capability_path),
+                "--pricing",
+                str(pricing_path),
+                "--story",
+                str(story_path),
+                "--run-id",
+                "canary-run-fixed",
+                "--max-cost-cny",
+                "15",
+                "--output",
+                str(plan_path),
+                "--execution-output",
+                str(execution_path),
+            ]
+        )
+        == 0
+    )
+    execution = CanaryExecution.model_validate_json(execution_path.read_text())
+    assert execution.run_id == "canary-run-fixed"
+    authorization_path = tmp_path / "authorization.json"
+    assert (
+        authorize_main(
+            [
+                "--plan",
+                str(plan_path),
+                "--execution",
+                str(execution_path),
+                "--authorization-id",
+                "SDC-CANARY-001",
+                "--max-cost-cny",
+                "15",
+                "--expires-at",
+                VALID_UNTIL.isoformat(),
+                "--nonce",
+                "e" * 64,
+                "--output",
+                str(authorization_path),
+            ]
+        )
+        == 0
+    )
+    assert not authorization_path.samefile(execution_path)

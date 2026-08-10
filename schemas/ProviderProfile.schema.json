@@ -6,6 +6,11 @@
       "title": "Aspect Ratio",
       "type": "string"
     },
+    "generate_audio": {
+      "default": false,
+      "title": "Generate Audio",
+      "type": "boolean"
+    },
     "max_duration_ms": {
       "default": 15000,
       "title": "Max Duration Ms",

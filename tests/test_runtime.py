@@ -187,6 +187,26 @@ async def test_restart_reuses_persisted_task_id_without_second_post(tmp_path: Pa
     assert provider.posts == 1
 
 
+@pytest.mark.asyncio
+async def test_frozen_workflow_request_mismatch_fails_before_post(tmp_path: Path) -> None:
+    store = AsyncMemoryStore()
+    provider = AcceptedProvider()
+    item = job().model_copy(update={"duration_ms": 4000})
+    activities = RuntimeActivities(
+        store,
+        provider,  # type: ignore[arg-type]
+        tmp_path,
+        ProviderProfile(provider="volcengine_ark", model=ARK_MODEL),
+    )
+    frozen = activities._request("canary-run", item, 1).model_copy(
+        update={"request_fingerprint": "f" * 64}
+    )
+    result = await activities.submit_generation("canary-run", item, 1, frozen)
+    assert result.state is RunState.HUMAN_GATE
+    assert store.failure is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    assert store.reservation is None and provider.posts == 0
+
+
 def live_guard(run_id: str, item: GenerationJob) -> LiveSubmissionGuard:
     now = datetime(2026, 8, 10, tzinfo=UTC)
     request = ProviderRequest(
@@ -199,6 +219,7 @@ def live_guard(run_id: str, item: GenerationJob) -> LiveSubmissionGuard:
         duration_ms=item.duration_ms,
         aspect_ratio="9:16",
         resolution="1080p",
+        generate_audio=False,
         request_fingerprint="0" * 64,
     )
     request = request.model_copy(update={"request_fingerprint": request_fingerprint(request)})
@@ -253,9 +274,7 @@ async def test_live_authorization_is_consumed_before_only_post(tmp_path: Path) -
     provider = AcceptedProvider()
     item = job().model_copy(update={"duration_ms": 4000})
     profile = ProviderProfile(provider="volcengine_ark", model=ARK_MODEL)
-    activities = RuntimeActivities(
-        store, provider, tmp_path, profile, live_guard("run", item)
-    )  # type: ignore[arg-type]
+    activities = RuntimeActivities(store, provider, tmp_path, profile, live_guard("run", item))  # type: ignore[arg-type]
     first = await activities.submit_generation("run", item, 1)
     assert first.provider_task_id == "task-stable"
     assert store.authorization_consumed and provider.posts == 1

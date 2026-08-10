@@ -6,6 +6,7 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 from temporalio.worker.workflow_sandbox import SandboxedWorkflowRunner
 
+from sdc.canary import freeze_canary_execution
 from sdc.contracts import GenerationJob, JobGraph, ProviderTaskState, RunState
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
 from sdc.workflow import (
@@ -152,3 +153,43 @@ async def test_stop_2_blocks_dependent_jobs(monkeypatch: pytest.MonkeyPatch) -> 
     assert outputs == [DurableResult(state=RunState.STOP_2, path=None, attempts=2)]
     assert submissions == [("parent", 1), ("parent", 2)]
     assert states == [RunState.RUNNING, RunState.STOP_2]
+
+
+@pytest.mark.asyncio
+async def test_canary_workflow_passes_frozen_request_and_never_attempts_two(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    canary_job = job("canary-job").model_copy(update={"duration_ms": 4000})
+    graph = JobGraph(id="canary-graph", jobs=(canary_job,))
+    execution = freeze_canary_execution("canary-run", graph)
+    submissions: list[tuple[int, object]] = []
+    states: list[RunState] = []
+
+    def execute_activity(definition: object, **kwargs: Any) -> Coroutine[Any, Any, Any]:
+        if definition is set_run_state_activity:
+            states.append(kwargs["args"][1])
+            return resolved(None)
+        _run_id, _item, attempt, *tail = kwargs["args"]
+        if definition is submit_generation_activity:
+            submissions.append((attempt, tail[0]))
+            return resolved(
+                SubmitResult(
+                    state=RunState.RUNNING,
+                    attempt=attempt,
+                    provider_task_id="task-canary",
+                )
+            )
+        assert definition is watch_generation_activity
+        return resolved(
+            WatchResult(
+                attempt=attempt,
+                provider_task_id=tail[0],
+                task_state=ProviderTaskState.FAILED,
+            )
+        )
+
+    monkeypatch.setattr("sdc.workflow.workflow.execute_activity", execute_activity)
+    outputs = await DramaWorkflow().run(execution.run_id, execution.graph, execution.request)
+    assert outputs == [DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)]
+    assert submissions == [(1, execution.request)]
+    assert states == [RunState.RUNNING, RunState.HUMAN_GATE]

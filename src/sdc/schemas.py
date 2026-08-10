@@ -29,6 +29,7 @@ MODELS: list[type[Contract]] = [
     contracts.ProviderPricingSnapshot,
     contracts.LiveAuthorization,
     contracts.CanaryPlan,
+    contracts.CanaryExecution,
 ]
 
 

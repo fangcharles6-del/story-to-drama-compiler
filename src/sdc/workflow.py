@@ -6,12 +6,24 @@ from datetime import timedelta
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 
-from sdc.contracts import GenerationJob, JobGraph, ProviderTaskState, RunState
+from sdc.contracts import (
+    CanaryExecution,
+    GenerationJob,
+    JobGraph,
+    ProviderRequest,
+    ProviderTaskState,
+    RunState,
+)
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
 
 
 @activity.defn(name="submit_generation")
-async def submit_generation_activity(run_id: str, job: GenerationJob, attempt: int) -> SubmitResult:
+async def submit_generation_activity(
+    run_id: str,
+    job: GenerationJob,
+    attempt: int,
+    frozen_request: ProviderRequest | None = None,
+) -> SubmitResult:
     raise RuntimeError(f"submit activity {run_id}/{job.id}/{attempt} was not replaced")
 
 
@@ -52,13 +64,19 @@ class DramaWorkflow:
             retry_policy=RetryPolicy(maximum_attempts=1),
         )
 
-    async def _generate(self, run_id: str, job: GenerationJob) -> DurableResult:
-        for attempt in range(1, job.max_attempts + 1):
+    async def _generate(
+        self, run_id: str, job: GenerationJob, frozen_request: ProviderRequest | None = None
+    ) -> DurableResult:
+        attempts = (1,) if frozen_request is not None else range(1, job.max_attempts + 1)
+        for attempt in attempts:
             # This is the only activity that may create a paid task. Never let Temporal redeliver
             # it automatically after an ambiguous outcome.
+            submit_args: list[object] = [run_id, job, attempt]
+            if frozen_request is not None:
+                submit_args.append(frozen_request)
             submitted = await workflow.execute_activity(
                 submit_generation_activity,
-                args=[run_id, job, attempt],
+                args=submit_args,
                 start_to_close_timeout=timedelta(minutes=2),
                 retry_policy=RetryPolicy(maximum_attempts=1),
             )
@@ -94,12 +112,23 @@ class DramaWorkflow:
                         ),
                     )
                 if watched.task_state in {ProviderTaskState.FAILED, ProviderTaskState.EXPIRED}:
+                    if frozen_request is not None:
+                        return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
                     break
                 return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+        if frozen_request is not None:
+            return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)
         return DurableResult(state=RunState.STOP_2, path=None, attempts=job.max_attempts)
 
     @workflow.run
-    async def run(self, run_id: str, graph: JobGraph) -> list[DurableResult]:
+    async def run(
+        self,
+        run_id: str,
+        graph: JobGraph,
+        canary_request: ProviderRequest | None = None,
+    ) -> list[DurableResult]:
+        if canary_request is not None:
+            CanaryExecution(run_id=run_id, graph=graph, request=canary_request)
         await self._set_run_state(run_id, RunState.RUNNING)
         pending = {job.id: job for job in graph.jobs}
         done: set[str] = set()
@@ -111,7 +140,9 @@ class DramaWorkflow:
                 )
                 if not ready:
                     raise ValueError("job graph contains a cycle or unknown dependency")
-                batch = await asyncio.gather(*(self._generate(run_id, job) for job in ready))
+                batch = await asyncio.gather(
+                    *(self._generate(run_id, job, canary_request) for job in ready)
+                )
                 outputs.extend(batch)
                 terminal = next(
                     (
