@@ -182,29 +182,13 @@ class CanaryWorkflow:
             )
             if submitted.state is RunState.HUMAN_GATE or not submitted.provider_task_id:
                 result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
-                await self._set_run_state(run_id, result.state)
-                return [result]
-            task_id = submitted.provider_task_id
-            while True:
-                watched = await workflow.execute_activity(
-                    watch_generation_activity,
-                    args=[run_id, job, attempt, task_id],
-                    start_to_close_timeout=timedelta(minutes=2),
-                    heartbeat_timeout=timedelta(seconds=30),
-                    retry_policy=RetryPolicy(
-                        maximum_attempts=8,
-                        initial_interval=timedelta(seconds=1),
-                        maximum_interval=timedelta(seconds=30),
-                    ),
-                )
-                if watched.task_state in {ProviderTaskState.QUEUED, ProviderTaskState.RUNNING}:
-                    await workflow.sleep(timedelta(seconds=2))
-                    continue
-                if watched.task_state is ProviderTaskState.SUCCEEDED:
-                    result = await workflow.execute_activity(
-                        download_generation_activity,
+            else:
+                task_id = submitted.provider_task_id
+                while True:
+                    watched = await workflow.execute_activity(
+                        watch_generation_activity,
                         args=[run_id, job, attempt, task_id],
-                        start_to_close_timeout=timedelta(minutes=15),
+                        start_to_close_timeout=timedelta(minutes=2),
                         heartbeat_timeout=timedelta(seconds=30),
                         retry_policy=RetryPolicy(
                             maximum_attempts=8,
@@ -212,10 +196,34 @@ class CanaryWorkflow:
                             maximum_interval=timedelta(seconds=30),
                         ),
                     )
-                else:
-                    result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
-                await self._set_run_state(run_id, result.state)
-                return [result]
+                    if watched.task_state in {
+                        ProviderTaskState.QUEUED,
+                        ProviderTaskState.RUNNING,
+                    }:
+                        await workflow.sleep(timedelta(seconds=2))
+                        continue
+                    if watched.task_state is ProviderTaskState.SUCCEEDED:
+                        result = await workflow.execute_activity(
+                            download_generation_activity,
+                            args=[run_id, job, attempt, task_id],
+                            start_to_close_timeout=timedelta(minutes=15),
+                            heartbeat_timeout=timedelta(seconds=30),
+                            retry_policy=RetryPolicy(
+                                maximum_attempts=8,
+                                initial_interval=timedelta(seconds=1),
+                                maximum_interval=timedelta(seconds=30),
+                            ),
+                        )
+                    else:
+                        result = DurableResult(
+                            state=RunState.HUMAN_GATE,
+                            path=None,
+                            attempts=attempt,
+                        )
+                    break
         except Exception:
-            await self._set_run_state(run_id, RunState.FAILED)
-            raise
+            # Activity timeouts, crashes, and exhausted technical retries are ambiguous on this
+            # one-POST route. Fail closed without reserving Attempt 2 or resubmitting.
+            result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+        await self._set_run_state(run_id, result.state)
+        return [result]
