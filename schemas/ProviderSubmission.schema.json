@@ -1,0 +1,38 @@
+{
+  "$defs": {
+    "ProviderTaskState": {
+      "enum": [
+        "queued",
+        "running",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "expired"
+      ],
+      "title": "ProviderTaskState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "provider_task_id": {
+      "title": "Provider Task Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/ProviderTaskState"
+    }
+  },
+  "required": [
+    "provider_task_id",
+    "state"
+  ],
+  "title": "ProviderSubmission",
+  "type": "object"
+}

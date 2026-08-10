@@ -41,11 +41,31 @@ Apply migrations with `uv run alembic upgrade head`, then start the replaceable 
 with `uv run python -m sdc.worker`. `SDC_DATABASE_URL`, `SDC_TEMPORAL_ADDRESS`, `SDC_TASK_QUEUE`,
 and `SDC_OUTPUT_ROOT` configure its boundaries. Provider attempts are reserved transactionally
 before generation, so activity redelivery or a worker restart cannot create an automatic third
-attempt. The bundled worker deliberately uses the offline `FakeProvider`; a deployment injects its
-own provider adapter without changing workflow code.
+attempt. The worker defaults to the offline `FakeProvider`. Its durable production path reserves an
+Attempt, submits exactly once, then inspects and downloads only the persisted remote task ID.
+Inspect/download technical retries never reserve another creative Attempt.
 
 Submit a real execution with `uv run python -m sdc.client examples/minimal_story.json`. Every
 submission creates a unique `run_id`, uses it verbatim as the Temporal workflow ID, and passes it
 beside the deterministic `JobGraph`; repeated compilation therefore preserves content IDs without
 colliding durable runtime state. Both the submitting client and worker use Temporal's Pydantic v2
 payload converter. See `docs/adr/SDC-ADR-009.md` for the accepted identity and retry decisions.
+
+## Seedance provider (offline integration only)
+
+`SDC_PROVIDER=fake` is the safe default and CI never needs a provider credential or network access
+to Ark. The accepted optional adapter is selected with `SDC_PROVIDER=volcengine_ark`; it requires
+`SDC_ARK_API_KEY` at worker startup and otherwise fails fast. Optional settings are
+`SDC_ARK_MODEL` (default `doubao-seedance-2-0-260128`), `SDC_ARK_BASE_URL` (official HTTPS URL by
+default; override for local tests), `SDC_ARK_MAX_IN_FLIGHT` (default 2),
+`SDC_ARK_POLL_INTERVAL_SECONDS`, and `SDC_ARK_TASK_TIMEOUT_SECONDS`. Do not put keys in `.env` or
+source control.
+
+No real/live canary is authorized by BUILD-003. Before production, an operator must manually open
+the Ark service, inject the secret through the deployment secret store, establish a cost cap, and
+obtain separate approval for a monitored canary. The adapter never falls back to another model or
+provider. See `docs/adr/SDC-ADR-010.md` for submission-unknown and two-Attempt semantics.
+
+The Ark HTTP implementation is worker-only and is not imported into Temporal's deterministic
+workflow sandbox. Result downloads use a separate credential-free HTTP client, are verified in a
+temporary file, and are atomically published only after SHA-256, size, and ffprobe evidence pass.

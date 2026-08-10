@@ -1,6 +1,7 @@
 import asyncio
 import os
 import uuid
+from collections import Counter
 from datetime import timedelta
 from pathlib import Path
 
@@ -14,7 +15,18 @@ from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
 from sdc.compiler import compile_story
-from sdc.contracts import GenerationJob, RunState, StoryBeat, StoryInput
+from sdc.contracts import (
+    DownloadedArtifact,
+    GenerationJob,
+    ProviderFailure,
+    ProviderFailureClass,
+    ProviderSubmission,
+    ProviderTaskSnapshot,
+    ProviderTaskState,
+    RunState,
+    StoryBeat,
+    StoryInput,
+)
 from sdc.payloads import DurableResult
 from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
 from sdc.provider import GenerationError
@@ -26,6 +38,27 @@ TEMPORAL_ADDRESS = os.environ.get("SDC_TEMPORAL_ADDRESS", "localhost:7233")
 
 
 class LocalProvider:
+    async def submit(self, request: object) -> ProviderSubmission:
+        return ProviderSubmission(
+            provider_task_id=f"task-{id(request)}", state=ProviderTaskState.SUCCEEDED
+        )
+
+    async def inspect(self, task_id: str) -> ProviderTaskSnapshot:
+        return ProviderTaskSnapshot(
+            provider_task_id=task_id, state=ProviderTaskState.SUCCEEDED, result_available=True
+        )
+
+    async def download(self, task_id: str, output: Path) -> DownloadedArtifact:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(b"integration-candidate")
+        return DownloadedArtifact(
+            provider_task_id=task_id,
+            path=str(output),
+            sha256="a" * 64,
+            size_bytes=21,
+            ffprobe={"streams": [{"codec_type": "video"}]},
+        )
+
     async def generate(self, _job: object, output: Path, _attempt: int) -> Path:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_bytes(b"integration-candidate")
@@ -33,6 +66,20 @@ class LocalProvider:
 
 
 class FailingProvider:
+    async def submit(self, request: object) -> ProviderSubmission:
+        return ProviderSubmission(
+            provider_task_id=f"failed-{id(request)}", state=ProviderTaskState.QUEUED
+        )
+
+    async def inspect(self, task_id: str) -> ProviderTaskSnapshot:
+        return ProviderTaskSnapshot(
+            provider_task_id=task_id,
+            state=ProviderTaskState.FAILED,
+            failure=ProviderFailure(
+                failure_class=ProviderFailureClass.REMOTE_FAILED, message="planned"
+            ),
+        )
+
     async def generate(self, _job: object, _output: Path, _attempt: int) -> Path:
         raise GenerationError("planned integration failure")
 
@@ -110,7 +157,12 @@ async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
             client,
             task_queue=queue,
             workflows=[DramaWorkflow],
-            activities=[activities.generate, activities.set_run_state],
+            activities=[
+                activities.submit_generation,
+                activities.watch_generation,
+                activities.download_generation,
+                activities.set_run_state,
+            ],
         ):
             return await client.execute_workflow(
                 DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue
@@ -122,24 +174,53 @@ async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
     assert first and second
 
     async with sessions() as session:
-        for model in (AttemptRecord, EventRecord, ArtifactRecord):
-            assert (
-                await session.scalar(
-                    select(func.count())
-                    .select_from(model)
-                    .where(model.run_id.in_([run_one, run_two]))
-                )
-                == 2
+        run_ids = [run_one, run_two]
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(AttemptRecord)
+                .where(AttemptRecord.run_id.in_(run_ids))
             )
+            == 2
+        )
+        attempts = (
+            await session.scalars(select(AttemptRecord).where(AttemptRecord.run_id.in_(run_ids)))
+        ).all()
+        assert {(item.run_id, item.job_id, item.attempt) for item in attempts} == {
+            (run_one, graph.jobs[0].id, 1),
+            (run_two, graph.jobs[0].id, 1),
+        }
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(ArtifactRecord)
+                .where(ArtifactRecord.run_id.in_(run_ids))
+            )
+            == 2
+        )
         artifacts = (
             await session.scalars(
-                select(ArtifactRecord).where(ArtifactRecord.run_id.in_([run_one, run_two]))
+                select(ArtifactRecord).where(ArtifactRecord.run_id.in_(run_ids))
             )
         ).all()
         assert {(item.run_id, item.job_id, item.is_current) for item in artifacts} == {
             (run_one, graph.jobs[0].id, True),
             (run_two, graph.jobs[0].id, True),
         }
+        events = (
+            await session.scalars(select(EventRecord).where(EventRecord.run_id.in_(run_ids)))
+        ).all()
+        assert len(events) == 10
+        expected_event_types = {
+            "provider.attempt_reserved",
+            "provider.submission_accepted",
+            "provider.status_observed",
+            "provider.artifact_downloaded",
+            "provider.artifact_verified",
+        }
+        assert Counter((item.run_id, item.event_type) for item in events) == Counter(
+            {(run_id, event_type): 1 for run_id in run_ids for event_type in expected_event_types}
+        )
         states = (
             await session.scalars(
                 select(RunRecord.state).where(RunRecord.id.in_([run_one, run_two]))
@@ -163,7 +244,12 @@ async def test_stop_2_is_durable_and_never_calls_a_third_attempt(tmp_path: Path)
         client,
         task_queue=queue,
         workflows=[DramaWorkflow],
-        activities=[activities.generate, activities.set_run_state],
+        activities=[
+            activities.submit_generation,
+            activities.watch_generation,
+            activities.download_generation,
+            activities.set_run_state,
+        ],
     ):
         results = await client.execute_workflow(
             DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue

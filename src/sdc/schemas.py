@@ -18,6 +18,13 @@ MODELS: list[type[Contract]] = [
     contracts.QCReport,
     contracts.QCEvidence,
     contracts.ReleaseManifest,
+    contracts.ProviderProfile,
+    contracts.ProviderRequest,
+    contracts.ProviderSubmission,
+    contracts.ProviderTaskSnapshot,
+    contracts.DownloadedArtifact,
+    contracts.ProviderFailure,
+    contracts.CancelResult,
 ]
 
 

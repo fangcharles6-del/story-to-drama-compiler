@@ -20,6 +20,7 @@ class RunRecord(Base):
     __tablename__ = "runs"
     id: Mapped[str] = mapped_column(String, primary_key=True)
     state: Mapped[str] = mapped_column(String, nullable=False)
+    provider_profile: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
 
 
 class EventRecord(Base):
@@ -53,18 +54,38 @@ class ArtifactRecord(Base):
     idempotency_key: Mapped[str] = mapped_column(String, nullable=False)
     path: Mapped[str] = mapped_column(String, nullable=False)
     is_current: Mapped[bool] = mapped_column(default=True)
+    sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ffprobe: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
 
 
 class AttemptRecord(Base):
     """A provider attempt reserved before the non-idempotent remote operation starts."""
 
     __tablename__ = "generation_attempts"
-    __table_args__ = (UniqueConstraint("run_id", "job_id", "attempt"),)
+    __table_args__ = (
+        UniqueConstraint("run_id", "job_id", "attempt"),
+        UniqueConstraint("provider", "provider_task_id"),
+    )
     id: Mapped[str] = mapped_column(String, primary_key=True)
     run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
     job_id: Mapped[str] = mapped_column(String, nullable=False)
     attempt: Mapped[int] = mapped_column(Integer, nullable=False)
     state: Mapped[str] = mapped_column(String, nullable=False)
+    provider: Mapped[str | None] = mapped_column(String, nullable=True)
+    model: Mapped[str | None] = mapped_column(String, nullable=True)
+    request_fingerprint: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    provider_task_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    provider_state: Mapped[str | None] = mapped_column(String, nullable=True)
+    attempt_state: Mapped[str | None] = mapped_column(String, nullable=True)
+    failure_class: Mapped[str | None] = mapped_column(String, nullable=True)
+    usage_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_observed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    downloaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    artifact_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
 
 @event.listens_for(EventRecord, "before_update")

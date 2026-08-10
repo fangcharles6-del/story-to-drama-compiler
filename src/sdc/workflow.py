@@ -1,4 +1,4 @@
-"""Temporal production orchestration using dependency-aware parallel batches."""
+"""Deterministic Temporal orchestration for durable asynchronous provider tasks."""
 
 import asyncio
 from datetime import timedelta
@@ -6,19 +6,37 @@ from datetime import timedelta
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 
-from sdc.contracts import GenerationJob, JobGraph, RunState
-from sdc.payloads import DurableResult
+from sdc.contracts import GenerationJob, JobGraph, ProviderTaskState, RunState
+from sdc.payloads import DurableResult, SubmitResult, WatchResult
 
 
+@activity.defn(name="submit_generation")
+async def submit_generation_activity(run_id: str, job: GenerationJob, attempt: int) -> SubmitResult:
+    raise RuntimeError(f"submit activity {run_id}/{job.id}/{attempt} was not replaced")
+
+
+@activity.defn(name="watch_generation")
+async def watch_generation_activity(
+    run_id: str, job: GenerationJob, attempt: int, provider_task_id: str
+) -> WatchResult:
+    raise RuntimeError(f"watch activity {run_id}/{job.id}/{provider_task_id} was not replaced")
+
+
+@activity.defn(name="download_generation")
+async def download_generation_activity(
+    run_id: str, job: GenerationJob, attempt: int, provider_task_id: str
+) -> DurableResult:
+    raise RuntimeError(f"download activity {run_id}/{job.id}/{provider_task_id} was not replaced")
+
+
+# Kept as an activity signature for BUILD-002 replay/integration compatibility only.
 @activity.defn(name="generate")
 async def generate_activity(run_id: str, job: GenerationJob) -> DurableResult:
-    """Workflow signature only; workers register ``RuntimeActivities.generate``."""
     raise RuntimeError(f"activity {run_id}/{job.id} was not replaced by a worker adapter")
 
 
 @activity.defn(name="set_run_state")
 async def set_run_state_activity(run_id: str, state: RunState) -> None:
-    """Workflow signature only; workers register ``RuntimeActivities.set_run_state``."""
     raise RuntimeError(
         f"state activity {run_id}/{state.value} was not replaced by a worker adapter"
     )
@@ -34,6 +52,52 @@ class DramaWorkflow:
             retry_policy=RetryPolicy(maximum_attempts=1),
         )
 
+    async def _generate(self, run_id: str, job: GenerationJob) -> DurableResult:
+        for attempt in range(1, job.max_attempts + 1):
+            # This is the only activity that may create a paid task. Never let Temporal redeliver
+            # it automatically after an ambiguous outcome.
+            submitted = await workflow.execute_activity(
+                submit_generation_activity,
+                args=[run_id, job, attempt],
+                start_to_close_timeout=timedelta(minutes=2),
+                retry_policy=RetryPolicy(maximum_attempts=1),
+            )
+            if submitted.state is RunState.HUMAN_GATE or not submitted.provider_task_id:
+                return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+            task_id = submitted.provider_task_id
+            while True:
+                # Technical retries address only the persisted task id and never reserve an Attempt.
+                watched = await workflow.execute_activity(
+                    watch_generation_activity,
+                    args=[run_id, job, attempt, task_id],
+                    start_to_close_timeout=timedelta(minutes=2),
+                    heartbeat_timeout=timedelta(seconds=30),
+                    retry_policy=RetryPolicy(
+                        maximum_attempts=8,
+                        initial_interval=timedelta(seconds=1),
+                        maximum_interval=timedelta(seconds=30),
+                    ),
+                )
+                if watched.task_state in {ProviderTaskState.QUEUED, ProviderTaskState.RUNNING}:
+                    await workflow.sleep(timedelta(seconds=2))
+                    continue
+                if watched.task_state is ProviderTaskState.SUCCEEDED:
+                    return await workflow.execute_activity(
+                        download_generation_activity,
+                        args=[run_id, job, attempt, task_id],
+                        start_to_close_timeout=timedelta(minutes=15),
+                        heartbeat_timeout=timedelta(seconds=30),
+                        retry_policy=RetryPolicy(
+                            maximum_attempts=8,
+                            initial_interval=timedelta(seconds=1),
+                            maximum_interval=timedelta(seconds=30),
+                        ),
+                    )
+                if watched.task_state in {ProviderTaskState.FAILED, ProviderTaskState.EXPIRED}:
+                    break
+                return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+        return DurableResult(state=RunState.STOP_2, path=None, attempts=job.max_attempts)
+
     @workflow.run
     async def run(self, run_id: str, graph: JobGraph) -> list[DurableResult]:
         await self._set_run_state(run_id, RunState.RUNNING)
@@ -47,24 +111,18 @@ class DramaWorkflow:
                 )
                 if not ready:
                     raise ValueError("job graph contains a cycle or unknown dependency")
-                batch = await asyncio.gather(
-                    *(
-                        workflow.execute_activity(
-                            generate_activity,
-                            args=[run_id, job],
-                            start_to_close_timeout=timedelta(minutes=15),
-                            # The gateway owns the two attempts and STOP-2. Temporal must not
-                            # silently turn them into a third generation attempt.
-                            retry_policy=RetryPolicy(maximum_attempts=1),
-                        )
-                        for job in ready
-                    )
-                )
+                batch = await asyncio.gather(*(self._generate(run_id, job) for job in ready))
                 outputs.extend(batch)
-                if any(item.state is RunState.STOP_2 for item in batch):
-                    # STOP-2 is terminal for automatic execution. Dependent jobs remain
-                    # undispatched until an explicit human decision starts a new action.
-                    await self._set_run_state(run_id, RunState.STOP_2)
+                terminal = next(
+                    (
+                        item.state
+                        for item in batch
+                        if item.state in {RunState.STOP_2, RunState.HUMAN_GATE}
+                    ),
+                    None,
+                )
+                if terminal is not None:
+                    await self._set_run_state(run_id, terminal)
                     return outputs
                 done.update(j.id for j in ready)
                 for job in ready:

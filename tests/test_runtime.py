@@ -2,8 +2,17 @@ from pathlib import Path
 
 import pytest
 
-from sdc.contracts import GenerationJob, RunState
-from sdc.provider import FakeProvider, GenerationError
+from sdc.contracts import (
+    GenerationJob,
+    ProviderFailureClass,
+    ProviderProfile,
+    ProviderRequest,
+    ProviderSubmission,
+    ProviderTaskState,
+    RunState,
+)
+from sdc.payloads import SubmitResult
+from sdc.provider import FakeProvider, GenerationError, SubmissionUnknown
 from sdc.runtime import RuntimeActivities
 
 
@@ -73,3 +82,79 @@ async def test_activity_cannot_make_third_call_after_restart(tmp_path: Path) -> 
     result = await activity.generate("run_a", job())
     assert result == result.__class__(state=RunState.STOP_2, path=None, attempts=2)
     assert store.finished == []
+
+
+class AsyncMemoryStore:
+    def __init__(self) -> None:
+        self.reservation: SubmitResult | None = None
+        self.failure: ProviderFailureClass | None = None
+        self.profile: ProviderProfile | None = None
+
+    async def ensure_run(self, run_id: str) -> None:
+        pass
+
+    async def freeze_profile(self, run_id: str, profile: ProviderProfile) -> None:
+        self.profile = profile
+
+    async def reserve_provider_attempt(self, request: ProviderRequest) -> SubmitResult:
+        if self.failure is not None:
+            return SubmitResult(state=RunState.HUMAN_GATE, attempt=request.attempt)
+        if self.reservation is None:
+            self.reservation = SubmitResult(state=RunState.RUNNING, attempt=request.attempt)
+        return self.reservation
+
+    async def record_submission_failure(
+        self, request: ProviderRequest, failure_class: ProviderFailureClass
+    ) -> None:
+        self.failure = failure_class
+
+    async def record_submission(
+        self, request: ProviderRequest, submission: ProviderSubmission
+    ) -> None:
+        self.reservation = SubmitResult(
+            state=RunState.RUNNING,
+            attempt=request.attempt,
+            provider_task_id=submission.provider_task_id,
+        )
+
+
+class UnknownProvider:
+    def __init__(self) -> None:
+        self.posts = 0
+
+    async def submit(self, request: ProviderRequest) -> ProviderSubmission:
+        self.posts += 1
+        raise SubmissionUnknown("unknown")
+
+
+@pytest.mark.asyncio
+async def test_submission_unknown_is_persisted_and_never_posted_again(tmp_path: Path) -> None:
+    store = AsyncMemoryStore()
+    provider = UnknownProvider()
+    activities = RuntimeActivities(store, provider, tmp_path)  # type: ignore[arg-type]
+    first = await activities.submit_generation("run", job(), 1)
+    second = await activities.submit_generation("run", job(), 1)
+    assert first.state is RunState.HUMAN_GATE and second.state is RunState.HUMAN_GATE
+    assert store.failure is ProviderFailureClass.SUBMISSION_UNKNOWN
+    assert provider.posts == 1
+
+
+class AcceptedProvider:
+    def __init__(self) -> None:
+        self.posts = 0
+
+    async def submit(self, request: ProviderRequest) -> ProviderSubmission:
+        self.posts += 1
+        return ProviderSubmission(provider_task_id="task-stable", state=ProviderTaskState.QUEUED)
+
+
+@pytest.mark.asyncio
+async def test_restart_reuses_persisted_task_id_without_second_post(tmp_path: Path) -> None:
+    store = AsyncMemoryStore()
+    provider = AcceptedProvider()
+    first_worker = RuntimeActivities(store, provider, tmp_path)  # type: ignore[arg-type]
+    first = await first_worker.submit_generation("run", job(), 1)
+    second_worker = RuntimeActivities(store, provider, tmp_path)  # type: ignore[arg-type]
+    resumed = await second_worker.submit_generation("run", job(), 1)
+    assert first.provider_task_id == resumed.provider_task_id == "task-stable"
+    assert provider.posts == 1

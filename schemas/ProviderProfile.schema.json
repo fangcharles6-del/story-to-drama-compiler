@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "aspect_ratio": {
+      "default": "9:16",
+      "title": "Aspect Ratio",
+      "type": "string"
+    },
+    "max_duration_ms": {
+      "default": 15000,
+      "title": "Max Duration Ms",
+      "type": "integer"
+    },
+    "max_in_flight": {
+      "default": 2,
+      "title": "Max In Flight",
+      "type": "integer"
+    },
+    "min_duration_ms": {
+      "default": 4000,
+      "title": "Min Duration Ms",
+      "type": "integer"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "resolution": {
+      "default": "1080p",
+      "title": "Resolution",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "provider",
+    "model"
+  ],
+  "title": "ProviderProfile",
+  "type": "object"
+}
