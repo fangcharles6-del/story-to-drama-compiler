@@ -20,7 +20,7 @@ from sdc.contracts import (
 )
 from sdc.provider import ARK_BASE_URL, ARK_MODEL, FakeProvider, Provider
 from sdc.runtime import PostgresRuntimeStore, RuntimeActivities
-from sdc.workflow import DramaWorkflow
+from sdc.workflow import CanaryWorkflow, DramaWorkflow
 
 
 def provider_from_environment() -> tuple[Provider, ProviderProfile]:
@@ -94,7 +94,7 @@ async def run() -> None:
         await Worker(
             client,
             task_queue=task_queue,
-            workflows=[DramaWorkflow],
+            workflows=[DramaWorkflow, CanaryWorkflow],
             activities=[
                 activities.submit_generation,
                 activities.watch_generation,

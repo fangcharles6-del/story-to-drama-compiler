@@ -57,4 +57,4 @@ async def test_canary_submission_uses_frozen_identity_and_request(
     monkeypatch.setattr("sdc.client.Client.connect", connect)
     await submit(canary_execution_path=execution_path)
     assert calls[0]["id"] == "canary-run-fixed"
-    assert calls[0]["args"] == [execution.run_id, execution.graph, execution.request]
+    assert calls[0]["args"] == [execution]

@@ -10,6 +10,7 @@ from sdc.canary import freeze_canary_execution
 from sdc.contracts import GenerationJob, JobGraph, ProviderTaskState, RunState
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
 from sdc.workflow import (
+    CanaryWorkflow,
     DramaWorkflow,
     download_generation_activity,
     set_run_state_activity,
@@ -88,6 +89,7 @@ async def test_temporal_boundaries_have_safe_retry_policies(
 @pytest.mark.asyncio
 async def test_workflow_imports_in_temporal_sandbox() -> None:
     SandboxedWorkflowRunner().prepare_workflow(workflow._Definition.must_from_class(DramaWorkflow))
+    SandboxedWorkflowRunner().prepare_workflow(workflow._Definition.must_from_class(CanaryWorkflow))
 
 
 @pytest.mark.asyncio
@@ -189,7 +191,7 @@ async def test_canary_workflow_passes_frozen_request_and_never_attempts_two(
         )
 
     monkeypatch.setattr("sdc.workflow.workflow.execute_activity", execute_activity)
-    outputs = await DramaWorkflow().run(execution.run_id, execution.graph, execution.request)
+    outputs = await CanaryWorkflow().run(execution)
     assert outputs == [DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)]
     assert submissions == [(1, execution.request)]
     assert states == [RunState.RUNNING, RunState.HUMAN_GATE]
