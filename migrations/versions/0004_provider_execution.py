@@ -9,6 +9,7 @@ down_revision = "0003"
 
 
 def upgrade() -> None:
+    op.add_column("runs", sa.Column("provider_profile", postgresql.JSONB(), nullable=True))
     columns = (
         sa.Column("provider", sa.String(), nullable=True),
         sa.Column("model", sa.String(), nullable=True),
@@ -52,3 +53,4 @@ def downgrade() -> None:
         "provider",
     ):
         op.drop_column("generation_attempts", name)
+    op.drop_column("runs", "provider_profile")

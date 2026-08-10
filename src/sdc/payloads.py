@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, ConfigDict
 
-from sdc.contracts import RunState
+from sdc.contracts import ProviderFailureClass, ProviderTaskState, RunState
 
 
 class DurableResult(BaseModel):
@@ -11,3 +11,18 @@ class DurableResult(BaseModel):
     state: RunState
     path: str | None
     attempts: int
+
+
+class SubmitResult(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    state: RunState
+    attempt: int
+    provider_task_id: str | None = None
+
+
+class WatchResult(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    attempt: int
+    provider_task_id: str
+    task_state: ProviderTaskState
+    failure_class: ProviderFailureClass | None = None

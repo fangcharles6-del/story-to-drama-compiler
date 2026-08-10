@@ -1,8 +1,4 @@
-"""Replaceable asynchronous provider adapters.
-
-The Ark adapter contains no credentials or remote calls at import time.  Tests inject an
-``httpx.MockTransport``; the safe worker default remains :class:`FakeProvider`.
-"""
+"""Deterministic provider boundary and offline adapter (Temporal-sandbox safe)."""
 
 from __future__ import annotations
 
@@ -12,8 +8,6 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
-
-import httpx
 
 from sdc.contracts import (
     CancelResult,
@@ -36,8 +30,20 @@ class GenerationError(RuntimeError):
     pass
 
 
-class SubmissionUnknown(GenerationError):
+class ProviderOperationError(GenerationError):
+    def __init__(
+        self, failure_class: ProviderFailureClass, message: str, *, retryable: bool
+    ) -> None:
+        super().__init__(message)
+        self.failure_class = failure_class
+        self.retryable = retryable
+
+
+class SubmissionUnknown(ProviderOperationError):
     """The POST may have been accepted; callers must persist and enter HUMAN_GATE."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(ProviderFailureClass.SUBMISSION_UNKNOWN, message, retryable=False)
 
 
 class Provider(Protocol):
@@ -171,110 +177,6 @@ class FakeProvider:
         output.parent.mkdir(parents=True, exist_ok=True)
         await self._render(job.idempotency_key, job.duration_ms, output)
         return output
-
-
-class VolcengineArkProvider:
-    """Seedance 2.0 HTTP adapter. Signed result URLs are held only in process memory."""
-
-    def __init__(
-        self,
-        api_key: str,
-        *,
-        model: str = ARK_MODEL,
-        base_url: str = ARK_BASE_URL,
-        client: httpx.AsyncClient | None = None,
-    ) -> None:
-        if not api_key:
-            raise ValueError("SDC_ARK_API_KEY is required for volcengine_ark")
-        self.model = model
-        self._client = client or httpx.AsyncClient(
-            base_url=base_url.rstrip("/"),
-            headers={"Authorization": f"Bearer {api_key}"},
-            timeout=60,
-        )
-        self._result_urls: dict[str, str] = {}
-
-    async def submit(self, request: ProviderRequest) -> ProviderSubmission:
-        if request.provider != "volcengine_ark" or request.model != self.model:
-            raise GenerationError("request profile does not match configured Ark adapter")
-        if not 4000 <= request.duration_ms <= 15000:
-            raise GenerationError("Ark duration must be between 4000 and 15000 ms")
-        payload = {
-            "model": request.model,
-            "content": [{"type": "text", "text": request.prompt}],
-            "duration": request.duration_ms // 1000,
-            "ratio": request.aspect_ratio,
-            "resolution": request.resolution,
-        }
-        try:
-            response = await self._client.post("/contents/generations/tasks", json=payload)
-        except httpx.TransportError as exc:
-            raise SubmissionUnknown(
-                "Ark submission outcome is unknown; manual review required"
-            ) from exc
-        if response.status_code in {401, 403}:
-            raise GenerationError("Ark authentication or authorization failed")
-        if response.status_code >= 400:
-            raise GenerationError(f"Ark rejected submission with HTTP {response.status_code}")
-        data = response.json()
-        task_id = data.get("id") or data.get("task_id")
-        if not isinstance(task_id, str) or not task_id:
-            raise SubmissionUnknown(
-                "Ark submission response omitted task id; manual review required"
-            )
-        return ProviderSubmission(
-            provider_task_id=task_id, state=ProviderTaskState(data.get("status", "queued"))
-        )
-
-    async def inspect(self, provider_task_id: str) -> ProviderTaskSnapshot:
-        response = await self._client.get(f"/contents/generations/tasks/{provider_task_id}")
-        response.raise_for_status()
-        data = response.json()
-        state = ProviderTaskState(data["status"])
-        content = data.get("content") or {}
-        url = content.get("video_url") if isinstance(content, dict) else None
-        if isinstance(url, str) and state is ProviderTaskState.SUCCEEDED:
-            self._result_urls[provider_task_id] = url
-        error = data.get("error") or {}
-        failure = None
-        if state in {ProviderTaskState.FAILED, ProviderTaskState.EXPIRED}:
-            failure = ProviderFailure(
-                failure_class=(
-                    ProviderFailureClass.EXPIRED
-                    if state is ProviderTaskState.EXPIRED
-                    else ProviderFailureClass.REMOTE_FAILED
-                ),
-                code=str(error.get("code", "")) or None,
-                message=str(error.get("message", "remote generation failed")),
-            )
-        usage = data.get("usage") or {}
-        return ProviderTaskSnapshot(
-            provider_task_id=provider_task_id,
-            state=state,
-            usage_tokens=usage.get("completion_tokens"),
-            failure=failure,
-            result_available=bool(url),
-        )
-
-    async def download(self, provider_task_id: str, destination: Path) -> DownloadedArtifact:
-        if provider_task_id not in self._result_urls:
-            snapshot = await self.inspect(provider_task_id)
-            if snapshot.state is not ProviderTaskState.SUCCEEDED:
-                raise GenerationError("Ark task is not ready for download")
-        url = self._result_urls[provider_task_id]
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        partial = destination.with_suffix(destination.suffix + ".part")
-        async with self._client.stream("GET", url) as response:
-            response.raise_for_status()
-            with partial.open("wb") as handle:
-                async for chunk in response.aiter_bytes():
-                    handle.write(chunk)
-        partial.replace(destination)
-        return await _evidence(provider_task_id, destination)
-
-    async def cancel(self, provider_task_id: str) -> CancelResult:
-        response = await self._client.delete(f"/contents/generations/tasks/{provider_task_id}")
-        return CancelResult(provider_task_id=provider_task_id, cancelled=response.is_success)
 
 
 async def generate_with_limit(provider: object, job: GenerationJob, output: Path) -> AttemptResult:

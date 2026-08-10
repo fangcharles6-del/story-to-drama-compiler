@@ -41,8 +41,9 @@ Apply migrations with `uv run alembic upgrade head`, then start the replaceable 
 with `uv run python -m sdc.worker`. `SDC_DATABASE_URL`, `SDC_TEMPORAL_ADDRESS`, `SDC_TASK_QUEUE`,
 and `SDC_OUTPUT_ROOT` configure its boundaries. Provider attempts are reserved transactionally
 before generation, so activity redelivery or a worker restart cannot create an automatic third
-attempt. The bundled worker deliberately uses the offline `FakeProvider`; a deployment injects its
-own provider adapter without changing workflow code.
+attempt. The worker defaults to the offline `FakeProvider`. Its durable production path reserves an
+Attempt, submits exactly once, then inspects and downloads only the persisted remote task ID.
+Inspect/download technical retries never reserve another creative Attempt.
 
 Submit a real execution with `uv run python -m sdc.client examples/minimal_story.json`. Every
 submission creates a unique `run_id`, uses it verbatim as the Temporal workflow ID, and passes it
@@ -64,3 +65,7 @@ No real/live canary is authorized by BUILD-003. Before production, an operator m
 the Ark service, inject the secret through the deployment secret store, establish a cost cap, and
 obtain separate approval for a monitored canary. The adapter never falls back to another model or
 provider. See `docs/adr/SDC-ADR-010.md` for submission-unknown and two-Attempt semantics.
+
+The Ark HTTP implementation is worker-only and is not imported into Temporal's deterministic
+workflow sandbox. Result downloads use a separate credential-free HTTP client, are verified in a
+temporary file, and are atomically published only after SHA-256, size, and ffprobe evidence pass.

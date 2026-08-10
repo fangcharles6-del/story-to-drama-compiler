@@ -20,6 +20,7 @@ class RunRecord(Base):
     __tablename__ = "runs"
     id: Mapped[str] = mapped_column(String, primary_key=True)
     state: Mapped[str] = mapped_column(String, nullable=False)
+    provider_profile: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
 
 
 class EventRecord(Base):

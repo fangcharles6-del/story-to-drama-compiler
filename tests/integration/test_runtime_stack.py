@@ -14,7 +14,18 @@ from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
 from sdc.compiler import compile_story
-from sdc.contracts import GenerationJob, RunState, StoryBeat, StoryInput
+from sdc.contracts import (
+    DownloadedArtifact,
+    GenerationJob,
+    ProviderFailure,
+    ProviderFailureClass,
+    ProviderSubmission,
+    ProviderTaskSnapshot,
+    ProviderTaskState,
+    RunState,
+    StoryBeat,
+    StoryInput,
+)
 from sdc.payloads import DurableResult
 from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
 from sdc.provider import GenerationError
@@ -26,6 +37,27 @@ TEMPORAL_ADDRESS = os.environ.get("SDC_TEMPORAL_ADDRESS", "localhost:7233")
 
 
 class LocalProvider:
+    async def submit(self, request: object) -> ProviderSubmission:
+        return ProviderSubmission(
+            provider_task_id=f"task-{id(request)}", state=ProviderTaskState.SUCCEEDED
+        )
+
+    async def inspect(self, task_id: str) -> ProviderTaskSnapshot:
+        return ProviderTaskSnapshot(
+            provider_task_id=task_id, state=ProviderTaskState.SUCCEEDED, result_available=True
+        )
+
+    async def download(self, task_id: str, output: Path) -> DownloadedArtifact:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(b"integration-candidate")
+        return DownloadedArtifact(
+            provider_task_id=task_id,
+            path=str(output),
+            sha256="a" * 64,
+            size_bytes=21,
+            ffprobe={"streams": [{"codec_type": "video"}]},
+        )
+
     async def generate(self, _job: object, output: Path, _attempt: int) -> Path:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_bytes(b"integration-candidate")
@@ -33,6 +65,20 @@ class LocalProvider:
 
 
 class FailingProvider:
+    async def submit(self, request: object) -> ProviderSubmission:
+        return ProviderSubmission(
+            provider_task_id=f"failed-{id(request)}", state=ProviderTaskState.QUEUED
+        )
+
+    async def inspect(self, task_id: str) -> ProviderTaskSnapshot:
+        return ProviderTaskSnapshot(
+            provider_task_id=task_id,
+            state=ProviderTaskState.FAILED,
+            failure=ProviderFailure(
+                failure_class=ProviderFailureClass.REMOTE_FAILED, message="planned"
+            ),
+        )
+
     async def generate(self, _job: object, _output: Path, _attempt: int) -> Path:
         raise GenerationError("planned integration failure")
 
@@ -110,7 +156,12 @@ async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
             client,
             task_queue=queue,
             workflows=[DramaWorkflow],
-            activities=[activities.generate, activities.set_run_state],
+            activities=[
+                activities.submit_generation,
+                activities.watch_generation,
+                activities.download_generation,
+                activities.set_run_state,
+            ],
         ):
             return await client.execute_workflow(
                 DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue
@@ -163,7 +214,12 @@ async def test_stop_2_is_durable_and_never_calls_a_third_attempt(tmp_path: Path)
         client,
         task_queue=queue,
         workflows=[DramaWorkflow],
-        activities=[activities.generate, activities.set_run_state],
+        activities=[
+            activities.submit_generation,
+            activities.watch_generation,
+            activities.download_generation,
+            activities.set_run_state,
+        ],
     ):
         results = await client.execute_workflow(
             DramaWorkflow.run, args=[run_id, graph], id=run_id, task_queue=queue
