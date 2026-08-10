@@ -104,7 +104,7 @@ def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
 
 
 @pytest.mark.parametrize(
-    ("request", "cost", "failure_class"),
+    ("provider_request", "cost", "failure_class"),
     [
         (frozen_request(attempt=2), Decimal("0.20"), ProviderFailureClass.LIVE_NOT_AUTHORIZED),
         (frozen_request(duration_ms=15001), Decimal("0.20"), ProviderFailureClass.CAPABILITY_DRIFT),
@@ -112,10 +112,10 @@ def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
     ],
 )
 def test_plan_fails_closed_before_live_submission(
-    request: ProviderRequest, cost: Decimal, failure_class: ProviderFailureClass
+    provider_request: ProviderRequest, cost: Decimal, failure_class: ProviderFailureClass
 ) -> None:
     with pytest.raises(LiveGateError) as caught:
-        build_canary_plan(capability(), pricing(), request, cost, now=NOW)
+        build_canary_plan(capability(), pricing(), provider_request, cost, now=NOW)
     assert caught.value.failure_class is failure_class
 
 
