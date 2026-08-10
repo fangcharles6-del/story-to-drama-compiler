@@ -15,7 +15,7 @@ from sdc.compiler import stable_id
 from sdc.contracts import GenerationJob, RunState
 from sdc.payloads import DurableResult
 from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
-from sdc.provider import GenerationError, Provider
+from sdc.provider import GenerationError, LegacyProvider
 
 
 class RuntimeStore(Protocol):
@@ -138,7 +138,7 @@ class PostgresRuntimeStore:
 class RuntimeActivities:
     """Worker-owned dependency injection; no provider or database globals are required."""
 
-    def __init__(self, store: RuntimeStore, provider: Provider, output_root: Path) -> None:
+    def __init__(self, store: RuntimeStore, provider: LegacyProvider, output_root: Path) -> None:
         self.store = store
         self.provider = provider
         self.output_root = output_root

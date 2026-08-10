@@ -49,3 +49,18 @@ submission creates a unique `run_id`, uses it verbatim as the Temporal workflow 
 beside the deterministic `JobGraph`; repeated compilation therefore preserves content IDs without
 colliding durable runtime state. Both the submitting client and worker use Temporal's Pydantic v2
 payload converter. See `docs/adr/SDC-ADR-009.md` for the accepted identity and retry decisions.
+
+## Seedance provider (offline integration only)
+
+`SDC_PROVIDER=fake` is the safe default and CI never needs a provider credential or network access
+to Ark. The accepted optional adapter is selected with `SDC_PROVIDER=volcengine_ark`; it requires
+`SDC_ARK_API_KEY` at worker startup and otherwise fails fast. Optional settings are
+`SDC_ARK_MODEL` (default `doubao-seedance-2-0-260128`), `SDC_ARK_BASE_URL` (official HTTPS URL by
+default; override for local tests), `SDC_ARK_MAX_IN_FLIGHT` (default 2),
+`SDC_ARK_POLL_INTERVAL_SECONDS`, and `SDC_ARK_TASK_TIMEOUT_SECONDS`. Do not put keys in `.env` or
+source control.
+
+No real/live canary is authorized by BUILD-003. Before production, an operator must manually open
+the Ark service, inject the secret through the deployment secret store, establish a cost cap, and
+obtain separate approval for a monitored canary. The adapter never falls back to another model or
+provider. See `docs/adr/SDC-ADR-010.md` for submission-unknown and two-Attempt semantics.

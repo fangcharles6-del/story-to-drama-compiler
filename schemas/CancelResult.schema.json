@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cancelled": {
+      "title": "Cancelled",
+      "type": "boolean"
+    },
+    "provider_task_id": {
+      "title": "Provider Task Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "provider_task_id",
+    "cancelled"
+  ],
+  "title": "CancelResult",
+  "type": "object"
+}

@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "ProviderFailureClass": {
+      "enum": [
+        "SUBMISSION_UNKNOWN",
+        "REMOTE_FAILED",
+        "EXPIRED",
+        "AUTHENTICATION",
+        "QUOTA",
+        "CONFIGURATION",
+        "INVALID_INPUT",
+        "SENSITIVE_CONTENT",
+        "TRANSIENT"
+      ],
+      "title": "ProviderFailureClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Code"
+    },
+    "failure_class": {
+      "$ref": "#/$defs/ProviderFailureClass"
+    },
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "retryable": {
+      "default": false,
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "failure_class",
+    "message"
+  ],
+  "title": "ProviderFailure",
+  "type": "object"
+}

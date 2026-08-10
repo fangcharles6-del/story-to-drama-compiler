@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "ffprobe": {
+      "additionalProperties": true,
+      "title": "Ffprobe",
+      "type": "object"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "provider_task_id": {
+      "title": "Provider Task Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "size_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "provider_task_id",
+    "path",
+    "sha256",
+    "size_bytes",
+    "ffprobe"
+  ],
+  "title": "DownloadedArtifact",
+  "type": "object"
+}

@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "ProviderFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "failure_class": {
+          "$ref": "#/$defs/ProviderFailureClass"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "failure_class",
+        "message"
+      ],
+      "title": "ProviderFailure",
+      "type": "object"
+    },
+    "ProviderFailureClass": {
+      "enum": [
+        "SUBMISSION_UNKNOWN",
+        "REMOTE_FAILED",
+        "EXPIRED",
+        "AUTHENTICATION",
+        "QUOTA",
+        "CONFIGURATION",
+        "INVALID_INPUT",
+        "SENSITIVE_CONTENT",
+        "TRANSIENT"
+      ],
+      "title": "ProviderFailureClass",
+      "type": "string"
+    },
+    "ProviderTaskState": {
+      "enum": [
+        "queued",
+        "running",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "expired"
+      ],
+      "title": "ProviderTaskState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "failure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProviderFailure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "provider_task_id": {
+      "title": "Provider Task Id",
+      "type": "string"
+    },
+    "result_available": {
+      "default": false,
+      "title": "Result Available",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/ProviderTaskState"
+    },
+    "usage_tokens": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Usage Tokens"
+    }
+  },
+  "required": [
+    "provider_task_id",
+    "state"
+  ],
+  "title": "ProviderTaskSnapshot",
+  "type": "object"
+}
