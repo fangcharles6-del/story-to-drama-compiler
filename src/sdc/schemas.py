@@ -25,6 +25,10 @@ MODELS: list[type[Contract]] = [
     contracts.DownloadedArtifact,
     contracts.ProviderFailure,
     contracts.CancelResult,
+    contracts.ProviderCapabilitySnapshot,
+    contracts.ProviderPricingSnapshot,
+    contracts.LiveAuthorization,
+    contracts.CanaryPlan,
 ]
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.schema import CreateIndex
 
-from sdc.persistence import ArtifactRecord
+from sdc.persistence import ArtifactRecord, LiveAuthorizationUseRecord
 
 
 def test_current_candidate_uses_postgresql_partial_unique_index() -> None:
@@ -16,3 +16,10 @@ def test_current_candidate_uses_postgresql_partial_unique_index() -> None:
     assert "UNIQUE INDEX" in ddl
     assert "WHERE is_current = true" in ddl
     assert "(run_id, job_id)" in ddl
+
+
+def test_live_authorization_is_globally_one_use() -> None:
+    table = LiveAuthorizationUseRecord.__table__
+    assert table.primary_key.columns.keys() == ["authorization_id"]
+    fingerprint = table.columns["request_fingerprint"]
+    assert fingerprint.unique
