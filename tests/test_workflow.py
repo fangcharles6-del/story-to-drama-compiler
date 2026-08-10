@@ -196,3 +196,67 @@ async def test_canary_workflow_passes_frozen_request_and_never_attempts_two(
     assert outputs == [DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)]
     assert submissions == [(1, execution.request)]
     assert states == [RunState.RUNNING, RunState.HUMAN_GATE]
+
+
+@pytest.mark.parametrize(
+    "failed_definition",
+    [
+        pytest.param(submit_canary_generation_activity, id="submit"),
+        pytest.param(watch_generation_activity, id="watch"),
+        pytest.param(download_generation_activity, id="download"),
+    ],
+)
+@pytest.mark.asyncio
+async def test_canary_activity_exceptions_enter_human_gate_without_resubmission(
+    monkeypatch: pytest.MonkeyPatch,
+    failed_definition: object,
+) -> None:
+    canary_job = job("canary-job").model_copy(update={"duration_ms": 4000})
+    execution = freeze_canary_execution(
+        "canary-run",
+        JobGraph(id="canary-graph", jobs=(canary_job,)),
+    )
+    provider_calls: list[tuple[object, int]] = []
+    states: list[RunState] = []
+
+    async def rejected_activity() -> Any:
+        raise RuntimeError("simulated activity failure")
+
+    def execute_activity(definition: object, **kwargs: Any) -> Coroutine[Any, Any, Any]:
+        if definition is set_run_state_activity:
+            states.append(kwargs["args"][1])
+            return resolved(None)
+        _run_id, item, attempt, *tail = kwargs["args"]
+        provider_calls.append((definition, attempt))
+        if definition is failed_definition:
+            return rejected_activity()
+        if definition is submit_canary_generation_activity:
+            return resolved(
+                SubmitResult(
+                    state=RunState.RUNNING,
+                    attempt=attempt,
+                    provider_task_id="task-canary",
+                )
+            )
+        if definition is watch_generation_activity:
+            return resolved(
+                WatchResult(
+                    attempt=attempt,
+                    provider_task_id=tail[0],
+                    task_state=ProviderTaskState.SUCCEEDED,
+                )
+            )
+        assert definition is download_generation_activity
+        return resolved(DurableResult(state=RunState.SUCCEEDED, path=item.id, attempts=attempt))
+
+    monkeypatch.setattr("sdc.workflow.workflow.execute_activity", execute_activity)
+    outputs = await CanaryWorkflow().run(execution)
+
+    assert outputs == [DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)]
+    assert provider_calls.count((submit_canary_generation_activity, 1)) == 1
+    assert {attempt for _definition, attempt in provider_calls} == {1}
+    assert all(
+        definition is not submit_generation_activity
+        for definition, _attempt in provider_calls
+    )
+    assert states == [RunState.RUNNING, RunState.HUMAN_GATE]
