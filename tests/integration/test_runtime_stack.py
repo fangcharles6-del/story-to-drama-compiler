@@ -1,6 +1,7 @@
 import asyncio
 import os
 import uuid
+from collections import Counter
 from datetime import timedelta
 from pathlib import Path
 
@@ -173,24 +174,53 @@ async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
     assert first and second
 
     async with sessions() as session:
-        for model in (AttemptRecord, EventRecord, ArtifactRecord):
-            assert (
-                await session.scalar(
-                    select(func.count())
-                    .select_from(model)
-                    .where(model.run_id.in_([run_one, run_two]))
-                )
-                == 2
+        run_ids = [run_one, run_two]
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(AttemptRecord)
+                .where(AttemptRecord.run_id.in_(run_ids))
             )
+            == 2
+        )
+        attempts = (
+            await session.scalars(select(AttemptRecord).where(AttemptRecord.run_id.in_(run_ids)))
+        ).all()
+        assert {(item.run_id, item.job_id, item.attempt) for item in attempts} == {
+            (run_one, graph.jobs[0].id, 1),
+            (run_two, graph.jobs[0].id, 1),
+        }
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(ArtifactRecord)
+                .where(ArtifactRecord.run_id.in_(run_ids))
+            )
+            == 2
+        )
         artifacts = (
             await session.scalars(
-                select(ArtifactRecord).where(ArtifactRecord.run_id.in_([run_one, run_two]))
+                select(ArtifactRecord).where(ArtifactRecord.run_id.in_(run_ids))
             )
         ).all()
         assert {(item.run_id, item.job_id, item.is_current) for item in artifacts} == {
             (run_one, graph.jobs[0].id, True),
             (run_two, graph.jobs[0].id, True),
         }
+        events = (
+            await session.scalars(select(EventRecord).where(EventRecord.run_id.in_(run_ids)))
+        ).all()
+        assert len(events) == 10
+        expected_event_types = {
+            "provider.attempt_reserved",
+            "provider.submission_accepted",
+            "provider.status_observed",
+            "provider.artifact_downloaded",
+            "provider.artifact_verified",
+        }
+        assert Counter((item.run_id, item.event_type) for item in events) == Counter(
+            {(run_id, event_type): 1 for run_id in run_ids for event_type in expected_event_types}
+        )
         states = (
             await session.scalars(
                 select(RunRecord.state).where(RunRecord.id.in_([run_one, run_two]))
