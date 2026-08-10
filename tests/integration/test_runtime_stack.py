@@ -299,7 +299,7 @@ async def test_frozen_canary_request_crosses_temporal_and_fails_closed_on_profil
         task_queue=queue,
         workflows=[CanaryWorkflow],
         activities=[
-            activities.submit_generation,
+            activities.submit_canary_generation,
             activities.watch_generation,
             activities.download_generation,
             activities.set_run_state,

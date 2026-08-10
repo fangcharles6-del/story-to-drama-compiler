@@ -581,7 +581,25 @@ class RuntimeActivities:
         run_id: str,
         job: GenerationJob,
         attempt: int,
-        frozen_request: ProviderRequest | None = None,
+    ) -> SubmitResult:
+        return await self._submit_generation(run_id, job, attempt, None)
+
+    @activity.defn(name="submit_canary_generation")
+    async def submit_canary_generation(
+        self,
+        run_id: str,
+        job: GenerationJob,
+        attempt: int,
+        frozen_request: ProviderRequest,
+    ) -> SubmitResult:
+        return await self._submit_generation(run_id, job, attempt, frozen_request)
+
+    async def _submit_generation(
+        self,
+        run_id: str,
+        job: GenerationJob,
+        attempt: int,
+        frozen_request: ProviderRequest | None,
     ) -> SubmitResult:
         await self.store.ensure_run(run_id)
         await self.store.freeze_profile(run_id, self.profile)

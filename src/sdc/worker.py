@@ -97,6 +97,7 @@ async def run() -> None:
             workflows=[DramaWorkflow, CanaryWorkflow],
             activities=[
                 activities.submit_generation,
+                activities.submit_canary_generation,
                 activities.watch_generation,
                 activities.download_generation,
                 activities.generate,

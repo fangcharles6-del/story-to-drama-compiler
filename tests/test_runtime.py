@@ -201,7 +201,7 @@ async def test_frozen_workflow_request_mismatch_fails_before_post(tmp_path: Path
     frozen = activities._request("canary-run", item, 1).model_copy(
         update={"request_fingerprint": "f" * 64}
     )
-    result = await activities.submit_generation("canary-run", item, 1, frozen)
+    result = await activities.submit_canary_generation("canary-run", item, 1, frozen)
     assert result.state is RunState.HUMAN_GATE
     assert store.failure is ProviderFailureClass.LIVE_NOT_AUTHORIZED
     assert store.reservation is None and provider.posts == 0

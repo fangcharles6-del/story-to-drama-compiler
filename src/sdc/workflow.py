@@ -22,9 +22,18 @@ async def submit_generation_activity(
     run_id: str,
     job: GenerationJob,
     attempt: int,
-    frozen_request: ProviderRequest | None = None,
 ) -> SubmitResult:
     raise RuntimeError(f"submit activity {run_id}/{job.id}/{attempt} was not replaced")
+
+
+@activity.defn(name="submit_canary_generation")
+async def submit_canary_generation_activity(
+    run_id: str,
+    job: GenerationJob,
+    attempt: int,
+    frozen_request: ProviderRequest,
+) -> SubmitResult:
+    raise RuntimeError(f"canary submit activity {run_id}/{job.id}/{attempt} was not replaced")
 
 
 @activity.defn(name="watch_generation")
@@ -166,7 +175,7 @@ class CanaryWorkflow:
         await self._set_run_state(run_id, RunState.RUNNING)
         try:
             submitted = await workflow.execute_activity(
-                submit_generation_activity,
+                submit_canary_generation_activity,
                 args=[run_id, job, attempt, execution.request],
                 start_to_close_timeout=timedelta(minutes=2),
                 retry_policy=RetryPolicy(maximum_attempts=1),

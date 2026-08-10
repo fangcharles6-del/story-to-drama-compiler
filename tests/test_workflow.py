@@ -14,6 +14,7 @@ from sdc.workflow import (
     DramaWorkflow,
     download_generation_activity,
     set_run_state_activity,
+    submit_canary_generation_activity,
     submit_generation_activity,
     watch_generation_activity,
 )
@@ -172,7 +173,7 @@ async def test_canary_workflow_passes_frozen_request_and_never_attempts_two(
             states.append(kwargs["args"][1])
             return resolved(None)
         _run_id, _item, attempt, *tail = kwargs["args"]
-        if definition is submit_generation_activity:
+        if definition is submit_canary_generation_activity:
             submissions.append((attempt, tail[0]))
             return resolved(
                 SubmitResult(
