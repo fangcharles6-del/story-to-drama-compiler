@@ -8,7 +8,6 @@ import json
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import TypeVar
 from urllib.parse import urlparse
 
 from pydantic import BaseModel
@@ -214,10 +213,7 @@ class LiveSubmissionGuard:
             )
 
 
-ModelT = TypeVar("ModelT", bound=BaseModel)
-
-
-def _load(path: Path, model: type[ModelT]) -> ModelT:
+def _load[ModelT: BaseModel](path: Path, model: type[ModelT]) -> ModelT:
     return model.model_validate_json(path.read_text())
 
 
