@@ -82,3 +82,14 @@ evidence enters `HUMAN_GATE` without a provider request.
 `NOT_AUTHORIZED` with zero allowed POSTs; it cannot create a live authorization or call Ark. See
 `docs/runbooks/ARK-CANARY-001.md`. BUILD-004 still authorizes no credentials, service activation,
 purchase, recharge, paid generation, or live canary; that requires a separate SDC-CANARY approval.
+
+SDC-ADR-012 adds the deterministic BUILD-005 operation path. A preparation command can compile a
+one-beat, 4000 ms story and freeze one `CanaryExecution`: fixed `run_id`, deterministic single
+`job_id`, exact request fingerprint, pinned Seedance 2.0 / 9:16 / 1080p parameters, text-only input,
+and explicit `generate_audio=false`. The reviewed cost ceiling is capped at CNY 15. Authorization
+artifact creation uses the separate `python -m sdc.canary_authorize` command, and execution uses
+`python -m sdc.client --canary-execution ...`; neither preparation command executes a Workflow or
+touches Ark. The canary Workflow permits Attempt 1 and at most one POST, then fails closed to
+`HUMAN_GATE` without Attempt 2. BUILD-005 still performs no live call and grants no credentials or
+spend authority; `SDC-CANARY-001` remains a separate approval based on execution-day official
+evidence.

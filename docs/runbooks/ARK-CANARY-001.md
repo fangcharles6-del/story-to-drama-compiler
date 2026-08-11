@@ -1,6 +1,6 @@
 # ARK-CANARY-001 runbook (preparation only)
 
-This runbook prepares review evidence. BUILD-004 does **not** authorize the live step.
+This runbook prepares review evidence. BUILD-004 and BUILD-005 do **not** authorize the live step.
 
 ## 1. Capture current evidence
 
@@ -18,33 +18,55 @@ Official sources:
 Store evidence outside source control. Never place an API Key, Bearer header, signed input URL, or
 signed result URL in a snapshot.
 
-## 2. Create the zero-network plan
+## 2. Freeze the deterministic one-task execution and zero-network plan
 
-Prepare three local JSON files that validate against `ProviderCapabilitySnapshot`,
-`ProviderPricingSnapshot`, and `ProviderRequest`. The request may initially use 64 zeroes as its
-fingerprint. Then run:
+Prepare current `ProviderCapabilitySnapshot` and `ProviderPricingSnapshot` JSON files plus a
+one-beat `StoryInput` whose duration is exactly 4000 ms. Select the final `run_id` once; do not
+replace it after review. Then run:
 
 ```bash
 uv run python -m sdc.canary \
   --capability .artifacts/canary/capability.json \
   --pricing .artifacts/canary/pricing.json \
-  --request .artifacts/canary/request-draft.json \
-  --max-cost-cny <HUMAN_APPROVED_LIMIT> \
+  --story .artifacts/canary/story.json \
+  --run-id <FIXED_RUN_ID> \
+  --max-cost-cny <HUMAN_APPROVED_LIMIT_NOT_OVER_15_CNY> \
   --frozen-request-output .artifacts/canary/request-frozen.json \
+  --execution-output .artifacts/canary/execution.json \
   --output .artifacts/canary/plan.json
 ```
 
 Successful output must contain `"state": "NOT_AUTHORIZED"` and `"posts_allowed": 0`. This command
-contains no HTTP client and makes no provider request.
+contains no HTTP client and makes no provider request. The execution artifact must validate as one
+Job, Attempt 1, Seedance 2.0, 9:16, 1080p, 4000 ms, text-only, and
+`"generate_audio": false`. Its request `run_id`, `job_id`, and fingerprint are the values that the
+Workflow must later receive unchanged.
 
 ## 3. Human review boundary
 
 Review the frozen request fingerprint, capability checksum, pricing checksum, and worst-case CNY
-cost. Do not create `LiveAuthorization` during BUILD-004. A future SDC-CANARY-001 approval must name
-the exact request and checksum values, establish an expiry and cost ceiling, and authorize no more
-than one POST for creative Attempt 1.
+cost. BUILD-005 tests authorization generation but does not authorize creating an operational
+authorization. A future SDC-CANARY-001 approval must name the exact request and checksum values,
+establish an expiry and a cost ceiling no greater than CNY 15, and authorize no more than one POST
+for creative Attempt 1.
 
-## 4. Future live prerequisites (not authorized here)
+After that separate approval, generate (but do not execute) the authorization artifact in its own
+step:
+
+```bash
+uv run python -m sdc.canary_authorize \
+  --plan .artifacts/canary/plan.json \
+  --execution .artifacts/canary/execution.json \
+  --authorization-id SDC-CANARY-001 \
+  --max-cost-cny <APPROVED_LIMIT_NOT_OVER_15_CNY> \
+  --expires-at <APPROVED_TIMEZONE_AWARE_EXPIRY> \
+  --nonce <APPROVED_64_HEX_NONCE> \
+  --output .artifacts/canary/authorization.json
+```
+
+This command writes JSON only. It does not start Temporal, load an API Key, or call Ark.
+
+## 4. Future live prerequisites and execution (not authorized here)
 
 Only after SDC-CANARY-001 approval may an operator inject the Key through a deployment Secret Store
 and supply these paths to an isolated worker:
@@ -52,6 +74,16 @@ and supply these paths to an isolated worker:
 - `SDC_PROVIDER_CAPABILITY_PATH`
 - `SDC_PROVIDER_PRICING_PATH`
 - `SDC_LIVE_AUTHORIZATION_PATH`
+
+The separately approved client action is:
+
+```bash
+uv run python -m sdc.client --canary-execution .artifacts/canary/execution.json
+```
+
+The client uses the frozen `run_id` as `workflow_id` and passes the frozen request to the Workflow.
+The worker independently reconstructs the request from its explicit Provider profile and fails
+closed on any mismatch. The Canary Workflow cannot dispatch Attempt 2.
 
 If any file is missing, mismatched, expired, already consumed, or over budget, the worker/runtime
 fails closed before POST. A submission with an unknown outcome enters `HUMAN_GATE`; do not create a

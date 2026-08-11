@@ -81,6 +81,7 @@ class VolcengineArkProvider:
             "duration": request.duration_ms // 1000,
             "ratio": request.aspect_ratio,
             "resolution": request.resolution,
+            "generate_audio": request.generate_audio,
         }
         try:
             response = await self._client.post("/contents/generations/tasks", json=payload)

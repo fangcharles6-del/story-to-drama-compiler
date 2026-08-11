@@ -14,6 +14,7 @@ from temporalio.common import RetryPolicy
 from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
+from sdc.canary import freeze_canary_execution
 from sdc.compiler import compile_story
 from sdc.contracts import (
     DownloadedArtifact,
@@ -31,7 +32,7 @@ from sdc.payloads import DurableResult
 from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
 from sdc.provider import GenerationError
 from sdc.runtime import PostgresRuntimeStore, RuntimeActivities
-from sdc.workflow import DramaWorkflow, generate_activity
+from sdc.workflow import CanaryWorkflow, DramaWorkflow, generate_activity
 
 DATABASE_URL = os.environ.get("SDC_DATABASE_URL", "postgresql+asyncpg://sdc:sdc@localhost:5432/sdc")
 TEMPORAL_ADDRESS = os.environ.get("SDC_TEMPORAL_ADDRESS", "localhost:7233")
@@ -91,6 +92,15 @@ class NoCallProvider:
     async def generate(self, _job: object, _output: Path, _attempt: int) -> Path:
         self.calls += 1
         raise AssertionError("durable exhaustion must prevent a provider call after restart")
+
+
+class NoSubmitProvider:
+    def __init__(self) -> None:
+        self.posts = 0
+
+    async def submit(self, _request: object) -> ProviderSubmission:
+        self.posts += 1
+        raise AssertionError("mismatched frozen canary request must fail before submit")
 
 
 @workflow.defn
@@ -199,9 +209,7 @@ async def test_two_same_story_runs_are_isolated_and_reach_succeeded_state(
             == 2
         )
         artifacts = (
-            await session.scalars(
-                select(ArtifactRecord).where(ArtifactRecord.run_id.in_(run_ids))
-            )
+            await session.scalars(select(ArtifactRecord).where(ArtifactRecord.run_id.in_(run_ids)))
         ).all()
         assert {(item.run_id, item.job_id, item.is_current) for item in artifacts} == {
             (run_one, graph.jobs[0].id, True),
@@ -268,6 +276,54 @@ async def test_stop_2_is_durable_and_never_calls_a_third_attempt(tmp_path: Path)
         )
         assert await session.scalar(select(RunRecord.state).where(RunRecord.id == run_id)) == (
             RunState.STOP_2.value
+        )
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_frozen_canary_request_crosses_temporal_and_fails_closed_on_profile_mismatch(
+    tmp_path: Path,
+) -> None:
+    engine = create_async_engine(DATABASE_URL)
+    sessions = async_sessionmaker(engine, expire_on_commit=False)
+    graph = compile_story(
+        StoryInput(title="canary", beats=(StoryBeat(text="safe", duration_ms=4000),))
+    )[3]
+    run_id, queue = f"canary_{uuid.uuid4().hex}", f"integration-{uuid.uuid4().hex}"
+    execution = freeze_canary_execution(run_id, graph)
+    client = await Client.connect(TEMPORAL_ADDRESS, data_converter=pydantic_data_converter)
+    provider = NoSubmitProvider()
+    activities = RuntimeActivities(PostgresRuntimeStore(sessions), provider, tmp_path)  # type: ignore[arg-type]
+    async with Worker(
+        client,
+        task_queue=queue,
+        workflows=[CanaryWorkflow],
+        activities=[
+            activities.submit_canary_generation,
+            activities.watch_generation,
+            activities.download_generation,
+            activities.set_run_state,
+        ],
+    ):
+        results = await client.execute_workflow(
+            CanaryWorkflow.run,
+            args=[execution],
+            id=execution.run_id,
+            task_queue=queue,
+        )
+    assert results == [DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=1)]
+    assert provider.posts == 0
+    async with sessions() as session:
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(AttemptRecord)
+                .where(AttemptRecord.run_id == run_id)
+            )
+            == 0
+        )
+        assert await session.scalar(select(RunRecord.state).where(RunRecord.id == run_id)) == (
+            RunState.HUMAN_GATE.value
         )
     await engine.dispose()
 

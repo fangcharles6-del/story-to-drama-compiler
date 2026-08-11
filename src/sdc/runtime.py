@@ -564,6 +564,7 @@ class RuntimeActivities:
             duration_ms=job.duration_ms,
             aspect_ratio=self.profile.aspect_ratio,
             resolution=self.profile.resolution,
+            generate_audio=self.profile.generate_audio,
             input_materials=(),
             request_fingerprint="0" * 64,
         )
@@ -576,11 +577,39 @@ class RuntimeActivities:
 
     @activity.defn(name="submit_generation")
     async def submit_generation(
-        self, run_id: str, job: GenerationJob, attempt: int
+        self,
+        run_id: str,
+        job: GenerationJob,
+        attempt: int,
+    ) -> SubmitResult:
+        return await self._submit_generation(run_id, job, attempt, None)
+
+    @activity.defn(name="submit_canary_generation")
+    async def submit_canary_generation(
+        self,
+        run_id: str,
+        job: GenerationJob,
+        attempt: int,
+        frozen_request: ProviderRequest,
+    ) -> SubmitResult:
+        return await self._submit_generation(run_id, job, attempt, frozen_request)
+
+    async def _submit_generation(
+        self,
+        run_id: str,
+        job: GenerationJob,
+        attempt: int,
+        frozen_request: ProviderRequest | None,
     ) -> SubmitResult:
         await self.store.ensure_run(run_id)
         await self.store.freeze_profile(run_id, self.profile)
-        request = self._request(run_id, job, attempt)
+        expected_request = self._request(run_id, job, attempt)
+        request = frozen_request or expected_request
+        if request != expected_request:
+            await self.store.record_live_gate_failure(
+                expected_request, ProviderFailureClass.LIVE_NOT_AUTHORIZED
+            )
+            return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         if self.profile.provider == "volcengine_ark":
             try:
                 if self.live_guard is None:
@@ -612,7 +641,7 @@ class RuntimeActivities:
             except LiveGateError as exc:
                 await self.store.record_submission_failure(request, exc.failure_class)
                 return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
-        maximum_submit_calls = 1 if self.live_guard is not None else 3
+        maximum_submit_calls = 1 if frozen_request is not None or self.live_guard is not None else 3
         for explicit_rejection in range(maximum_submit_calls):
             try:
                 submission = await self.provider.submit(request)  # type: ignore[union-attr]

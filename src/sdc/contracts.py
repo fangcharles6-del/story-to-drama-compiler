@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import datetime
 from decimal import Decimal
 from enum import StrEnum
 from typing import Annotated, Final, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 SCHEMA_VERSION: Final[Literal["1.0.0"]] = "1.0.0"
+CANARY_PROVIDER: Final[Literal["volcengine_ark"]] = "volcengine_ark"
+CANARY_MODEL: Final[Literal["doubao-seedance-2-0-260128"]] = "doubao-seedance-2-0-260128"
 Ms = Annotated[int, Field(ge=0)]
 
 
@@ -150,6 +154,7 @@ class ProviderProfile(Contract):
     min_duration_ms: int = 4000
     max_duration_ms: int = 15000
     max_in_flight: int = 2
+    generate_audio: bool = False
 
 
 class SnapshotStatus(StrEnum):
@@ -239,8 +244,56 @@ class ProviderRequest(Contract):
     duration_ms: Annotated[int, Field(gt=0)]
     aspect_ratio: str
     resolution: str
+    generate_audio: bool
     input_materials: tuple[InputMaterial, ...] = ()
     request_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+def provider_request_fingerprint(request: ProviderRequest) -> str:
+    """Hash every explicit Provider input while excluding the self-referential digest."""
+    body = request.model_dump(exclude={"request_fingerprint"}, mode="json")
+    return hashlib.sha256(
+        json.dumps(body, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+class CanaryExecution(Contract):
+    """Exact workflow payload for the separately authorized one-task canary route."""
+
+    run_id: str = Field(min_length=1)
+    graph: JobGraph
+    request: ProviderRequest
+
+    @model_validator(mode="after")
+    def validate_exact_canary(self) -> CanaryExecution:
+        if len(self.graph.jobs) != 1:
+            raise ValueError("canary workflow must contain exactly one Job")
+        job = self.graph.jobs[0]
+        if job.depends_on:
+            raise ValueError("canary Job must not depend on another Job")
+        if self.request.run_id != self.run_id or self.request.job_id != job.id:
+            raise ValueError("canary run_id/job_id must match the Workflow payload")
+        if self.request.attempt != 1:
+            raise ValueError("canary permits Attempt 1 only")
+        if self.request.provider != CANARY_PROVIDER or self.request.model != CANARY_MODEL:
+            raise ValueError("canary Provider and Seedance 2.0 model are fixed")
+        if (
+            self.request.duration_ms != 4000
+            or self.request.aspect_ratio != "9:16"
+            or self.request.resolution != "1080p"
+        ):
+            raise ValueError("canary output is fixed to 9:16, 1080p, and 4000 ms")
+        if self.request.generate_audio:
+            raise ValueError("canary generate_audio must be false")
+        if self.request.input_materials:
+            raise ValueError("canary is text-only and accepts no input materials")
+        if not self.request.prompt.strip():
+            raise ValueError("canary text prompt must not be empty")
+        if self.request.prompt != job.prompt or self.request.duration_ms != job.duration_ms:
+            raise ValueError("canary request must match the single compiled Job")
+        if provider_request_fingerprint(self.request) != self.request.request_fingerprint:
+            raise ValueError("canary request fingerprint does not match the Workflow request")
+        return self
 
 
 class ProviderSubmission(Contract):

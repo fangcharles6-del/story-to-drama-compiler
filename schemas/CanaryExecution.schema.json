@@ -1,0 +1,223 @@
+{
+  "$defs": {
+    "GenerationJob": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "max_attempts": {
+          "const": 2,
+          "default": 2,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_id": {
+          "title": "Shot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "shot_id",
+        "prompt",
+        "duration_ms",
+        "idempotency_key"
+      ],
+      "title": "GenerationJob",
+      "type": "object"
+    },
+    "InputMaterial": {
+      "additionalProperties": false,
+      "properties": {
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference",
+        "sha256"
+      ],
+      "title": "InputMaterial",
+      "type": "object"
+    },
+    "JobGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/GenerationJob"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "jobs"
+      ],
+      "title": "JobGraph",
+      "type": "object"
+    },
+    "ProviderRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "title": "Aspect Ratio",
+          "type": "string"
+        },
+        "attempt": {
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "generate_audio": {
+          "title": "Generate Audio",
+          "type": "boolean"
+        },
+        "input_materials": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/InputMaterial"
+          },
+          "title": "Input Materials",
+          "type": "array"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "request_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Fingerprint",
+          "type": "string"
+        },
+        "resolution": {
+          "title": "Resolution",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "job_id",
+        "attempt",
+        "provider",
+        "model",
+        "prompt",
+        "duration_ms",
+        "aspect_ratio",
+        "resolution",
+        "generate_audio",
+        "request_fingerprint"
+      ],
+      "title": "ProviderRequest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Exact workflow payload for the separately authorized one-task canary route.",
+  "properties": {
+    "graph": {
+      "$ref": "#/$defs/JobGraph"
+    },
+    "request": {
+      "$ref": "#/$defs/ProviderRequest"
+    },
+    "run_id": {
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "graph",
+    "request"
+  ],
+  "title": "CanaryExecution",
+  "type": "object"
+}
