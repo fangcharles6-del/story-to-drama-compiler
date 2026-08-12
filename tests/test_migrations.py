@@ -17,7 +17,7 @@ def test_provider_failure_diagnostic_migration_extends_0005_without_backfill() -
     for name in (
         "provider_http_status",
         "provider_error_code",
-        "provider_request_id",
+        "provider_request_id_hmac_sha256",
         "provider_error_message",
     ):
         assert f'Column("{name}"' in source

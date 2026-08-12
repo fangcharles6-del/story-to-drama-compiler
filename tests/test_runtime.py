@@ -10,7 +10,6 @@ from sdc.contracts import (
     LiveAuthorization,
     PricingInputMode,
     ProviderCapabilitySnapshot,
-    ProviderFailure,
     ProviderFailureClass,
     ProviderPricingSnapshot,
     ProviderProfile,
@@ -25,6 +24,7 @@ from sdc.provider import (
     ARK_MODEL,
     FakeProvider,
     GenerationError,
+    ProviderAttemptFailure,
     ProviderOperationError,
     SubmissionUnknown,
     request_fingerprint,
@@ -103,7 +103,7 @@ async def test_activity_cannot_make_third_call_after_restart(tmp_path: Path) -> 
 class AsyncMemoryStore:
     def __init__(self) -> None:
         self.reservation: SubmitResult | None = None
-        self.failure: ProviderFailure | None = None
+        self.failure: ProviderAttemptFailure | None = None
         self.profile: ProviderProfile | None = None
         self.authorization_consumed = False
 
@@ -121,7 +121,7 @@ class AsyncMemoryStore:
         return self.reservation
 
     async def record_submission_failure(
-        self, request: ProviderRequest, failure: ProviderFailure
+        self, request: ProviderRequest, failure: ProviderAttemptFailure
     ) -> None:
         self.failure = failure
 
@@ -143,9 +143,7 @@ class AsyncMemoryStore:
     async def record_live_gate_failure(
         self, request: ProviderRequest, failure_class: ProviderFailureClass
     ) -> None:
-        self.failure = ProviderFailure(
-            failure_class=failure_class, message="live submission gate rejected the request"
-        )
+        self.failure = ProviderAttemptFailure(failure_class=failure_class)
 
 
 class UnknownProvider:
@@ -323,7 +321,7 @@ class ExplicitRejectProvider:
             retryable=True,
             code="RateLimitExceeded",
             http_status=429,
-            request_id="req-test",
+            request_id_hmac_sha256="a" * 64,
         )
 
 
@@ -341,12 +339,12 @@ async def test_live_canary_explicit_rejection_is_not_posted_twice(tmp_path: Path
     )  # type: ignore[arg-type]
     result = await activities.submit_generation("run", item, 1)
     assert result.state is RunState.HUMAN_GATE
-    assert store.failure == ProviderFailure(
+    assert store.failure == ProviderAttemptFailure(
         failure_class=ProviderFailureClass.TRANSIENT,
-        code="RateLimitExceeded",
-        message="explicit rejection",
         retryable=True,
+        provider_code="RateLimitExceeded",
         http_status=429,
-        request_id="req-test",
+        provider_request_id_hmac_sha256="a" * 64,
     )
+    assert store.failure.local_message == "provider request failed transiently"
     assert provider.posts == 1

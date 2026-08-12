@@ -32,7 +32,7 @@ def test_provider_failure_diagnostics_are_bounded_nullable_scalars() -> None:
     assert isinstance(status.type, Integer) and status.nullable
     for name, length in (
         ("provider_error_code", 128),
-        ("provider_request_id", 128),
+        ("provider_request_id_hmac_sha256", 64),
         ("provider_error_message", 256),
     ):
         column = table.columns[name]

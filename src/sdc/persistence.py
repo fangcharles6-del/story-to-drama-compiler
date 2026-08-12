@@ -92,7 +92,7 @@ class AttemptRecord(Base):
     failure_class: Mapped[str | None] = mapped_column(String, nullable=True)
     provider_http_status: Mapped[int | None] = mapped_column(Integer, nullable=True)
     provider_error_code: Mapped[str | None] = mapped_column(String(128), nullable=True)
-    provider_request_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    provider_request_id_hmac_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
     provider_error_message: Mapped[str | None] = mapped_column(String(256), nullable=True)
     usage_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

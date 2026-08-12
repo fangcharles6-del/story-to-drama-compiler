@@ -15,7 +15,8 @@ def upgrade() -> None:
         "generation_attempts", sa.Column("provider_error_code", sa.String(128), nullable=True)
     )
     op.add_column(
-        "generation_attempts", sa.Column("provider_request_id", sa.String(128), nullable=True)
+        "generation_attempts",
+        sa.Column("provider_request_id_hmac_sha256", sa.String(64), nullable=True),
     )
     op.add_column(
         "generation_attempts", sa.Column("provider_error_message", sa.String(256), nullable=True)
@@ -25,7 +26,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     for name in (
         "provider_error_message",
-        "provider_request_id",
+        "provider_request_id_hmac_sha256",
         "provider_error_code",
         "provider_http_status",
     ):

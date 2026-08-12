@@ -31,6 +31,37 @@ class GenerationError(RuntimeError):
     pass
 
 
+_FAILURE_MESSAGES = {
+    ProviderFailureClass.SUBMISSION_UNKNOWN: "provider submission outcome is unknown",
+    ProviderFailureClass.REMOTE_FAILED: "provider generation failed",
+    ProviderFailureClass.EXPIRED: "provider generation expired",
+    ProviderFailureClass.AUTHENTICATION: "provider authentication failed",
+    ProviderFailureClass.QUOTA: "provider quota rejected the request",
+    ProviderFailureClass.CONFIGURATION: "provider configuration rejected the request",
+    ProviderFailureClass.INVALID_INPUT: "provider rejected invalid input",
+    ProviderFailureClass.SENSITIVE_CONTENT: "provider rejected sensitive content",
+    ProviderFailureClass.TRANSIENT: "provider request failed transiently",
+    ProviderFailureClass.LIVE_NOT_AUTHORIZED: "live submission gate rejected the request",
+    ProviderFailureClass.CAPABILITY_DRIFT: "provider capability drift blocked the request",
+    ProviderFailureClass.COST_LIMIT: "provider cost limit blocked the request",
+}
+
+
+@dataclass(frozen=True, slots=True)
+class ProviderAttemptFailure:
+    """Worker-internal, bounded diagnostics that never enter public/Temporal contracts."""
+
+    failure_class: ProviderFailureClass
+    retryable: bool = False
+    provider_code: str | None = None
+    http_status: int | None = None
+    provider_request_id_hmac_sha256: str | None = None
+
+    @property
+    def local_message(self) -> str:
+        return _FAILURE_MESSAGES[self.failure_class]
+
+
 class ProviderOperationError(GenerationError):
     def __init__(
         self,
@@ -40,19 +71,18 @@ class ProviderOperationError(GenerationError):
         retryable: bool,
         code: str | None = None,
         http_status: int | None = None,
-        request_id: str | None = None,
+        request_id_hmac_sha256: str | None = None,
     ) -> None:
-        self.failure = ProviderFailure(
+        self.failure_record = ProviderAttemptFailure(
             failure_class=failure_class,
-            code=code,
-            message=message,
             retryable=retryable,
+            provider_code=code,
             http_status=http_status,
-            request_id=request_id,
+            provider_request_id_hmac_sha256=request_id_hmac_sha256,
         )
-        super().__init__(self.failure.message)
-        self.failure_class = self.failure.failure_class
-        self.retryable = self.failure.retryable
+        super().__init__(message)
+        self.failure_class = self.failure_record.failure_class
+        self.retryable = self.failure_record.retryable
 
 
 class SubmissionUnknown(ProviderOperationError):
@@ -64,7 +94,7 @@ class SubmissionUnknown(ProviderOperationError):
         *,
         code: str | None = None,
         http_status: int | None = None,
-        request_id: str | None = None,
+        request_id_hmac_sha256: str | None = None,
     ) -> None:
         super().__init__(
             ProviderFailureClass.SUBMISSION_UNKNOWN,
@@ -72,7 +102,7 @@ class SubmissionUnknown(ProviderOperationError):
             retryable=False,
             code=code,
             http_status=http_status,
-            request_id=request_id,
+            request_id_hmac_sha256=request_id_hmac_sha256,
         )
 
 

@@ -127,7 +127,7 @@ class DiagnosticRejectProvider:
             retryable=False,
             code="InvalidParameter",
             http_status=400,
-            request_id="req-integration",
+            request_id_hmac_sha256="d" * 64,
         )
 
 
@@ -388,8 +388,8 @@ async def test_explicit_rejection_diagnostics_are_durable_without_event_duplicat
         assert attempt.failure_class == ProviderFailureClass.INVALID_INPUT.value
         assert attempt.provider_http_status == 400
         assert attempt.provider_error_code == "InvalidParameter"
-        assert attempt.provider_request_id == "req-integration"
-        assert attempt.provider_error_message == "Ark explicitly rejected submission"
+        assert attempt.provider_request_id_hmac_sha256 == "d" * 64
+        assert attempt.provider_error_message == "provider rejected invalid input"
         failure_events = (
             await session.scalars(
                 select(EventRecord).where(

@@ -6,6 +6,8 @@ stack and is constructed only by ``sdc.worker``.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import re
 from pathlib import Path
 from typing import Any
@@ -32,29 +34,52 @@ from sdc.provider import (
     _evidence,
 )
 
-_DIAGNOSTIC_TOKEN = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
+_TASK_ID = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
 _REQUEST_ID_HEADERS = ("x-request-id", "x-tt-logid")
+_REQUEST_ID_HMAC_DOMAIN = b"sdc:volcengine_ark:request-id:v1\0"
+_KNOWN_ARK_ERROR_CODES = frozenset(
+    {
+        "ContentPolicy",
+        "InvalidParameter",
+        "RateLimitExceeded",
+    }
+)
 
 
-def _safe_token(value: object) -> str | None:
-    """Accept only bounded opaque identifiers; never persist arbitrary provider text."""
-    if not isinstance(value, str):
-        return None
-    candidate = value.strip()
-    return candidate if _DIAGNOSTIC_TOKEN.fullmatch(candidate) else None
+def _safe_task_id(value: object) -> str | None:
+    return value if isinstance(value, str) and _TASK_ID.fullmatch(value) else None
+
+
+def _safe_error_code(value: object) -> str | None:
+    return value if isinstance(value, str) and value in _KNOWN_ARK_ERROR_CODES else None
+
+
+def _request_id_hmac_sha256(response: httpx.Response, api_key: bytes) -> str | None:
+    """HMAC one bounded allowlisted header value; never persist the provider value itself."""
+    for name in _REQUEST_ID_HEADERS:
+        values = response.headers.get_list(name)
+        if not values:
+            continue
+        # A malformed preferred header is not permission to fall back to a different one.
+        if len(values) != 1:
+            return None
+        value = values[0]
+        encoded = value.encode("utf-8")
+        if (
+            value != value.strip()
+            or not 1 <= len(encoded) <= 512
+            or any(ord(ch) < 32 or ord(ch) == 127 for ch in value)
+        ):
+            return None
+        payload = _REQUEST_ID_HMAC_DOMAIN + name.encode("ascii") + b"\0" + encoded
+        return hmac.new(api_key, payload, hashlib.sha256).hexdigest()
+    return None
 
 
 def _safe_response_diagnostics(
-    response: httpx.Response, data: dict[str, Any] | None = None
+    response: httpx.Response, api_key: bytes, data: dict[str, Any] | None = None
 ) -> tuple[str | None, str | None]:
-    request_id = next(
-        (
-            item
-            for name in _REQUEST_ID_HEADERS
-            if (item := _safe_token(response.headers.get(name))) is not None
-        ),
-        None,
-    )
+    request_id_hmac_sha256 = _request_id_hmac_sha256(response, api_key)
     if data is None:
         try:
             candidate = response.json()
@@ -62,8 +87,8 @@ def _safe_response_diagnostics(
             candidate = None
         data = candidate if isinstance(candidate, dict) else None
     error = data.get("error") if data is not None else None
-    code = _safe_token(error.get("code")) if isinstance(error, dict) else None
-    return code, request_id
+    code = _safe_error_code(error.get("code")) if isinstance(error, dict) else None
+    return code, request_id_hmac_sha256
 
 
 class VolcengineArkProvider:
@@ -83,6 +108,7 @@ class VolcengineArkProvider:
         if model != ARK_MODEL:
             raise ValueError(f"Ark model is pinned to {ARK_MODEL}")
         self.model = model
+        self._diagnostic_hmac_key = api_key.encode("utf-8")
         self._client = client or httpx.AsyncClient(
             base_url=base_url.rstrip("/"),
             headers={"Authorization": f"Bearer {api_key}"},
@@ -127,7 +153,9 @@ class VolcengineArkProvider:
             raise SubmissionUnknown(
                 "Ark submission outcome is unknown; manual review required"
             )
-        code, request_id = _safe_response_diagnostics(response)
+        code, request_id_hmac_sha256 = _safe_response_diagnostics(
+            response, self._diagnostic_hmac_key
+        )
         if response.status_code in {401, 403}:
             raise ProviderOperationError(
                 ProviderFailureClass.AUTHENTICATION,
@@ -135,7 +163,7 @@ class VolcengineArkProvider:
                 retryable=False,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         if response.status_code == 429 or response.status_code >= 500:
             # A response proves that this request was not accepted as a task. The activity still
@@ -146,7 +174,7 @@ class VolcengineArkProvider:
                 retryable=True,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         if response.status_code >= 400:
             raise ProviderOperationError(
@@ -155,7 +183,7 @@ class VolcengineArkProvider:
                 retryable=False,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         try:
             candidate = response.json()
@@ -165,16 +193,16 @@ class VolcengineArkProvider:
             raise SubmissionUnknown(
                 "Ark submission response was invalid; manual review required",
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             ) from None
         data = candidate
-        task_id = _safe_token(data.get("id") or data.get("task_id"))
+        task_id = _safe_task_id(data.get("id") or data.get("task_id"))
         if task_id is None:
             raise SubmissionUnknown(
                 "Ark submission response omitted a safe task id; manual review required",
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         state: ProviderTaskState | None = None
         try:
@@ -186,7 +214,7 @@ class VolcengineArkProvider:
                 "Ark submission response had an invalid state; manual review required",
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         return ProviderSubmission(
             provider_task_id=task_id,
@@ -203,7 +231,9 @@ class VolcengineArkProvider:
             raise ProviderOperationError(
                 ProviderFailureClass.TRANSIENT, "Ark inspection transport failure", retryable=True
             )
-        code, request_id = _safe_response_diagnostics(response)
+        code, request_id_hmac_sha256 = _safe_response_diagnostics(
+            response, self._diagnostic_hmac_key
+        )
         if response.status_code == 429 or response.status_code >= 500:
             raise ProviderOperationError(
                 ProviderFailureClass.TRANSIENT,
@@ -211,7 +241,7 @@ class VolcengineArkProvider:
                 retryable=True,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         if response.status_code in {401, 403}:
             raise ProviderOperationError(
@@ -220,7 +250,7 @@ class VolcengineArkProvider:
                 retryable=False,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         if response.status_code >= 400:
             raise ProviderOperationError(
@@ -229,7 +259,7 @@ class VolcengineArkProvider:
                 retryable=False,
                 code=code,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         try:
             candidate = response.json()
@@ -241,7 +271,7 @@ class VolcengineArkProvider:
                 "Ark inspection response was invalid",
                 retryable=True,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             ) from None
         data = candidate
         state: ProviderTaskState | None = None
@@ -255,7 +285,7 @@ class VolcengineArkProvider:
                 "Ark inspection response had an invalid state",
                 retryable=True,
                 http_status=response.status_code,
-                request_id=request_id,
+                request_id_hmac_sha256=request_id_hmac_sha256,
             )
         content = data.get("content") or {}
         url = content.get("video_url") if isinstance(content, dict) else None
@@ -275,8 +305,6 @@ class VolcengineArkProvider:
                     if state is ProviderTaskState.EXPIRED
                     else "Ark generation failed"
                 ),
-                http_status=response.status_code,
-                request_id=request_id,
             )
         usage = data.get("usage") or {}
         return ProviderTaskSnapshot(

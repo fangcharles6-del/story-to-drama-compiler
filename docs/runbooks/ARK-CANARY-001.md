@@ -92,22 +92,24 @@ replacement authorization until the remote task state has been manually reconcil
 ## 5. Diagnose a rejected or failed request without expanding the evidence surface
 
 Run database migration `0006` before starting a Worker that contains provider-failure diagnostics.
-For a future explicit Ark rejection or remotely failed task, inspect only the bounded columns on
-the matching `generation_attempts` row:
+For a future explicit Ark submission rejection, inspect only the bounded columns on the matching
+`generation_attempts` row:
 
 ```sql
 SELECT run_id, job_id, attempt, failure_class,
        provider_http_status, provider_error_code,
-       provider_request_id, provider_error_message
+       provider_request_id_hmac_sha256, provider_error_message
 FROM generation_attempts
 WHERE run_id = '<FIXED_RUN_ID>' AND job_id = '<FIXED_JOB_ID>' AND attempt = 1;
 ```
 
-`provider_error_code` and `provider_request_id` are restricted opaque identifiers.
-`provider_error_message` is a local fixed description, not the Ark response message. The adapter
-never persists a raw response body, response headers, request payload, Prompt, API Key, Bearer
-value, signed input URL, or signed result URL. Run events retain only the failure classification;
-the attempt row is the authoritative diagnostic record.
+`provider_error_code` is retained only when it exactly matches the reviewed Ark allowlist.
+`provider_request_id_hmac_sha256` is a keyed, domain-separated HMAC used only for correlation; the
+raw response-header value is never stored.
+`provider_error_message` is a local fixed description, not the Ark response message. This
+submission-diagnostic path never persists a raw response body, response headers, request payload,
+Prompt, API Key, Bearer value, signed input URL, or signed result URL. Run events retain only the
+failure classification; the attempt row is the authoritative diagnostic record.
 
 The four diagnostic columns are nullable. `NULL` means the value was unavailable or was not safely
 captured; do not infer or backfill it. In particular, migration `0006` cannot recover diagnostics
