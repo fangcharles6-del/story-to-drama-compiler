@@ -2,13 +2,13 @@ services:
   postgres:
     image: postgres:16
     environment: {POSTGRES_USER: sdc, POSTGRES_PASSWORD: sdc, POSTGRES_DB: sdc}
-    ports: ["5432:5432"]
+    ports: ["127.0.0.1:5432:5432"]
     healthcheck: {test: ["CMD-SHELL", "pg_isready -U sdc"], interval: 5s, timeout: 3s, retries: 10}
   temporal:
     image: temporalio/auto-setup:1.27
     depends_on: [postgres]
     environment: {DB: postgres12, DB_PORT: 5432, POSTGRES_USER: sdc, POSTGRES_PWD: sdc, POSTGRES_SEEDS: postgres}
-    ports: ["7233:7233"]
+    ports: ["127.0.0.1:7233:7233"]
     healthcheck:
       test: ["CMD", "tctl", "--address", "temporal:7233", "cluster", "health"]
       interval: 5s

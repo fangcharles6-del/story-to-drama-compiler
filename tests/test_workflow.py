@@ -12,6 +12,7 @@ from sdc.payloads import DurableResult, SubmitResult, WatchResult
 from sdc.workflow import (
     CanaryWorkflow,
     DramaWorkflow,
+    FakeCanaryRehearsalWorkflow,
     download_generation_activity,
     set_run_state_activity,
     submit_canary_generation_activity,
@@ -91,6 +92,9 @@ async def test_temporal_boundaries_have_safe_retry_policies(
 async def test_workflow_imports_in_temporal_sandbox() -> None:
     SandboxedWorkflowRunner().prepare_workflow(workflow._Definition.must_from_class(DramaWorkflow))
     SandboxedWorkflowRunner().prepare_workflow(workflow._Definition.must_from_class(CanaryWorkflow))
+    SandboxedWorkflowRunner().prepare_workflow(
+        workflow._Definition.must_from_class(FakeCanaryRehearsalWorkflow)
+    )
 
 
 @pytest.mark.asyncio

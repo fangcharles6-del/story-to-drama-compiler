@@ -93,3 +93,11 @@ touches Ark. The canary Workflow permits Attempt 1 and at most one POST, then fa
 `HUMAN_GATE` without Attempt 2. BUILD-005 still performs no live call and grants no credentials or
 spend authority; `SDC-CANARY-001` remains a separate approval based on execution-day official
 evidence.
+
+SDC-ADR-013 fixes the first Canary infrastructure to local Windows 10 Pro plus Docker Desktop WSL2.
+PostgreSQL and Temporal bind to loopback only, while the Worker and client run through host `uv`.
+Before any real Provider call, run the isolated FakeProvider rehearsal documented in
+`docs/runbooks/SDC-CANARY-001-LOCAL-REHEARSAL.md`. It uses a dedicated Task Queue, Activity
+concurrency one, one Run/Job/Attempt/candidate, 1080x1920 at 24 fps for four seconds, no audio, no
+Ark adapter, no `LiveAuthorization`, and zero Provider HTTP POSTs. Failures enter `HUMAN_GATE`
+without Attempt 2. Expired capability or price evidence can never be extended or reused.

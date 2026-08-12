@@ -108,11 +108,23 @@ async def _evidence(task_id: str, path: Path) -> DownloadedArtifact:
 class FakeProvider:
     """Deterministic, entirely offline provider implementing both old and new boundaries."""
 
-    def __init__(self, fail_attempts: int = 0) -> None:
+    def __init__(
+        self,
+        fail_attempts: int = 0,
+        *,
+        width: int = 360,
+        height: int = 640,
+        fps: int = 25,
+    ) -> None:
+        if min(width, height, fps) <= 0:
+            raise ValueError("FakeProvider output dimensions and fps must be positive")
         self.fail_attempts = fail_attempts
+        self.width, self.height, self.fps = width, height, fps
+        self.submit_calls = 0
         self._requests: dict[str, ProviderRequest] = {}
 
     async def submit(self, request: ProviderRequest) -> ProviderSubmission:
+        self.submit_calls += 1
         task_id = f"fake-{request.request_fingerprint[:24]}"
         self._requests[task_id] = request
         state = (
@@ -155,7 +167,10 @@ class FakeProvider:
             "-f",
             "lavfi",
             "-i",
-            f"color=c=0x{color}:s=360x640:r=25:d={duration_ms / 1000}",
+            (
+                f"color=c=0x{color}:s={self.width}x{self.height}:"
+                f"r={self.fps}:d={duration_ms / 1000}"
+            ),
             "-an",
             "-c:v",
             "libx264",
