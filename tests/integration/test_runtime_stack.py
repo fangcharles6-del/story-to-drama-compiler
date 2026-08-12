@@ -15,12 +15,14 @@ from temporalio.contrib.pydantic import pydantic_data_converter
 from temporalio.worker import Worker
 
 from sdc.canary import freeze_canary_execution
+from sdc.canary_rehearsal import build_rehearsal_inputs, run_rehearsal
 from sdc.compiler import compile_story
 from sdc.contracts import (
     DownloadedArtifact,
     GenerationJob,
     ProviderFailure,
     ProviderFailureClass,
+    ProviderProfile,
     ProviderSubmission,
     ProviderTaskSnapshot,
     ProviderTaskState,
@@ -29,7 +31,13 @@ from sdc.contracts import (
     StoryInput,
 )
 from sdc.payloads import DurableResult
-from sdc.persistence import ArtifactRecord, AttemptRecord, EventRecord, RunRecord
+from sdc.persistence import (
+    ArtifactRecord,
+    AttemptRecord,
+    EventRecord,
+    LiveAuthorizationUseRecord,
+    RunRecord,
+)
 from sdc.provider import GenerationError
 from sdc.runtime import PostgresRuntimeStore, RuntimeActivities
 from sdc.workflow import CanaryWorkflow, DramaWorkflow, generate_activity
@@ -67,7 +75,11 @@ class LocalProvider:
 
 
 class FailingProvider:
+    def __init__(self) -> None:
+        self.posts = 0
+
     async def submit(self, request: object) -> ProviderSubmission:
+        self.posts += 1
         return ProviderSubmission(
             provider_task_id=f"failed-{id(request)}", state=ProviderTaskState.QUEUED
         )
@@ -380,5 +392,84 @@ async def test_same_workflow_resumes_on_fresh_worker_without_third_provider_call
                 .where(AttemptRecord.run_id == run_id)
             )
             == 2
+        )
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_fake_canary_rehearsal_crosses_postgres_and_temporal(tmp_path: Path) -> None:
+    run_id = f"sdc-canary-001-v01-rehearsal-{uuid.uuid4().hex}"
+    report = await run_rehearsal(
+        run_id=run_id,
+        database_url=DATABASE_URL,
+        temporal_address=TEMPORAL_ADDRESS,
+        output_root=tmp_path,
+    )
+    assert report.state is RunState.SUCCEEDED
+    assert report.task_queue == "sdc-canary-001-v01-rehearsal"
+    assert report.runs == report.jobs == report.attempts == 1
+    assert report.maximum_attempt == report.current_candidates == 1
+    assert report.provider_submit_calls == 1 and report.provider_http_posts == 0
+    assert report.live_authorizations == 0 and report.activity_max_concurrency == 1
+    assert (report.width, report.height, report.fps, report.duration_ms) == (1080, 1920, 24, 4000)
+    assert report.generate_audio is False and report.text_only is True
+
+
+@pytest.mark.asyncio
+async def test_fake_canary_activity_restart_reuses_attempt_one_without_resubmit(
+    tmp_path: Path,
+) -> None:
+    engine = create_async_engine(DATABASE_URL)
+    sessions = async_sessionmaker(engine, expire_on_commit=False)
+    run_id = f"sdc-canary-001-v01-restart-{uuid.uuid4().hex}"
+    graph, request = build_rehearsal_inputs(run_id)
+    profile = ProviderProfile(
+        provider="fake",
+        model="fake-v1",
+        min_duration_ms=4000,
+        max_duration_ms=4000,
+        max_in_flight=1,
+    )
+    first_worker = RuntimeActivities(
+        PostgresRuntimeStore(sessions),
+        LocalProvider(),
+        tmp_path,
+        profile,
+    )  # type: ignore[arg-type]
+    first = await first_worker.submit_canary_generation(run_id, graph.jobs[0], 1, request)
+    assert first.provider_task_id is not None
+
+    no_submit = NoSubmitProvider()
+    restarted_worker = RuntimeActivities(
+        PostgresRuntimeStore(sessions),
+        no_submit,
+        tmp_path,
+        profile,
+    )  # type: ignore[arg-type]
+    resumed = await restarted_worker.submit_canary_generation(run_id, graph.jobs[0], 1, request)
+    assert resumed.provider_task_id == first.provider_task_id
+    assert no_submit.posts == 0
+    async with sessions() as session:
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(AttemptRecord)
+                .where(AttemptRecord.run_id == run_id)
+            )
+            == 1
+        )
+        assert (
+            await session.scalar(
+                select(func.max(AttemptRecord.attempt)).where(AttemptRecord.run_id == run_id)
+            )
+            == 1
+        )
+        assert (
+            await session.scalar(
+                select(func.count())
+                .select_from(LiveAuthorizationUseRecord)
+                .where(LiveAuthorizationUseRecord.run_id == run_id)
+            )
+            == 0
         )
     await engine.dispose()

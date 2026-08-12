@@ -13,6 +13,7 @@ from sdc.contracts import (
     ProviderRequest,
     ProviderTaskState,
     RunState,
+    provider_request_fingerprint,
 )
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
 
@@ -224,6 +225,88 @@ class CanaryWorkflow:
         except Exception:
             # Activity timeouts, crashes, and exhausted technical retries are ambiguous on this
             # one-POST route. Fail closed without reserving Attempt 2 or resubmitting.
+            result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+        await self._set_run_state(run_id, result.state)
+        return [result]
+
+
+@workflow.defn
+class FakeCanaryRehearsalWorkflow:
+    """Isolated single-Attempt rehearsal; never registered by the production worker."""
+
+    async def _set_run_state(self, run_id: str, state: RunState) -> None:
+        await workflow.execute_activity(
+            set_run_state_activity,
+            args=[run_id, state],
+            start_to_close_timeout=timedelta(minutes=1),
+            retry_policy=RetryPolicy(maximum_attempts=1),
+        )
+
+    @staticmethod
+    def _valid(run_id: str, graph: JobGraph, request: ProviderRequest) -> bool:
+        if len(graph.jobs) != 1:
+            return False
+        job = graph.jobs[0]
+        return (
+            not job.depends_on
+            and request.run_id == run_id
+            and request.job_id == job.id
+            and request.attempt == 1
+            and request.provider == "fake"
+            and request.model == "fake-v1"
+            and request.prompt == job.prompt
+            and bool(request.prompt.strip())
+            and request.duration_ms == job.duration_ms == 4000
+            and request.aspect_ratio == "9:16"
+            and request.resolution == "1080p"
+            and request.generate_audio is False
+            and not request.input_materials
+            and provider_request_fingerprint(request) == request.request_fingerprint
+        )
+
+    @workflow.run
+    async def run(
+        self,
+        run_id: str,
+        graph: JobGraph,
+        request: ProviderRequest,
+    ) -> list[DurableResult]:
+        attempt = 1
+        await self._set_run_state(run_id, RunState.RUNNING)
+        if not self._valid(run_id, graph, request):
+            result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+            await self._set_run_state(run_id, result.state)
+            return [result]
+        job = graph.jobs[0]
+        try:
+            submitted = await workflow.execute_activity(
+                submit_canary_generation_activity,
+                args=[run_id, job, attempt, request],
+                start_to_close_timeout=timedelta(minutes=2),
+                retry_policy=RetryPolicy(maximum_attempts=1),
+            )
+            if submitted.state is RunState.HUMAN_GATE or not submitted.provider_task_id:
+                result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+            else:
+                task_id = submitted.provider_task_id
+                watched = await workflow.execute_activity(
+                    watch_generation_activity,
+                    args=[run_id, job, attempt, task_id],
+                    start_to_close_timeout=timedelta(minutes=2),
+                    heartbeat_timeout=timedelta(seconds=30),
+                    retry_policy=RetryPolicy(maximum_attempts=1),
+                )
+                if watched.task_state is not ProviderTaskState.SUCCEEDED:
+                    result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
+                else:
+                    result = await workflow.execute_activity(
+                        download_generation_activity,
+                        args=[run_id, job, attempt, task_id],
+                        start_to_close_timeout=timedelta(minutes=15),
+                        heartbeat_timeout=timedelta(seconds=30),
+                        retry_policy=RetryPolicy(maximum_attempts=1),
+                    )
+        except Exception:
             result = DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
         await self._set_run_state(run_id, result.state)
         return [result]
