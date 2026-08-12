@@ -6,7 +6,9 @@ services:
     healthcheck: {test: ["CMD-SHELL", "pg_isready -U sdc"], interval: 5s, timeout: 3s, retries: 10}
   temporal:
     image: temporalio/auto-setup:1.27
-    depends_on: [postgres]
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment: {DB: postgres12, DB_PORT: 5432, POSTGRES_USER: sdc, POSTGRES_PWD: sdc, POSTGRES_SEEDS: postgres}
     ports: ["127.0.0.1:7233:7233"]
     healthcheck:
