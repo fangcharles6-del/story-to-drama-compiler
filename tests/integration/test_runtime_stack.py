@@ -38,7 +38,7 @@ from sdc.persistence import (
     LiveAuthorizationUseRecord,
     RunRecord,
 )
-from sdc.provider import GenerationError
+from sdc.provider import GenerationError, ProviderOperationError
 from sdc.runtime import PostgresRuntimeStore, RuntimeActivities
 from sdc.workflow import CanaryWorkflow, DramaWorkflow, generate_activity
 
@@ -113,6 +113,22 @@ class NoSubmitProvider:
     async def submit(self, _request: object) -> ProviderSubmission:
         self.posts += 1
         raise AssertionError("mismatched frozen canary request must fail before submit")
+
+
+class DiagnosticRejectProvider:
+    def __init__(self) -> None:
+        self.posts = 0
+
+    async def submit(self, _request: object) -> ProviderSubmission:
+        self.posts += 1
+        raise ProviderOperationError(
+            ProviderFailureClass.INVALID_INPUT,
+            "Ark explicitly rejected submission",
+            retryable=False,
+            code="InvalidParameter",
+            http_status=400,
+            request_id="req-integration",
+        )
 
 
 @workflow.defn
@@ -337,6 +353,53 @@ async def test_frozen_canary_request_crosses_temporal_and_fails_closed_on_profil
         assert await session.scalar(select(RunRecord.state).where(RunRecord.id == run_id)) == (
             RunState.HUMAN_GATE.value
         )
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_explicit_rejection_diagnostics_are_durable_without_event_duplication(
+    tmp_path: Path,
+) -> None:
+    engine = create_async_engine(DATABASE_URL)
+    sessions = async_sessionmaker(engine, expire_on_commit=False)
+    run_id = f"diagnostic_{uuid.uuid4().hex}"
+    provider = DiagnosticRejectProvider()
+    activities = RuntimeActivities(
+        PostgresRuntimeStore(sessions), provider, tmp_path
+    )  # type: ignore[arg-type]
+    diagnostic_job = GenerationJob(
+        id="diagnostic-job",
+        shot_id="diagnostic-shot",
+        prompt="prompt",
+        duration_ms=4000,
+        idempotency_key="diagnostic-generate",
+    )
+
+    first = await activities.submit_generation(run_id, diagnostic_job, 1)
+    second = await activities.submit_generation(run_id, diagnostic_job, 1)
+    assert first.state is second.state is RunState.HUMAN_GATE
+    assert provider.posts == 1
+
+    async with sessions() as session:
+        attempt = await session.scalar(
+            select(AttemptRecord).where(AttemptRecord.run_id == run_id)
+        )
+        assert attempt is not None
+        assert attempt.failure_class == ProviderFailureClass.INVALID_INPUT.value
+        assert attempt.provider_http_status == 400
+        assert attempt.provider_error_code == "InvalidParameter"
+        assert attempt.provider_request_id == "req-integration"
+        assert attempt.provider_error_message == "Ark explicitly rejected submission"
+        failure_events = (
+            await session.scalars(
+                select(EventRecord).where(
+                    EventRecord.run_id == run_id,
+                    EventRecord.event_type == "provider.attempt_failed",
+                )
+            )
+        ).all()
+        assert len(failure_events) == 1
+        assert set(failure_events[0].payload) == {"job_id", "attempt", "failure_class"}
     await engine.dispose()
 
 

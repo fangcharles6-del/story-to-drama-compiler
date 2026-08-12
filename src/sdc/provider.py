@@ -33,18 +33,47 @@ class GenerationError(RuntimeError):
 
 class ProviderOperationError(GenerationError):
     def __init__(
-        self, failure_class: ProviderFailureClass, message: str, *, retryable: bool
+        self,
+        failure_class: ProviderFailureClass,
+        message: str,
+        *,
+        retryable: bool,
+        code: str | None = None,
+        http_status: int | None = None,
+        request_id: str | None = None,
     ) -> None:
-        super().__init__(message)
-        self.failure_class = failure_class
-        self.retryable = retryable
+        self.failure = ProviderFailure(
+            failure_class=failure_class,
+            code=code,
+            message=message,
+            retryable=retryable,
+            http_status=http_status,
+            request_id=request_id,
+        )
+        super().__init__(self.failure.message)
+        self.failure_class = self.failure.failure_class
+        self.retryable = self.failure.retryable
 
 
 class SubmissionUnknown(ProviderOperationError):
     """The POST may have been accepted; callers must persist and enter HUMAN_GATE."""
 
-    def __init__(self, message: str) -> None:
-        super().__init__(ProviderFailureClass.SUBMISSION_UNKNOWN, message, retryable=False)
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: str | None = None,
+        http_status: int | None = None,
+        request_id: str | None = None,
+    ) -> None:
+        super().__init__(
+            ProviderFailureClass.SUBMISSION_UNKNOWN,
+            message,
+            retryable=False,
+            code=code,
+            http_status=http_status,
+            request_id=request_id,
+        )
 
 
 class Provider(Protocol):

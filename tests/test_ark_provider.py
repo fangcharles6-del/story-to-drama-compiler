@@ -5,8 +5,8 @@ import httpx
 import pytest
 
 from sdc.ark_provider import VolcengineArkProvider
-from sdc.contracts import InputMaterial, ProviderRequest, ProviderTaskState
-from sdc.provider import SubmissionUnknown
+from sdc.contracts import InputMaterial, ProviderFailureClass, ProviderRequest, ProviderTaskState
+from sdc.provider import ProviderOperationError, SubmissionUnknown
 
 
 def request(duration_ms: int = 4000) -> ProviderRequest:
@@ -96,6 +96,141 @@ async def test_lost_post_response_is_submission_unknown_without_retry() -> None:
     with pytest.raises(SubmissionUnknown) as caught:
         await provider.submit(request())
     assert posts == 1 and "do-not-leak" not in str(caught.value)
+    assert caught.value.failure.http_status is None
+    assert caught.value.__context__ is None
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_rejection_keeps_only_bounded_allowlisted_diagnostics() -> None:
+    secret_message = (
+        "safe prompt Bearer api-secret https://signed.invalid/video?token=private"
+    )
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            400,
+            json={"error": {"code": "InvalidParameter", "message": secret_message}},
+            headers={
+                "x-request-id": "req-0123:abc",
+                "authorization": "Bearer reflected-secret",
+            },
+        )
+
+    client = httpx.AsyncClient(
+        base_url="https://mock.invalid/api/v3", transport=httpx.MockTransport(handler)
+    )
+    provider = VolcengineArkProvider("api-secret", client=client)
+    with pytest.raises(ProviderOperationError) as caught:
+        await provider.submit(request())
+    failure = caught.value.failure
+    assert failure.failure_class is ProviderFailureClass.INVALID_INPUT
+    assert failure.http_status == 400
+    assert failure.code == "InvalidParameter"
+    assert failure.request_id == "req-0123:abc"
+    assert failure.message == "Ark explicitly rejected submission"
+    serialized = failure.model_dump_json() + str(caught.value)
+    secrets = (secret_message, "safe prompt", "api-secret", "reflected-secret", "signed.invalid")
+    for secret in secrets:
+        assert secret not in serialized
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_non_json_rejection_does_not_persist_body_or_invalid_identifiers() -> None:
+    raw_body = b"Bearer raw-secret https://signed.invalid/result?token=private"
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            422,
+            content=raw_body,
+            headers={"x-request-id": "https://not-an-opaque-id.invalid/value"},
+        )
+
+    client = httpx.AsyncClient(
+        base_url="https://mock.invalid/api/v3", transport=httpx.MockTransport(handler)
+    )
+    provider = VolcengineArkProvider("secret", client=client)
+    with pytest.raises(ProviderOperationError) as caught:
+        await provider.submit(request())
+    failure = caught.value.failure
+    assert failure.http_status == 422
+    assert failure.code is None and failure.request_id is None
+    assert raw_body.decode() not in failure.model_dump_json()
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_success_without_task_id_records_only_safe_response_metadata() -> None:
+    def handler(req: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={"status": "queued", "message": "safe prompt should not persist"},
+            headers={"x-tt-logid": "ark-log-123"},
+        )
+
+    client = httpx.AsyncClient(
+        base_url="https://mock.invalid/api/v3", transport=httpx.MockTransport(handler)
+    )
+    provider = VolcengineArkProvider("secret", client=client)
+    with pytest.raises(SubmissionUnknown) as caught:
+        await provider.submit(request())
+    failure = caught.value.failure
+    assert failure.http_status == 200 and failure.request_id == "ark-log-123"
+    assert "safe prompt" not in failure.model_dump_json()
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_success_with_untrusted_task_or_state_fails_with_safe_diagnostics() -> None:
+    unsafe_values = (
+        {"id": "https://signed.invalid/task?token=secret", "status": "queued"},
+        {"id": "task-safe", "status": "safe prompt Bearer secret"},
+    )
+    for body in unsafe_values:
+        def handler(req: httpx.Request, response_body: dict[str, str] = body) -> httpx.Response:
+            return httpx.Response(200, json=response_body)
+
+        client = httpx.AsyncClient(
+            base_url="https://mock.invalid/api/v3",
+            transport=httpx.MockTransport(handler),
+        )
+        provider = VolcengineArkProvider("secret", client=client)
+        with pytest.raises(SubmissionUnknown) as caught:
+            await provider.submit(request())
+        serialized = caught.value.failure.model_dump_json() + str(caught.value)
+        assert "signed.invalid" not in serialized
+        assert "safe prompt" not in serialized
+        assert caught.value.failure.http_status == 200
+        await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_remote_failure_does_not_copy_provider_message() -> None:
+    reflected = "safe prompt Bearer secret https://signed.invalid/output?token=private"
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "id": "task",
+                "status": "failed",
+                "error": {"code": "ContentPolicy", "message": reflected},
+            },
+            headers={"x-request-id": "req-remote-failure"},
+        )
+
+    client = httpx.AsyncClient(
+        base_url="https://mock.invalid/api/v3", transport=httpx.MockTransport(handler)
+    )
+    provider = VolcengineArkProvider("secret", client=client)
+    snapshot = await provider.inspect("task")
+    assert snapshot.failure is not None
+    assert snapshot.failure.code == "ContentPolicy"
+    assert snapshot.failure.http_status == 200
+    assert snapshot.failure.request_id == "req-remote-failure"
+    assert snapshot.failure.message == "Ark generation failed"
+    assert reflected not in snapshot.model_dump_json()
     await client.aclose()
 
 

@@ -88,3 +88,29 @@ closed on any mismatch. The Canary Workflow cannot dispatch Attempt 2.
 If any file is missing, mismatched, expired, already consumed, or over budget, the worker/runtime
 fails closed before POST. A submission with an unknown outcome enters `HUMAN_GATE`; do not create a
 replacement authorization until the remote task state has been manually reconciled.
+
+## 5. Diagnose a rejected or failed request without expanding the evidence surface
+
+Run database migration `0006` before starting a Worker that contains provider-failure diagnostics.
+For a future explicit Ark rejection or remotely failed task, inspect only the bounded columns on
+the matching `generation_attempts` row:
+
+```sql
+SELECT run_id, job_id, attempt, failure_class,
+       provider_http_status, provider_error_code,
+       provider_request_id, provider_error_message
+FROM generation_attempts
+WHERE run_id = '<FIXED_RUN_ID>' AND job_id = '<FIXED_JOB_ID>' AND attempt = 1;
+```
+
+`provider_error_code` and `provider_request_id` are restricted opaque identifiers.
+`provider_error_message` is a local fixed description, not the Ark response message. The adapter
+never persists a raw response body, response headers, request payload, Prompt, API Key, Bearer
+value, signed input URL, or signed result URL. Run events retain only the failure classification;
+the attempt row is the authoritative diagnostic record.
+
+The four diagnostic columns are nullable. `NULL` means the value was unavailable or was not safely
+captured; do not infer or backfill it. In particular, migration `0006` cannot recover diagnostics
+for a rejection recorded by an earlier version. An explicit rejection still enters `HUMAN_GATE`,
+and `SUBMISSION_UNKNOWN` still requires manual reconciliation. Neither condition authorizes a
+retry, a replacement authorization, a new Run, a recharge, or a purchase.

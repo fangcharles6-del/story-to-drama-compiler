@@ -24,6 +24,8 @@
     "code": {
       "anyOf": [
         {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:-]+$",
           "type": "string"
         },
         {
@@ -36,9 +38,40 @@
     "failure_class": {
       "$ref": "#/$defs/ProviderFailureClass"
     },
+    "http_status": {
+      "anyOf": [
+        {
+          "maximum": 599,
+          "minimum": 100,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Http Status"
+    },
     "message": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[^\\r\\n]+$",
       "title": "Message",
       "type": "string"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:-]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Request Id"
     },
     "retryable": {
       "default": false,

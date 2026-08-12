@@ -23,6 +23,7 @@ from sdc.contracts import (
     GenerationJob,
     LiveAuthorization,
     ProviderAttemptState,
+    ProviderFailure,
     ProviderFailureClass,
     ProviderProfile,
     ProviderRequest,
@@ -70,7 +71,7 @@ class RuntimeStore(Protocol):
         self, request: ProviderRequest, submission: ProviderSubmission
     ) -> None: ...
     async def record_submission_failure(
-        self, request: ProviderRequest, failure_class: ProviderFailureClass
+        self, request: ProviderRequest, failure: ProviderFailure
     ) -> None: ...
     async def record_observation(
         self, run_id: str, job_id: str, attempt: int, snapshot: ProviderTaskSnapshot
@@ -314,8 +315,9 @@ class PostgresRuntimeStore:
             )
 
     async def record_submission_failure(
-        self, request: ProviderRequest, failure_class: ProviderFailureClass
+        self, request: ProviderRequest, failure: ProviderFailure
     ) -> None:
+        failure_class = failure.failure_class
         async with self._sessions.begin() as session:
             await session.execute(
                 update(AttemptRecord)
@@ -327,6 +329,10 @@ class PostgresRuntimeStore:
                 .values(
                     state=RunState.HUMAN_GATE.value,
                     failure_class=failure_class.value,
+                    provider_http_status=failure.http_status,
+                    provider_error_code=failure.code,
+                    provider_request_id=failure.request_id,
+                    provider_error_message=failure.message,
                     attempt_state=(
                         ProviderAttemptState.SUBMISSION_UNKNOWN.value
                         if failure_class is ProviderFailureClass.SUBMISSION_UNKNOWN
@@ -369,6 +375,10 @@ class PostgresRuntimeStore:
         }
         if snapshot.failure:
             values["failure_class"] = snapshot.failure.failure_class.value
+            values["provider_http_status"] = snapshot.failure.http_status
+            values["provider_error_code"] = snapshot.failure.code
+            values["provider_request_id"] = snapshot.failure.request_id
+            values["provider_error_message"] = snapshot.failure.message
             values["attempt_state"] = ProviderAttemptState.FAILED.value
             values["state"] = RunState.STOP_2.value if attempt == 2 else RunState.RETRYING.value
         async with self._sessions.begin() as session:
@@ -639,17 +649,21 @@ class RuntimeActivities:
                         "live authorization was already consumed",
                     )
             except LiveGateError as exc:
-                await self.store.record_submission_failure(request, exc.failure_class)
+                await self.store.record_submission_failure(
+                    request,
+                    ProviderFailure(
+                        failure_class=exc.failure_class,
+                        message="live submission gate rejected the request",
+                    ),
+                )
                 return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         maximum_submit_calls = 1 if frozen_request is not None or self.live_guard is not None else 3
         for explicit_rejection in range(maximum_submit_calls):
             try:
                 submission = await self.provider.submit(request)  # type: ignore[union-attr]
                 break
-            except SubmissionUnknown:
-                await self.store.record_submission_failure(
-                    request, ProviderFailureClass.SUBMISSION_UNKNOWN
-                )
+            except SubmissionUnknown as exc:
+                await self.store.record_submission_failure(request, exc.failure)
                 return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
             except ProviderOperationError as exc:
                 # Only an explicit response proving no task was accepted may retry this POST.
@@ -657,7 +671,7 @@ class RuntimeActivities:
                 if exc.retryable and explicit_rejection + 1 < maximum_submit_calls:
                     await asyncio.sleep(2**explicit_rejection)
                     continue
-                await self.store.record_submission_failure(request, exc.failure_class)
+                await self.store.record_submission_failure(request, exc.failure)
                 return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         await self.store.record_submission(request, submission)
         return SubmitResult(

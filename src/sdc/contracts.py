@@ -303,9 +303,13 @@ class ProviderSubmission(Contract):
 
 class ProviderFailure(Contract):
     failure_class: ProviderFailureClass
-    code: str | None = None
-    message: str
+    code: Annotated[str, Field(max_length=128, pattern=r"^[A-Za-z0-9._:-]+$")] | None = None
+    message: Annotated[str, Field(min_length=1, max_length=256, pattern=r"^[^\r\n]+$")]
     retryable: bool = False
+    http_status: Annotated[int, Field(ge=100, le=599)] | None = None
+    request_id: Annotated[
+        str, Field(max_length=128, pattern=r"^[A-Za-z0-9._:-]+$")
+    ] | None = None
 
 
 class ProviderTaskSnapshot(Contract):
