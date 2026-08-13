@@ -24,6 +24,7 @@ from sdc.provider import (
     ARK_MODEL,
     FakeProvider,
     GenerationError,
+    ProviderAttemptFailure,
     ProviderOperationError,
     SubmissionUnknown,
     request_fingerprint,
@@ -102,7 +103,7 @@ async def test_activity_cannot_make_third_call_after_restart(tmp_path: Path) -> 
 class AsyncMemoryStore:
     def __init__(self) -> None:
         self.reservation: SubmitResult | None = None
-        self.failure: ProviderFailureClass | None = None
+        self.failure: ProviderAttemptFailure | None = None
         self.profile: ProviderProfile | None = None
         self.authorization_consumed = False
 
@@ -120,9 +121,9 @@ class AsyncMemoryStore:
         return self.reservation
 
     async def record_submission_failure(
-        self, request: ProviderRequest, failure_class: ProviderFailureClass
+        self, request: ProviderRequest, failure: ProviderAttemptFailure
     ) -> None:
-        self.failure = failure_class
+        self.failure = failure
 
     async def record_submission(
         self, request: ProviderRequest, submission: ProviderSubmission
@@ -142,7 +143,7 @@ class AsyncMemoryStore:
     async def record_live_gate_failure(
         self, request: ProviderRequest, failure_class: ProviderFailureClass
     ) -> None:
-        self.failure = failure_class
+        self.failure = ProviderAttemptFailure(failure_class=failure_class)
 
 
 class UnknownProvider:
@@ -162,7 +163,8 @@ async def test_submission_unknown_is_persisted_and_never_posted_again(tmp_path: 
     first = await activities.submit_generation("run", job(), 1)
     second = await activities.submit_generation("run", job(), 1)
     assert first.state is RunState.HUMAN_GATE and second.state is RunState.HUMAN_GATE
-    assert store.failure is ProviderFailureClass.SUBMISSION_UNKNOWN
+    assert store.failure is not None
+    assert store.failure.failure_class is ProviderFailureClass.SUBMISSION_UNKNOWN
     assert provider.posts == 1
 
 
@@ -203,7 +205,8 @@ async def test_frozen_workflow_request_mismatch_fails_before_post(tmp_path: Path
     )
     result = await activities.submit_canary_generation("canary-run", item, 1, frozen)
     assert result.state is RunState.HUMAN_GATE
-    assert store.failure is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    assert store.failure is not None
+    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
     assert store.reservation is None and provider.posts == 0
 
 
@@ -283,7 +286,8 @@ async def test_live_authorization_is_consumed_before_only_post(tmp_path: Path) -
     store.reservation = SubmitResult(state=RunState.RUNNING, attempt=1)
     second = await activities.submit_generation("run", item, 1)
     assert second.state is RunState.HUMAN_GATE
-    assert store.failure is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    assert store.failure is not None
+    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
     assert provider.posts == 1
 
 
@@ -300,7 +304,8 @@ async def test_live_profile_without_authorization_makes_zero_posts(tmp_path: Pat
     )  # type: ignore[arg-type]
     result = await activities.submit_generation("run", item, 1)
     assert result.state is RunState.HUMAN_GATE
-    assert store.failure is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    assert store.failure is not None
+    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
     assert provider.posts == 0
 
 
@@ -311,7 +316,12 @@ class ExplicitRejectProvider:
     async def submit(self, request: ProviderRequest) -> ProviderSubmission:
         self.posts += 1
         raise ProviderOperationError(
-            ProviderFailureClass.TRANSIENT, "explicit rejection", retryable=True
+            ProviderFailureClass.TRANSIENT,
+            "explicit rejection",
+            retryable=True,
+            code="RateLimitExceeded",
+            http_status=429,
+            request_id_hmac_sha256="a" * 64,
         )
 
 
@@ -329,5 +339,12 @@ async def test_live_canary_explicit_rejection_is_not_posted_twice(tmp_path: Path
     )  # type: ignore[arg-type]
     result = await activities.submit_generation("run", item, 1)
     assert result.state is RunState.HUMAN_GATE
-    assert store.failure is ProviderFailureClass.TRANSIENT
+    assert store.failure == ProviderAttemptFailure(
+        failure_class=ProviderFailureClass.TRANSIENT,
+        retryable=True,
+        provider_code="RateLimitExceeded",
+        http_status=429,
+        provider_request_id_hmac_sha256="a" * 64,
+    )
+    assert store.failure.local_message == "provider request failed transiently"
     assert provider.posts == 1

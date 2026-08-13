@@ -1,7 +1,8 @@
+from sqlalchemy import Integer, String
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.schema import CreateIndex
 
-from sdc.persistence import ArtifactRecord, LiveAuthorizationUseRecord
+from sdc.persistence import ArtifactRecord, AttemptRecord, LiveAuthorizationUseRecord
 
 
 def test_current_candidate_uses_postgresql_partial_unique_index() -> None:
@@ -23,3 +24,17 @@ def test_live_authorization_is_globally_one_use() -> None:
     assert table.primary_key.columns.keys() == ["authorization_id"]
     fingerprint = table.columns["request_fingerprint"]
     assert fingerprint.unique
+
+
+def test_provider_failure_diagnostics_are_bounded_nullable_scalars() -> None:
+    table = AttemptRecord.__table__
+    status = table.columns["provider_http_status"]
+    assert isinstance(status.type, Integer) and status.nullable
+    for name, length in (
+        ("provider_error_code", 128),
+        ("provider_request_id_hmac_sha256", 64),
+        ("provider_error_message", 256),
+    ):
+        column = table.columns[name]
+        assert isinstance(column.type, String)
+        assert column.type.length == length and column.nullable
