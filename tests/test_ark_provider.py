@@ -31,15 +31,34 @@ def request(duration_ms: int = 4000) -> ProviderRequest:
 
 
 @pytest.mark.asyncio
-async def test_ark_submit_inspect_uses_official_boundary() -> None:
+async def test_ark_submit_wire_json_and_inspect_use_official_boundary() -> None:
     calls: list[httpx.Request] = []
 
     def handler(req: httpx.Request) -> httpx.Response:
         calls.append(req)
         if req.method == "POST":
-            assert req.headers["authorization"] == "Bearer secret"
-            assert json.loads(req.content)["generate_audio"] is False
+            assert req.url == httpx.URL(
+                "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks"
+            )
+            assert {
+                "authorization": req.headers["authorization"],
+                "content-type": req.headers["content-type"],
+            } == {
+                "authorization": "Bearer test-only-api-key",
+                "content-type": "application/json",
+            }
+            assert json.loads(req.content) == {
+                "model": "doubao-seedance-2-0-260128",
+                "content": [{"type": "text", "text": "safe prompt"}],
+                "duration": 4,
+                "ratio": "9:16",
+                "resolution": "1080p",
+                "generate_audio": False,
+            }
             return httpx.Response(200, json={"id": "task-1", "status": "queued"})
+        assert req.url == httpx.URL(
+            "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/task-1"
+        )
         return httpx.Response(
             200,
             json={
@@ -51,11 +70,11 @@ async def test_ark_submit_inspect_uses_official_boundary() -> None:
         )
 
     client = httpx.AsyncClient(
-        base_url="https://mock.invalid/api/v3",
+        base_url="https://ark.cn-beijing.volces.com/api/v3",
         transport=httpx.MockTransport(handler),
-        headers={"Authorization": "Bearer secret"},
+        headers={"Authorization": "Bearer test-only-api-key"},
     )
-    provider = VolcengineArkProvider("secret", client=client)
+    provider = VolcengineArkProvider("test-only-api-key", client=client)
     submission = await provider.submit(request())
     snapshot = await provider.inspect(submission.provider_task_id)
     assert submission.state is ProviderTaskState.QUEUED
