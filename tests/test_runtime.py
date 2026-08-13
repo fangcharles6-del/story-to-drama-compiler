@@ -210,7 +210,13 @@ async def test_frozen_workflow_request_mismatch_fails_before_post(tmp_path: Path
     assert store.reservation is None and provider.posts == 0
 
 
-def live_guard(run_id: str, item: GenerationJob) -> LiveSubmissionGuard:
+def live_guard(
+    run_id: str,
+    item: GenerationJob,
+    *,
+    worst_case_units: Decimal = Decimal("196425"),
+    worst_case_cost_cny: Decimal = Decimal("0.196425"),
+) -> LiveSubmissionGuard:
     now = datetime(2026, 8, 10, tzinfo=UTC)
     request = ProviderRequest(
         run_id=run_id,
@@ -249,10 +255,10 @@ def live_guard(run_id: str, item: GenerationJob) -> LiveSubmissionGuard:
         model=ARK_MODEL,
         resolution="1080p",
         input_mode=PricingInputMode.WITHOUT_VIDEO,
-        billing_unit="token",
+        billing_unit="provider-token",
         unit_price_cny=Decimal("0.000001"),
-        worst_case_units=Decimal("100000"),
-        worst_case_cost_cny=Decimal("0.10"),
+        worst_case_units=worst_case_units,
+        worst_case_cost_cny=worst_case_cost_cny,
         source_url="https://docs.volcengine.com/docs/82379/1544106",
         source_updated_at=now,
         captured_at=now,
@@ -269,6 +275,38 @@ def live_guard(run_id: str, item: GenerationJob) -> LiveSubmissionGuard:
         nonce="c" * 64,
     )
     return LiveSubmissionGuard(capability, pricing, authorization)
+
+
+@pytest.mark.asyncio
+async def test_under_reserved_canary_cost_fails_before_reservation_or_post(
+    tmp_path: Path,
+) -> None:
+    store = AsyncMemoryStore()
+    provider = AcceptedProvider()
+    item = job().model_copy(update={"duration_ms": 4000})
+    activities = RuntimeActivities(
+        store,
+        provider,
+        tmp_path,
+        ProviderProfile(provider="volcengine_ark", model=ARK_MODEL),
+        live_guard(
+            "run",
+            item,
+            worst_case_units=Decimal("194400"),
+            worst_case_cost_cny=Decimal("0.194400"),
+        ),
+    )  # type: ignore[arg-type]
+
+    result = await activities.submit_canary_generation(
+        "run", item, 1, activities._request("run", item, 1)
+    )
+
+    assert result.state is RunState.HUMAN_GATE
+    assert store.failure is not None
+    assert store.failure.failure_class is ProviderFailureClass.COST_LIMIT
+    assert store.reservation is None
+    assert store.authorization_consumed is False
+    assert provider.posts == 0
 
 
 @pytest.mark.asyncio

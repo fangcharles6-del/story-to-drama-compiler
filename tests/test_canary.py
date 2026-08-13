@@ -13,6 +13,7 @@ from sdc.canary import (
     contract_sha256,
     freeze_canary_execution,
     main,
+    minimum_canary_worst_case_units,
 )
 from sdc.canary_authorize import main as authorize_main
 from sdc.contracts import (
@@ -79,8 +80,8 @@ def pricing() -> ProviderPricingSnapshot:
         input_mode=PricingInputMode.WITHOUT_VIDEO,
         billing_unit="provider-token",
         unit_price_cny=Decimal("0.000001"),
-        worst_case_units=Decimal("100000"),
-        worst_case_cost_cny=Decimal("0.10"),
+        worst_case_units=Decimal("196425"),
+        worst_case_cost_cny=Decimal("0.196425"),
         source_url="https://docs.volcengine.com/docs/82379/1544106",
         source_updated_at=NOW,
         captured_at=NOW,
@@ -118,7 +119,48 @@ def test_plan_is_not_authorization_and_allows_zero_posts() -> None:
     plan = build_canary_plan(capability(), pricing(), frozen_request(), Decimal("0.20"), now=NOW)
     assert plan.state == "NOT_AUTHORIZED"
     assert plan.posts_allowed == 0
-    assert plan.worst_case_cost_cny == Decimal("0.10")
+    assert plan.worst_case_cost_cny == Decimal("0.196425")
+
+
+def test_canary_cost_floor_includes_one_provider_terminal_frame() -> None:
+    request = frozen_request()
+    assert minimum_canary_worst_case_units(capability(), request) == Decimal("196425")
+
+    nominal_only = pricing().model_copy(
+        update={
+            "unit_price_cny": Decimal("0.000051"),
+            "worst_case_units": Decimal("194400"),
+            "worst_case_cost_cny": Decimal("9.9144"),
+        }
+    )
+    with pytest.raises(LiveGateError, match="one-frame canary billing allowance"):
+        build_canary_plan(capability(), nominal_only, request, Decimal("12"), now=NOW)
+
+    calibrated = nominal_only.model_copy(
+        update={
+            "worst_case_units": Decimal("196425"),
+            "worst_case_cost_cny": Decimal("10.017675"),
+        }
+    )
+    plan = build_canary_plan(capability(), calibrated, request, Decimal("10.017675"), now=NOW)
+    assert plan.worst_case_cost_cny == Decimal("10.017675")
+    with pytest.raises(LiveGateError, match="approved ceiling"):
+        build_canary_plan(capability(), calibrated, request, Decimal("10.017674"), now=NOW)
+
+    underpriced = calibrated.model_copy(update={"worst_case_cost_cny": Decimal("10.017674")})
+    with pytest.raises(LiveGateError, match="calculated worst-case cost"):
+        build_canary_plan(capability(), underpriced, request, Decimal("12"), now=NOW)
+
+
+def test_canary_rejects_capability_fps_drift() -> None:
+    with pytest.raises(LiveGateError, match="24 fps"):
+        build_canary_plan(
+            capability().model_copy(update={"fps": 25}),
+            pricing(),
+            frozen_request(),
+            Decimal("0.20"),
+            now=NOW,
+        )
 
 
 def test_exact_execution_freezes_single_job_and_request_fingerprint() -> None:
@@ -174,6 +216,15 @@ def test_authorization_generation_is_offline_and_capped() -> None:
         nonce="d" * 64,
     )
     assert value.request_fingerprint == plan.request_fingerprint
+    with pytest.raises(LiveGateError, match="reviewed worst-case cost"):
+        build_live_authorization(
+            plan,
+            execution,
+            authorization_id="SDC-CANARY-001",
+            max_cost_cny=Decimal("0.19"),
+            expires_at=VALID_UNTIL,
+            nonce="d" * 64,
+        )
     with pytest.raises(LiveGateError, match="CNY 15"):
         build_live_authorization(
             plan,
@@ -182,6 +233,17 @@ def test_authorization_generation_is_offline_and_capped() -> None:
             max_cost_cny=Decimal("15.01"),
             expires_at=VALID_UNTIL,
             nonce="d" * 64,
+        )
+
+
+def test_canary_rejects_unknown_billing_unit_before_cost_arithmetic() -> None:
+    with pytest.raises(LiveGateError, match="billing unit"):
+        build_canary_plan(
+            capability(),
+            pricing().model_copy(update={"billing_unit": "unknown-unit"}),
+            frozen_request(),
+            Decimal("0.20"),
+            now=NOW,
         )
 
 
