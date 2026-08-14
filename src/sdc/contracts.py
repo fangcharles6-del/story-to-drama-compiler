@@ -4,16 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from enum import StrEnum
+from pathlib import PurePosixPath
 from typing import Annotated, Final, Literal
+from unicodedata import normalize
+from urllib.parse import urlparse
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 SCHEMA_VERSION: Final[Literal["1.0.0"]] = "1.0.0"
 CANARY_PROVIDER: Final[Literal["volcengine_ark"]] = "volcengine_ark"
 CANARY_MODEL: Final[Literal["doubao-seedance-2-0-260128"]] = "doubao-seedance-2-0-260128"
+EVIDENCE_MAX_OBJECT_BYTES: Final = 64 * 1024 * 1024
+EVIDENCE_MAX_BUNDLE_BYTES: Final = 512 * 1024 * 1024
 Ms = Annotated[int, Field(ge=0)]
 
 
@@ -227,6 +232,260 @@ class CanaryPlan(Contract):
     approved_cost_ceiling_cny: Annotated[Decimal, Field(gt=0)]
     planned_at: datetime
     posts_allowed: Literal[0] = 0
+
+
+class EvidenceAcquisition(StrEnum):
+    FRESH = "FRESH"
+    INHERITED = "INHERITED"
+    LEGACY_IMPORT = "LEGACY_IMPORT"
+
+
+_WINDOWS_RESERVED_PATH_STEMS = frozenset(
+    {"con", "prn", "aux", "nul"}
+    | {f"com{index}" for index in range(1, 10)}
+    | {f"lpt{index}" for index in range(1, 10)}
+    | {f"com{index}" for index in "¹²³"}
+    | {f"lpt{index}" for index in "¹²³"}
+)
+_EVIDENCE_SOURCE_HOSTS = frozenset(
+    {"console.volcengine.com", "docs.volcengine.com", "www.volcengine.com"}
+)
+
+
+def _canonical_evidence_path(value: str) -> str:
+    if not value or len(value) > 512:
+        raise ValueError("evidence logical path must contain 1..512 characters")
+    if normalize("NFC", value) != value:
+        raise ValueError("evidence logical path must use NFC Unicode normalization")
+    if (
+        "\\" in value
+        or any(character in '<>:"|?*' for character in value)
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+    ):
+        raise ValueError("evidence logical path contains a non-portable character")
+    path = PurePosixPath(value)
+    if not path.parts or value == "." or path.is_absolute() or path.as_posix() != value:
+        raise ValueError("evidence logical path must be canonical and relative")
+    for part in path.parts:
+        if part in {"", ".", ".."} or len(part) > 255 or part.rstrip(" .") != part:
+            raise ValueError("evidence logical path contains an unsafe segment")
+        if part.split(".", 1)[0].casefold() in _WINDOWS_RESERVED_PATH_STEMS:
+            raise ValueError("evidence logical path contains a reserved device name")
+    return value
+
+
+def _require_timezone(value: datetime, field: str) -> None:
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError(f"{field} must include a timezone")
+
+
+class EvidenceObject(Contract):
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    size_bytes: Annotated[int, Field(gt=0, le=EVIDENCE_MAX_OBJECT_BYTES)]
+    media_type: str = Field(
+        min_length=3,
+        max_length=127,
+        pattern=r"^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$",
+    )
+
+    @field_validator("media_type")
+    @classmethod
+    def validate_media_type(cls, value: str) -> str:
+        if value != value.lower():
+            raise ValueError("evidence media type must use canonical lowercase spelling")
+        return value
+
+
+class EvidenceMember(Contract):
+    logical_path: str
+    role: str = Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9._-]*$")
+    object_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    content_schema_version: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=32,
+        pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$",
+    )
+
+    @field_validator("logical_path")
+    @classmethod
+    def validate_logical_path(cls, value: str) -> str:
+        return _canonical_evidence_path(value)
+
+
+class EvidenceCapture(Contract):
+    capture_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    kind: str = Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9._-]*$")
+    source_url: str | None = Field(default=None, max_length=2048)
+    source_updated_at: datetime | None = None
+    captured_at: datetime
+    valid_until: datetime
+    acquisition: EvidenceAcquisition
+    origin_anchor_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    origin_valid_until: datetime | None = None
+    member_paths: tuple[str, ...] = Field(min_length=1)
+
+    @field_validator(
+        "source_updated_at", "captured_at", "valid_until", "origin_valid_until"
+    )
+    @classmethod
+    def canonicalize_datetime(cls, value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        _require_timezone(value, "evidence datetime")
+        return value.astimezone(UTC)
+
+    @model_validator(mode="after")
+    def validate_capture(self) -> EvidenceCapture:
+        if self.source_updated_at is not None:
+            if self.source_updated_at > self.captured_at:
+                raise ValueError("source_updated_at must not be later than captured_at")
+        if self.captured_at > self.valid_until:
+            raise ValueError("captured_at must not be later than valid_until")
+        if self.source_url is not None:
+            parsed = urlparse(self.source_url)
+            try:
+                port = parsed.port
+            except ValueError as exc:
+                raise ValueError(
+                    "source_url must be an approved Volcengine HTTPS URL"
+                ) from exc
+            safe_doc_query = (
+                parsed.hostname in {"docs.volcengine.com", "www.volcengine.com"}
+                and parsed.query in {"lang=zh", "lang=en"}
+            )
+            has_noncanonical_character = "\\" in self.source_url or any(
+                ord(character) <= 32 or ord(character) == 127
+                for character in self.source_url
+            )
+            if (
+                has_noncanonical_character
+                or parsed.scheme != "https"
+                or parsed.hostname not in _EVIDENCE_SOURCE_HOSTS
+                or parsed.netloc != parsed.hostname
+                or parsed.username is not None
+                or parsed.password is not None
+                or port is not None
+                or (parsed.query and not safe_doc_query)
+                or parsed.fragment
+            ):
+                raise ValueError("source_url must be an approved Volcengine HTTPS URL")
+        canonical_paths = tuple(_canonical_evidence_path(path) for path in self.member_paths)
+        if canonical_paths != tuple(sorted(set(canonical_paths))):
+            raise ValueError("capture member_paths must be unique and sorted")
+        if self.acquisition is EvidenceAcquisition.FRESH:
+            if self.origin_anchor_sha256 is not None or self.origin_valid_until is not None:
+                raise ValueError("fresh evidence must not name an origin")
+        elif self.origin_anchor_sha256 is None or self.origin_valid_until is None:
+            raise ValueError("inherited or legacy evidence must name its origin and expiry")
+        elif self.valid_until > self.origin_valid_until:
+            raise ValueError("inherited evidence must not extend its origin validity")
+        return self
+
+
+def evidence_logical_tree_sha256(
+    objects: tuple[EvidenceObject, ...], members: tuple[EvidenceMember, ...]
+) -> str:
+    object_by_hash = {item.sha256: item for item in objects}
+    resolved: list[dict[str, object]] = []
+    for member in sorted(members, key=lambda item: item.logical_path):
+        item = object_by_hash.get(member.object_sha256)
+        if item is None:
+            raise ValueError(f"member references undeclared object: {member.logical_path}")
+        resolved.append(
+            {
+                "logical_path": member.logical_path,
+                "role": member.role,
+                "content_schema_version": member.content_schema_version,
+                "sha256": item.sha256,
+                "size_bytes": item.size_bytes,
+                "media_type": item.media_type,
+            }
+        )
+    descriptor = json.dumps(
+        resolved, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    ).encode()
+    return hashlib.sha256(b"sdc:evidence-logical-tree:1.0.0\0" + descriptor).hexdigest()
+
+
+class EvidenceBundleContent(Contract):
+    created_at: datetime
+    valid_until: datetime
+    predecessor_bundle_id: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    objects: tuple[EvidenceObject, ...] = Field(min_length=1)
+    members: tuple[EvidenceMember, ...] = Field(min_length=1)
+    captures: tuple[EvidenceCapture, ...] = Field(min_length=1)
+    resolved_logical_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @field_validator("created_at", "valid_until")
+    @classmethod
+    def canonicalize_datetime(cls, value: datetime) -> datetime:
+        _require_timezone(value, "bundle datetime")
+        return value.astimezone(UTC)
+
+    @model_validator(mode="after")
+    def validate_bundle_content(self) -> EvidenceBundleContent:
+        object_hashes = tuple(item.sha256 for item in self.objects)
+        if object_hashes != tuple(sorted(set(object_hashes))):
+            raise ValueError("evidence objects must be unique and sorted by sha256")
+
+        member_paths = tuple(item.logical_path for item in self.members)
+        if member_paths != tuple(sorted(set(member_paths))):
+            raise ValueError("evidence members must be unique and sorted by logical_path")
+        if len({path.casefold() for path in member_paths}) != len(member_paths):
+            raise ValueError("evidence logical paths must remain unique when case-folded")
+
+        declared_objects = set(object_hashes)
+        referenced_objects = {item.object_sha256 for item in self.members}
+        if referenced_objects != declared_objects:
+            raise ValueError("evidence objects and member references must form an exact closure")
+        if sum(item.size_bytes for item in self.objects) > EVIDENCE_MAX_BUNDLE_BYTES:
+            raise ValueError("evidence bundle exceeds the total object byte limit")
+
+        capture_ids = tuple(item.capture_id for item in self.captures)
+        if capture_ids != tuple(sorted(set(capture_ids))):
+            raise ValueError("evidence captures must be unique and sorted by capture_id")
+        captured_paths = [path for capture in self.captures for path in capture.member_paths]
+        if len(captured_paths) != len(set(captured_paths)) or set(captured_paths) != set(
+            member_paths
+        ):
+            raise ValueError(
+                "captures must reference every evidence member exactly once"
+            )
+        if self.created_at < max(capture.captured_at for capture in self.captures):
+            raise ValueError("created_at must not precede an evidence capture")
+
+        expected_valid_until = min(capture.valid_until for capture in self.captures)
+        if self.valid_until != expected_valid_until:
+            raise ValueError("bundle valid_until must equal the earliest capture expiry")
+        expected_tree = evidence_logical_tree_sha256(self.objects, self.members)
+        if self.resolved_logical_tree_sha256 != expected_tree:
+            raise ValueError("resolved evidence tree digest does not match bundle members")
+        return self
+
+
+def evidence_bundle_content_sha256(content: EvidenceBundleContent) -> str:
+    descriptor = json.dumps(
+        content.model_dump(mode="json"),
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    ).encode()
+    return hashlib.sha256(b"sdc:evidence-bundle-content:1.0.0\0" + descriptor).hexdigest()
+
+
+class EvidenceBundle(Contract):
+    document_type: Literal["sdc.evidence-bundle"] = "sdc.evidence-bundle"
+    bundle_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    content: EvidenceBundleContent
+
+    @model_validator(mode="after")
+    def validate_bundle_id(self) -> EvidenceBundle:
+        if self.bundle_id != evidence_bundle_content_sha256(self.content):
+            raise ValueError("bundle_id does not match canonical bundle content")
+        if self.bundle_id == self.content.predecessor_bundle_id:
+            raise ValueError("bundle predecessor must differ from the current bundle")
+        return self
 
 
 class InputMaterial(Contract):

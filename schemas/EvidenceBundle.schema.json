@@ -1,0 +1,308 @@
+{
+  "$defs": {
+    "EvidenceAcquisition": {
+      "enum": [
+        "FRESH",
+        "INHERITED",
+        "LEGACY_IMPORT"
+      ],
+      "title": "EvidenceAcquisition",
+      "type": "string"
+    },
+    "EvidenceBundleContent": {
+      "additionalProperties": false,
+      "properties": {
+        "captures": {
+          "items": {
+            "$ref": "#/$defs/EvidenceCapture"
+          },
+          "minItems": 1,
+          "title": "Captures",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/EvidenceMember"
+          },
+          "minItems": 1,
+          "title": "Members",
+          "type": "array"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/EvidenceObject"
+          },
+          "minItems": 1,
+          "title": "Objects",
+          "type": "array"
+        },
+        "predecessor_bundle_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Predecessor Bundle Id"
+        },
+        "resolved_logical_tree_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Resolved Logical Tree Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date-time",
+          "title": "Valid Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "created_at",
+        "valid_until",
+        "objects",
+        "members",
+        "captures",
+        "resolved_logical_tree_sha256"
+      ],
+      "title": "EvidenceBundleContent",
+      "type": "object"
+    },
+    "EvidenceCapture": {
+      "additionalProperties": false,
+      "properties": {
+        "acquisition": {
+          "$ref": "#/$defs/EvidenceAcquisition"
+        },
+        "capture_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Capture Id",
+          "type": "string"
+        },
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "kind": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9._-]*$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "member_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Member Paths",
+          "type": "array"
+        },
+        "origin_anchor_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin Anchor Sha256"
+        },
+        "origin_valid_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin Valid Until"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Updated At"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "valid_until": {
+          "format": "date-time",
+          "title": "Valid Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capture_id",
+        "kind",
+        "captured_at",
+        "valid_until",
+        "acquisition",
+        "member_paths"
+      ],
+      "title": "EvidenceCapture",
+      "type": "object"
+    },
+    "EvidenceMember": {
+      "additionalProperties": false,
+      "properties": {
+        "content_schema_version": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 1,
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Schema Version"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "object_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Object Sha256",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9._-]*$",
+          "title": "Role",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "logical_path",
+        "role",
+        "object_sha256"
+      ],
+      "title": "EvidenceMember",
+      "type": "object"
+    },
+    "EvidenceObject": {
+      "additionalProperties": false,
+      "properties": {
+        "media_type": {
+          "maxLength": 127,
+          "minLength": 3,
+          "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "maximum": 67108864,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sha256",
+        "size_bytes",
+        "media_type"
+      ],
+      "title": "EvidenceObject",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "bundle_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "content": {
+      "$ref": "#/$defs/EvidenceBundleContent"
+    },
+    "document_type": {
+      "const": "sdc.evidence-bundle",
+      "default": "sdc.evidence-bundle",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "content"
+  ],
+  "title": "EvidenceBundle",
+  "type": "object"
+}
