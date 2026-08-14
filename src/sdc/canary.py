@@ -6,7 +6,7 @@ import argparse
 import hashlib
 import json
 from datetime import UTC, datetime
-from decimal import Decimal
+from decimal import ROUND_CEILING, Decimal
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -30,6 +30,11 @@ from sdc.provider import ARK_MODEL, request_fingerprint
 
 ARK_PROVIDER = "volcengine_ark"
 CANARY_DURATION_MS = 4000
+CANARY_FPS = 24
+CANARY_WIDTH_PX = 1080
+CANARY_HEIGHT_PX = 1920
+CANARY_PROVIDER_TAIL_FRAME_ALLOWANCE = 1
+ARK_PROVIDER_TOKEN_PIXEL_DIVISOR = Decimal(1024)
 CANARY_COST_HARD_LIMIT_CNY = Decimal("15")
 
 
@@ -89,6 +94,20 @@ def _validate_request(request: ProviderRequest) -> None:
         )
 
 
+def minimum_canary_worst_case_units(
+    capability: ProviderCapabilitySnapshot, request: ProviderRequest
+) -> Decimal:
+    """Return the calibrated billing floor, including one provider terminal frame."""
+    nominal_frames = (
+        Decimal(request.duration_ms) * Decimal(capability.fps) / Decimal(1000)
+    ).to_integral_value(rounding=ROUND_CEILING)
+    billed_frames = nominal_frames + Decimal(CANARY_PROVIDER_TAIL_FRAME_ALLOWANCE)
+    pixels_per_frame = Decimal(CANARY_WIDTH_PX * CANARY_HEIGHT_PX)
+    return (billed_frames * pixels_per_frame / ARK_PROVIDER_TOKEN_PIXEL_DIVISOR).to_integral_value(
+        rounding=ROUND_CEILING
+    )
+
+
 def validate_snapshots(
     capability: ProviderCapabilitySnapshot,
     pricing: ProviderPricingSnapshot,
@@ -143,10 +162,14 @@ def validate_snapshots(
         raise LiveGateError(
             ProviderFailureClass.CAPABILITY_DRIFT, "request resolution is outside capability"
         )
-    if capability.min_duration_ms != 4000 or capability.max_duration_ms != 15000:
+    if (
+        capability.fps != CANARY_FPS
+        or capability.min_duration_ms != 4000
+        or capability.max_duration_ms != 15000
+    ):
         raise LiveGateError(
             ProviderFailureClass.CAPABILITY_DRIFT,
-            "Seedance 2.0 output duration capability must remain 4000..15000 ms",
+            "Seedance 2.0 capability must remain 24 fps and 4000..15000 ms",
         )
     # ProviderRequest currently carries image references only, so Ark pricing remains
     # WITHOUT_VIDEO even when input_materials is non-empty.
@@ -158,10 +181,26 @@ def validate_snapshots(
         or pricing.input_mode is not expected_input_mode
     ):
         raise LiveGateError(ProviderFailureClass.COST_LIMIT, "pricing snapshot profile mismatch")
+    if pricing.billing_unit != "provider-token":
+        raise LiveGateError(
+            ProviderFailureClass.COST_LIMIT,
+            "pricing snapshot billing unit must remain provider-token",
+        )
     if pricing.worst_case_cost_cny < pricing.unit_price_cny * pricing.worst_case_units:
         raise LiveGateError(
             ProviderFailureClass.COST_LIMIT,
             "pricing snapshot understates its calculated worst-case cost",
+        )
+    minimum_worst_case_units = minimum_canary_worst_case_units(capability, request)
+    if pricing.worst_case_units < minimum_worst_case_units:
+        raise LiveGateError(
+            ProviderFailureClass.COST_LIMIT,
+            "pricing snapshot omits the one-frame canary billing allowance",
+        )
+    if pricing.worst_case_cost_cny < pricing.unit_price_cny * minimum_worst_case_units:
+        raise LiveGateError(
+            ProviderFailureClass.COST_LIMIT,
+            "pricing snapshot understates the frame-rounded canary cost",
         )
     if pricing.worst_case_cost_cny > cost_ceiling_cny:
         raise LiveGateError(

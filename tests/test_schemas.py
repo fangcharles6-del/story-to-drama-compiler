@@ -1,7 +1,8 @@
 import json
+from decimal import Decimal
 from pathlib import Path
 
-from sdc.contracts import ProviderFailure
+from sdc.contracts import ProviderFailure, ProviderPricingSnapshot
 from sdc.schemas import MODELS
 
 
@@ -26,3 +27,51 @@ def test_provider_failure_1_0_0_payload_remains_backward_compatible() -> None:
     expected_fields = {"schema_version", "failure_class", "code", "message", "retryable"}
     assert set(ProviderFailure.model_fields) == expected_fields
     assert set(ProviderFailure.model_json_schema()["properties"]) == expected_fields
+
+
+def test_provider_pricing_1_0_0_legacy_cost_remains_parseable() -> None:
+    legacy_payload = {
+        "schema_version": "1.0.0",
+        "snapshot_revision": "2026-08-13.v02-r6",
+        "status": "CURRENT",
+        "provider": "volcengine_ark",
+        "model": "doubao-seedance-2-0-260128",
+        "resolution": "1080p",
+        "input_mode": "WITHOUT_VIDEO",
+        "currency": "CNY",
+        "billing_unit": "provider-token",
+        "unit_price_cny": "0.000051",
+        "worst_case_units": "194400",
+        "worst_case_cost_cny": "9.9144",
+        "source_url": "https://docs.volcengine.com/docs/82379/1544106",
+        "source_updated_at": "2026-08-12T22:01:30+08:00",
+        "captured_at": "2026-08-13T17:14:11+08:00",
+        "valid_until": "2026-08-13T23:59:59+08:00",
+        "evidence_sha256": "a" * 64,
+    }
+
+    snapshot = ProviderPricingSnapshot.model_validate(legacy_payload)
+
+    assert snapshot.worst_case_units == Decimal("194400")
+    assert snapshot.worst_case_cost_cny == Decimal("9.9144")
+    expected_fields = {
+        "schema_version",
+        "snapshot_revision",
+        "status",
+        "provider",
+        "model",
+        "resolution",
+        "input_mode",
+        "currency",
+        "billing_unit",
+        "unit_price_cny",
+        "worst_case_units",
+        "worst_case_cost_cny",
+        "source_url",
+        "source_updated_at",
+        "captured_at",
+        "valid_until",
+        "evidence_sha256",
+    }
+    assert set(ProviderPricingSnapshot.model_fields) == expected_fields
+    assert set(ProviderPricingSnapshot.model_json_schema()["properties"]) == expected_fields

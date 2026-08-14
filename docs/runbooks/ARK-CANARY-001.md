@@ -9,6 +9,15 @@ Record their URLs, page update timestamps, capture timestamps, validity deadline
 the saved evidence. Do not infer a unit or price from a search-result excerpt. The capability
 snapshot must retain model `doubao-seedance-2-0-260128`, 9:16, 1080p, 24 fps, and 4–15 seconds.
 
+For the pinned 4000 ms request, SDC's R6-calibrated safety floor reserves one terminal output frame
+in addition to the nominal 96 frames. This is a conservative local preflight rule, not a Provider
+SLA or a hard billing cap. The calibrated billing floor is therefore
+`(ceil(4000 * 24 / 1000) + 1) * 1080 * 1920 / 1024 = 196425` provider tokens. At CNY 51 per
+million tokens this is CNY 10.017675. A snapshot that records only 194400 tokens / CNY 9.9144
+fails closed because it does not cover the frame-rounded output observed by SDC-CANARY-001 V02-R6.
+The live gate applies this arithmetic only when the pricing snapshot uses the reviewed
+`provider-token` billing unit; an unknown unit fails before authorization consumption or POST.
+
 Official sources:
 
 - Capability: <https://www.volcengine.com/docs/82379/1330310>
