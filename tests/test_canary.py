@@ -17,7 +17,6 @@ from sdc.canary import (
 )
 from sdc.canary_authorize import main as authorize_main
 from sdc.contracts import (
-    CanaryExecution,
     GenerationJob,
     JobGraph,
     LiveAuthorization,
@@ -204,33 +203,15 @@ def test_authorization_is_bound_to_exact_snapshots_and_request() -> None:
         guard.validate(request.model_copy(update={"prompt": "different"}), now=NOW)
 
 
-def test_authorization_generation_is_offline_and_capped() -> None:
+def test_legacy_authorization_generation_is_retired() -> None:
     plan = build_canary_plan(capability(), pricing(), frozen_request(), Decimal("15"), now=NOW)
     execution = freeze_canary_execution("canary-run", graph())
-    value = build_live_authorization(
-        plan,
-        execution,
-        authorization_id="SDC-CANARY-001",
-        max_cost_cny=Decimal("15"),
-        expires_at=VALID_UNTIL,
-        nonce="d" * 64,
-    )
-    assert value.request_fingerprint == plan.request_fingerprint
-    with pytest.raises(LiveGateError, match="reviewed worst-case cost"):
+    with pytest.raises(LiveGateError, match="legacy authorization generation is retired"):
         build_live_authorization(
             plan,
             execution,
             authorization_id="SDC-CANARY-001",
-            max_cost_cny=Decimal("0.19"),
-            expires_at=VALID_UNTIL,
-            nonce="d" * 64,
-        )
-    with pytest.raises(LiveGateError, match="CNY 15"):
-        build_live_authorization(
-            plan,
-            execution,
-            authorization_id="SDC-CANARY-001",
-            max_cost_cny=Decimal("15.01"),
+            max_cost_cny=Decimal("15"),
             expires_at=VALID_UNTIL,
             nonce="d" * 64,
         )
@@ -247,93 +228,47 @@ def test_canary_rejects_unknown_billing_unit_before_cost_arithmetic() -> None:
         )
 
 
-def test_cli_dry_run_performs_no_network_calls(
+def test_loose_snapshot_cli_is_retired_before_files_or_network(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def forbidden(*_: object, **__: object) -> None:
         raise AssertionError("dry-run must not touch the network")
 
     monkeypatch.setattr(socket, "create_connection", forbidden)
-    request = frozen_request()
-    files = {
-        "capability": capability(),
-        "pricing": pricing(),
-        "request": request,
-    }
-    paths: dict[str, Path] = {}
-    for name, value in files.items():
-        paths[name] = tmp_path / f"{name}.json"
-        paths[name].write_text(value.model_dump_json())
     output = tmp_path / "plan.json"
-    assert (
+    with pytest.raises(LiveGateError, match="loose snapshot planning is retired"):
         main(
             [
                 "--capability",
-                str(paths["capability"]),
+                str(tmp_path / "missing-capability.json"),
                 "--pricing",
-                str(paths["pricing"]),
+                str(tmp_path / "missing-pricing.json"),
                 "--request",
-                str(paths["request"]),
+                str(tmp_path / "missing-request.json"),
                 "--max-cost-cny",
                 "0.20",
                 "--output",
                 str(output),
             ]
         )
-        == 0
-    )
-    assert '"state": "NOT_AUTHORIZED"' in output.read_text()
-    assert '"posts_allowed": 0' in output.read_text()
+    assert not output.exists()
 
 
-def test_story_planner_and_authorizer_are_separate_zero_network_steps(
+def test_legacy_authorizer_cli_is_disabled_before_input_reads(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def forbidden(*_: object, **__: object) -> None:
         raise AssertionError("canary preparation must not touch the network")
 
     monkeypatch.setattr(socket, "create_connection", forbidden)
-    capability_path = tmp_path / "capability.json"
-    pricing_path = tmp_path / "pricing.json"
-    story_path = tmp_path / "story.json"
-    capability_path.write_text(capability().model_dump_json())
-    pricing_path.write_text(pricing().model_dump_json())
-    story_path.write_text(
-        '{"title":"canary","beats":[{"text":"one safe canary","duration_ms":4000}]}'
-    )
-    plan_path = tmp_path / "plan.json"
-    execution_path = tmp_path / "execution.json"
-    assert (
-        main(
-            [
-                "--capability",
-                str(capability_path),
-                "--pricing",
-                str(pricing_path),
-                "--story",
-                str(story_path),
-                "--run-id",
-                "canary-run-fixed",
-                "--max-cost-cny",
-                "15",
-                "--output",
-                str(plan_path),
-                "--execution-output",
-                str(execution_path),
-            ]
-        )
-        == 0
-    )
-    execution = CanaryExecution.model_validate_json(execution_path.read_text())
-    assert execution.run_id == "canary-run-fixed"
     authorization_path = tmp_path / "authorization.json"
-    assert (
+    with pytest.raises(LiveGateError, match="authorization generation is disabled"):
         authorize_main(
             [
                 "--plan",
-                str(plan_path),
+                str(tmp_path / "missing-plan.json"),
                 "--execution",
-                str(execution_path),
+                str(tmp_path / "missing-execution.json"),
                 "--authorization-id",
                 "SDC-CANARY-001",
                 "--max-cost-cny",
@@ -346,6 +281,4 @@ def test_story_planner_and_authorizer_are_separate_zero_network_steps(
                 str(authorization_path),
             ]
         )
-        == 0
-    )
-    assert not authorization_path.samefile(execution_path)
+    assert not authorization_path.exists()

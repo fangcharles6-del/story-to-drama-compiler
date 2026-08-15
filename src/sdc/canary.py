@@ -7,12 +7,10 @@ import hashlib
 import json
 from datetime import UTC, datetime
 from decimal import ROUND_CEILING, Decimal
-from pathlib import Path
 from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
-from sdc.compiler import compile_story
 from sdc.contracts import (
     CanaryExecution,
     CanaryPlan,
@@ -24,7 +22,6 @@ from sdc.contracts import (
     ProviderPricingSnapshot,
     ProviderRequest,
     SnapshotStatus,
-    StoryInput,
 )
 from sdc.provider import ARK_MODEL, request_fingerprint
 
@@ -268,45 +265,11 @@ def build_live_authorization(
     expires_at: datetime,
     nonce: str,
 ) -> LiveAuthorization:
-    """Create an offline authorization artifact; execution remains a separate client action."""
-    if (
-        plan.run_id != execution.run_id
-        or plan.job_id != execution.request.job_id
-        or plan.request_fingerprint != execution.request.request_fingerprint
-    ):
-        raise LiveGateError(
-            ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-            "reviewed plan does not match the frozen Workflow execution",
-        )
-    if max_cost_cny > CANARY_COST_HARD_LIMIT_CNY:
-        raise LiveGateError(
-            ProviderFailureClass.COST_LIMIT,
-            "live authorization exceeds the CNY 15 hard limit",
-        )
-    if max_cost_cny > plan.approved_cost_ceiling_cny:
-        raise LiveGateError(
-            ProviderFailureClass.COST_LIMIT,
-            "live authorization exceeds the reviewed plan ceiling",
-        )
-    if max_cost_cny < plan.worst_case_cost_cny:
-        raise LiveGateError(
-            ProviderFailureClass.COST_LIMIT,
-            "live authorization is below the reviewed worst-case cost",
-        )
-    _aware(expires_at, "authorization expires_at")
-    if expires_at <= _aware(plan.planned_at, "plan planned_at"):
-        raise LiveGateError(
-            ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-            "live authorization must expire after the reviewed plan time",
-        )
-    return LiveAuthorization(
-        authorization_id=authorization_id,
-        request_fingerprint=plan.request_fingerprint,
-        capability_snapshot_sha256=plan.capability_snapshot_sha256,
-        pricing_snapshot_sha256=plan.pricing_snapshot_sha256,
-        max_cost_cny=max_cost_cny,
-        expires_at=expires_at,
-        nonce=nonce,
+    """Fail closed until an evidence-bound authorization contract is delivered."""
+    del plan, execution, authorization_id, max_cost_cny, expires_at, nonce
+    raise LiveGateError(
+        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+        "legacy authorization generation is retired; evidence-bound authorization is not delivered",
     )
 
 
@@ -360,61 +323,15 @@ class LiveSubmissionGuard:
             )
 
 
-def _load[ModelT: BaseModel](path: Path, model: type[ModelT]) -> ModelT:
-    return model.model_validate_json(path.read_text())
-
-
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build a zero-network Ark canary plan")
-    parser.add_argument("--capability", type=Path, required=True)
-    parser.add_argument("--pricing", type=Path, required=True)
-    inputs = parser.add_mutually_exclusive_group(required=True)
-    inputs.add_argument("--request", type=Path)
-    inputs.add_argument("--story", type=Path)
-    parser.add_argument("--run-id")
-    parser.add_argument("--max-cost-cny", type=Decimal, required=True)
-    parser.add_argument("--output", type=Path)
-    parser.add_argument("--frozen-request-output", type=Path)
-    parser.add_argument("--execution-output", type=Path)
-    args = parser.parse_args(argv)
-    execution: CanaryExecution | None = None
-    if args.story:
-        if not args.run_id or not args.execution_output:
-            parser.error("--story requires --run-id and --execution-output")
-        story = _load(args.story, StoryInput)
-        execution = freeze_canary_execution(args.run_id, compile_story(story)[3])
-        request = execution.request
-    else:
-        if args.run_id or args.execution_output:
-            parser.error("--run-id/--execution-output are only valid with --story")
-        request = _load(args.request, ProviderRequest)
-        expected_fingerprint = request_fingerprint(request)
-        if request.request_fingerprint not in {"0" * 64, expected_fingerprint}:
-            raise LiveGateError(
-                ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-                "input request contains a mismatched non-placeholder fingerprint",
-            )
-        request = request.model_copy(update={"request_fingerprint": expected_fingerprint})
-    plan = build_canary_plan(
-        _load(args.capability, ProviderCapabilitySnapshot),
-        _load(args.pricing, ProviderPricingSnapshot),
-        request,
-        args.max_cost_cny,
+    parser = argparse.ArgumentParser(
+        description="Retired loose-snapshot Canary planner; use sdc.fresh_canary_plan"
     )
-    rendered = plan.model_dump_json(indent=2) + "\n"
-    if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(rendered)
-    else:
-        print(rendered, end="")
-    if args.frozen_request_output:
-        args.frozen_request_output.parent.mkdir(parents=True, exist_ok=True)
-        args.frozen_request_output.write_text(request.model_dump_json(indent=2) + "\n")
-    if execution is not None:
-        assert args.execution_output is not None
-        args.execution_output.parent.mkdir(parents=True, exist_ok=True)
-        args.execution_output.write_text(execution.model_dump_json(indent=2) + "\n")
-    return 0
+    parser.parse_known_args(argv)
+    raise LiveGateError(
+        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+        "loose snapshot planning is retired; use the reviewed FRESH evidence planner",
+    )
 
 
 if __name__ == "__main__":

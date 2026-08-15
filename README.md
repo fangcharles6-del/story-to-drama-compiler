@@ -54,12 +54,10 @@ payload converter. See `docs/adr/SDC-ADR-009.md` for the accepted identity and r
 ## Seedance provider (offline integration only)
 
 `SDC_PROVIDER=fake` is the safe default and CI never needs a provider credential or network access
-to Ark. The accepted optional adapter is selected with `SDC_PROVIDER=volcengine_ark`; it requires
-`SDC_ARK_API_KEY` at worker startup and otherwise fails fast. Optional settings are
-`SDC_ARK_MODEL` (default `doubao-seedance-2-0-260128`), `SDC_ARK_BASE_URL` (official HTTPS URL by
-default; override for local tests), `SDC_ARK_MAX_IN_FLIGHT` (default 2),
-`SDC_ARK_POLL_INTERVAL_SECONDS`, and `SDC_ARK_TASK_TIMEOUT_SECONDS`. Do not put keys in `.env` or
-source control.
+to Ark. The Ark adapter remains in the codebase, but supported Worker startup with
+`SDC_PROVIDER=volcengine_ark` now fails closed until an evidence-bound runtime contract is
+delivered. It does so before reading an API Key or legacy authorization file. FakeProvider rehearsal
+remains available; do not put keys in `.env` or source control.
 
 No real/live canary is authorized by BUILD-003. Before production, an operator must manually open
 the Ark service, inject the secret through the deployment secret store, establish a cost cap, and
@@ -72,27 +70,24 @@ temporary file, and are atomically published only after SHA-256, size, and ffpro
 
 ## Zero-spend live readiness
 
-SDC-ADR-011 adds a second, fail-closed boundary in front of Ark submission. A live worker requires
+SDC-ADR-011 historically added a second, fail-closed boundary in front of Ark submission using
 versioned capability and pricing snapshots plus a separately approved, exact-request
-`LiveAuthorization`. Consumption is persisted before POST and is globally one-use, so worker
-restart cannot replay a paid authorization. Missing, stale, mismatched, reused, or over-budget
-evidence enters `HUMAN_GATE` without a provider request.
+`LiveAuthorization`. ADR-016 now retires that supported live path until the evidence-bound runtime
+contract is delivered. The durable one-use design remains historical context, not a current
+execution instruction.
 
-`uv run python -m sdc.canary` creates a zero-network plan and frozen request. Its output is always
-`NOT_AUTHORIZED` with zero allowed POSTs; it cannot create a live authorization or call Ark. See
-`docs/runbooks/ARK-CANARY-001.md`. BUILD-004 still authorizes no credentials, service activation,
-purchase, recharge, paid generation, or live canary; that requires a separate SDC-CANARY approval.
+The historical loose-snapshot `python -m sdc.canary` command is retired and fails closed. New
+zero-network planning uses a Git-reviewed execution-day FRESH EvidenceBundle through
+`python -m sdc.fresh_canary_plan`; its output is always `NOT_AUTHORIZED` with zero allowed POSTs.
+See `docs/runbooks/ARK-CANARY-001.md`. No planner creates authorization or calls Ark.
 
 SDC-ADR-012 adds the deterministic BUILD-005 operation path. A preparation command can compile a
 one-beat, 4000 ms story and freeze one `CanaryExecution`: fixed `run_id`, deterministic single
 `job_id`, exact request fingerprint, pinned Seedance 2.0 / 9:16 / 1080p parameters, text-only input,
-and explicit `generate_audio=false`. The reviewed cost ceiling is capped at CNY 15. Authorization
-artifact creation uses the separate `python -m sdc.canary_authorize` command, and execution uses
-`python -m sdc.client --canary-execution ...`; neither preparation command executes a Workflow or
-touches Ark. The canary Workflow permits Attempt 1 and at most one POST, then fails closed to
-`HUMAN_GATE` without Attempt 2. BUILD-005 still performs no live call and grants no credentials or
-spend authority; `SDC-CANARY-001` remains a separate approval based on execution-day official
-evidence.
+and explicit `generate_audio=false`. The reviewed cost ceiling is capped at CNY 15. The historical
+`python -m sdc.canary_authorize` command and Ark Worker startup path are now retired and fail closed
+until an evidence-bound authorization/runtime contract is delivered. FakeProvider rehearsal remains
+available. This build performs no live call and grants no credentials or spend authority.
 
 SDC-ADR-013 fixes the first Canary infrastructure to local Windows 10 Pro plus Docker Desktop WSL2.
 PostgreSQL and Temporal bind to loopback only, while the Worker and client run through host `uv`.
@@ -110,3 +105,11 @@ unchanged historical evidence without modifying its source archive, capture time
 never restores live eligibility or reads R6-live, credentials, Provider requests, or generated
 media. See `docs/runbooks/SDC-EVIDENCE-CAS-R2-R6.md` for the verify-first procedure and fixed
 67-object closure.
+
+SDC-ADR-016 adds a separate execution-day FRESH namespace and a zero-network evidence-bound
+planner. The freezer produces only an untrusted candidate bundle; a distinct Git-reviewed positive
+registry entry must bind its full ID, tree, contract hashes and expiry before planning. The new
+`EvidenceBoundCanaryPlan` remains `NOT_AUTHORIZED` with zero POSTs. Historical authorization
+generation and Ark Worker startup both fail closed rather than accepting it. See
+`docs/runbooks/SDC-FRESH-EVIDENCE-PLANNING.md`; this build still does not access Ark, read a Key,
+start services, create authorization, or permit paid generation.

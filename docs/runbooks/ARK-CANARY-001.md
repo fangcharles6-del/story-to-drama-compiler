@@ -27,16 +27,19 @@ Official sources:
 Store evidence outside source control. Never place an API Key, Bearer header, signed input URL, or
 signed result URL in a snapshot.
 
-## 2. Freeze the deterministic one-task execution and zero-network plan
+## 2. Freeze reviewed evidence and the deterministic zero-network plan
 
-Prepare current `ProviderCapabilitySnapshot` and `ProviderPricingSnapshot` JSON files plus a
-one-beat `StoryInput` whose duration is exactly 4000 ms. Select the final `run_id` once; do not
-replace it after review. Then run:
+The historical loose-snapshot `sdc.canary` path is not evidence-bound. For a new execution-day
+plan, first follow `SDC-FRESH-EVIDENCE-PLANNING.md`: freeze the two sanitized official PDFs and
+matching snapshots, then obtain a separate reviewed registry commit for the resulting bundle ID.
+
+Prepare a one-beat `StoryInput` whose duration is exactly 4000 ms. Select the final `run_id` once;
+do not replace it after review. With the reviewed bundle on the current baseline, run:
 
 ```bash
-uv run python -m sdc.canary \
-  --capability .artifacts/canary/capability.json \
-  --pricing .artifacts/canary/pricing.json \
+uv run python -m sdc.fresh_canary_plan \
+  --fresh-evidence-root .artifacts/evidence-current/v1 \
+  --reviewed-evidence-bundle-id <FULL_REVIEWED_BUNDLE_ID> \
   --story .artifacts/canary/story.json \
   --run-id <FIXED_RUN_ID> \
   --max-cost-cny <HUMAN_APPROVED_LIMIT_NOT_OVER_15_CNY> \
@@ -45,39 +48,32 @@ uv run python -m sdc.canary \
   --output .artifacts/canary/plan.json
 ```
 
-Successful output must contain `"state": "NOT_AUTHORIZED"` and `"posts_allowed": 0`. This command
-contains no HTTP client and makes no provider request. The execution artifact must validate as one
-Job, Attempt 1, Seedance 2.0, 9:16, 1080p, 4000 ms, text-only, and
+Successful output must identify `sdc.evidence-bound-canary-plan`, contain
+`"state": "NOT_AUTHORIZED"` and `"posts_allowed": 0`, and bind the reviewed bundle ID/tree/expiry.
+This command contains no HTTP client and makes no provider request. The execution artifact must
+validate as one Job, Attempt 1, Seedance 2.0, 9:16, 1080p, 4000 ms, text-only, and
 `"generate_audio": false`. Its request `run_id`, `job_id`, and fingerprint are the values that the
 Workflow must later receive unchanged.
 
 ## 3. Human review boundary
 
 Review the frozen request fingerprint, capability checksum, pricing checksum, and worst-case CNY
-cost. BUILD-005 tests authorization generation but does not authorize creating an operational
-authorization. A future SDC-CANARY-001 approval must name the exact request and checksum values,
-establish an expiry and a cost ceiling no greater than CNY 15, and authorize no more than one POST
-for creative Attempt 1.
+cost. Historical BUILD-005 authorization generation is retired; this plan cannot create an
+operational authorization. Any future live delivery and approval must name the exact request and
+checksum values, establish an expiry and a cost ceiling no greater than CNY 15, and authorize no
+more than one POST for creative Attempt 1.
 
-After that separate approval, generate (but do not execute) the authorization artifact in its own
-step:
-
-```bash
-uv run python -m sdc.canary_authorize \
-  --plan .artifacts/canary/plan.json \
-  --execution .artifacts/canary/execution.json \
-  --authorization-id SDC-CANARY-001 \
-  --max-cost-cny <APPROVED_LIMIT_NOT_OVER_15_CNY> \
-  --expires-at <APPROVED_TIMEZONE_AWARE_EXPIRY> \
-  --nonce <APPROVED_64_HEX_NONCE> \
-  --output .artifacts/canary/authorization.json
-```
-
-This command writes JSON only. It does not start Temporal, load an API Key, or call Ark.
+The historical `sdc.canary_authorize` command is retired and fails closed for both old and new plan
+types. Ark Worker startup is also retired; only FakeProvider rehearsal remains available. Stop
+after offline planning. Connecting this plan to a new authorization/runtime contract requires a
+separate delivery and explicit approval; do not convert it to the old `CanaryPlan` or fall back to
+loose snapshot files.
 
 ## 4. Future live prerequisites and execution (not authorized here)
 
-Only after SDC-CANARY-001 approval may an operator inject the Key through a deployment Secret Store
+The evidence-bound runtime connection is not delivered by ADR-016, so this section remains
+historical and is not an execution instruction for a new plan. Only after a future dedicated
+delivery and SDC-CANARY-001 approval may an operator inject the Key through a deployment Secret Store
 and supply these paths to an isolated worker:
 
 - `SDC_PROVIDER_CAPABILITY_PATH`

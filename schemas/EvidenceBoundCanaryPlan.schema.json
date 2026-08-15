@@ -1,0 +1,126 @@
+{
+  "additionalProperties": false,
+  "description": "Zero-authority plan whose snapshots came from one trusted FRESH bundle.",
+  "properties": {
+    "approved_cost_ceiling_cny": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Approved Cost Ceiling Cny"
+    },
+    "attempt": {
+      "const": 1,
+      "default": 1,
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "capability_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Capability Snapshot Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.evidence-bound-canary-plan",
+      "default": "sdc.evidence-bound-canary-plan",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evidence_bundle_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Bundle Id",
+      "type": "string"
+    },
+    "evidence_logical_tree_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Logical Tree Sha256",
+      "type": "string"
+    },
+    "evidence_profile": {
+      "const": "ark-canary-capability-pricing-v1",
+      "default": "ark-canary-capability-pricing-v1",
+      "title": "Evidence Profile",
+      "type": "string"
+    },
+    "evidence_valid_until": {
+      "format": "date-time",
+      "title": "Evidence Valid Until",
+      "type": "string"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "planned_at": {
+      "format": "date-time",
+      "title": "Planned At",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "pricing_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pricing Snapshot Sha256",
+      "type": "string"
+    },
+    "request_fingerprint": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Fingerprint",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "State",
+      "type": "string"
+    },
+    "worst_case_cost_cny": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Worst Case Cost Cny"
+    }
+  },
+  "required": [
+    "evidence_bundle_id",
+    "evidence_logical_tree_sha256",
+    "evidence_valid_until",
+    "run_id",
+    "job_id",
+    "request_fingerprint",
+    "capability_snapshot_sha256",
+    "pricing_snapshot_sha256",
+    "worst_case_cost_cny",
+    "approved_cost_ceiling_cny",
+    "planned_at"
+  ],
+  "title": "EvidenceBoundCanaryPlan",
+  "type": "object"
+}
