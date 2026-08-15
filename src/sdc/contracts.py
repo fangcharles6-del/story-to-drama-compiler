@@ -234,6 +234,43 @@ class CanaryPlan(Contract):
     posts_allowed: Literal[0] = 0
 
 
+class EvidenceBoundCanaryPlan(Contract):
+    """Zero-authority plan whose snapshots came from one trusted FRESH bundle."""
+
+    document_type: Literal["sdc.evidence-bound-canary-plan"] = "sdc.evidence-bound-canary-plan"
+    evidence_profile: Literal["ark-canary-capability-pricing-v1"] = (
+        "ark-canary-capability-pricing-v1"
+    )
+    evidence_bundle_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    evidence_logical_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    evidence_valid_until: datetime
+    state: Literal["NOT_AUTHORIZED"] = "NOT_AUTHORIZED"
+    run_id: str
+    job_id: str
+    attempt: Literal[1] = 1
+    request_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    capability_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pricing_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    worst_case_cost_cny: Annotated[Decimal, Field(gt=0)]
+    approved_cost_ceiling_cny: Annotated[Decimal, Field(gt=0)]
+    planned_at: datetime
+    posts_allowed: Literal[0] = 0
+
+    @model_validator(mode="after")
+    def validate_evidence_window(self) -> EvidenceBoundCanaryPlan:
+        for field, value in (
+            ("planned_at", self.planned_at),
+            ("evidence_valid_until", self.evidence_valid_until),
+        ):
+            if value.tzinfo is None or value.utcoffset() is None:
+                raise ValueError(f"{field} must include a timezone")
+        if self.planned_at > self.evidence_valid_until:
+            raise ValueError("planned_at must not exceed the evidence validity window")
+        if self.worst_case_cost_cny > self.approved_cost_ceiling_cny:
+            raise ValueError("worst-case cost must not exceed the approved ceiling")
+        return self
+
+
 class EvidenceAcquisition(StrEnum):
     FRESH = "FRESH"
     INHERITED = "INHERITED"
