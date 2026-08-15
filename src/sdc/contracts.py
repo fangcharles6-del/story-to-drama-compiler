@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 from enum import StrEnum
 from pathlib import PurePosixPath
@@ -17,9 +17,23 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 SCHEMA_VERSION: Final[Literal["1.0.0"]] = "1.0.0"
 CANARY_PROVIDER: Final[Literal["volcengine_ark"]] = "volcengine_ark"
 CANARY_MODEL: Final[Literal["doubao-seedance-2-0-260128"]] = "doubao-seedance-2-0-260128"
+ARK_CANARY_ENTITLEMENT_PROFILE: Final[Literal["ark-canary-entitlement-v1"]] = (
+    "ark-canary-entitlement-v1"
+)
+ARK_CANARY_SERVICE: Final[Literal["ark-video-generation"]] = "ark-video-generation"
+ARK_CANARY_REGION: Final[Literal["cn-beijing"]] = "cn-beijing"
+ARK_CANARY_OPERATION: Final[Literal["contents.generations.tasks.create"]] = (
+    "contents.generations.tasks.create"
+)
+ARK_CANARY_ENTITLEMENT_SOURCE_URL: Final[
+    Literal["https://console.volcengine.com/ark/region:cn-beijing/openManagement"]
+] = "https://console.volcengine.com/ark/region:cn-beijing/openManagement"
 EVIDENCE_MAX_OBJECT_BYTES: Final = 64 * 1024 * 1024
 EVIDENCE_MAX_BUNDLE_BYTES: Final = 512 * 1024 * 1024
 Ms = Annotated[int, Field(ge=0)]
+
+_SHANGHAI_TIMEZONE = timezone(timedelta(hours=8))
+_ENTITLEMENT_MAX_VALIDITY = timedelta(hours=4)
 
 
 class Contract(BaseModel):
@@ -166,6 +180,72 @@ class SnapshotStatus(StrEnum):
     CURRENT = "CURRENT"
     STALE = "STALE"
     REVOKED = "REVOKED"
+
+
+class ArkCanaryEntitlementSnapshot(Contract):
+    """Execution-day proof of the exact Ark Canary entitlement scope."""
+
+    document_type: Literal["sdc.ark-canary-entitlement-snapshot"]
+    evidence_profile: Literal["ark-canary-entitlement-v1"]
+    snapshot_revision: str = Field(
+        min_length=1,
+        max_length=64,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$",
+    )
+    status: Literal["CURRENT"]
+    provider: Literal["volcengine_ark"]
+    service: Literal["ark-video-generation"]
+    model: Literal["doubao-seedance-2-0-260128"]
+    region: Literal["cn-beijing"]
+    operation: Literal["contents.generations.tasks.create"]
+    provider_state: Literal["ENABLED"]
+    conclusion: Literal["PASS_ENTITLEMENT_ONLY"]
+    account_scope_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    credential_binding_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_url: Literal["https://console.volcengine.com/ark/region:cn-beijing/openManagement"]
+    source_valid_until: datetime | None
+    captured_at: datetime
+    valid_until: datetime
+    evidence_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @field_validator("source_valid_until", "captured_at", "valid_until")
+    @classmethod
+    def canonicalize_entitlement_datetime(cls, value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        _require_timezone(value, "entitlement datetime")
+        return value.astimezone(UTC)
+
+    @model_validator(mode="after")
+    def validate_entitlement_window(self) -> ArkCanaryEntitlementSnapshot:
+        if self.account_scope_sha256 == self.credential_binding_sha256:
+            raise ValueError("account scope and credential binding must be independent digests")
+        if self.captured_at >= self.valid_until:
+            raise ValueError("entitlement validity must end strictly after capture")
+        if self.source_valid_until is not None and self.source_valid_until <= self.captured_at:
+            raise ValueError("entitlement source boundary must end strictly after capture")
+
+        local_capture = self.captured_at.astimezone(_SHANGHAI_TIMEZONE)
+        capture_day_boundary = datetime(
+            local_capture.year,
+            local_capture.month,
+            local_capture.day,
+            23,
+            59,
+            59,
+            tzinfo=_SHANGHAI_TIMEZONE,
+        ).astimezone(UTC)
+        deadlines = [
+            self.captured_at + _ENTITLEMENT_MAX_VALIDITY,
+            capture_day_boundary,
+        ]
+        if self.source_valid_until is not None:
+            deadlines.append(self.source_valid_until)
+        if self.valid_until > min(deadlines):
+            raise ValueError(
+                "entitlement validity exceeds its source, four-hour, or capture-day boundary"
+            )
+        return self
 
 
 class PricingInputMode(StrEnum):

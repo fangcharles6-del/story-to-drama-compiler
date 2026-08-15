@@ -27,6 +27,7 @@ MODELS: list[type[Contract]] = [
     contracts.CancelResult,
     contracts.ProviderCapabilitySnapshot,
     contracts.ProviderPricingSnapshot,
+    contracts.ArkCanaryEntitlementSnapshot,
     contracts.LiveAuthorization,
     contracts.CanaryPlan,
     contracts.EvidenceBoundCanaryPlan,

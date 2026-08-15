@@ -141,7 +141,7 @@ considered.
 
 Each PR must be independently green and must not create a half-open live path.
 
-1. **Entitlement trust** (1.5-2.5 engineer-days): add the snapshot/profile/schema, offline freezer,
+1. **Entitlement trust (PR1, this delivery)**: add the snapshot/profile/schema, offline freezer,
    verifier and an empty positive registry. Ark remains unreachable.
 2. **Atomic ledger** (2-3 days): add the claim interface, database-time transaction, replay result,
    task ownership and PostgreSQL tests. Add a new migration if persistence changes are needed;
