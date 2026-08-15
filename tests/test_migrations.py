@@ -1,4 +1,26 @@
+import ast
 from pathlib import Path
+
+from sqlalchemy import CheckConstraint
+
+from sdc.persistence import LiveAuthorizationUseRecord
+
+
+def _migration_check_expression(source: str) -> str:
+    matches = [
+        node
+        for node in ast.walk(ast.parse(source))
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "create_check_constraint"
+        and len(node.args) >= 3
+        and isinstance(node.args[0], ast.Constant)
+        and node.args[0].value == "ck_live_auth_evidence_bound_complete"
+    ]
+    assert len(matches) == 1
+    expression = ast.literal_eval(matches[0].args[2])
+    assert isinstance(expression, str)
+    return expression
 
 
 def test_alembic_online_environment_uses_asyncpg_pattern() -> None:
@@ -75,3 +97,23 @@ def test_evidence_bound_authorization_migration_preserves_legacy_rows() -> None:
     assert source.index("DROP TRIGGER IF EXISTS trg_live_authorization_uses_no_truncate") < (
         source.index("DROP FUNCTION IF EXISTS sdc_reject_live_authorization_use_mutation")
     )
+
+
+def test_evidence_bound_authorization_check_matches_orm_and_has_balanced_parentheses() -> None:
+    source = Path("migrations/versions/0007_evidence_bound_authorization.py").read_text()
+    migration_expression = _migration_check_expression(source)
+    constraint = next(
+        item
+        for item in LiveAuthorizationUseRecord.__table__.constraints
+        if isinstance(item, CheckConstraint) and item.name == "ck_live_auth_evidence_bound_complete"
+    )
+
+    assert migration_expression == str(constraint.sqltext)
+    depth = 0
+    for character in migration_expression:
+        if character == "(":
+            depth += 1
+        elif character == ")":
+            depth -= 1
+            assert depth >= 0
+    assert depth == 0

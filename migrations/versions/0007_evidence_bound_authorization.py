@@ -60,7 +60,7 @@ def upgrade() -> None:
         "AND attempt = 1 AND max_cost_cny > 0 AND max_cost_cny <= 15 "
         "AND authorized_at < expires_at AND expires_at <= evidence_valid_until "
         "AND expires_at <= entitlement_valid_until"
-        "))",
+        ")",
     )
     op.create_index(
         "uq_live_auth_authorization_sha256",

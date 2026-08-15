@@ -30,14 +30,15 @@ def test_evidence_bound_authorization_has_a_distinct_committed_schema() -> None:
 def test_legacy_canary_schema_bytes_remain_unchanged() -> None:
     expected = {
         "CanaryPlan.schema.json": (
-            "31b7809aa44a02c4524cc91703dd025a68d983dc0d9649a8eaf20e1398ac451e"
+            "63cc1b14fdd34ecbf80a3693e097b29f9bc79d64015ab001f891cb29a90366bf"
         ),
         "LiveAuthorization.schema.json": (
-            "e0a612ed3def758b859a42a2c9eb3eda093faf1b3aa5d3f298eee890e15a4132"
+            "d18d571c9ff374a1ce128de9b005d0aaff02d61de8b7f456c37f16089f0ec6ce"
         ),
     }
     for name, digest in expected.items():
-        assert hashlib.sha256((Path("schemas") / name).read_bytes()).hexdigest() == digest
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest
 
 
 def test_provider_failure_1_0_0_payload_remains_backward_compatible() -> None:
