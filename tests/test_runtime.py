@@ -1,23 +1,15 @@
-from datetime import UTC, datetime
-from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
-from sdc.canary import LiveSubmissionGuard, contract_sha256
 from sdc.contracts import (
     GenerationJob,
-    LiveAuthorization,
-    PricingInputMode,
-    ProviderCapabilitySnapshot,
     ProviderFailureClass,
-    ProviderPricingSnapshot,
     ProviderProfile,
     ProviderRequest,
     ProviderSubmission,
     ProviderTaskState,
     RunState,
-    SnapshotStatus,
 )
 from sdc.payloads import SubmitResult
 from sdc.provider import (
@@ -27,7 +19,6 @@ from sdc.provider import (
     ProviderAttemptFailure,
     ProviderOperationError,
     SubmissionUnknown,
-    request_fingerprint,
 )
 from sdc.runtime import RuntimeActivities
 
@@ -106,6 +97,8 @@ class AsyncMemoryStore:
         self.failure: ProviderAttemptFailure | None = None
         self.profile: ProviderProfile | None = None
         self.authorization_consumed = False
+        self.reservation_calls = 0
+        self.authorization_consume_calls = 0
 
     async def ensure_run(self, run_id: str) -> None:
         pass
@@ -114,6 +107,7 @@ class AsyncMemoryStore:
         self.profile = profile
 
     async def reserve_provider_attempt(self, request: ProviderRequest) -> SubmitResult:
+        self.reservation_calls += 1
         if self.failure is not None:
             return SubmitResult(state=RunState.HUMAN_GATE, attempt=request.attempt)
         if self.reservation is None:
@@ -135,6 +129,7 @@ class AsyncMemoryStore:
         )
 
     async def consume_live_authorization(self, *_: object) -> bool:
+        self.authorization_consume_calls += 1
         if self.authorization_consumed:
             return False
         self.authorization_consumed = True
@@ -210,76 +205,20 @@ async def test_frozen_workflow_request_mismatch_fails_before_post(tmp_path: Path
     assert store.reservation is None and provider.posts == 0
 
 
-def live_guard(
-    run_id: str,
-    item: GenerationJob,
-    *,
-    worst_case_units: Decimal = Decimal("196425"),
-    worst_case_cost_cny: Decimal = Decimal("0.196425"),
-) -> LiveSubmissionGuard:
-    now = datetime(2026, 8, 10, tzinfo=UTC)
-    request = ProviderRequest(
-        run_id=run_id,
-        job_id=item.id,
-        attempt=1,
-        provider="volcengine_ark",
-        model=ARK_MODEL,
-        prompt=item.prompt,
-        duration_ms=item.duration_ms,
-        aspect_ratio="9:16",
-        resolution="1080p",
-        generate_audio=False,
-        request_fingerprint="0" * 64,
-    )
-    request = request.model_copy(update={"request_fingerprint": request_fingerprint(request)})
-    capability = ProviderCapabilitySnapshot(
-        snapshot_revision="test",
-        status=SnapshotStatus.CURRENT,
-        provider="volcengine_ark",
-        model=ARK_MODEL,
-        aspect_ratios=("9:16",),
-        resolutions=("1080p",),
-        fps=24,
-        min_duration_ms=4000,
-        max_duration_ms=15000,
-        source_url="https://www.volcengine.com/docs/82379/1330310",
-        source_updated_at=now,
-        captured_at=now,
-        valid_until=datetime(2030, 1, 1, tzinfo=UTC),
-        evidence_sha256="a" * 64,
-    )
-    pricing = ProviderPricingSnapshot(
-        snapshot_revision="test",
-        status=SnapshotStatus.CURRENT,
-        provider="volcengine_ark",
-        model=ARK_MODEL,
-        resolution="1080p",
-        input_mode=PricingInputMode.WITHOUT_VIDEO,
-        billing_unit="provider-token",
-        unit_price_cny=Decimal("0.000001"),
-        worst_case_units=worst_case_units,
-        worst_case_cost_cny=worst_case_cost_cny,
-        source_url="https://docs.volcengine.com/docs/82379/1544106",
-        source_updated_at=now,
-        captured_at=now,
-        valid_until=datetime(2030, 1, 1, tzinfo=UTC),
-        evidence_sha256="b" * 64,
-    )
-    authorization = LiveAuthorization(
-        authorization_id="SDC-CANARY-001",
-        request_fingerprint=request.request_fingerprint,
-        capability_snapshot_sha256=contract_sha256(capability),
-        pricing_snapshot_sha256=contract_sha256(pricing),
-        max_cost_cny=Decimal("0.20"),
-        expires_at=datetime(2030, 1, 1, tzinfo=UTC),
-        nonce="c" * 64,
-    )
-    return LiveSubmissionGuard(capability, pricing, authorization)
-
-
+@pytest.mark.parametrize(
+    ("entrypoint", "attempt"),
+    [
+        pytest.param("generic", 1, id="generic-attempt-1"),
+        pytest.param("generic", 2, id="generic-attempt-2"),
+        pytest.param("canary", 1, id="canary-attempt-1"),
+        pytest.param("canary", 2, id="canary-attempt-2"),
+    ],
+)
 @pytest.mark.asyncio
-async def test_under_reserved_canary_cost_fails_before_reservation_or_post(
+async def test_ark_runtime_is_unconditionally_disabled_before_reserve_consume_or_post(
     tmp_path: Path,
+    entrypoint: str,
+    attempt: int,
 ) -> None:
     store = AsyncMemoryStore()
     provider = AcceptedProvider()
@@ -289,50 +228,74 @@ async def test_under_reserved_canary_cost_fails_before_reservation_or_post(
         provider,
         tmp_path,
         ProviderProfile(provider="volcengine_ark", model=ARK_MODEL),
-        live_guard(
-            "run",
-            item,
-            worst_case_units=Decimal("194400"),
-            worst_case_cost_cny=Decimal("0.194400"),
-        ),
+        object(),
     )  # type: ignore[arg-type]
-
-    result = await activities.submit_canary_generation(
-        "run", item, 1, activities._request("run", item, 1)
-    )
+    if entrypoint == "generic":
+        result = await activities.submit_generation("run", item, attempt)
+    else:
+        frozen = activities._request("run", item, attempt)
+        result = await activities.submit_canary_generation("run", item, attempt, frozen)
 
     assert result.state is RunState.HUMAN_GATE
     assert store.failure is not None
-    assert store.failure.failure_class is ProviderFailureClass.COST_LIMIT
+    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    assert store.reservation_calls == 0
+    assert store.authorization_consume_calls == 0
     assert store.reservation is None
     assert store.authorization_consumed is False
     assert provider.posts == 0
 
 
+class ArkDirectCallStore:
+    def __init__(self) -> None:
+        self.run_states: list[tuple[str, RunState]] = []
+        self.legacy_reservation_calls = 0
+        self.provider_reservation_calls = 0
+
+    async def ensure_run(self, run_id: str) -> None:
+        assert run_id == "run"
+
+    async def set_run_state(self, run_id: str, state: RunState) -> None:
+        self.run_states.append((run_id, state))
+
+    async def reserve_attempt(
+        self, run_id: str, job_id: str, maximum: int = 2
+    ) -> int | None:
+        self.legacy_reservation_calls += 1
+        raise AssertionError("disabled Ark activity must not reserve a legacy attempt")
+
+    async def reserve_provider_attempt(self, request: ProviderRequest) -> SubmitResult:
+        self.provider_reservation_calls += 1
+        raise AssertionError("disabled Ark activity must not reserve a provider attempt")
+
+
+class ArkDirectCallProvider:
+    def __init__(self) -> None:
+        self.inspect_calls = 0
+        self.download_calls = 0
+        self.generate_calls = 0
+
+    async def inspect(self, provider_task_id: str) -> None:
+        self.inspect_calls += 1
+        raise AssertionError("disabled Ark activity must not inspect a task")
+
+    async def download(self, provider_task_id: str, destination: Path) -> None:
+        self.download_calls += 1
+        raise AssertionError("disabled Ark activity must not download an artifact")
+
+    async def generate(self, item: GenerationJob, output: Path, attempt: int) -> None:
+        self.generate_calls += 1
+        raise AssertionError("disabled Ark activity must not call legacy generate")
+
+
+@pytest.mark.parametrize("entrypoint", ["watch", "download", "generate"])
 @pytest.mark.asyncio
-async def test_live_authorization_is_consumed_before_only_post(tmp_path: Path) -> None:
-    store = AsyncMemoryStore()
-    provider = AcceptedProvider()
-    item = job().model_copy(update={"duration_ms": 4000})
-    profile = ProviderProfile(provider="volcengine_ark", model=ARK_MODEL)
-    activities = RuntimeActivities(store, provider, tmp_path, profile, live_guard("run", item))  # type: ignore[arg-type]
-    first = await activities.submit_generation("run", item, 1)
-    assert first.provider_task_id == "task-stable"
-    assert store.authorization_consumed and provider.posts == 1
-
-    # Simulate restart after authorization consumption but before a task ID was durably visible.
-    store.reservation = SubmitResult(state=RunState.RUNNING, attempt=1)
-    second = await activities.submit_generation("run", item, 1)
-    assert second.state is RunState.HUMAN_GATE
-    assert store.failure is not None
-    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
-    assert provider.posts == 1
-
-
-@pytest.mark.asyncio
-async def test_live_profile_without_authorization_makes_zero_posts(tmp_path: Path) -> None:
-    store = AsyncMemoryStore()
-    provider = AcceptedProvider()
+async def test_ark_direct_runtime_entrypoints_fail_closed_without_provider_io_or_reservation(
+    tmp_path: Path,
+    entrypoint: str,
+) -> None:
+    store = ArkDirectCallStore()
+    provider = ArkDirectCallProvider()
     item = job().model_copy(update={"duration_ms": 4000})
     activities = RuntimeActivities(
         store,
@@ -340,11 +303,28 @@ async def test_live_profile_without_authorization_makes_zero_posts(tmp_path: Pat
         tmp_path,
         ProviderProfile(provider="volcengine_ark", model=ARK_MODEL),
     )  # type: ignore[arg-type]
-    result = await activities.submit_generation("run", item, 1)
-    assert result.state is RunState.HUMAN_GATE
-    assert store.failure is not None
-    assert store.failure.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
-    assert provider.posts == 0
+
+    if entrypoint == "watch":
+        watch = await activities.watch_generation("run", item, 1, "ark-task")
+        assert watch.task_state is ProviderTaskState.FAILED
+        assert watch.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
+    elif entrypoint == "download":
+        download = await activities.download_generation("run", item, 1, "ark-task")
+        assert download.state is RunState.HUMAN_GATE
+        assert download.path is None
+        assert download.attempts == 1
+    else:
+        generated = await activities.generate("run", item)
+        assert generated.state is RunState.HUMAN_GATE
+        assert generated.path is None
+        assert generated.attempts == 0
+
+    assert store.run_states == [("run", RunState.HUMAN_GATE)]
+    assert store.legacy_reservation_calls == 0
+    assert store.provider_reservation_calls == 0
+    assert provider.inspect_calls == 0
+    assert provider.download_calls == 0
+    assert provider.generate_calls == 0
 
 
 class ExplicitRejectProvider:
@@ -364,7 +344,9 @@ class ExplicitRejectProvider:
 
 
 @pytest.mark.asyncio
-async def test_live_canary_explicit_rejection_is_not_posted_twice(tmp_path: Path) -> None:
+async def test_disabled_ark_runtime_never_reaches_retryable_provider_rejection(
+    tmp_path: Path,
+) -> None:
     store = AsyncMemoryStore()
     provider = ExplicitRejectProvider()
     item = job().model_copy(update={"duration_ms": 4000})
@@ -373,16 +355,13 @@ async def test_live_canary_explicit_rejection_is_not_posted_twice(tmp_path: Path
         provider,
         tmp_path,
         ProviderProfile(provider="volcengine_ark", model=ARK_MODEL),
-        live_guard("run", item),
     )  # type: ignore[arg-type]
-    result = await activities.submit_generation("run", item, 1)
+    frozen = activities._request("run", item, 1)
+    result = await activities.submit_canary_generation("run", item, 1, frozen)
     assert result.state is RunState.HUMAN_GATE
     assert store.failure == ProviderAttemptFailure(
-        failure_class=ProviderFailureClass.TRANSIENT,
-        retryable=True,
-        provider_code="RateLimitExceeded",
-        http_status=429,
-        provider_request_id_hmac_sha256="a" * 64,
+        failure_class=ProviderFailureClass.LIVE_NOT_AUTHORIZED,
     )
-    assert store.failure.local_message == "provider request failed transiently"
-    assert provider.posts == 1
+    assert store.reservation_calls == 0
+    assert store.authorization_consume_calls == 0
+    assert provider.posts == 0

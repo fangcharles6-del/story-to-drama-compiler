@@ -55,9 +55,11 @@ payload converter. See `docs/adr/SDC-ADR-009.md` for the accepted identity and r
 
 `SDC_PROVIDER=fake` is the safe default and CI never needs a provider credential or network access
 to Ark. The Ark adapter remains in the codebase, but supported Worker startup with
-`SDC_PROVIDER=volcengine_ark` now fails closed until an evidence-bound runtime contract is
-delivered. It does so before reading an API Key or legacy authorization file. FakeProvider rehearsal
-remains available; do not put keys in `.env` or source control.
+`SDC_PROVIDER=volcengine_ark` still fails closed unconditionally. ADR-017 adds inert
+evidence-bound contracts and validation, but does not connect them to the Worker or
+`RuntimeActivities`. Worker startup rejects Ark before reading an API Key. Directly constructed Ark
+runtime activities reject it before reserving an Attempt, consuming authorization or calling the
+Provider. FakeProvider rehearsal remains available; do not put keys in `.env` or source control.
 
 No real/live canary is authorized by BUILD-003. Before production, an operator must manually open
 the Ark service, inject the secret through the deployment secret store, establish a cost cap, and
@@ -72,9 +74,9 @@ temporary file, and are atomically published only after SHA-256, size, and ffpro
 
 SDC-ADR-011 historically added a second, fail-closed boundary in front of Ark submission using
 versioned capability and pricing snapshots plus a separately approved, exact-request
-`LiveAuthorization`. ADR-016 now retires that supported live path until the evidence-bound runtime
-contract is delivered. The durable one-use design remains historical context, not a current
-execution instruction.
+`LiveAuthorization`. ADR-016 retires that supported live path, and ADR-017's inert contract does
+not reopen it. The durable one-use design remains historical context, not a current execution
+instruction.
 
 The historical loose-snapshot `python -m sdc.canary` command is retired and fails closed. New
 zero-network planning uses a Git-reviewed execution-day FRESH EvidenceBundle through
@@ -86,8 +88,8 @@ one-beat, 4000 ms story and freeze one `CanaryExecution`: fixed `run_id`, determ
 `job_id`, exact request fingerprint, pinned Seedance 2.0 / 9:16 / 1080p parameters, text-only input,
 and explicit `generate_audio=false`. The reviewed cost ceiling is capped at CNY 15. The historical
 `python -m sdc.canary_authorize` command and Ark Worker startup path are now retired and fail closed
-until an evidence-bound authorization/runtime contract is delivered. FakeProvider rehearsal remains
-available. This build performs no live call and grants no credentials or spend authority.
+for all old and new authorization objects. FakeProvider rehearsal remains available. This build
+performs no live call and grants no credentials or spend authority.
 
 SDC-ADR-013 fixes the first Canary infrastructure to local Windows 10 Pro plus Docker Desktop WSL2.
 PostgreSQL and Temporal bind to loopback only, while the Worker and client run through host `uv`.
@@ -113,3 +115,23 @@ registry entry must bind its full ID, tree, contract hashes and expiry before pl
 generation and Ark Worker startup both fail closed rather than accepting it. See
 `docs/runbooks/SDC-FRESH-EVIDENCE-PLANNING.md`; this build still does not access Ark, read a Key,
 start services, create authorization, or permit paid generation.
+
+SDC-ADR-017 adds an inert `EvidenceBoundLiveAuthorization` candidate and a module-private runtime
+binding validator. A candidate rebinds the reviewed plan and execution, evidence
+bundle/tree, cost and expiry, independent entitlement-anchor identifier, Task Queue, durable
+ledger, runtime release, and domain-separated Ark wire policy. That wire policy fixes
+`cn-beijing`, the official host and task-creation path, HTTP `POST`, the exact credential-free JSON
+body, and one submit call. Candidate generation reports `mode=candidate-only-not-approved`; the
+file and digest do not grant authority. Runtime validation first requires an exact entry in a
+separate Git-reviewed positive authorization registry, before reading the plan, execution or
+authorization artifacts. That registry is empty in this PR, and candidate generation never edits
+it.
+
+Migration `0007` only prepares append-only evidence-bound claim columns and constraints. It does
+not implement the future atomic `POST_IN_FLIGHT` claim or connect any guard to Provider I/O. The
+current FRESH profile contains capability and pricing only, not current account entitlement.
+Future live enablement therefore still requires a positively trusted entitlement artifact,
+independent approval of the exact authorization SHA, an approved runtime/ledger identity, atomic
+claim and replay-to-`SUBMISSION_UNKNOWN` handling, and a dedicated one-concurrency Canary Worker.
+Until a separate ADR and explicit approval deliver all of those gates, Ark remains disabled with
+zero POSTs.

@@ -30,6 +30,7 @@ MODELS: list[type[Contract]] = [
     contracts.LiveAuthorization,
     contracts.CanaryPlan,
     contracts.EvidenceBoundCanaryPlan,
+    contracts.EvidenceBoundLiveAuthorization,
     contracts.CanaryExecution,
     contracts.EvidenceBundle,
 ]

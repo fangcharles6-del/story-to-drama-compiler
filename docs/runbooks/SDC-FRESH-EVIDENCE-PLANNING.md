@@ -1,7 +1,9 @@
 # Execution-day FRESH evidence and offline Canary planning
 
 This runbook creates a candidate evidence bundle and, only after a separate reviewed registry
-commit, a zero-authority Canary plan. It never acquires evidence itself and never authorizes Ark.
+commit, a zero-authority Canary plan. ADR-017 additionally defines an inert evidence-bound
+authorization candidate, but does not make it an operational authorization and does not connect it
+to Ark. This runbook never acquires evidence itself and never authorizes Ark.
 
 ## Hard boundary
 
@@ -12,8 +14,8 @@ commit, a zero-authority Canary plan. It never acquires evidence itself and neve
   matching `ProviderCapabilitySnapshot` and `ProviderPricingSnapshot` JSON.
 - Inputs and outputs must use a local, operator-controlled filesystem with no links, junctions,
   mapped network drive, cloud-sync writer, or concurrent process changing their parent paths.
-- No command below accesses the network, starts a service, creates `LiveAuthorization`, or permits
-  a POST. Stop on any mismatch or ambiguous result.
+- No command in Sections 1-3 accesses the network, starts a service, creates an approved or
+  operational authorization, or permits a POST. Stop on any mismatch or ambiguous result.
 
 ## 1. Freeze a candidate
 
@@ -77,11 +79,42 @@ Expected plan fields include:
 
 The historical `sdc.canary_authorize` command is retired and fails closed for both legacy and new
 plans. The supported Ark Worker startup path is also retired; FakeProvider rehearsal remains
-available. Authorization/runtime integration requires a later approved delivery.
+available. ADR-017 does not change these boundaries.
+
+## 4. ADR-017 candidate contract is not a live next step
+
+ADR-017 adds `EvidenceBoundLiveAuthorization` and the offline
+`sdc.evidence_authorization` candidate builder. A candidate binds the exact plan and execution,
+FRESH bundle/tree and snapshot hashes, cost and expiry, `cn-beijing`, Task Queue and ledger, plus
+the reviewed Ark wire-policy digest. The wire digest covers the official base URL, HTTP `POST`,
+`/contents/generations/tasks`, a maximum of one submit call and the exact credential-free JSON body.
+The command prints `mode=candidate-only-not-approved` and a canonical authorization SHA-256.
+
+That output remains inert. The candidate file, its ID, nonce, `max_posts=1`, printed digest, and an
+arbitrary caller-supplied approval digest do not establish independent authority. Runtime loading
+requires an exact entry in the separate Git-reviewed positive authorization registry. That
+registry is empty in this PR, and candidate creation never edits it. The production Worker and
+`RuntimeActivities` reject Ark unconditionally and do not accept the new guard. Alembic revision
+`0007` only declares the future append-only claim fields; no evidence-bound claim or Provider
+operation writes them in this delivery.
+
+Do not run the candidate builder for the current FRESH bundle as if it completed live preparation.
+The `ark-canary-capability-pricing-v1` profile contains capability and pricing only. It does not
+contain a reviewed entitlement artifact for the exact model, account scope and `cn-beijing`
+region. ADR-017 reserves an entitlement-anchor field but does not define or verify its trust
+source; an arbitrary 64-hex value is not entitlement evidence.
+
+A future live-enablement delivery requires a current positively trusted entitlement artifact, an
+independent authority for the exact authorization SHA, an approved runtime release and durable
+ledger, an atomic database `POST_IN_FLIGHT` claim, replay-to-`SUBMISSION_UNKNOWN` handling, and a
+dedicated one-concurrency Canary Worker. It requires another ADR and explicit approval. Until then,
+do not read or inject a Key, start services, invoke the Canary client against Ark, or create a real
+authorization.
 
 ## Stop conditions
 
 Stop at `HUMAN_GATE` on an unknown or duplicate registry ID, expiry, not-yet-reviewed time, manifest
 or CAS drift, extra/missing member, non-FRESH capture, snapshot/provenance mismatch, cost failure,
-existing output, or any unclear result. Do not repair, extend expiry, relabel legacy evidence, create
-an alternate registry file, or fall back to loose capability/pricing JSON.
+existing output, missing entitlement trust, missing independent authorization authority, or any
+unclear result. Do not repair, extend expiry, relabel legacy evidence, create an alternate registry
+file, invent an entitlement anchor, or fall back to loose capability/pricing JSON.

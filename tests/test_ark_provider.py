@@ -6,7 +6,12 @@ import pytest
 
 from sdc.ark_provider import VolcengineArkProvider
 from sdc.contracts import InputMaterial, ProviderFailureClass, ProviderRequest, ProviderTaskState
-from sdc.provider import ProviderOperationError, SubmissionUnknown
+from sdc.provider import (
+    ProviderOperationError,
+    SubmissionUnknown,
+    ark_submission_policy_sha256,
+    ark_submit_payload,
+)
 
 HMAC_API_KEY = "test-ark-api-key"
 REQUEST_ID_HMAC = "fddc4155da1f7fe2aad99a69082efa0755279f8967138d15e5fb56a6b56eb114"
@@ -33,6 +38,7 @@ def request(duration_ms: int = 4000) -> ProviderRequest:
 @pytest.mark.asyncio
 async def test_ark_submit_wire_json_and_inspect_use_official_boundary() -> None:
     calls: list[httpx.Request] = []
+    provider_request = request()
 
     def handler(req: httpx.Request) -> httpx.Response:
         calls.append(req)
@@ -47,14 +53,7 @@ async def test_ark_submit_wire_json_and_inspect_use_official_boundary() -> None:
                 "authorization": "Bearer test-only-api-key",
                 "content-type": "application/json",
             }
-            assert json.loads(req.content) == {
-                "model": "doubao-seedance-2-0-260128",
-                "content": [{"type": "text", "text": "safe prompt"}],
-                "duration": 4,
-                "ratio": "9:16",
-                "resolution": "1080p",
-                "generate_audio": False,
-            }
+            assert json.loads(req.content) == ark_submit_payload(provider_request)
             return httpx.Response(200, json={"id": "task-1", "status": "queued"})
         assert req.url == httpx.URL(
             "https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/task-1"
@@ -75,13 +74,60 @@ async def test_ark_submit_wire_json_and_inspect_use_official_boundary() -> None:
         headers={"Authorization": "Bearer test-only-api-key"},
     )
     provider = VolcengineArkProvider("test-only-api-key", client=client)
-    submission = await provider.submit(request())
+    submission = await provider.submit(provider_request)
     snapshot = await provider.inspect(submission.provider_task_id)
     assert submission.state is ProviderTaskState.QUEUED
     assert snapshot.state is ProviderTaskState.SUCCEEDED and snapshot.usage_tokens == 7
     assert "video_url" not in snapshot.model_dump_json()
     assert [item.method for item in calls] == ["POST", "GET"]
     await client.aclose()
+
+
+def test_ark_submission_policy_binds_exact_credential_free_wire_contract() -> None:
+    provider_request = request()
+    payload = ark_submit_payload(provider_request)
+    policy = ark_submission_policy_sha256(provider_request)
+
+    assert payload == {
+        "model": "doubao-seedance-2-0-260128",
+        "content": [{"type": "text", "text": "safe prompt"}],
+        "duration": 4,
+        "ratio": "9:16",
+        "resolution": "1080p",
+        "generate_audio": False,
+    }
+    assert len(policy) == 64
+    assert (
+        ark_submission_policy_sha256(
+            provider_request.model_copy(update={"prompt": "different prompt"})
+        )
+        != policy
+    )
+    assert (
+        ark_submission_policy_sha256(
+            provider_request.model_copy(update={"request_fingerprint": "b" * 64})
+        )
+        == policy
+    )
+
+
+def test_default_ark_clients_ignore_proxy_environment_and_redirects(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    constructed: list[dict[str, object]] = []
+
+    def fake_async_client(**kwargs: object) -> object:
+        constructed.append(kwargs)
+        return object()
+
+    monkeypatch.setattr("sdc.ark_provider.httpx.AsyncClient", fake_async_client)
+    VolcengineArkProvider("test-only-api-key")
+
+    assert len(constructed) == 2
+    assert all(options["trust_env"] is False for options in constructed)
+    assert all(options["follow_redirects"] is False for options in constructed)
+    assert constructed[0]["base_url"] == "https://ark.cn-beijing.volces.com/api/v3"
+    assert "base_url" not in constructed[1]
 
 
 @pytest.mark.asyncio
