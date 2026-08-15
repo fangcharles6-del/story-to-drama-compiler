@@ -80,6 +80,9 @@ as approval.
 ## 4. Future live prerequisites and execution (not authorized here)
 
 ADR-017 delivers contract validation and database schema preparation, not the runtime connection.
+Proposed ADR-018 specifies the missing entitlement, atomic-claim, replay, dedicated-Worker and
+task-ownership boundary, but does not implement or authorize it. Its non-operational verification
+plan is `SDC-EVIDENCE-BOUND-LIVE-CANARY.md`.
 There is no supported Ark Worker environment-variable set or client action in this version. Legacy
 capability, pricing and authorization path variables remain rejected. Do not inject an API Key,
 start Worker/Temporal/PostgreSQL, or invoke the Canary client against Ark.
@@ -89,7 +92,8 @@ candidate contract reserves `entitlement_anchor_sha256` and `entitlement_valid_u
 version has no entitlement evidence profile, positive registry or verifier. A caller-supplied hash
 and date cannot establish current access to `doubao-seedance-2-0-260128` in `cn-beijing`.
 
-A future live proposal must be separately approved and atomically deliver:
+A future implementation under ADR-018 must be split into independently green, fail-closed changes
+and separately approved before it can atomically deliver:
 
 - current, independently reviewed entitlement for the exact account scope, model and region;
 - a separately reviewed, current positive-registry entry for the exact authorization SHA and all

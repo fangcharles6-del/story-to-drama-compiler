@@ -107,9 +107,10 @@ source; an arbitrary 64-hex value is not entitlement evidence.
 A future live-enablement delivery requires a current positively trusted entitlement artifact, an
 independent authority for the exact authorization SHA, an approved runtime release and durable
 ledger, an atomic database `POST_IN_FLIGHT` claim, replay-to-`SUBMISSION_UNKNOWN` handling, and a
-dedicated one-concurrency Canary Worker. It requires another ADR and explicit approval. Until then,
-do not read or inject a Key, start services, invoke the Canary client against Ark, or create a real
-authorization.
+dedicated one-concurrency Canary Worker. Proposed SDC-ADR-018 defines that future boundary and its
+test/PR sequence in `SDC-EVIDENCE-BOUND-LIVE-CANARY.md`; it is design-only and still requires
+explicit implementation and activation approvals. Until then, do not read or inject a Key, start
+services, invoke the Canary client against Ark, or create a real authorization.
 
 ## Stop conditions
 
