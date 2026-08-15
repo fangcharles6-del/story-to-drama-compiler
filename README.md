@@ -135,3 +135,11 @@ independent approval of the exact authorization SHA, an approved runtime/ledger 
 claim and replay-to-`SUBMISSION_UNKNOWN` handling, and a dedicated one-concurrency Canary Worker.
 Until a separate ADR and explicit approval deliver all of those gates, Ark remains disabled with
 zero POSTs.
+
+Proposed SDC-ADR-018 now fixes that future execution boundary at design level: a short-lived,
+positively registered exact-account/Seedance/`cn-beijing` entitlement bundle; one database-UTC
+transaction for Attempt 1 plus the immutable `POST_IN_FLIGHT` claim; replay to
+`SUBMISSION_UNKNOWN` when no owned task ID exists; and a dedicated one-concurrency Worker that
+loads the exact reviewed secret resource version only after every static and durable gate passes.
+It remains non-operational and grants no authority. See
+`docs/runbooks/SDC-EVIDENCE-BOUND-LIVE-CANARY.md` for the test and follow-up PR plan.
