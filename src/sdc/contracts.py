@@ -271,6 +271,84 @@ class EvidenceBoundCanaryPlan(Contract):
         return self
 
 
+class EvidenceBoundLiveAuthorization(Contract):
+    """Inert one-POST authorization candidate bound to reviewed evidence and runtime policy."""
+
+    document_type: Literal["sdc.evidence-bound-live-authorization"] = (
+        "sdc.evidence-bound-live-authorization"
+    )
+    evidence_profile: Literal["ark-canary-capability-pricing-v1"] = (
+        "ark-canary-capability-pricing-v1"
+    )
+    authorization_id: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$",
+    )
+    plan_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    execution_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    submission_policy_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    runtime_policy_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    runtime_release_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    evidence_bundle_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    evidence_logical_tree_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    evidence_valid_until: datetime
+    entitlement_anchor_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    entitlement_valid_until: datetime
+    provider_region: Literal["cn-beijing"] = "cn-beijing"
+    task_queue: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$",
+    )
+    ledger_id: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$",
+    )
+    run_id: str = Field(min_length=1, max_length=256)
+    job_id: str = Field(min_length=1, max_length=128)
+    attempt: Literal[1] = 1
+    request_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    capability_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    pricing_snapshot_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    worst_case_cost_cny: Annotated[Decimal, Field(gt=0)]
+    max_cost_cny: Annotated[Decimal, Field(gt=0, le=15)]
+    authorized_at: datetime
+    expires_at: datetime
+    nonce: str = Field(pattern=r"^[0-9a-f]{64}$")
+    max_posts: Literal[1] = 1
+
+    @field_validator(
+        "evidence_valid_until",
+        "entitlement_valid_until",
+        "authorized_at",
+        "expires_at",
+    )
+    @classmethod
+    def canonicalize_authorization_datetime(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("evidence-bound authorization datetimes must include a timezone")
+        return value.astimezone(UTC)
+
+    @model_validator(mode="after")
+    def validate_authorization_window(self) -> EvidenceBoundLiveAuthorization:
+        if self.authorized_at >= self.expires_at:
+            raise ValueError("authorization expiry must be later than authorized_at")
+        if self.expires_at > min(self.evidence_valid_until, self.entitlement_valid_until):
+            raise ValueError("authorization must expire within evidence and entitlement validity")
+        if self.worst_case_cost_cny > self.max_cost_cny:
+            raise ValueError("authorization max cost must cover the reviewed worst-case cost")
+        if self.entitlement_anchor_sha256 in {
+            self.evidence_bundle_id,
+            self.evidence_logical_tree_sha256,
+            self.capability_snapshot_sha256,
+            self.pricing_snapshot_sha256,
+        }:
+            raise ValueError("entitlement must use an independent reviewed anchor")
+        return self
+
+
 class EvidenceAcquisition(StrEnum):
     FRESH = "FRESH"
     INHERITED = "INHERITED"

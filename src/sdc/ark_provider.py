@@ -28,10 +28,12 @@ from sdc.contracts import (
 from sdc.provider import (
     ARK_BASE_URL,
     ARK_MODEL,
+    ARK_SUBMIT_PATH,
     GenerationError,
     ProviderOperationError,
     SubmissionUnknown,
     _evidence,
+    ark_submit_payload,
 )
 
 _TASK_ID = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
@@ -113,9 +115,15 @@ class VolcengineArkProvider:
             base_url=base_url.rstrip("/"),
             headers={"Authorization": f"Bearer {api_key}"},
             timeout=60,
+            follow_redirects=False,
+            trust_env=False,
         )
         # Deliberately separate: Ark Authorization must not be sent to signed/CDN origins.
-        self._download_client = download_client or httpx.AsyncClient(timeout=60)
+        self._download_client = download_client or httpx.AsyncClient(
+            timeout=60,
+            follow_redirects=False,
+            trust_env=False,
+        )
         self._result_urls: dict[str, str] = {}
 
     async def submit(self, request: ProviderRequest) -> ProviderSubmission:
@@ -131,22 +139,10 @@ class VolcengineArkProvider:
                 "Ark duration must be between 4000 and 15000 ms",
                 retryable=False,
             )
-        content: list[dict[str, str]] = [{"type": "text", "text": request.prompt}]
-        content.extend(
-            {"type": "image_url", "image_url": material.reference}
-            for material in request.input_materials
-        )
-        payload = {
-            "model": request.model,
-            "content": content,
-            "duration": request.duration_ms // 1000,
-            "ratio": request.aspect_ratio,
-            "resolution": request.resolution,
-            "generate_audio": request.generate_audio,
-        }
+        payload = ark_submit_payload(request)
         response: httpx.Response | None = None
         try:
-            response = await self._client.post("/contents/generations/tasks", json=payload)
+            response = await self._client.post(ARK_SUBMIT_PATH, json=payload)
         except httpx.TransportError:
             pass
         if response is None:

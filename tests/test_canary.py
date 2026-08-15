@@ -195,12 +195,11 @@ def test_plan_fails_closed_before_live_submission(
     assert caught.value.failure_class is failure_class
 
 
-def test_authorization_is_bound_to_exact_snapshots_and_request() -> None:
+def test_legacy_live_submission_guard_is_retired() -> None:
     request = frozen_request()
-    guard = LiveSubmissionGuard(capability(), pricing(), authorization(request))
-    guard.validate(request, now=NOW)
-    with pytest.raises(LiveGateError, match="fingerprint"):
-        guard.validate(request.model_copy(update={"prompt": "different"}), now=NOW)
+    with pytest.raises(LiveGateError, match="legacy live submission guard is retired") as caught:
+        LiveSubmissionGuard(capability(), pricing(), authorization(request))
+    assert caught.value.failure_class is ProviderFailureClass.LIVE_NOT_AUTHORIZED
 
 
 def test_legacy_authorization_generation_is_retired() -> None:

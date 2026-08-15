@@ -274,7 +274,7 @@ def build_live_authorization(
 
 
 class LiveSubmissionGuard:
-    """Validates one separately approved POST; durable consumption belongs to RuntimeStore."""
+    """Retired loose-snapshot guard retained only as an explicit compatibility failure."""
 
     def __init__(
         self,
@@ -282,45 +282,18 @@ class LiveSubmissionGuard:
         pricing: ProviderPricingSnapshot,
         authorization: LiveAuthorization,
     ) -> None:
-        self.capability = capability
-        self.pricing = pricing
-        self.authorization = authorization
-        self.capability_sha256 = contract_sha256(capability)
-        self.pricing_sha256 = contract_sha256(pricing)
+        del capability, pricing, authorization
+        raise LiveGateError(
+            ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+            "legacy live submission guard is retired; evidence-bound runtime is not enabled",
+        )
 
     def validate(self, request: ProviderRequest, *, now: datetime | None = None) -> None:
-        current = now or datetime.now(UTC)
-        validate_snapshots(
-            self.capability,
-            self.pricing,
-            request,
-            self.authorization.max_cost_cny,
-            now=current,
+        del request, now
+        raise LiveGateError(
+            ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+            "legacy live submission guard is retired; evidence-bound runtime is not enabled",
         )
-        if self.authorization.max_cost_cny > CANARY_COST_HARD_LIMIT_CNY:
-            raise LiveGateError(
-                ProviderFailureClass.COST_LIMIT,
-                "live authorization exceeds the CNY 15 hard limit",
-            )
-        if current > _aware(self.authorization.expires_at, "authorization expires_at"):
-            raise LiveGateError(
-                ProviderFailureClass.LIVE_NOT_AUTHORIZED, "live authorization has expired"
-            )
-        if self.authorization.request_fingerprint != request.request_fingerprint:
-            raise LiveGateError(
-                ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-                "live authorization does not match request fingerprint",
-            )
-        if self.authorization.capability_snapshot_sha256 != self.capability_sha256:
-            raise LiveGateError(
-                ProviderFailureClass.CAPABILITY_DRIFT,
-                "live authorization capability snapshot mismatch",
-            )
-        if self.authorization.pricing_snapshot_sha256 != self.pricing_sha256:
-            raise LiveGateError(
-                ProviderFailureClass.COST_LIMIT,
-                "live authorization pricing snapshot mismatch",
-            )
 
 
 def main(argv: list[str] | None = None) -> int:

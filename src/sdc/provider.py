@@ -25,6 +25,8 @@ from sdc.contracts import (
 
 ARK_MODEL = "doubao-seedance-2-0-260128"
 ARK_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+ARK_REGION = "cn-beijing"
+ARK_SUBMIT_PATH = "/contents/generations/tasks"
 
 
 class GenerationError(RuntimeError):
@@ -129,6 +131,38 @@ class AttemptResult:
 def request_fingerprint(request: ProviderRequest) -> str:
     """Fingerprint stable request inputs (never adapter commands or credentials)."""
     return provider_request_fingerprint(request)
+
+
+def ark_submit_payload(request: ProviderRequest) -> dict[str, object]:
+    """Build the exact credential-free Ark JSON body used by the HTTP adapter."""
+    content: list[dict[str, str]] = [{"type": "text", "text": request.prompt}]
+    content.extend(
+        {"type": "image_url", "image_url": material.reference}
+        for material in request.input_materials
+    )
+    return {
+        "model": request.model,
+        "content": content,
+        "duration": request.duration_ms // 1000,
+        "ratio": request.aspect_ratio,
+        "resolution": request.resolution,
+        "generate_audio": request.generate_audio,
+    }
+
+
+def ark_submission_policy_sha256(request: ProviderRequest) -> str:
+    """Bind one request to the pinned Ark region, endpoint, method, body, and POST count."""
+    descriptor = {
+        "provider": "volcengine_ark",
+        "region": ARK_REGION,
+        "base_url": ARK_BASE_URL,
+        "method": "POST",
+        "path": ARK_SUBMIT_PATH,
+        "max_submit_calls": 1,
+        "payload": ark_submit_payload(request),
+    }
+    encoded = json.dumps(descriptor, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(b"sdc:ark-submission-policy:1.0.0\0" + encoded).hexdigest()
 
 
 async def _probe(path: Path) -> dict[str, object]:

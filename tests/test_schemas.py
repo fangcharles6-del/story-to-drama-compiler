@@ -1,8 +1,13 @@
+import hashlib
 import json
 from decimal import Decimal
 from pathlib import Path
 
-from sdc.contracts import ProviderFailure, ProviderPricingSnapshot
+from sdc.contracts import (
+    EvidenceBoundLiveAuthorization,
+    ProviderFailure,
+    ProviderPricingSnapshot,
+)
 from sdc.schemas import MODELS
 
 
@@ -10,6 +15,29 @@ def test_committed_schemas_have_not_drifted() -> None:
     for model in MODELS:
         committed = json.loads(Path(f"schemas/{model.__name__}.schema.json").read_text())
         assert committed == model.model_json_schema(), f"schema drift: {model.__name__}"
+
+
+def test_evidence_bound_authorization_has_a_distinct_committed_schema() -> None:
+    assert EvidenceBoundLiveAuthorization in MODELS
+    schema = json.loads(Path("schemas/EvidenceBoundLiveAuthorization.schema.json").read_text())
+    assert schema["properties"]["document_type"]["const"] == (
+        "sdc.evidence-bound-live-authorization"
+    )
+    assert schema["properties"]["max_posts"]["const"] == 1
+    assert schema["properties"]["attempt"]["const"] == 1
+
+
+def test_legacy_canary_schema_bytes_remain_unchanged() -> None:
+    expected = {
+        "CanaryPlan.schema.json": (
+            "31b7809aa44a02c4524cc91703dd025a68d983dc0d9649a8eaf20e1398ac451e"
+        ),
+        "LiveAuthorization.schema.json": (
+            "e0a612ed3def758b859a42a2c9eb3eda093faf1b3aa5d3f298eee890e15a4132"
+        ),
+    }
+    for name, digest in expected.items():
+        assert hashlib.sha256((Path("schemas") / name).read_bytes()).hexdigest() == digest
 
 
 def test_provider_failure_1_0_0_payload_remains_backward_compatible() -> None:

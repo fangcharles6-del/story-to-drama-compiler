@@ -42,3 +42,24 @@ def test_legacy_live_guard_loading_is_retired_before_file_reads(
         monkeypatch.delenv(name, raising=False)
     with pytest.raises(ValueError, match="legacy live authorization loading is disabled"):
         live_guard_from_environment()
+
+
+def test_evidence_bound_candidate_does_not_enable_production_worker(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("SDC_PROVIDER", "volcengine_ark")
+    monkeypatch.setenv("SDC_ARK_API_KEY", "must-not-be-used")
+    for name in (
+        "SDC_FRESH_EVIDENCE_ROOT",
+        "SDC_EVIDENCE_BOUND_PLAN_PATH",
+        "SDC_CANARY_EXECUTION_PATH",
+        "SDC_EVIDENCE_BOUND_AUTHORIZATION_PATH",
+        "SDC_APPROVED_AUTHORIZATION_SHA256",
+    ):
+        monkeypatch.setenv(name, "missing-evidence-bound-input")
+
+    with pytest.raises(ValueError, match="evidence-bound runtime contract") as provider_error:
+        provider_from_environment()
+    with pytest.raises(ValueError, match="legacy live authorization loading is disabled"):
+        live_guard_from_environment()
+    assert "must-not-be-used" not in str(provider_error.value)

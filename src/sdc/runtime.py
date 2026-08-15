@@ -16,7 +16,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from temporalio import activity
 
-from sdc.canary import LiveGateError, LiveSubmissionGuard
+from sdc.canary import LiveSubmissionGuard
 from sdc.compiler import stable_id
 from sdc.contracts import (
     DownloadedArtifact,
@@ -28,6 +28,7 @@ from sdc.contracts import (
     ProviderRequest,
     ProviderSubmission,
     ProviderTaskSnapshot,
+    ProviderTaskState,
     RunState,
 )
 from sdc.payloads import DurableResult, SubmitResult, WatchResult
@@ -559,6 +560,13 @@ class RuntimeActivities:
         )
         self.live_guard = live_guard
 
+    async def _block_disabled_ark_activity(self, run_id: str) -> bool:
+        if self.profile.provider != "volcengine_ark":
+            return False
+        await self.store.ensure_run(run_id)
+        await self.store.set_run_state(run_id, RunState.HUMAN_GATE)
+        return True
+
     def _request(self, run_id: str, job: GenerationJob, attempt: int) -> ProviderRequest:
         request = ProviderRequest(
             run_id=run_id,
@@ -617,42 +625,17 @@ class RuntimeActivities:
             )
             return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         if self.profile.provider == "volcengine_ark":
-            try:
-                if self.live_guard is None:
-                    raise LiveGateError(
-                        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-                        "live Ark submission requires a separate one-use authorization",
-                    )
-                self.live_guard.validate(request)
-            except LiveGateError as exc:
-                await self.store.record_live_gate_failure(request, exc.failure_class)
-                return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
+            # The new evidence-bound contract is intentionally not connected to Provider I/O in
+            # this delivery.  Keeping this unconditional boundary prevents direct RuntimeActivities
+            # construction from bypassing the disabled production Worker.
+            await self.store.record_live_gate_failure(
+                request, ProviderFailureClass.LIVE_NOT_AUTHORIZED
+            )
+            return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
         reserved = await self.store.reserve_provider_attempt(request)
         if reserved.provider_task_id or reserved.state is RunState.HUMAN_GATE:
             return reserved
-        if self.profile.provider == "volcengine_ark":
-            try:
-                assert self.live_guard is not None
-                consumed = await self.store.consume_live_authorization(
-                    request,
-                    self.live_guard.authorization,
-                    self.live_guard.capability_sha256,
-                    self.live_guard.pricing_sha256,
-                )
-                if not consumed:
-                    raise LiveGateError(
-                        ProviderFailureClass.LIVE_NOT_AUTHORIZED,
-                        "live authorization was already consumed",
-                    )
-            except LiveGateError as exc:
-                await self.store.record_submission_failure(
-                    request,
-                    ProviderAttemptFailure(
-                        failure_class=exc.failure_class,
-                    ),
-                )
-                return SubmitResult(state=RunState.HUMAN_GATE, attempt=attempt)
-        maximum_submit_calls = 1 if frozen_request is not None or self.live_guard is not None else 3
+        maximum_submit_calls = 1 if frozen_request is not None else 3
         for explicit_rejection in range(maximum_submit_calls):
             try:
                 submission = await self.provider.submit(request)  # type: ignore[union-attr]
@@ -677,6 +660,13 @@ class RuntimeActivities:
     async def watch_generation(
         self, run_id: str, job: GenerationJob, attempt: int, provider_task_id: str
     ) -> WatchResult:
+        if await self._block_disabled_ark_activity(run_id):
+            return WatchResult(
+                attempt=attempt,
+                provider_task_id=provider_task_id,
+                task_state=ProviderTaskState.FAILED,
+                failure_class=ProviderFailureClass.LIVE_NOT_AUTHORIZED,
+            )
         _heartbeat(provider_task_id)
         snapshot = await self.provider.inspect(provider_task_id)  # type: ignore[union-attr]
         await self.store.record_observation(run_id, job.id, attempt, snapshot)
@@ -692,6 +682,8 @@ class RuntimeActivities:
     async def download_generation(
         self, run_id: str, job: GenerationJob, attempt: int, provider_task_id: str
     ) -> DurableResult:
+        if await self._block_disabled_ark_activity(run_id):
+            return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=attempt)
         destination = self.output_root / run_id / f"{job.id}-{attempt}.mp4"
         _heartbeat(provider_task_id, "downloading")
         artifact = await self.provider.download(provider_task_id, destination)  # type: ignore[union-attr]
@@ -702,6 +694,8 @@ class RuntimeActivities:
     @activity.defn(name="generate")
     async def generate(self, run_id: str, job: GenerationJob) -> DurableResult:
         """Legacy compatibility activity; production workflow uses the three safe boundaries."""
+        if await self._block_disabled_ark_activity(run_id):
+            return DurableResult(state=RunState.HUMAN_GATE, path=None, attempts=0)
         await self.store.ensure_run(run_id)
         while (
             attempt := await self.store.reserve_attempt(run_id, job.id, job.max_attempts)

@@ -1,6 +1,7 @@
-# ARK-CANARY-001 runbook (preparation only)
+# ARK-CANARY-001 runbook (preparation and inert contracts only)
 
-This runbook prepares review evidence. BUILD-004 and BUILD-005 do **not** authorize the live step.
+This runbook prepares review evidence and describes fail-closed contracts. BUILD-004 through
+ADR-017 do **not** authorize the live step.
 
 ## 1. Capture current evidence
 
@@ -59,46 +60,63 @@ Workflow must later receive unchanged.
 
 Review the frozen request fingerprint, capability checksum, pricing checksum, and worst-case CNY
 cost. Historical BUILD-005 authorization generation is retired; this plan cannot create an
-operational authorization. Any future live delivery and approval must name the exact request and
-checksum values, establish an expiry and a cost ceiling no greater than CNY 15, and authorize no
-more than one POST for creative Attempt 1.
+operational authorization. ADR-017 adds a separate `EvidenceBoundLiveAuthorization` candidate
+contract, but its file remains inert until an independent authority approves its exact canonical
+SHA-256. Its binding includes the plan and execution digests, FRESH bundle/tree, snapshot hashes,
+cost, expiry, entitlement-anchor identifier, region, Task Queue, ledger, runtime release and fixed
+Ark wire-policy digest. The wire policy covers `cn-beijing`, the official base URL, HTTP `POST`,
+`/contents/generations/tasks`, the exact credential-free JSON payload and one submit call.
 
 The historical `sdc.canary_authorize` command is retired and fails closed for both old and new plan
-types. Ark Worker startup is also retired; only FakeProvider rehearsal remains available. Stop
-after offline planning. Connecting this plan to a new authorization/runtime contract requires a
-separate delivery and explicit approval; do not convert it to the old `CanaryPlan` or fall back to
-loose snapshot files.
+types. `sdc.evidence_authorization` can only emit `mode=candidate-only-not-approved`; its output,
+authorization ID, nonce, `max_posts=1` and printed digest grant no authority. Runtime loading first
+requires an exact entry in the separate Git-reviewed positive authorization registry, before it
+reads plan, execution or authorization artifacts. The registry is empty in this PR and candidate
+creation cannot update it. Ark Worker startup and the Ark branch inside `RuntimeActivities` remain
+unconditionally disabled; only FakeProvider rehearsal is supported. Stop after offline planning.
+Do not convert the plan to the old `CanaryPlan`, fall back to loose snapshots, or treat a candidate
+as approval.
 
 ## 4. Future live prerequisites and execution (not authorized here)
 
-The evidence-bound runtime connection is not delivered by ADR-016, so this section remains
-historical and is not an execution instruction for a new plan. Only after a future dedicated
-delivery and SDC-CANARY-001 approval may an operator inject the Key through a deployment Secret Store
-and supply these paths to an isolated worker:
+ADR-017 delivers contract validation and database schema preparation, not the runtime connection.
+There is no supported Ark Worker environment-variable set or client action in this version. Legacy
+capability, pricing and authorization path variables remain rejected. Do not inject an API Key,
+start Worker/Temporal/PostgreSQL, or invoke the Canary client against Ark.
 
-- `SDC_PROVIDER_CAPABILITY_PATH`
-- `SDC_PROVIDER_PRICING_PATH`
-- `SDC_LIVE_AUTHORIZATION_PATH`
+The current `ark-canary-capability-pricing-v1` FRESH bundle contains no entitlement evidence. The
+candidate contract reserves `entitlement_anchor_sha256` and `entitlement_valid_until`, but this
+version has no entitlement evidence profile, positive registry or verifier. A caller-supplied hash
+and date cannot establish current access to `doubao-seedance-2-0-260128` in `cn-beijing`.
 
-The separately approved client action is:
+A future live proposal must be separately approved and atomically deliver:
 
-```bash
-uv run python -m sdc.client --canary-execution .artifacts/canary/execution.json
-```
+- current, independently reviewed entitlement for the exact account scope, model and region;
+- a separately reviewed, current positive-registry entry for the exact authorization SHA and all
+  of its bound identities, not the candidate file or digest copied beside it;
+- a reviewed runtime-release digest and one durable ledger/deployment identity;
+- a database transaction that reserves Attempt 1, consumes that authorization and persists
+  `POST_IN_FLIGHT` before any socket write, using database UTC and an exclusive expiry boundary;
+- replay behavior that maps a consumed or in-flight claim without a persisted task ID to
+  `SUBMISSION_UNKNOWN -> HUMAN_GATE`, with no replacement POST;
+- a dedicated Worker that reads the Key only after every static and durable gate passes, registers
+  only `CanaryWorkflow`, fixes Activity concurrency to one, rejects generic submit/generate, and
+  verifies task-ID ownership before watch/download; and
+- tests proving at most one Ark POST, no creative Attempt 2, no legacy fallback, and no automatic
+  resubmission after an explicit rejection, crash or ambiguous outcome.
 
-The client uses the frozen `run_id` as `workflow_id` and passes the frozen request to the Workflow.
-The worker independently reconstructs the request from its explicit Provider profile and fails
-closed on any mismatch. The Canary Workflow cannot dispatch Attempt 2.
-
-If any file is missing, mismatched, expired, already consumed, or over budget, the worker/runtime
-fails closed before POST. A submission with an unknown outcome enters `HUMAN_GATE`; do not create a
-replacement authorization until the remote task state has been manually reconciled.
+Non-mutating watch/download technical retries may operate only on a durably owned task ID after a
+future accepted submission. They never authorize another creative Attempt or POST.
 
 ## 5. Diagnose a rejected or failed request without expanding the evidence surface
 
-Run database migration `0006` before starting a Worker that contains provider-failure diagnostics.
-For a future explicit Ark submission rejection, inspect only the bounded columns on the matching
-`generation_attempts` row:
+Migration `0006` defines the bounded provider-failure diagnostics. ADR-017 adds migration `0007`,
+which only declares nullable evidence-bound claim metadata, completeness/uniqueness constraints and
+a database append-only trigger. No current code inserts such a claim, and applying `0007` does not
+make Ark execution available.
+
+After a future separately approved live delivery, an explicit Ark submission rejection may be
+diagnosed using only the bounded columns on the matching `generation_attempts` row:
 
 ```sql
 SELECT run_id, job_id, attempt, failure_class,
