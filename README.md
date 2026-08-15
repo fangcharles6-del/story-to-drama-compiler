@@ -101,3 +101,12 @@ Before any real Provider call, run the isolated FakeProvider rehearsal documente
 concurrency one, one Run/Job/Attempt/candidate, 1080x1920 at 24 fps for four seconds, no audio, no
 Ark adapter, no `LiveAuthorization`, and zero Provider HTTP POSTs. Failures enter `HUMAN_GATE`
 without Attempt 2. Expired capability or price evidence can never be extended or reused.
+
+## Immutable evidence bundles
+
+SDC-ADR-014 and SDC-ADR-015 define immutable, content-addressed evidence bundles and a restricted
+offline importer for the reviewed R2-R6 Canary archives. The canonical materialization deduplicates
+unchanged historical evidence without modifying its source archive, capture time, or expiry. It
+never restores live eligibility or reads R6-live, credentials, Provider requests, or generated
+media. See `docs/runbooks/SDC-EVIDENCE-CAS-R2-R6.md` for the verify-first procedure and fixed
+67-object closure.
