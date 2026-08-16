@@ -1121,7 +1121,7 @@ def test_0008_legacy_rows_are_lossless_across_upgrade_downgrade_and_upgrade(
         asyncio.run(
             _scalar(
                 database_url,
-                "SELECT event_type || ':' || state || ':' || payload->>'kind' "
+                "SELECT event_type || ':' || state || ':' || (payload->>'kind') "
                 "FROM run_events WHERE id = 'legacy-event'",
             )
         )
