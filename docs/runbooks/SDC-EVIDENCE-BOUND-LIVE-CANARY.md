@@ -143,9 +143,10 @@ Each PR must be independently green and must not create a half-open live path.
 
 1. **Entitlement trust (PR1, this delivery)**: add the snapshot/profile/schema, offline freezer,
    verifier and an empty positive registry. Ark remains unreachable.
-2. **Atomic ledger** (2-3 days): add the claim interface, database-time transaction, replay result,
-   task ownership and PostgreSQL tests. Add a new migration if persistence changes are needed;
-   never rewrite released revision `0007`. No Provider wiring.
+2. **Atomic ledger (PR2, this delivery)**: add migration `0008`, the private claim interface,
+   database-time transaction, replay classification, task ownership and PostgreSQL tests without
+   rewriting released revision `0007`. The runtime-identity table and authorization registry stay
+   empty; there is no Provider wiring or POST authority.
 3. **Dedicated Canary runtime** (1.5-2.5 days): add the dedicated Worker entrypoint, private binding,
    lazy secret provider and owned watch/download using only a local stub. Authorization registry
    remains empty.

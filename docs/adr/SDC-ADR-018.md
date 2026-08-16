@@ -17,8 +17,12 @@ This ADR fixes the interfaces, state transitions, trust order and test obligatio
 implementation. PR1 implements only the offline entitlement contract, candidate freezer, trusted
 loader and an empty registry. It does not add a real entitlement evidence bundle or registry
 entry, approve an authorization, connect the ADR-017 guard to runtime, read a Key, start a service
-or issue an Ark request. Until all follow-up deliveries are approved and merged, the existing Ark
-Worker and every Ark `RuntimeActivities` entrypoint remain unconditionally disabled.
+or issue an Ark request. PR2 implements only migration `0008`, the inert atomic PostgreSQL claim
+store, task-ownership persistence and their offline/PostgreSQL tests. The singleton runtime
+identity and both positive registries remain empty, and the ledger has no Worker, Temporal,
+Provider, secret or network connection. Until all follow-up deliveries are approved and merged,
+the existing Ark Worker and every Ark `RuntimeActivities` entrypoint remain unconditionally
+disabled.
 
 ## Positive authority chain
 

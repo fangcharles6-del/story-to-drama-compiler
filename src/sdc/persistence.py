@@ -15,6 +15,7 @@ from sqlalchemy import (
     Index,
     Integer,
     Numeric,
+    SmallInteger,
     String,
     UniqueConstraint,
     event,
@@ -78,6 +79,50 @@ class AttemptRecord(Base):
     __table_args__ = (
         UniqueConstraint("run_id", "job_id", "attempt"),
         UniqueConstraint("provider", "provider_task_id"),
+        CheckConstraint(
+            "(evidence_authorization_id IS NULL AND "
+            "evidence_authorization_sha256 IS NULL AND "
+            "evidence_runtime_release_sha256 IS NULL AND "
+            "evidence_runtime_policy_sha256 IS NULL AND "
+            "evidence_task_queue IS NULL AND evidence_ledger_id IS NULL AND "
+            "evidence_deployment_id IS NULL AND evidence_claim_event_id IS NULL AND "
+            "evidence_acceptance_event_id IS NULL AND "
+            "evidence_claimed_at IS NULL AND evidence_claim_state IS NULL AND "
+            "attempt_state IS DISTINCT FROM 'POST_IN_FLIGHT') OR ("
+            "evidence_authorization_id IS NOT NULL AND "
+            "evidence_authorization_sha256 IS NOT NULL AND "
+            "evidence_runtime_release_sha256 IS NOT NULL AND "
+            "evidence_runtime_policy_sha256 IS NOT NULL AND "
+            "evidence_task_queue IS NOT NULL AND evidence_ledger_id IS NOT NULL AND "
+            "evidence_deployment_id IS NOT NULL AND evidence_claim_event_id IS NOT NULL AND "
+            "evidence_claimed_at IS NOT NULL AND "
+            "evidence_claim_state IS NOT NULL AND "
+            "evidence_claim_state = 'POST_IN_FLIGHT' AND attempt = 1 AND "
+            "provider IS NOT NULL AND provider = 'volcengine_ark' AND "
+            "model IS NOT NULL AND model = 'doubao-seedance-2-0-260128' AND "
+            "request_fingerprint IS NOT NULL AND "
+            "request_fingerprint ~ '^[0-9a-f]{64}$' AND attempt_state IS NOT NULL AND ("
+            "(provider_task_id IS NULL AND submitted_at IS NULL AND "
+            "evidence_acceptance_event_id IS NULL AND "
+            "attempt_state IN ('POST_IN_FLIGHT', 'SUBMISSION_UNKNOWN', 'HUMAN_GATE')) OR ("
+            "provider_task_id IS NOT NULL AND submitted_at IS NOT NULL AND "
+            "evidence_acceptance_event_id IS NOT NULL AND "
+            "attempt_state IN ('SUBMITTED', 'WATCHING', 'DOWNLOADING', 'VERIFIED', "
+            "'FAILED', 'SUBMISSION_UNKNOWN', 'HUMAN_GATE'))))",
+            name="ck_attempt_evidence_bound_claim_complete",
+        ),
+        Index(
+            "uq_attempt_evidence_authorization_id",
+            "evidence_authorization_id",
+            unique=True,
+            postgresql_where=text("evidence_authorization_id IS NOT NULL"),
+        ),
+        Index(
+            "uq_attempt_evidence_authorization_sha256",
+            "evidence_authorization_sha256",
+            unique=True,
+            postgresql_where=text("evidence_authorization_sha256 IS NOT NULL"),
+        ),
     )
     id: Mapped[str] = mapped_column(String, primary_key=True)
     run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
@@ -102,6 +147,35 @@ class AttemptRecord(Base):
     )
     downloaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     artifact_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    evidence_authorization_id: Mapped[str | None] = mapped_column(
+        String(128),
+        ForeignKey(
+            "live_authorization_uses.authorization_id",
+            deferrable=True,
+            initially="DEFERRED",
+        ),
+        nullable=True,
+    )
+    evidence_authorization_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    evidence_runtime_release_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    evidence_runtime_policy_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    evidence_task_queue: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    evidence_ledger_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    evidence_deployment_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    evidence_claim_event_id: Mapped[str | None] = mapped_column(
+        String,
+        ForeignKey("run_events.id", deferrable=True, initially="DEFERRED"),
+        nullable=True,
+    )
+    evidence_acceptance_event_id: Mapped[str | None] = mapped_column(
+        String,
+        ForeignKey("run_events.id", deferrable=True, initially="DEFERRED"),
+        nullable=True,
+    )
+    evidence_claimed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    evidence_claim_state: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
 
 class LiveAuthorizationUseRecord(Base):
@@ -200,6 +274,52 @@ class LiveAuthorizationUseRecord(Base):
     claim_state: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
 
+class CanaryRuntimeIdentityRecord(Base):
+    """Immutable singleton binding the Canary ledger to one reviewed deployment."""
+
+    __tablename__ = "canary_runtime_identity"
+    __table_args__ = (
+        CheckConstraint("singleton_id = 1", name="ck_canary_runtime_identity_singleton"),
+        CheckConstraint(
+            "provider = 'volcengine_ark' AND "
+            "model = 'doubao-seedance-2-0-260128' AND "
+            "region = 'cn-beijing' AND "
+            "operation = 'contents.generations.tasks.create'",
+            name="ck_canary_runtime_identity_route",
+        ),
+        CheckConstraint(
+            "runtime_release_sha256 ~ '^[0-9a-f]{64}$' AND "
+            "runtime_policy_sha256 ~ '^[0-9a-f]{64}$'",
+            name="ck_canary_runtime_identity_digests",
+        ),
+        CheckConstraint(
+            "ledger_id ~ '^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$' AND "
+            "deployment_id ~ '^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$' AND "
+            "task_queue ~ '^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$'",
+            name="ck_canary_runtime_identity_names",
+        ),
+        CheckConstraint(
+            "claim_to_socket_max_ms = 10000 AND expiry_guard_band_ms = 30000",
+            name="ck_canary_runtime_identity_deadlines",
+        ),
+        UniqueConstraint("ledger_id", name="uq_canary_runtime_identity_ledger"),
+        UniqueConstraint("deployment_id", name="uq_canary_runtime_identity_deployment"),
+    )
+    singleton_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, autoincrement=False)
+    ledger_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    deployment_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    runtime_release_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    runtime_policy_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    task_queue: Mapped[str] = mapped_column(String(128), nullable=False)
+    provider: Mapped[str] = mapped_column(String(64), nullable=False)
+    model: Mapped[str] = mapped_column(String(128), nullable=False)
+    region: Mapped[str] = mapped_column(String(32), nullable=False)
+    operation: Mapped[str] = mapped_column(String(128), nullable=False)
+    claim_to_socket_max_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    expiry_guard_band_ms: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
 @event.listens_for(EventRecord, "before_update")
 @event.listens_for(EventRecord, "before_delete")
 def prohibit_event_mutation(*_: object) -> None:
@@ -210,3 +330,9 @@ def prohibit_event_mutation(*_: object) -> None:
 @event.listens_for(LiveAuthorizationUseRecord, "before_delete")
 def prohibit_authorization_use_mutation(*_: object) -> None:
     raise ValueError("live authorization uses are append-only")
+
+
+@event.listens_for(CanaryRuntimeIdentityRecord, "before_update")
+@event.listens_for(CanaryRuntimeIdentityRecord, "before_delete")
+def prohibit_canary_runtime_identity_mutation(*_: object) -> None:
+    raise ValueError("Canary runtime identity is append-only")
