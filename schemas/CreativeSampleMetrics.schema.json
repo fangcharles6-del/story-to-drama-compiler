@@ -1,0 +1,173 @@
+{
+  "additionalProperties": false,
+  "description": "Caller observations; continuity scores are human inputs, not technical QC.",
+  "properties": {
+    "artifact_free_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Artifact Free Rate"
+    },
+    "average_attempts": {
+      "anyOf": [
+        {
+          "maximum": 2.0,
+          "minimum": 1.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Average Attempts"
+    },
+    "character_continuity_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Character Continuity Rate"
+    },
+    "cost_cny": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Cost Cny"
+    },
+    "critical_identity_breaks": {
+      "minimum": 0,
+      "title": "Critical Identity Breaks",
+      "type": "integer"
+    },
+    "duplicate_media_count": {
+      "minimum": 0,
+      "title": "Duplicate Media Count",
+      "type": "integer"
+    },
+    "failure_counts": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "title": "Failure Counts",
+      "type": "object"
+    },
+    "first_pass_usable_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "First Pass Usable Rate"
+    },
+    "human_edit_minutes": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Human Edit Minutes"
+    },
+    "revision_id": {
+      "pattern": "^creative_revision_[0-9a-f]{20}$",
+      "title": "Revision Id",
+      "type": "string"
+    },
+    "sample_id": {
+      "pattern": "^creative_sample_[0-9a-f]{20}$",
+      "title": "Sample Id",
+      "type": "string"
+    },
+    "scene_continuity_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Scene Continuity Rate"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shot_intent_pass_rate": {
+      "anyOf": [
+        {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Shot Intent Pass Rate"
+    },
+    "total_elapsed_ms": {
+      "minimum": 0,
+      "title": "Total Elapsed Ms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "sample_id",
+    "revision_id",
+    "first_pass_usable_rate",
+    "character_continuity_rate",
+    "scene_continuity_rate",
+    "shot_intent_pass_rate",
+    "artifact_free_rate",
+    "critical_identity_breaks",
+    "duplicate_media_count",
+    "average_attempts",
+    "total_elapsed_ms",
+    "human_edit_minutes",
+    "cost_cny",
+    "failure_counts"
+  ],
+  "title": "CreativeSampleMetrics",
+  "type": "object"
+}

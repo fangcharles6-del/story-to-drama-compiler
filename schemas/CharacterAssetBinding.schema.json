@@ -1,0 +1,27 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "asset_version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Asset Version Id",
+      "type": "string"
+    },
+    "character_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Character Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "character_id",
+    "asset_version_id"
+  ],
+  "title": "CharacterAssetBinding",
+  "type": "object"
+}

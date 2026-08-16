@@ -157,3 +157,25 @@ The second ADR-018 slice adds only the atomic evidence-bound Canary ledger. It c
 Attempt-1 claim or classify existing state, and can persist one safely returned task ID with its
 acceptance event; it cannot read a Key or call Ark. The runtime-identity table is initially empty,
 the authorization registry remains empty, and all Ark runtime entrypoints remain hard-disabled.
+
+## Offline creative sample loop
+
+Proposed SDC-ADR-019 defines a separate Creative Sample Loop v1 for measuring creative quality
+without reopening live execution. It accepts only human-supplied local `ImportedMedia` and fixes
+one sample at 60–90 seconds, 8–12 ordered shots, one or two recurring characters and exactly two
+scenes. The scorecard records character and scene continuity, shot intent, visual artifacts,
+first-pass usable-shot rate and human review effort. FakeProvider and other synthetic fixtures may
+test mechanics but must be labeled and can never be presented or scored as real imported shots.
+
+The loop is offline: it reads no Key, starts no Worker/Temporal/PostgreSQL service, contacts no Ark
+or other Provider, changes no entitlement or authorization registry and consumes no ledger claim.
+A passing sample is not live authority or production certification. Any later live experiment must
+be a separately reviewed, exact finite batch with its own current evidence, authorization, spend
+and submission limits. See `docs/runbooks/SDC-CREATIVE-SAMPLE-LOOP.md`.
+
+Its implementation is a separate v2 creative-contract/compiler path and leaves every released v1
+schema byte unchanged. It freezes explicit local inputs before media parsing, admits only sanitized
+PNG asset versions, invokes FFmpeg/ffprobe with explicit local demuxers and a `file`-only protocol
+allowlist, produces a 48 kHz audio master plus embedded subtitles, and publishes an exact
+report-last closure. A synthetic 60-second/8-shot FFmpeg rehearsal is technical evidence only: it
+is forced to `STOP` and excluded from all creative metrics.
