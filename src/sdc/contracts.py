@@ -15,6 +15,7 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 SCHEMA_VERSION: Final[Literal["1.0.0"]] = "1.0.0"
+CREATIVE_SCHEMA_VERSION: Final[Literal["2.0.0"]] = "2.0.0"
 CANARY_PROVIDER: Final[Literal["volcengine_ark"]] = "volcengine_ark"
 CANARY_MODEL: Final[Literal["doubao-seedance-2-0-260128"]] = "doubao-seedance-2-0-260128"
 ARK_CANARY_ENTITLEMENT_PROFILE: Final[Literal["ark-canary-entitlement-v1"]] = (
@@ -39,6 +40,13 @@ _ENTITLEMENT_MAX_VALIDITY = timedelta(hours=4)
 class Contract(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     schema_version: Literal["1.0.0"] = SCHEMA_VERSION
+
+
+class ContractV2(BaseModel):
+    """Independent v2 contract family; released v1 contracts remain byte-stable."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    schema_version: Literal["2.0.0"] = CREATIVE_SCHEMA_VERSION
 
 
 class StoryBeat(Contract):
@@ -118,6 +126,804 @@ class AssemblyPlan(Contract):
     id: str
     clock_id: str
     items: tuple[AssemblyItem, ...]
+
+
+_PORTABLE_CREATIVE_ID = r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+_LOWER_SHA256 = r"^[0-9a-f]{64}$"
+
+
+def _creative_stable_id(kind: str, value: object) -> str:
+    canonical = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    return f"{kind}_{hashlib.sha256(canonical.encode()).hexdigest()[:20]}"
+
+
+class CharacterAssetVersion(Contract):
+    """Portable, immutable reference to one approved character asset version."""
+
+    id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    character_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    version: Annotated[int, Field(ge=1)]
+    content_sha256: str = Field(pattern=_LOWER_SHA256)
+    media_type: Literal["image/png"] = "image/png"
+    approval_ref: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    visual_description: str = Field(min_length=1, max_length=4000)
+    provenance: Literal["IMPORTED_APPROVED_MEDIA"] = "IMPORTED_APPROVED_MEDIA"
+
+    @classmethod
+    def derive_id(
+        cls,
+        *,
+        character_id: str,
+        version: int,
+        content_sha256: str,
+        media_type: Literal["image/png"],
+        approval_ref: str,
+        visual_description: str,
+    ) -> str:
+        return _creative_stable_id(
+            "character_asset",
+            {
+                "approval_ref": approval_ref,
+                "character_id": character_id,
+                "content_sha256": content_sha256,
+                "media_type": media_type,
+                "provenance": "IMPORTED_APPROVED_MEDIA",
+                "version": version,
+                "visual_description": visual_description,
+            },
+        )
+
+    @model_validator(mode="after")
+    def validate_character_asset_id(self) -> CharacterAssetVersion:
+        expected = self.derive_id(
+            character_id=self.character_id,
+            version=self.version,
+            content_sha256=self.content_sha256,
+            media_type=self.media_type,
+            approval_ref=self.approval_ref,
+            visual_description=self.visual_description,
+        )
+        if self.id != expected:
+            raise ValueError(
+                "character asset ID must derive from canonical content and bind its "
+                "containing character"
+            )
+        return self
+
+
+class CharacterBible(Contract):
+    character_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    name: str = Field(min_length=1, max_length=128)
+    visual_description: str = Field(min_length=1, max_length=4000)
+    asset_versions: tuple[CharacterAssetVersion, ...] = Field(min_length=1)
+    active_asset_version_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+
+    @classmethod
+    def derive_id(cls, *, name: str, visual_description: str) -> str:
+        return _creative_stable_id(
+            "character",
+            {"name": name, "visual_description": visual_description},
+        )
+
+    @model_validator(mode="after")
+    def validate_character_assets(self) -> CharacterBible:
+        if self.character_id != self.derive_id(
+            name=self.name,
+            visual_description=self.visual_description,
+        ):
+            raise ValueError("character ID must derive from its canonical content")
+        version_ids = tuple(item.id for item in self.asset_versions)
+        versions = tuple(item.version for item in self.asset_versions)
+        if len(version_ids) != len(set(version_ids)) or len(versions) != len(set(versions)):
+            raise ValueError("character asset IDs and versions must be unique")
+        if versions != tuple(sorted(versions)):
+            raise ValueError("character asset versions must use ascending version order")
+        if any(item.character_id != self.character_id for item in self.asset_versions):
+            raise ValueError("character asset version must bind its containing character")
+        if self.active_asset_version_id not in version_ids:
+            raise ValueError("active character asset version must exist in the bible")
+        return self
+
+
+class SceneAssetVersion(Contract):
+    """Portable, immutable reference to one approved scene asset version."""
+
+    id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    scene_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    version: Annotated[int, Field(ge=1)]
+    content_sha256: str = Field(pattern=_LOWER_SHA256)
+    media_type: Literal["image/png"] = "image/png"
+    approval_ref: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    visual_description: str = Field(min_length=1, max_length=4000)
+    provenance: Literal["IMPORTED_APPROVED_MEDIA"] = "IMPORTED_APPROVED_MEDIA"
+
+    @classmethod
+    def derive_id(
+        cls,
+        *,
+        scene_id: str,
+        version: int,
+        content_sha256: str,
+        media_type: Literal["image/png"],
+        approval_ref: str,
+        visual_description: str,
+    ) -> str:
+        return _creative_stable_id(
+            "scene_asset",
+            {
+                "approval_ref": approval_ref,
+                "content_sha256": content_sha256,
+                "media_type": media_type,
+                "provenance": "IMPORTED_APPROVED_MEDIA",
+                "scene_id": scene_id,
+                "version": version,
+                "visual_description": visual_description,
+            },
+        )
+
+    @model_validator(mode="after")
+    def validate_scene_asset_id(self) -> SceneAssetVersion:
+        expected = self.derive_id(
+            scene_id=self.scene_id,
+            version=self.version,
+            content_sha256=self.content_sha256,
+            media_type=self.media_type,
+            approval_ref=self.approval_ref,
+            visual_description=self.visual_description,
+        )
+        if self.id != expected:
+            raise ValueError(
+                "scene asset ID must derive from canonical content and bind its containing scene"
+            )
+        return self
+
+
+class SceneBible(Contract):
+    scene_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    ordinal: Annotated[int, Field(ge=0)]
+    name: str = Field(min_length=1, max_length=128)
+    visual_description: str = Field(min_length=1, max_length=4000)
+    asset_versions: tuple[SceneAssetVersion, ...] = Field(min_length=1)
+    active_asset_version_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+
+    @classmethod
+    def derive_id(cls, *, ordinal: int, name: str, visual_description: str) -> str:
+        return _creative_stable_id(
+            "scene",
+            {
+                "name": name,
+                "ordinal": ordinal,
+                "visual_description": visual_description,
+            },
+        )
+
+    @model_validator(mode="after")
+    def validate_scene_assets(self) -> SceneBible:
+        if self.scene_id != self.derive_id(
+            ordinal=self.ordinal,
+            name=self.name,
+            visual_description=self.visual_description,
+        ):
+            raise ValueError("scene ID must derive from its canonical content")
+        version_ids = tuple(item.id for item in self.asset_versions)
+        versions = tuple(item.version for item in self.asset_versions)
+        if len(version_ids) != len(set(version_ids)) or len(versions) != len(set(versions)):
+            raise ValueError("scene asset IDs and versions must be unique")
+        if versions != tuple(sorted(versions)):
+            raise ValueError("scene asset versions must use ascending version order")
+        if any(item.scene_id != self.scene_id for item in self.asset_versions):
+            raise ValueError("scene asset version must bind its containing scene")
+        if self.active_asset_version_id not in version_ids:
+            raise ValueError("active scene asset version must exist in the bible")
+        return self
+
+
+class DialogueLine(Contract):
+    line_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    ordinal: Annotated[int, Field(ge=0)]
+    scene_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    character_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    text: str = Field(min_length=1, max_length=2000)
+    start_ms: Ms
+    end_ms: Ms
+
+    @classmethod
+    def derive_id(
+        cls,
+        *,
+        ordinal: int,
+        scene_id: str,
+        character_id: str,
+        text: str,
+        start_ms: int,
+        end_ms: int,
+    ) -> str:
+        return _creative_stable_id(
+            "dialogue",
+            {
+                "character_id": character_id,
+                "end_ms": end_ms,
+                "ordinal": ordinal,
+                "scene_id": scene_id,
+                "start_ms": start_ms,
+                "text": text,
+            },
+        )
+
+    @model_validator(mode="after")
+    def validate_dialogue_interval(self) -> DialogueLine:
+        if self.end_ms <= self.start_ms:
+            raise ValueError("dialogue end_ms must be strictly later than start_ms")
+        if self.line_id != self.derive_id(
+            ordinal=self.ordinal,
+            scene_id=self.scene_id,
+            character_id=self.character_id,
+            text=self.text,
+            start_ms=self.start_ms,
+            end_ms=self.end_ms,
+        ):
+            raise ValueError("dialogue line ID must derive from its canonical content")
+        return self
+
+
+class CreativeShotSize(StrEnum):
+    EXTREME_CLOSE_UP = "EXTREME_CLOSE_UP"
+    CLOSE_UP = "CLOSE_UP"
+    MEDIUM_CLOSE_UP = "MEDIUM_CLOSE_UP"
+    MEDIUM = "MEDIUM"
+    MEDIUM_WIDE = "MEDIUM_WIDE"
+    WIDE = "WIDE"
+    EXTREME_WIDE = "EXTREME_WIDE"
+
+
+class CreativeCameraAngle(StrEnum):
+    EYE_LEVEL = "EYE_LEVEL"
+    LOW_ANGLE = "LOW_ANGLE"
+    HIGH_ANGLE = "HIGH_ANGLE"
+    DUTCH_ANGLE = "DUTCH_ANGLE"
+    OVERHEAD = "OVERHEAD"
+    POV = "POV"
+
+
+class CreativeCameraMovement(StrEnum):
+    STATIC = "STATIC"
+    PAN = "PAN"
+    TILT = "TILT"
+    DOLLY = "DOLLY"
+    TRUCK = "TRUCK"
+    PEDESTAL = "PEDESTAL"
+    HANDHELD = "HANDHELD"
+    CRANE = "CRANE"
+    ZOOM = "ZOOM"
+    ORBIT = "ORBIT"
+
+
+def _canonical_creative_text(value: str, *, field: str) -> str:
+    if value != value.strip() or normalize("NFC", value) != value:
+        raise ValueError(f"{field} must be trimmed and use NFC normalization")
+    if any(ord(character) < 32 or ord(character) == 127 for character in value):
+        raise ValueError(f"{field} must not contain control characters")
+    return value
+
+
+class CreativeSampleShotSpec(Contract):
+    """ID-free source shot; compilation derives the immutable StoryboardShotV2 ID."""
+
+    ordinal: Annotated[int, Field(ge=0)]
+    scene_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    narrative: str = Field(min_length=1, max_length=4000)
+    visual_direction: str = Field(min_length=1, max_length=4000)
+    emotion_by_character: dict[str, str] = Field(max_length=2)
+    action: str = Field(min_length=1, max_length=2000)
+    shot_size: CreativeShotSize
+    camera_angle: CreativeCameraAngle
+    camera_movement: CreativeCameraMovement
+    wardrobe_by_character: dict[str, str] = Field(max_length=2)
+    props: tuple[str, ...] = Field(max_length=16)
+    continuity_notes: str = Field(min_length=1, max_length=2000)
+    start_ms: Ms
+    duration_ms: Annotated[int, Field(gt=0)]
+    character_ids: tuple[str, ...] = Field(max_length=2)
+    dialogue_line_ids: tuple[str, ...]
+
+    @field_validator("character_ids", "dialogue_line_ids")
+    @classmethod
+    def validate_shot_references(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if len(value) != len(set(value)):
+            raise ValueError("shot references must be unique")
+        if any(not item for item in value):
+            raise ValueError("shot references must not be empty")
+        return value
+
+    @field_validator("character_ids")
+    @classmethod
+    def validate_canonical_character_order(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if value != tuple(sorted(value)):
+            raise ValueError("shot character_ids must use canonical sorted order")
+        return value
+
+    @field_validator("emotion_by_character", "wardrobe_by_character")
+    @classmethod
+    def validate_character_direction_map(cls, value: dict[str, str]) -> dict[str, str]:
+        for item in value.values():
+            if not item or len(item) > 512:
+                raise ValueError("character direction values must contain 1..512 characters")
+            _canonical_creative_text(item, field="character direction")
+        return value
+
+    @field_validator("action", "continuity_notes")
+    @classmethod
+    def validate_direction_text(cls, value: str) -> str:
+        return _canonical_creative_text(value, field="shot direction")
+
+    @field_validator("props")
+    @classmethod
+    def validate_props(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if value != tuple(sorted(set(value))):
+            raise ValueError("props must be unique and use canonical sorted order")
+        for item in value:
+            if not item or len(item) > 128:
+                raise ValueError("props must contain 1..128 characters")
+            _canonical_creative_text(item, field="prop")
+        return value
+
+    @model_validator(mode="after")
+    def validate_character_direction_closure(self) -> CreativeSampleShotSpec:
+        expected = set(self.character_ids)
+        if set(self.emotion_by_character) != expected:
+            raise ValueError("emotion_by_character keys must exactly match character_ids")
+        if set(self.wardrobe_by_character) != expected:
+            raise ValueError("wardrobe_by_character keys must exactly match character_ids")
+        return self
+
+
+class CreativeSampleSpec(Contract):
+    """Portable, deterministic source for one 60-90 second creative sample."""
+
+    title: str = Field(min_length=1, max_length=256)
+    seed: int
+    duration_ms: Annotated[int, Field(ge=60_000, le=90_000)]
+    character_bibles: tuple[CharacterBible, ...] = Field(min_length=1, max_length=2)
+    scene_bibles: tuple[SceneBible, ...] = Field(min_length=2, max_length=2)
+    dialogue: tuple[DialogueLine, ...] = Field(min_length=1)
+    shots: tuple[CreativeSampleShotSpec, ...] = Field(min_length=8, max_length=12)
+
+    @model_validator(mode="after")
+    def validate_creative_sample(self) -> CreativeSampleSpec:
+        character_ids = tuple(item.character_id for item in self.character_bibles)
+        if character_ids != tuple(sorted(set(character_ids))):
+            raise ValueError("character bibles must be unique and sorted by character_id")
+
+        scene_ids = tuple(item.scene_id for item in self.scene_bibles)
+        scene_ordinals = tuple(item.ordinal for item in self.scene_bibles)
+        if len(scene_ids) != len(set(scene_ids)) or scene_ordinals != (0, 1):
+            raise ValueError("creative sample must contain two unique scenes in ordinal order")
+
+        all_asset_ids = tuple(
+            version.id for bible in self.character_bibles for version in bible.asset_versions
+        ) + tuple(version.id for bible in self.scene_bibles for version in bible.asset_versions)
+        if len(all_asset_ids) != len(set(all_asset_ids)):
+            raise ValueError("asset version IDs must be globally unique")
+
+        line_ids = tuple(item.line_id for item in self.dialogue)
+        line_ordinals = tuple(item.ordinal for item in self.dialogue)
+        if len(line_ids) != len(set(line_ids)) or line_ordinals != tuple(range(len(line_ids))):
+            raise ValueError("dialogue lines must have unique IDs and contiguous ordinals")
+        known_characters = set(character_ids)
+        known_scenes = set(scene_ids)
+        for line in self.dialogue:
+            if line.character_id not in known_characters or line.scene_id not in known_scenes:
+                raise ValueError("dialogue line references an unknown character or scene")
+            if line.end_ms > self.duration_ms:
+                raise ValueError("dialogue line exceeds the sample master timeline")
+        for previous, current in zip(self.dialogue, self.dialogue[1:], strict=False):
+            if current.start_ms < previous.end_ms:
+                raise ValueError("dialogue lines must use non-overlapping master-clock intervals")
+
+        shot_ordinals = tuple(item.ordinal for item in self.shots)
+        if shot_ordinals != tuple(range(len(self.shots))):
+            raise ValueError("shot ordinals must be contiguous and match tuple order")
+        cursor = 0
+        referenced_scenes: set[str] = set()
+        referenced_characters: set[str] = set()
+        referenced_lines: list[str] = []
+        scene_shot_counts = {scene_id: 0 for scene_id in scene_ids}
+        character_shot_counts = {character_id: 0 for character_id in character_ids}
+        character_scenes = {character_id: set[str]() for character_id in character_ids}
+        line_by_id = {item.line_id: item for item in self.dialogue}
+        line_order = {item.line_id: item.ordinal for item in self.dialogue}
+        scene_order = {item.scene_id: item.ordinal for item in self.scene_bibles}
+        prior_scene_ordinal = 0
+        for shot in self.shots:
+            if shot.start_ms != cursor:
+                raise ValueError("shot timeline must be contiguous and start at zero")
+            cursor += shot.duration_ms
+            if shot.scene_id not in known_scenes:
+                raise ValueError("shot references an unknown scene")
+            current_scene_ordinal = scene_order[shot.scene_id]
+            if current_scene_ordinal < prior_scene_ordinal:
+                raise ValueError("shots for each scene must form one contiguous scene block")
+            prior_scene_ordinal = current_scene_ordinal
+            referenced_scenes.add(shot.scene_id)
+            scene_shot_counts[shot.scene_id] += 1
+            if not set(shot.character_ids) <= known_characters:
+                raise ValueError("shot references an unknown character")
+            referenced_characters.update(shot.character_ids)
+            for character_id in shot.character_ids:
+                character_shot_counts[character_id] += 1
+                character_scenes[character_id].add(shot.scene_id)
+            if any(line_id not in line_by_id for line_id in shot.dialogue_line_ids):
+                raise ValueError("shot references an unknown dialogue line")
+            expected_line_order = tuple(sorted(shot.dialogue_line_ids, key=line_order.__getitem__))
+            if shot.dialogue_line_ids != expected_line_order:
+                raise ValueError("shot dialogue references must follow dialogue ordinal order")
+            for line_id in shot.dialogue_line_ids:
+                line = line_by_id[line_id]
+                if line.scene_id != shot.scene_id or line.character_id not in shot.character_ids:
+                    raise ValueError("shot dialogue binding does not match its scene and character")
+                if line.start_ms < shot.start_ms or line.end_ms > shot.start_ms + shot.duration_ms:
+                    raise ValueError("dialogue line must lie completely within its bound shot")
+            referenced_lines.extend(shot.dialogue_line_ids)
+
+        if cursor != self.duration_ms:
+            raise ValueError("shot durations must equal the exact sample duration")
+        if referenced_scenes != known_scenes or referenced_characters != known_characters:
+            raise ValueError("every declared scene and character must be used by the sample")
+        if any(count < 3 for count in scene_shot_counts.values()):
+            raise ValueError("each scene must contain at least three shots")
+        if any(
+            character_shot_counts[character_id] < 3
+            or character_scenes[character_id] != known_scenes
+            for character_id in character_ids
+        ):
+            raise ValueError(
+                "each recurring character must appear in three shots across both scenes"
+            )
+        if len(referenced_lines) != len(set(referenced_lines)) or set(referenced_lines) != set(
+            line_ids
+        ):
+            raise ValueError("every dialogue line must be referenced by exactly one shot")
+        return self
+
+
+class NIRSceneV2(ContractV2):
+    id: str
+    scene_bible_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    scene_asset_version_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    ordinal: Annotated[int, Field(ge=0)]
+    narrative: str = Field(min_length=1)
+    start_ms: Ms
+    duration_ms: Annotated[int, Field(gt=0)]
+    character_ids: tuple[str, ...]
+    dialogue_line_ids: tuple[str, ...]
+
+
+class NIRV2(ContractV2):
+    id: str
+    title: str = Field(min_length=1)
+    seed: int
+    duration_ms: Annotated[int, Field(ge=60_000, le=90_000)]
+    character_bibles: tuple[CharacterBible, ...] = Field(min_length=1, max_length=2)
+    scene_bibles: tuple[SceneBible, ...] = Field(min_length=2, max_length=2)
+    dialogue: tuple[DialogueLine, ...] = Field(min_length=1)
+    scenes: tuple[NIRSceneV2, ...] = Field(min_length=2, max_length=2)
+
+    @model_validator(mode="after")
+    def validate_nir_v2_timeline(self) -> NIRV2:
+        if tuple(item.ordinal for item in self.scenes) != (0, 1):
+            raise ValueError("NIRV2 scenes must use exact ordinals 0 and 1")
+        cursor = 0
+        for scene in self.scenes:
+            if scene.start_ms != cursor:
+                raise ValueError("NIRV2 scene timeline must be contiguous")
+            cursor += scene.duration_ms
+        if cursor != self.duration_ms:
+            raise ValueError("NIRV2 scenes must cover the exact duration")
+        if {item.scene_bible_id for item in self.scenes} != {
+            item.scene_id for item in self.scene_bibles
+        }:
+            raise ValueError("NIRV2 scene bibles must form an exact reference closure")
+        scene_bible_by_id = {item.scene_id: item for item in self.scene_bibles}
+        dialogue_by_id = {item.line_id: item for item in self.dialogue}
+        for scene in self.scenes:
+            bible = scene_bible_by_id[scene.scene_bible_id]
+            if scene.scene_asset_version_id != bible.active_asset_version_id:
+                raise ValueError("NIRV2 scene must bind the active approved scene asset")
+            for line_id in scene.dialogue_line_ids:
+                line = dialogue_by_id.get(line_id)
+                if line is None or line.scene_id != scene.scene_bible_id:
+                    raise ValueError("NIRV2 dialogue must bind its declared scene")
+                if line.character_id not in scene.character_ids:
+                    raise ValueError("NIRV2 dialogue character must appear in its scene")
+        if {item.character_id for item in self.character_bibles} != {
+            character_id for scene in self.scenes for character_id in scene.character_ids
+        }:
+            raise ValueError("NIRV2 character bibles must form an exact reference closure")
+        if {item.line_id for item in self.dialogue} != {
+            line_id for scene in self.scenes for line_id in scene.dialogue_line_ids
+        }:
+            raise ValueError("NIRV2 dialogue must form an exact reference closure")
+        return self
+
+
+class CharacterAssetBinding(ContractV2):
+    character_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    asset_version_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+
+
+class StoryboardShotV2(ContractV2):
+    id: str
+    nir_scene_id: str
+    scene_bible_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    scene_asset_version_id: str = Field(pattern=_PORTABLE_CREATIVE_ID)
+    ordinal: Annotated[int, Field(ge=0)]
+    narrative: str = Field(min_length=1)
+    visual_direction: str = Field(min_length=1)
+    emotion_by_character: dict[str, str] = Field(max_length=2)
+    action: str = Field(min_length=1, max_length=2000)
+    shot_size: CreativeShotSize
+    camera_angle: CreativeCameraAngle
+    camera_movement: CreativeCameraMovement
+    wardrobe_by_character: dict[str, str] = Field(max_length=2)
+    props: tuple[str, ...] = Field(max_length=16)
+    continuity_notes: str = Field(min_length=1, max_length=2000)
+    prompt: str = Field(min_length=1)
+    start_ms: Ms
+    duration_ms: Annotated[int, Field(gt=0)]
+    character_assets: tuple[CharacterAssetBinding, ...] = Field(max_length=2)
+    dialogue_line_ids: tuple[str, ...]
+
+    @model_validator(mode="after")
+    def validate_storyboard_bindings(self) -> StoryboardShotV2:
+        character_ids = tuple(item.character_id for item in self.character_assets)
+        asset_ids = tuple(item.asset_version_id for item in self.character_assets)
+        if character_ids != tuple(sorted(set(character_ids))):
+            raise ValueError("storyboard character bindings must be unique and sorted")
+        if len(asset_ids) != len(set(asset_ids)):
+            raise ValueError("storyboard character asset versions must be unique")
+        if len(self.dialogue_line_ids) != len(set(self.dialogue_line_ids)):
+            raise ValueError("storyboard dialogue references must be unique")
+        if set(self.emotion_by_character) != set(character_ids):
+            raise ValueError("storyboard emotion keys must exactly match character bindings")
+        if set(self.wardrobe_by_character) != set(character_ids):
+            raise ValueError("storyboard wardrobe keys must exactly match character bindings")
+        for value in (*self.emotion_by_character.values(), *self.wardrobe_by_character.values()):
+            if not value or len(value) > 512:
+                raise ValueError("storyboard character directions must contain 1..512 characters")
+            _canonical_creative_text(value, field="storyboard character direction")
+        _canonical_creative_text(self.action, field="storyboard action")
+        _canonical_creative_text(self.continuity_notes, field="storyboard continuity notes")
+        if self.props != tuple(sorted(set(self.props))):
+            raise ValueError("storyboard props must be unique and use canonical sorted order")
+        for prop in self.props:
+            if not prop or len(prop) > 128:
+                raise ValueError("storyboard props must contain 1..128 characters")
+            _canonical_creative_text(prop, field="storyboard prop")
+        expected_id = _creative_stable_id(
+            "storyboard_shot_v2",
+            {
+                "character_assets": tuple(
+                    item.model_dump(mode="json") for item in self.character_assets
+                ),
+                "dialogue_line_ids": self.dialogue_line_ids,
+                "duration_ms": self.duration_ms,
+                "emotion_by_character": self.emotion_by_character,
+                "narrative": self.narrative,
+                "nir_scene_id": self.nir_scene_id,
+                "ordinal": self.ordinal,
+                "action": self.action,
+                "camera_angle": self.camera_angle.value,
+                "camera_movement": self.camera_movement.value,
+                "continuity_notes": self.continuity_notes,
+                "prompt": self.prompt,
+                "props": self.props,
+                "scene_asset_version_id": self.scene_asset_version_id,
+                "scene_bible_id": self.scene_bible_id,
+                "shot_size": self.shot_size.value,
+                "start_ms": self.start_ms,
+                "visual_direction": self.visual_direction,
+                "wardrobe_by_character": self.wardrobe_by_character,
+            },
+        )
+        if self.id != expected_id:
+            raise ValueError("storyboard shot ID must derive from its canonical content")
+        return self
+
+
+class PIRV2(ContractV2):
+    id: str
+    nir_id: str
+    duration_ms: Annotated[int, Field(ge=60_000, le=90_000)]
+    shots: tuple[StoryboardShotV2, ...] = Field(min_length=8, max_length=12)
+
+    @model_validator(mode="after")
+    def validate_pir_v2_timeline(self) -> PIRV2:
+        if tuple(item.ordinal for item in self.shots) != tuple(range(len(self.shots))):
+            raise ValueError("PIRV2 shots must use contiguous ordinals")
+        cursor = 0
+        for shot in self.shots:
+            if shot.start_ms != cursor:
+                raise ValueError("PIRV2 shot timeline must be contiguous")
+            cursor += shot.duration_ms
+        if cursor != self.duration_ms:
+            raise ValueError("PIRV2 shots must cover the exact duration")
+        expected_id = _creative_stable_id(
+            "pirv2",
+            {
+                "duration_ms": self.duration_ms,
+                "nir_id": self.nir_id,
+                "shots": tuple(item.model_dump(mode="json") for item in self.shots),
+            },
+        )
+        if self.id != expected_id:
+            raise ValueError("PIRV2 ID must derive from its canonical content")
+        return self
+
+
+NonNegativeFailureCount = Annotated[int, Field(ge=0)]
+
+
+class CreativeSampleDecision(StrEnum):
+    PASS_SAMPLE = "PASS_SAMPLE"
+    REVISE_OFFLINE = "REVISE_OFFLINE"
+    STOP = "STOP"
+
+
+class CreativeSampleMetrics(Contract):
+    """Caller observations; continuity scores are human inputs, not technical QC."""
+
+    sample_id: str = Field(pattern=r"^creative_sample_[0-9a-f]{20}$")
+    revision_id: str = Field(pattern=r"^creative_revision_[0-9a-f]{20}$")
+    first_pass_usable_rate: Annotated[Decimal, Field(ge=0, le=1)]
+    character_continuity_rate: Annotated[Decimal, Field(ge=0, le=1)]
+    scene_continuity_rate: Annotated[Decimal, Field(ge=0, le=1)]
+    shot_intent_pass_rate: Annotated[Decimal, Field(ge=0, le=1)]
+    artifact_free_rate: Annotated[Decimal, Field(ge=0, le=1)]
+    critical_identity_breaks: Annotated[int, Field(ge=0)]
+    duplicate_media_count: Annotated[int, Field(ge=0)]
+    average_attempts: Annotated[Decimal, Field(ge=1, le=2)]
+    total_elapsed_ms: Annotated[int, Field(ge=0)]
+    human_edit_minutes: Annotated[Decimal, Field(ge=0)]
+    cost_cny: Annotated[Decimal, Field(ge=0)]
+    failure_counts: dict[str, NonNegativeFailureCount]
+
+    @field_validator("failure_counts")
+    @classmethod
+    def validate_failure_counts(
+        cls, value: dict[str, NonNegativeFailureCount]
+    ) -> dict[str, NonNegativeFailureCount]:
+        if any(
+            not key
+            or len(key) > 64
+            or key[0].lower() not in "abcdefghijklmnopqrstuvwxyz"
+            or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789._-" for character in key)
+            for key in value
+        ):
+            raise ValueError("failure count keys must use canonical lowercase identifiers")
+        return value
+
+    @property
+    def decision(self) -> CreativeSampleDecision:
+        """Stop on an identity break, then apply the ADR-019 creative thresholds."""
+        if self.critical_identity_breaks > 0:
+            return CreativeSampleDecision.STOP
+        if (
+            self.character_continuity_rate >= Decimal("0.90")
+            and self.scene_continuity_rate >= Decimal("0.90")
+            and self.shot_intent_pass_rate >= Decimal("0.80")
+            and self.artifact_free_rate >= Decimal("0.90")
+            and self.first_pass_usable_rate >= Decimal("0.75")
+            and self.critical_identity_breaks == 0
+            and self.duplicate_media_count == 0
+        ):
+            return CreativeSampleDecision.PASS_SAMPLE
+        return CreativeSampleDecision.REVISE_OFFLINE
+
+
+class CreativeSampleCompilation(ContractV2):
+    id: str
+    spec_sha256: str = Field(pattern=_LOWER_SHA256)
+    nir: NIRV2
+    pir: PIRV2
+    audio_clock: AudioMasterClock
+    job_graph: JobGraph
+    assembly_plan: AssemblyPlan
+
+    @model_validator(mode="after")
+    def validate_compilation_closure(self) -> CreativeSampleCompilation:
+        if self.nir.id != f"nirv2_{self.spec_sha256[:20]}":
+            raise ValueError("NIRV2 ID must derive from the canonical sample specification")
+        if self.pir.nir_id != self.nir.id:
+            raise ValueError("PIRV2 must reference the compiled NIRV2")
+        if self.pir.duration_ms != self.nir.duration_ms:
+            raise ValueError("compiled NIRV2 and PIRV2 durations must match")
+        if self.audio_clock.duration_ms != self.pir.duration_ms:
+            raise ValueError("audio clock must match the compiled sample duration")
+        shots = self.pir.shots
+        nir_scene_by_id = {item.id: item for item in self.nir.scenes}
+        character_by_id = {item.character_id: item for item in self.nir.character_bibles}
+        scene_by_id = {item.scene_id: item for item in self.nir.scene_bibles}
+        dialogue_by_id = {item.line_id: item for item in self.nir.dialogue}
+        for scene in self.nir.scenes:
+            expected_scene_id = _creative_stable_id(
+                "nir_scene_v2",
+                {
+                    "character_ids": scene.character_ids,
+                    "dialogue_line_ids": scene.dialogue_line_ids,
+                    "duration_ms": scene.duration_ms,
+                    "narrative": scene.narrative,
+                    "nir_id": self.nir.id,
+                    "ordinal": scene.ordinal,
+                    "scene_asset_version_id": scene.scene_asset_version_id,
+                    "scene_bible_id": scene.scene_bible_id,
+                    "start_ms": scene.start_ms,
+                },
+            )
+            if scene.id != expected_scene_id:
+                raise ValueError("NIRSceneV2 ID must derive from its canonical content")
+        for shot in shots:
+            nir_scene = nir_scene_by_id.get(shot.nir_scene_id)
+            scene_bible = scene_by_id.get(shot.scene_bible_id)
+            if nir_scene is None or nir_scene.scene_bible_id != shot.scene_bible_id:
+                raise ValueError("storyboard shot must reference its compiled NIRV2 scene")
+            if (
+                scene_bible is None
+                or shot.scene_asset_version_id != scene_bible.active_asset_version_id
+            ):
+                raise ValueError("storyboard shot must bind the active approved scene asset")
+            bound_characters: set[str] = set()
+            for binding in shot.character_assets:
+                bible = character_by_id.get(binding.character_id)
+                if bible is None or binding.asset_version_id != bible.active_asset_version_id:
+                    raise ValueError(
+                        "storyboard shot must bind each active approved character asset"
+                    )
+                bound_characters.add(binding.character_id)
+            for line_id in shot.dialogue_line_ids:
+                line = dialogue_by_id.get(line_id)
+                if (
+                    line is None
+                    or line.scene_id != shot.scene_bible_id
+                    or line.character_id not in bound_characters
+                    or line.start_ms < shot.start_ms
+                    or line.end_ms > shot.start_ms + shot.duration_ms
+                ):
+                    raise ValueError("storyboard dialogue must close over its shot bindings")
+        if tuple(cue.shot_id for cue in self.audio_clock.cues) != tuple(shot.id for shot in shots):
+            raise ValueError("audio cues must form an exact storyboard-shot closure")
+        for cue, shot in zip(self.audio_clock.cues, shots, strict=True):
+            if cue.start_ms != shot.start_ms or cue.end_ms != shot.start_ms + shot.duration_ms:
+                raise ValueError("audio cue timing must match its storyboard shot")
+        if tuple(job.shot_id for job in self.job_graph.jobs) != tuple(shot.id for shot in shots):
+            raise ValueError("generation jobs must form an exact storyboard-shot closure")
+        for job, shot in zip(self.job_graph.jobs, shots, strict=True):
+            if job.prompt != shot.prompt or job.duration_ms != shot.duration_ms or job.depends_on:
+                raise ValueError("generation job content must match its storyboard shot")
+        if self.assembly_plan.clock_id != self.audio_clock.id:
+            raise ValueError("assembly plan must reference the compiled audio clock")
+        expected_items = tuple(
+            (job.id, shot.start_ms, shot.duration_ms)
+            for job, shot in zip(self.job_graph.jobs, shots, strict=True)
+        )
+        actual_items = tuple(
+            (item.job_id, item.start_ms, item.duration_ms) for item in self.assembly_plan.items
+        )
+        if actual_items != expected_items:
+            raise ValueError("assembly items must form an exact generation-job closure")
+        expected_compilation_id = _creative_stable_id(
+            "creative_sample",
+            [
+                self.spec_sha256,
+                self.nir.id,
+                self.pir.id,
+                self.audio_clock.id,
+                self.job_graph.id,
+                self.assembly_plan.id,
+            ],
+        )
+        if self.id != expected_compilation_id:
+            raise ValueError("creative sample ID must derive from its canonical compilation")
+        return self
 
 
 class RunState(StrEnum):
@@ -520,9 +1326,7 @@ class EvidenceCapture(Contract):
     origin_valid_until: datetime | None = None
     member_paths: tuple[str, ...] = Field(min_length=1)
 
-    @field_validator(
-        "source_updated_at", "captured_at", "valid_until", "origin_valid_until"
-    )
+    @field_validator("source_updated_at", "captured_at", "valid_until", "origin_valid_until")
     @classmethod
     def canonicalize_datetime(cls, value: datetime | None) -> datetime | None:
         if value is None:
@@ -542,16 +1346,13 @@ class EvidenceCapture(Contract):
             try:
                 port = parsed.port
             except ValueError as exc:
-                raise ValueError(
-                    "source_url must be an approved Volcengine HTTPS URL"
-                ) from exc
-            safe_doc_query = (
-                parsed.hostname in {"docs.volcengine.com", "www.volcengine.com"}
-                and parsed.query in {"lang=zh", "lang=en"}
-            )
+                raise ValueError("source_url must be an approved Volcengine HTTPS URL") from exc
+            safe_doc_query = parsed.hostname in {
+                "docs.volcengine.com",
+                "www.volcengine.com",
+            } and parsed.query in {"lang=zh", "lang=en"}
             has_noncanonical_character = "\\" in self.source_url or any(
-                ord(character) <= 32 or ord(character) == 127
-                for character in self.source_url
+                ord(character) <= 32 or ord(character) == 127 for character in self.source_url
             )
             if (
                 has_noncanonical_character
@@ -644,9 +1445,7 @@ class EvidenceBundleContent(Contract):
         if len(captured_paths) != len(set(captured_paths)) or set(captured_paths) != set(
             member_paths
         ):
-            raise ValueError(
-                "captures must reference every evidence member exactly once"
-            )
+            raise ValueError("captures must reference every evidence member exactly once")
         if self.created_at < max(capture.captured_at for capture in self.captures):
             raise ValueError("created_at must not precede an evidence capture")
 

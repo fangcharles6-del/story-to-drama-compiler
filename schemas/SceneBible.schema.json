@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "SceneAssetVersion": {
+      "additionalProperties": false,
+      "description": "Portable, immutable reference to one approved scene asset version.",
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "default": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scene_id",
+        "version",
+        "content_sha256",
+        "approval_ref",
+        "visual_description"
+      ],
+      "title": "SceneAssetVersion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "active_asset_version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Active Asset Version Id",
+      "type": "string"
+    },
+    "asset_versions": {
+      "items": {
+        "$ref": "#/$defs/SceneAssetVersion"
+      },
+      "minItems": 1,
+      "title": "Asset Versions",
+      "type": "array"
+    },
+    "name": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "ordinal": {
+      "minimum": 0,
+      "title": "Ordinal",
+      "type": "integer"
+    },
+    "scene_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Scene Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "visual_description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Visual Description",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scene_id",
+    "ordinal",
+    "name",
+    "visual_description",
+    "asset_versions",
+    "active_asset_version_id"
+  ],
+  "title": "SceneBible",
+  "type": "object"
+}

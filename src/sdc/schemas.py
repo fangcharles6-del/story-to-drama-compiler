@@ -3,10 +3,11 @@
 import json
 from pathlib import Path
 
-from sdc import contracts
-from sdc.contracts import Contract
+from pydantic import BaseModel
 
-MODELS: list[type[Contract]] = [
+from sdc import contracts
+
+MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
     contracts.NIR,
     contracts.PIR,
@@ -14,6 +15,20 @@ MODELS: list[type[Contract]] = [
     contracts.JobGraph,
     contracts.GenerationJob,
     contracts.AssemblyPlan,
+    contracts.CharacterAssetVersion,
+    contracts.CharacterBible,
+    contracts.SceneAssetVersion,
+    contracts.SceneBible,
+    contracts.DialogueLine,
+    contracts.CreativeSampleShotSpec,
+    contracts.CreativeSampleSpec,
+    contracts.NIRSceneV2,
+    contracts.NIRV2,
+    contracts.CharacterAssetBinding,
+    contracts.StoryboardShotV2,
+    contracts.PIRV2,
+    contracts.CreativeSampleMetrics,
+    contracts.CreativeSampleCompilation,
     contracts.RunEvent,
     contracts.QCReport,
     contracts.QCEvidence,

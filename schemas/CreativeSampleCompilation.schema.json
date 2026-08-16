@@ -1,0 +1,969 @@
+{
+  "$defs": {
+    "AssemblyItem": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id",
+        "start_ms",
+        "duration_ms"
+      ],
+      "title": "AssemblyItem",
+      "type": "object"
+    },
+    "AssemblyPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "clock_id": {
+          "title": "Clock Id",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/AssemblyItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "clock_id",
+        "items"
+      ],
+      "title": "AssemblyPlan",
+      "type": "object"
+    },
+    "AudioCue": {
+      "additionalProperties": false,
+      "properties": {
+        "end_ms": {
+          "minimum": 0,
+          "title": "End Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_id": {
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "shot_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "title": "AudioCue",
+      "type": "object"
+    },
+    "AudioMasterClock": {
+      "additionalProperties": false,
+      "properties": {
+        "cues": {
+          "items": {
+            "$ref": "#/$defs/AudioCue"
+          },
+          "title": "Cues",
+          "type": "array"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "default": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "duration_ms",
+        "cues"
+      ],
+      "title": "AudioMasterClock",
+      "type": "object"
+    },
+    "CharacterAssetBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character_id",
+        "asset_version_id"
+      ],
+      "title": "CharacterAssetBinding",
+      "type": "object"
+    },
+    "CharacterAssetVersion": {
+      "additionalProperties": false,
+      "description": "Portable, immutable reference to one approved character asset version.",
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "default": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "character_id",
+        "version",
+        "content_sha256",
+        "approval_ref",
+        "visual_description"
+      ],
+      "title": "CharacterAssetVersion",
+      "type": "object"
+    },
+    "CharacterBible": {
+      "additionalProperties": false,
+      "properties": {
+        "active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Active Asset Version Id",
+          "type": "string"
+        },
+        "asset_versions": {
+          "items": {
+            "$ref": "#/$defs/CharacterAssetVersion"
+          },
+          "minItems": 1,
+          "title": "Asset Versions",
+          "type": "array"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character_id",
+        "name",
+        "visual_description",
+        "asset_versions",
+        "active_asset_version_id"
+      ],
+      "title": "CharacterBible",
+      "type": "object"
+    },
+    "CreativeCameraAngle": {
+      "enum": [
+        "EYE_LEVEL",
+        "LOW_ANGLE",
+        "HIGH_ANGLE",
+        "DUTCH_ANGLE",
+        "OVERHEAD",
+        "POV"
+      ],
+      "title": "CreativeCameraAngle",
+      "type": "string"
+    },
+    "CreativeCameraMovement": {
+      "enum": [
+        "STATIC",
+        "PAN",
+        "TILT",
+        "DOLLY",
+        "TRUCK",
+        "PEDESTAL",
+        "HANDHELD",
+        "CRANE",
+        "ZOOM",
+        "ORBIT"
+      ],
+      "title": "CreativeCameraMovement",
+      "type": "string"
+    },
+    "CreativeShotSize": {
+      "enum": [
+        "EXTREME_CLOSE_UP",
+        "CLOSE_UP",
+        "MEDIUM_CLOSE_UP",
+        "MEDIUM",
+        "MEDIUM_WIDE",
+        "WIDE",
+        "EXTREME_WIDE"
+      ],
+      "title": "CreativeShotSize",
+      "type": "string"
+    },
+    "DialogueLine": {
+      "additionalProperties": false,
+      "properties": {
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "end_ms": {
+          "minimum": 0,
+          "title": "End Ms",
+          "type": "integer"
+        },
+        "line_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Line Id",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "ordinal",
+        "scene_id",
+        "character_id",
+        "text",
+        "start_ms",
+        "end_ms"
+      ],
+      "title": "DialogueLine",
+      "type": "object"
+    },
+    "GenerationJob": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "max_attempts": {
+          "const": 2,
+          "default": 2,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_id": {
+          "title": "Shot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "shot_id",
+        "prompt",
+        "duration_ms",
+        "idempotency_key"
+      ],
+      "title": "GenerationJob",
+      "type": "object"
+    },
+    "JobGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/GenerationJob"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "jobs"
+      ],
+      "title": "JobGraph",
+      "type": "object"
+    },
+    "NIRSceneV2": {
+      "additionalProperties": false,
+      "properties": {
+        "character_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Character Ids",
+          "type": "array"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "narrative": {
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Asset Version Id",
+          "type": "string"
+        },
+        "scene_bible_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Bible Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "scene_bible_id",
+        "scene_asset_version_id",
+        "ordinal",
+        "narrative",
+        "start_ms",
+        "duration_ms",
+        "character_ids",
+        "dialogue_line_ids"
+      ],
+      "title": "NIRSceneV2",
+      "type": "object"
+    },
+    "NIRV2": {
+      "additionalProperties": false,
+      "properties": {
+        "character_bibles": {
+          "items": {
+            "$ref": "#/$defs/CharacterBible"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Character Bibles",
+          "type": "array"
+        },
+        "dialogue": {
+          "items": {
+            "$ref": "#/$defs/DialogueLine"
+          },
+          "minItems": 1,
+          "title": "Dialogue",
+          "type": "array"
+        },
+        "duration_ms": {
+          "maximum": 90000,
+          "minimum": 60000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "scene_bibles": {
+          "items": {
+            "$ref": "#/$defs/SceneBible"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Scene Bibles",
+          "type": "array"
+        },
+        "scenes": {
+          "items": {
+            "$ref": "#/$defs/NIRSceneV2"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Scenes",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "seed",
+        "duration_ms",
+        "character_bibles",
+        "scene_bibles",
+        "dialogue",
+        "scenes"
+      ],
+      "title": "NIRV2",
+      "type": "object"
+    },
+    "PIRV2": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "maximum": 90000,
+          "minimum": 60000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "nir_id": {
+          "title": "Nir Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/StoryboardShotV2"
+          },
+          "maxItems": 12,
+          "minItems": 8,
+          "title": "Shots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "nir_id",
+        "duration_ms",
+        "shots"
+      ],
+      "title": "PIRV2",
+      "type": "object"
+    },
+    "SceneAssetVersion": {
+      "additionalProperties": false,
+      "description": "Portable, immutable reference to one approved scene asset version.",
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "default": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scene_id",
+        "version",
+        "content_sha256",
+        "approval_ref",
+        "visual_description"
+      ],
+      "title": "SceneAssetVersion",
+      "type": "object"
+    },
+    "SceneBible": {
+      "additionalProperties": false,
+      "properties": {
+        "active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Active Asset Version Id",
+          "type": "string"
+        },
+        "asset_versions": {
+          "items": {
+            "$ref": "#/$defs/SceneAssetVersion"
+          },
+          "minItems": 1,
+          "title": "Asset Versions",
+          "type": "array"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scene_id",
+        "ordinal",
+        "name",
+        "visual_description",
+        "asset_versions",
+        "active_asset_version_id"
+      ],
+      "title": "SceneBible",
+      "type": "object"
+    },
+    "StoryboardShotV2": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "camera_angle": {
+          "$ref": "#/$defs/CreativeCameraAngle"
+        },
+        "camera_movement": {
+          "$ref": "#/$defs/CreativeCameraMovement"
+        },
+        "character_assets": {
+          "items": {
+            "$ref": "#/$defs/CharacterAssetBinding"
+          },
+          "maxItems": 2,
+          "title": "Character Assets",
+          "type": "array"
+        },
+        "continuity_notes": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "emotion_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Emotion By Character",
+          "type": "object"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "narrative": {
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "nir_scene_id": {
+          "title": "Nir Scene Id",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "props": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Props",
+          "type": "array"
+        },
+        "scene_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Asset Version Id",
+          "type": "string"
+        },
+        "scene_bible_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Bible Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_size": {
+          "$ref": "#/$defs/CreativeShotSize"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "visual_direction": {
+          "minLength": 1,
+          "title": "Visual Direction",
+          "type": "string"
+        },
+        "wardrobe_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Wardrobe By Character",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "nir_scene_id",
+        "scene_bible_id",
+        "scene_asset_version_id",
+        "ordinal",
+        "narrative",
+        "visual_direction",
+        "emotion_by_character",
+        "action",
+        "shot_size",
+        "camera_angle",
+        "camera_movement",
+        "wardrobe_by_character",
+        "props",
+        "continuity_notes",
+        "prompt",
+        "start_ms",
+        "duration_ms",
+        "character_assets",
+        "dialogue_line_ids"
+      ],
+      "title": "StoryboardShotV2",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "assembly_plan": {
+      "$ref": "#/$defs/AssemblyPlan"
+    },
+    "audio_clock": {
+      "$ref": "#/$defs/AudioMasterClock"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "job_graph": {
+      "$ref": "#/$defs/JobGraph"
+    },
+    "nir": {
+      "$ref": "#/$defs/NIRV2"
+    },
+    "pir": {
+      "$ref": "#/$defs/PIRV2"
+    },
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Spec Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "spec_sha256",
+    "nir",
+    "pir",
+    "audio_clock",
+    "job_graph",
+    "assembly_plan"
+  ],
+  "title": "CreativeSampleCompilation",
+  "type": "object"
+}

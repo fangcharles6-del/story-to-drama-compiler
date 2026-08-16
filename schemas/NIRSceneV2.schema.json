@@ -1,0 +1,72 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "character_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Character Ids",
+      "type": "array"
+    },
+    "dialogue_line_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dialogue Line Ids",
+      "type": "array"
+    },
+    "duration_ms": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "narrative": {
+      "minLength": 1,
+      "title": "Narrative",
+      "type": "string"
+    },
+    "ordinal": {
+      "minimum": 0,
+      "title": "Ordinal",
+      "type": "integer"
+    },
+    "scene_asset_version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Scene Asset Version Id",
+      "type": "string"
+    },
+    "scene_bible_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Scene Bible Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "start_ms": {
+      "minimum": 0,
+      "title": "Start Ms",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "scene_bible_id",
+    "scene_asset_version_id",
+    "ordinal",
+    "narrative",
+    "start_ms",
+    "duration_ms",
+    "character_ids",
+    "dialogue_line_ids"
+  ],
+  "title": "NIRSceneV2",
+  "type": "object"
+}
