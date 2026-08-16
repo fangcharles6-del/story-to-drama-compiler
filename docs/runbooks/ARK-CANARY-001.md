@@ -80,20 +80,22 @@ as approval.
 ## 4. Future live prerequisites and execution (not authorized here)
 
 ADR-017 delivers contract validation and database schema preparation, not the runtime connection.
-Proposed ADR-018 specifies the missing entitlement, atomic-claim, replay, dedicated-Worker and
-task-ownership boundary, but does not implement or authorize it. Its non-operational verification
-plan is `SDC-EVIDENCE-BOUND-LIVE-CANARY.md`.
+ADR-018 PR1 now supplies the offline entitlement trust mechanism, and PR2 supplies the inert atomic
+claim/replay/task-ownership ledger. Neither delivery adds positive trust data or runtime authority;
+the dedicated Worker and crash-window proof remain unimplemented. The non-operational plan is
+`SDC-EVIDENCE-BOUND-LIVE-CANARY.md`.
 There is no supported Ark Worker environment-variable set or client action in this version. Legacy
 capability, pricing and authorization path variables remain rejected. Do not inject an API Key,
 start Worker/Temporal/PostgreSQL, or invoke the Canary client against Ark.
 
 The current `ark-canary-capability-pricing-v1` FRESH bundle contains no entitlement evidence. The
-candidate contract reserves `entitlement_anchor_sha256` and `entitlement_valid_until`, but this
-version has no entitlement evidence profile, positive registry or verifier. A caller-supplied hash
-and date cannot establish current access to `doubao-seedance-2-0-260128` in `cn-beijing`.
+separate `ark-canary-entitlement-v1` profile, offline freezer, verifier and positive registry now
+exist, but that registry is empty and no real entitlement evidence is committed. A caller-supplied
+hash and date still cannot establish current access to `doubao-seedance-2-0-260128` in
+`cn-beijing`.
 
-A future implementation under ADR-018 must be split into independently green, fail-closed changes
-and separately approved before it can atomically deliver:
+The remaining ADR-018 implementation must stay split into independently green, fail-closed changes
+and separately approved before it can deliver an executable path:
 
 - current, independently reviewed entitlement for the exact account scope, model and region;
 - a separately reviewed, current positive-registry entry for the exact authorization SHA and all
@@ -114,10 +116,11 @@ future accepted submission. They never authorize another creative Attempt or POS
 
 ## 5. Diagnose a rejected or failed request without expanding the evidence surface
 
-Migration `0006` defines the bounded provider-failure diagnostics. ADR-017 adds migration `0007`,
-which only declares nullable evidence-bound claim metadata, completeness/uniqueness constraints and
-a database append-only trigger. No current code inserts such a claim, and applying `0007` does not
-make Ark execution available.
+Migration `0006` defines the bounded provider-failure diagnostics. ADR-017 adds migration `0007`;
+ADR-018 PR2 adds migration `0008` and a dedicated, unconnected ledger store. Migration `0008`
+starts with no runtime identity, preserves legacy rows, protects claim/ownership state against
+mutation and fails closed on unsafe downgrade. No supported Worker calls this store, and applying
+either migration does not make Ark execution available.
 
 After a future separately approved live delivery, an explicit Ark submission rejection may be
 diagnosed using only the bounded columns on the matching `generation_attempts` row:

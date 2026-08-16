@@ -127,14 +127,15 @@ separate Git-reviewed positive authorization registry, before reading the plan, 
 authorization artifacts. That registry is empty in this PR, and candidate generation never edits
 it.
 
-Migration `0007` only prepares append-only evidence-bound claim columns and constraints. It does
-not implement the future atomic `POST_IN_FLIGHT` claim or connect any guard to Provider I/O. The
-current FRESH profile contains capability and pricing only, not current account entitlement.
-Future live enablement therefore still requires a positively trusted entitlement artifact,
-independent approval of the exact authorization SHA, an approved runtime/ledger identity, atomic
-claim and replay-to-`SUBMISSION_UNKNOWN` handling, and a dedicated one-concurrency Canary Worker.
-Until a separate ADR and explicit approval deliver all of those gates, Ark remains disabled with
-zero POSTs.
+Migration `0007` prepares the append-only evidence-bound authorization-use declaration. Migration
+`0008` adds an empty immutable runtime-identity singleton plus the dedicated atomic Attempt-1,
+authorization-use and claim-event ledger. The new inert store uses database UTC, a strict expiry
+guard, immutable `POST_IN_FLIGHT` replay semantics and atomic task ownership, but it is not wired to
+Worker, Temporal, Provider, secrets or network I/O. Future live enablement still requires actual
+positively reviewed evidence and entitlement entries, independent approval of the exact
+authorization SHA, a reviewed runtime/ledger identity, the dedicated one-concurrency Canary
+Worker and the full crash-window proof. Until those separate deliveries and approvals are merged,
+Ark remains disabled with zero POSTs.
 
 Proposed SDC-ADR-018 now fixes that future execution boundary at design level: a short-lived,
 positively registered exact-account/Seedance/`cn-beijing` entitlement bundle; one database-UTC
@@ -151,3 +152,8 @@ exact Seedance 2.0 model, `cn-beijing`, task-create operation, pseudonymous acco
 credential metadata. Candidate output grants no trust or authority; no committed registry entry,
 real entitlement evidence or Key is included. See
 `docs/runbooks/SDC-ARK-ENTITLEMENT-TRUST.md`.
+
+The second ADR-018 slice adds only the atomic evidence-bound Canary ledger. It can commit one new
+Attempt-1 claim or classify existing state, and can persist one safely returned task ID with its
+acceptance event; it cannot read a Key or call Ark. The runtime-identity table is initially empty,
+the authorization registry remains empty, and all Ark runtime entrypoints remain hard-disabled.
