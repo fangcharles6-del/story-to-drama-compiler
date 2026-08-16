@@ -143,3 +143,11 @@ transaction for Attempt 1 plus the immutable `POST_IN_FLIGHT` claim; replay to
 loads the exact reviewed secret resource version only after every static and durable gate passes.
 It remains non-operational and grants no authority. See
 `docs/runbooks/SDC-EVIDENCE-BOUND-LIVE-CANARY.md` for the test and follow-up PR plan.
+
+The first ADR-018 implementation slice adds the independent `ark-canary-entitlement-v1` contract,
+strict offline candidate freezer, trusted loader and an intentionally empty positive registry.
+Its two-member EvidenceBundle binds a sanitized entitlement PDF and canonical snapshot to the
+exact Seedance 2.0 model, `cn-beijing`, task-create operation, pseudonymous account scope and
+credential metadata. Candidate output grants no trust or authority; no committed registry entry,
+real entitlement evidence or Key is included. See
+`docs/runbooks/SDC-ARK-ENTITLEMENT-TRUST.md`.

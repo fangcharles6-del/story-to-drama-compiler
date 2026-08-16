@@ -1,0 +1,133 @@
+{
+  "additionalProperties": false,
+  "description": "Execution-day proof of the exact Ark Canary entitlement scope.",
+  "properties": {
+    "account_scope_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Account Scope Sha256",
+      "type": "string"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "conclusion": {
+      "const": "PASS_ENTITLEMENT_ONLY",
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "credential_binding_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Credential Binding Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.ark-canary-entitlement-snapshot",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evidence_profile": {
+      "const": "ark-canary-entitlement-v1",
+      "title": "Evidence Profile",
+      "type": "string"
+    },
+    "evidence_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Sha256",
+      "type": "string"
+    },
+    "model": {
+      "const": "doubao-seedance-2-0-260128",
+      "title": "Model",
+      "type": "string"
+    },
+    "operation": {
+      "const": "contents.generations.tasks.create",
+      "title": "Operation",
+      "type": "string"
+    },
+    "provider": {
+      "const": "volcengine_ark",
+      "title": "Provider",
+      "type": "string"
+    },
+    "provider_state": {
+      "const": "ENABLED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "region": {
+      "const": "cn-beijing",
+      "title": "Region",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service": {
+      "const": "ark-video-generation",
+      "title": "Service",
+      "type": "string"
+    },
+    "snapshot_revision": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "title": "Snapshot Revision",
+      "type": "string"
+    },
+    "source_url": {
+      "const": "https://console.volcengine.com/ark/region:cn-beijing/openManagement",
+      "title": "Source Url",
+      "type": "string"
+    },
+    "source_valid_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Valid Until"
+    },
+    "status": {
+      "const": "CURRENT",
+      "title": "Status",
+      "type": "string"
+    },
+    "valid_until": {
+      "format": "date-time",
+      "title": "Valid Until",
+      "type": "string"
+    }
+  },
+  "required": [
+    "document_type",
+    "evidence_profile",
+    "snapshot_revision",
+    "status",
+    "provider",
+    "service",
+    "model",
+    "region",
+    "operation",
+    "provider_state",
+    "conclusion",
+    "account_scope_sha256",
+    "credential_binding_sha256",
+    "source_url",
+    "source_valid_until",
+    "captured_at",
+    "valid_until",
+    "evidence_sha256"
+  ],
+  "title": "ArkCanaryEntitlementSnapshot",
+  "type": "object"
+}

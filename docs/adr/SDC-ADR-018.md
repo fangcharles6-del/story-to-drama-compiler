@@ -13,11 +13,12 @@ input, 9:16, 1080p, 24 fps, 4000 ms, `generate_audio=false`, exact model
 cost must cover the reviewed cost floor, may not exceed CNY 15, and is a review boundary rather
 than a Provider-side billing guarantee.
 
-This ADR fixes the interfaces, state transitions, trust order and test obligations for later
-implementation. It does not add an entitlement object, approve an authorization, connect the
-ADR-017 guard to runtime, read a Key, start a service or issue an Ark request. Until all follow-up
-deliveries are approved and merged, the existing Ark Worker and every Ark `RuntimeActivities`
-entrypoint remain unconditionally disabled.
+This ADR fixes the interfaces, state transitions, trust order and test obligations for staged
+implementation. PR1 implements only the offline entitlement contract, candidate freezer, trusted
+loader and an empty registry. It does not add a real entitlement evidence bundle or registry
+entry, approve an authorization, connect the ADR-017 guard to runtime, read a Key, start a service
+or issue an Ark request. Until all follow-up deliveries are approved and merged, the existing Ark
+Worker and every Ark `RuntimeActivities` entrypoint remain unconditionally disabled.
 
 ## Positive authority chain
 
@@ -115,8 +116,8 @@ value nor a digest copied from the bundle manifest. The freezer cannot update th
 entitlement review and authorization approval must be separate commits, with the former an
 ancestor of the latter.
 
-The next implementation PR will expose only the following conceptual trust interface; callers do
-not receive loose fields that can be recombined:
+PR1 exposes only the following conceptual trust interface; callers do not receive loose fields
+that can be recombined:
 
 ```text
 load_trusted_ark_entitlement(
@@ -273,5 +274,5 @@ Provider I/O or zero replacement POST.
 Detailed crash windows, test lanes, implementation PR order and operational stop conditions are in
 `docs/runbooks/SDC-EVIDENCE-BOUND-LIVE-CANARY.md`.
 
-This ADR is a design approval only. Changing its status or merging its documentation does not
-populate an entitlement or authorization registry and does not authorize Key access or Ark.
+This ADR remains a design approval. The PR1 mechanism does not populate the entitlement or
+authorization registry and does not authorize Key access or Ark.
