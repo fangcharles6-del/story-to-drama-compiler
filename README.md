@@ -179,3 +179,12 @@ PNG asset versions, invokes FFmpeg/ffprobe with explicit local demuxers and a `f
 allowlist, produces a 48 kHz audio master plus embedded subtitles, and publishes an exact
 report-last closure. A synthetic 60-second/8-shot FFmpeg rehearsal is technical evidence only: it
 is forced to `STOP` and excluded from all creative metrics.
+
+The design-only Creative Sample Pilot Pack v1 freezes `辞职信照旧`: a 72-second, ten-shot,
+two-character, two-scene content plan with exact dialogue, continuity, asset, two-reviewer and
+acceptance worksheets. Its committed specification is wrapped in a machine-enforced
+`SYNTHETIC_PLACEHOLDER_ONLY / TECHNICAL_COMPILATION_ONLY` envelope. Real assets
+must produce a newly frozen spec and Asset Pack after rights review; the fixture cannot inherit
+their approval. The proposed future 20-request/CNY-450 finite batch is `NOT_AUTHORIZED`, has zero
+allowed POSTs and remains behind a full human gate. See
+`docs/runbooks/SDC-CREATIVE-SAMPLE-PILOT-V1.md`.

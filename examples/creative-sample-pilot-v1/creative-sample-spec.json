@@ -1,0 +1,511 @@
+{
+  "document_type": "sdc.creative-sample-pilot-spec",
+  "eligible_for_real_generation": false,
+  "fixture_admission_scope": "TECHNICAL_COMPILATION_ONLY",
+  "profile": "creative-sample-pilot-pack-v1",
+  "schema_version": "1.0.0",
+  "source_mode": "SYNTHETIC_PLACEHOLDER_ONLY",
+  "spec": {
+    "character_bibles": [
+      {
+        "active_asset_version_id": "character_asset_28b463fa86740ce9caa3",
+        "asset_versions": [
+          {
+            "approval_ref": "pilot-fixture-only-gu-yan-v1",
+            "character_id": "character_43019e6eefc52eee8f6b",
+            "content_sha256": "4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917",
+            "id": "character_asset_28b463fa86740ce9caa3",
+            "media_type": "image/png",
+            "provenance": "IMPORTED_APPROVED_MEDIA",
+            "schema_version": "1.0.0",
+            "version": 1,
+            "visual_description": "顾言合成占位参考板：正面、四分之三侧面、半身和全身比例，纯技术夹具。"
+          }
+        ],
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "name": "顾言",
+        "schema_version": "1.0.0",
+        "visual_description": "32岁成年中国男性，短黑发，深棕色眼睛，轮廓清晰，身形修长，表达冷静；全片固定穿海军蓝无标识工作夹克、浅灰色衬衫和炭灰色长裤，不打领带；无胡须、首饰、品牌标志或可读文字。"
+      },
+      {
+        "active_asset_version_id": "character_asset_80ccdca6364719a16638",
+        "asset_versions": [
+          {
+            "approval_ref": "pilot-fixture-only-su-qing-v1",
+            "character_id": "character_eac118bceb9733dc90a1",
+            "content_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+            "id": "character_asset_80ccdca6364719a16638",
+            "media_type": "image/png",
+            "provenance": "IMPORTED_APPROVED_MEDIA",
+            "schema_version": "1.0.0",
+            "version": 1,
+            "visual_description": "苏晴合成占位参考板：正面、四分之三侧面、半身和全身比例，纯技术夹具。"
+          }
+        ],
+        "character_id": "character_eac118bceb9733dc90a1",
+        "name": "苏晴",
+        "schema_version": "1.0.0",
+        "visual_description": "28岁成年中国女性，椭圆脸，深棕色眼睛，黑色低马尾，身形匀称，神态克制；全片固定穿象牙白无标识衬衫、炭灰色直筒裤和黑色平底鞋，不佩戴首饰；自然妆容，无纹身、品牌标志或可读文字。"
+      }
+    ],
+    "dialogue": [
+      {
+        "character_id": "character_eac118bceb9733dc90a1",
+        "end_ms": 11600,
+        "line_id": "dialogue_65ea96ce3201083ff96f",
+        "ordinal": 0,
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "start_ms": 6800,
+        "text": "辞职信在桌上。天亮前，我就走。"
+      },
+      {
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "end_ms": 15600,
+        "line_id": "dialogue_2086b57f33fe54845c7e",
+        "ordinal": 1,
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "start_ms": 14000,
+        "text": "我不同意。"
+      },
+      {
+        "character_id": "character_eac118bceb9733dc90a1",
+        "end_ms": 24800,
+        "line_id": "dialogue_72f37bc5d434536ce911",
+        "ordinal": 2,
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "start_ms": 20900,
+        "text": "项目都停了，你拿什么留我？"
+      },
+      {
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "end_ms": 32600,
+        "line_id": "dialogue_685d8e8ddc4ef11e0a62",
+        "ordinal": 3,
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "start_ms": 28900,
+        "text": "不是留你。跟我上天台。"
+      },
+      {
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "end_ms": 41800,
+        "line_id": "dialogue_bf8392058acb05cdc2c1",
+        "ordinal": 4,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "start_ms": 36900,
+        "text": "三个月前，我把你的方案投进了城南改造终审。"
+      },
+      {
+        "character_id": "character_eac118bceb9733dc90a1",
+        "end_ms": 46100,
+        "line_id": "dialogue_23efbffb1c41cdb8e720",
+        "ordinal": 5,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "start_ms": 44100,
+        "text": "你没问过我。"
+      },
+      {
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "end_ms": 55600,
+        "line_id": "dialogue_7cccb7d8b6edaa29d71a",
+        "ordinal": 6,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "start_ms": 50900,
+        "text": "所以今天不是替你决定，是请你自己选。"
+      },
+      {
+        "character_id": "character_43019e6eefc52eee8f6b",
+        "end_ms": 62200,
+        "line_id": "dialogue_394d96060d7f03763924",
+        "ordinal": 7,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "start_ms": 58900,
+        "text": "合伙人，或者自由建筑师。"
+      },
+      {
+        "character_id": "character_eac118bceb9733dc90a1",
+        "end_ms": 70400,
+        "line_id": "dialogue_8d2d6305b45e90b93509",
+        "ordinal": 8,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "start_ms": 65700,
+        "text": "辞职信照旧。明天，我会以合伙人的身份回来。"
+      }
+    ],
+    "duration_ms": 72000,
+    "scene_bibles": [
+      {
+        "active_asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+        "asset_versions": [
+          {
+            "approval_ref": "pilot-fixture-only-office-night-v1",
+            "content_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+            "id": "scene_asset_ff40fa1bcf23100a83e4",
+            "media_type": "image/png",
+            "provenance": "IMPORTED_APPROVED_MEDIA",
+            "scene_id": "scene_3c1c4be2125f4ae91624",
+            "schema_version": "1.0.0",
+            "version": 1,
+            "visual_description": "建筑工作室深夜合成占位场景板，固定机位轴线与冷暖光方向。"
+          }
+        ],
+        "name": "建筑工作室深夜",
+        "ordinal": 0,
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "visual_description": "当代小型建筑工作室深夜，深灰水泥地面、浅木工作桌、玻璃门和落地窗，窗外为雨后虚化城市灯光；4300K冷白顶灯为主光，画面右后方有一盏2700K暖色台灯；空间整洁，无品牌、标识、屏幕内容或可读文字。"
+      },
+      {
+        "active_asset_version_id": "scene_asset_a7dfe043dc5e69b2ec53",
+        "asset_versions": [
+          {
+            "approval_ref": "pilot-fixture-only-rooftop-dawn-v1",
+            "content_sha256": "e999957460935f9a682c3f13916903b730c59a0f599bd134de7a3d58a1ba9a9a",
+            "id": "scene_asset_a7dfe043dc5e69b2ec53",
+            "media_type": "image/png",
+            "provenance": "IMPORTED_APPROVED_MEDIA",
+            "scene_id": "scene_58fe397959f557215593",
+            "schema_version": "1.0.0",
+            "version": 1,
+            "visual_description": "同楼屋顶清晨合成占位场景板，固定女儿墙安全线、天际线与光向。"
+          }
+        ],
+        "name": "同楼屋顶清晨",
+        "ordinal": 1,
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "visual_description": "同一建筑屋顶的清晨蓝调时刻，浅灰混凝土地面、腰高深灰女儿墙、远处无品牌城市天际线，暖色地平线位于画面右后方；无广告牌、车辆、其他人物或可读文字。"
+      }
+    ],
+    "schema_version": "1.0.0",
+    "seed": 20260816,
+    "shots": [
+      {
+        "action": "右手放下信封，停顿半秒后收回",
+        "camera_angle": "HIGH_ANGLE",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "苏晴位于画面左侧；信封长边平行桌沿，最终停在桌面左前部。",
+        "dialogue_line_ids": [],
+        "duration_ms": 6000,
+        "emotion_by_character": {
+          "character_eac118bceb9733dc90a1": "克制、疲惫，但决定已经做出，不哭泣"
+        },
+        "narrative": "辞职信落在桌上，在解释原因之前形成钩子。",
+        "ordinal": 0,
+        "props": [
+          "cream-envelope"
+        ],
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "shot_size": "CLOSE_UP",
+        "start_ms": 0,
+        "visual_direction": "高机位静态近景；苏晴右手将奶油色信封放在浅木桌左前方，脸在浅景深背景中仍可辨认。",
+        "wardrobe_by_character": {
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "看信封后抬眼望向右侧门口并说完对白",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "延续镜头0的脸、发型、服装、屏幕方向和桌上信封位置。",
+        "dialogue_line_ids": [
+          "dialogue_65ea96ce3201083ff96f"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_eac118bceb9733dc90a1": "平静外表下的失望，尾句坚定"
+        },
+        "narrative": "苏晴平静宣布离开，建立核心冲突。",
+        "ordinal": 1,
+        "props": [
+          "cream-envelope"
+        ],
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM_CLOSE_UP",
+        "start_ms": 6000,
+        "visual_direction": "眼平静态中近景；苏晴在画面左侧，信封作前景，从信封抬眼望向右侧门口并说完对白。",
+        "wardrobe_by_character": {
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "顾言入门、停步并说话，苏晴保持静止",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "DOLLY",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "苏晴保持画面左侧；顾言从右侧进入，蓝色文件夹始终在左手。",
+        "dialogue_line_ids": [
+          "dialogue_2086b57f33fe54845c7e"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "错愕后压住焦急",
+          "character_eac118bceb9733dc90a1": "戒备，不回头"
+        },
+        "narrative": "顾言进门，以一句拒绝打断苏晴的决定。",
+        "ordinal": 2,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM",
+        "start_ms": 13000,
+        "visual_direction": "眼平中景缓慢推进；顾言从右后玻璃门迈入一步后停下，左手垂持蓝色文件夹，苏晴背肩作左前景锚点。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "苏晴转身、质问并停住，顾言闭口",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "不越180度轴线；信封仍在桌上，文件夹仍在顾言左手。",
+        "dialogue_line_ids": [
+          "dialogue_72f37bc5d434536ce911"
+        ],
+        "duration_ms": 8000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "克制倾听，不辩解",
+          "character_eac118bceb9733dc90a1": "压抑的愤怒与失望"
+        },
+        "narrative": "苏晴转身质问，迫使顾言面对停摆的项目。",
+        "ordinal": 3,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM_CLOSE_UP",
+        "start_ms": 20000,
+        "visual_direction": "顾言肩后眼平静态中近景；苏晴转身约45度质问并保持目光，顾言闭口倾听。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "顾言说话后转身，苏晴右手取信封",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "DOLLY",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "对白、转身、取信封依次发生；顾言左手持文件夹，苏晴右手持信封进入下一场。",
+        "dialogue_line_ids": [
+          "dialogue_685d8e8ddc4ef11e0a62"
+        ],
+        "duration_ms": 8000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "坦诚、急切但不施压",
+          "character_eac118bceb9733dc90a1": "不信任中出现轻微动摇"
+        },
+        "narrative": "顾言不解释，只邀请苏晴到天台看答案。",
+        "ordinal": 4,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_3c1c4be2125f4ae91624",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM",
+        "start_ms": 28000,
+        "visual_direction": "眼平双人中景轻微推进；顾言在右侧说完转向门口，苏晴随后用右手拿起信封。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "两人停下，顾言面对苏晴说话",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "DOLLY",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "场景切换后角色身份、服装、左右位置与双道具手别完全延续；人物保持安全距离。",
+        "dialogue_line_ids": [
+          "dialogue_bf8392058acb05cdc2c1"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "谨慎揭示事实并准备承担后果",
+          "character_eac118bceb9733dc90a1": "警惕观察"
+        },
+        "narrative": "屋顶清晨，顾言揭示自己已把苏晴的方案送入终审。",
+        "ordinal": 5,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "shot_size": "WIDE",
+        "start_ms": 36000,
+        "visual_direction": "眼平广角建立镜头缓慢推进；顾言右、苏晴左，两人距女儿墙至少1.5米，分别持文件夹与信封。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "轻吸气、说短句，右手信封保持不动",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "屋顶光向与背景连续；信封仍在苏晴右手，画外文件夹不得出现在她手中。",
+        "dialogue_line_ids": [
+          "dialogue_23efbffb1c41cdb8e720"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_eac118bceb9733dc90a1": "意外、被冒犯，同时产生好奇"
+        },
+        "narrative": "苏晴对未经同意的决定提出短促异议。",
+        "ordinal": 6,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "shot_size": "CLOSE_UP",
+        "start_ms": 43000,
+        "visual_direction": "眼平静态近景；苏晴先看向画外右侧文件夹，再看顾言，克制说出短句。",
+        "wardrobe_by_character": {
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "顾言放下并打开文件夹后说话，苏晴不触碰",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "顾言完成文件夹由左手到平台的状态变化；苏晴不触碰，信封仍在右手。",
+        "dialogue_line_ids": [
+          "dialogue_7cccb7d8b6edaa29d71a"
+        ],
+        "duration_ms": 8000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "坦诚、带歉意、愿意承担后果",
+          "character_eac118bceb9733dc90a1": "逐渐理解但仍克制"
+        },
+        "narrative": "顾言将选择权归还给苏晴，而不是替她决定。",
+        "ordinal": 7,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM_CLOSE_UP",
+        "start_ms": 50000,
+        "visual_direction": "苏晴肩后眼平静态中近景；顾言把文件夹放上内侧平台，左手扶边、右手打开，页面无字。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "顾言说完选项、推文件夹并撤手，苏晴只看文件夹",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "文件夹最终静止在两人中点且无人触碰；不换位、不越轴、不靠近女儿墙。",
+        "dialogue_line_ids": [
+          "dialogue_394d96060d7f03763924"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "释然，把选择权交出",
+          "character_eac118bceb9733dc90a1": "犹豫开始转为坚定"
+        },
+        "narrative": "顾言给出合伙人或自由建筑师两个选项，并彻底撤回手。",
+        "ordinal": 8,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM_WIDE",
+        "start_ms": 58000,
+        "visual_direction": "眼平静态中广角双人镜头；顾言合上文件夹，推至中点并完全撤手，苏晴只看不碰。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      {
+        "action": "苏晴左手拿文件夹后说话，顾言闭口静听",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "DOLLY",
+        "character_ids": [
+          "character_43019e6eefc52eee8f6b",
+          "character_eac118bceb9733dc90a1"
+        ],
+        "continuity_notes": "苏晴左手文件夹、右手信封；顾言保持右侧、闭口，70400ms后稳定保持至72000ms。",
+        "dialogue_line_ids": [
+          "dialogue_8d2d6305b45e90b93509"
+        ],
+        "duration_ms": 7000,
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "松一口气但不抢戏",
+          "character_eac118bceb9733dc90a1": "坚定、释然，笑意极轻"
+        },
+        "narrative": "苏晴保留辞职决定，却以合伙人身份选择回来。",
+        "ordinal": 9,
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_id": "scene_58fe397959f557215593",
+        "schema_version": "1.0.0",
+        "shot_size": "MEDIUM_CLOSE_UP",
+        "start_ms": 65000,
+        "visual_direction": "眼平中近景缓慢推进；苏晴左手拿起文件夹、右手保留信封，说完望向晨光，顾言右肩作锚。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      }
+    ],
+    "title": "辞职信照旧"
+  }
+}
