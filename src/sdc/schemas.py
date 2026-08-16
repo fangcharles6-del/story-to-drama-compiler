@@ -6,6 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from sdc import contracts
+from sdc.creative_pilot import CreativeSamplePilotPack, CreativeSamplePilotSpecDocument
 
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
@@ -49,6 +50,8 @@ MODELS: list[type[BaseModel]] = [
     contracts.EvidenceBoundLiveAuthorization,
     contracts.CanaryExecution,
     contracts.EvidenceBundle,
+    CreativeSamplePilotSpecDocument,
+    CreativeSamplePilotPack,
 ]
 
 

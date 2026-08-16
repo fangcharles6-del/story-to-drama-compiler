@@ -1,0 +1,1596 @@
+{
+  "$defs": {
+    "PilotAssetRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "intended_logical_path": {
+          "title": "Intended Logical Path",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "placeholder_label": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Placeholder Label",
+          "type": "string"
+        },
+        "placeholder_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Placeholder Sha256",
+          "type": "string"
+        },
+        "privacy_status": {
+          "const": "PENDING_REVIEW",
+          "default": "PENDING_REVIEW",
+          "title": "Privacy Status",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "rights_status": {
+          "const": "PENDING_REVIEW",
+          "default": "PENDING_REVIEW",
+          "title": "Rights Status",
+          "type": "string"
+        },
+        "source_mode": {
+          "const": "SYNTHETIC_PLACEHOLDER_ONLY",
+          "default": "SYNTHETIC_PLACEHOLDER_ONLY",
+          "title": "Source Mode",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "subject_kind": {
+          "enum": [
+            "CHARACTER",
+            "SCENE"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "submission_status": {
+          "const": "NOT_SUBMITTED",
+          "default": "NOT_SUBMITTED",
+          "title": "Submission Status",
+          "type": "string"
+        },
+        "visual_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Visual Requirements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "subject_kind",
+        "subject_id",
+        "asset_version_id",
+        "intended_logical_path",
+        "placeholder_label",
+        "placeholder_sha256",
+        "visual_requirements"
+      ],
+      "title": "PilotAssetRequirement",
+      "type": "object"
+    },
+    "PilotAudioRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Direction",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "end_ms": {
+          "exclusiveMinimum": 0,
+          "title": "End Ms",
+          "type": "integer"
+        },
+        "exact_text": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact Text"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Sha256"
+        },
+        "expected_size_bytes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Size Bytes"
+        },
+        "intended_logical_path": {
+          "title": "Intended Logical Path",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "line_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Id"
+        },
+        "media_type": {
+          "const": "audio/wav",
+          "default": "audio/wav",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance_record_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance Record Sha256"
+        },
+        "requirement_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "rights_status": {
+          "default": "PENDING_REVIEW",
+          "enum": [
+            "PENDING_REVIEW",
+            "APPROVED",
+            "REJECTED"
+          ],
+          "title": "Rights Status",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "default": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "submission_status": {
+          "default": "NOT_SUBMITTED",
+          "enum": [
+            "NOT_SUBMITTED",
+            "SUBMITTED"
+          ],
+          "title": "Submission Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "kind",
+        "start_ms",
+        "end_ms",
+        "direction",
+        "intended_logical_path"
+      ],
+      "title": "PilotAudioRequirement",
+      "type": "object"
+    },
+    "PilotCharacterContinuityReview": {
+      "additionalProperties": false,
+      "properties": {
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passed"
+        }
+      },
+      "required": [
+        "character_id"
+      ],
+      "title": "PilotCharacterContinuityReview",
+      "type": "object"
+    },
+    "PilotDeliveryProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "audio_channels": {
+          "const": 2,
+          "default": 2,
+          "title": "Audio Channels",
+          "type": "integer"
+        },
+        "audio_codec": {
+          "const": "aac",
+          "default": "aac",
+          "title": "Audio Codec",
+          "type": "string"
+        },
+        "audio_sample_rate_hz": {
+          "const": 48000,
+          "default": 48000,
+          "title": "Audio Sample Rate Hz",
+          "type": "integer"
+        },
+        "container": {
+          "const": "mp4",
+          "default": "mp4",
+          "title": "Container",
+          "type": "string"
+        },
+        "display_aspect_ratio": {
+          "const": "9:16",
+          "default": "9:16",
+          "title": "Display Aspect Ratio",
+          "type": "string"
+        },
+        "fps": {
+          "const": 25,
+          "default": 25,
+          "title": "Fps",
+          "type": "integer"
+        },
+        "height": {
+          "const": 1920,
+          "default": 1920,
+          "title": "Height",
+          "type": "integer"
+        },
+        "pixel_format": {
+          "const": "yuv420p",
+          "default": "yuv420p",
+          "title": "Pixel Format",
+          "type": "string"
+        },
+        "subtitle_codec": {
+          "const": "mov_text",
+          "default": "mov_text",
+          "title": "Subtitle Codec",
+          "type": "string"
+        },
+        "video_codec": {
+          "const": "h264",
+          "default": "h264",
+          "title": "Video Codec",
+          "type": "string"
+        },
+        "width": {
+          "const": 1080,
+          "default": 1080,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "title": "PilotDeliveryProfile",
+      "type": "object"
+    },
+    "PilotFailureClass": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9._-]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "disposition": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Disposition",
+          "type": "string"
+        },
+        "meaning": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Meaning",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "meaning",
+        "disposition"
+      ],
+      "title": "PilotFailureClass",
+      "type": "object"
+    },
+    "PilotFailureCount": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9._-]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "code",
+        "count"
+      ],
+      "title": "PilotFailureCount",
+      "type": "object"
+    },
+    "PilotMetricsTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_free_count": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Free Count"
+        },
+        "character_appearance_count": {
+          "const": 17,
+          "default": 17,
+          "title": "Character Appearance Count",
+          "type": "integer"
+        },
+        "character_continuity_pass_count": {
+          "anyOf": [
+            {
+              "maximum": 17,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Character Continuity Pass Count"
+        },
+        "cost_cny_microunits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Cny Microunits"
+        },
+        "critical_identity_breaks": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Critical Identity Breaks"
+        },
+        "duplicate_media_count": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Media Count"
+        },
+        "failure_counts": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PilotFailureCount"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Failure Counts"
+        },
+        "first_pass_usable_count": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Pass Usable Count"
+        },
+        "human_edit_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Edit Ms"
+        },
+        "human_review_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Review Ms"
+        },
+        "scene_boundary_count": {
+          "const": 8,
+          "default": 8,
+          "title": "Scene Boundary Count",
+          "type": "integer"
+        },
+        "scene_continuity_pass_count": {
+          "anyOf": [
+            {
+              "maximum": 8,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scene Continuity Pass Count"
+        },
+        "shot_count": {
+          "const": 10,
+          "default": 10,
+          "title": "Shot Count",
+          "type": "integer"
+        },
+        "shot_intent_pass_count": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shot Intent Pass Count"
+        },
+        "status": {
+          "default": "UNFILLED",
+          "enum": [
+            "UNFILLED",
+            "COMPLETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "total_attempts": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 10,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Attempts"
+        },
+        "total_elapsed_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Elapsed Ms"
+        }
+      },
+      "title": "PilotMetricsTemplate",
+      "type": "object"
+    },
+    "PilotProviderBatchPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "current_gate": {
+          "const": "HUMAN_GATE",
+          "default": "HUMAN_GATE",
+          "title": "Current Gate",
+          "type": "string"
+        },
+        "exact_shot_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 10,
+          "title": "Exact Shot Ids",
+          "type": "array"
+        },
+        "max_attempts_per_shot": {
+          "const": 2,
+          "default": 2,
+          "title": "Max Attempts Per Shot",
+          "type": "integer"
+        },
+        "model": {
+          "const": "doubao-seedance-2-0-260128",
+          "default": "doubao-seedance-2-0-260128",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "contents.generations.tasks.create",
+          "default": "contents.generations.tasks.create",
+          "title": "Operation",
+          "type": "string"
+        },
+        "planned_image_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Planned Image Requests",
+          "type": "integer"
+        },
+        "planned_max_video_requests": {
+          "const": 20,
+          "default": 20,
+          "title": "Planned Max Video Requests",
+          "type": "integer"
+        },
+        "planned_voice_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Planned Voice Requests",
+          "type": "integer"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "default": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "proposed_cost_ceiling_cny": {
+          "const": 450,
+          "default": 450,
+          "title": "Proposed Cost Ceiling Cny",
+          "type": "integer"
+        },
+        "provider": {
+          "const": "volcengine_ark",
+          "default": "volcengine_ark",
+          "title": "Provider",
+          "type": "string"
+        },
+        "region": {
+          "const": "cn-beijing",
+          "default": "cn-beijing",
+          "title": "Region",
+          "type": "string"
+        },
+        "state": {
+          "const": "NOT_AUTHORIZED",
+          "default": "NOT_AUTHORIZED",
+          "title": "State",
+          "type": "string"
+        },
+        "stop_conditions": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 8,
+          "title": "Stop Conditions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "exact_shot_ids",
+        "stop_conditions"
+      ],
+      "title": "PilotProviderBatchPlan",
+      "type": "object"
+    },
+    "PilotRightsReviewRow": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "default": "PENDING_REVIEW",
+          "enum": [
+            "PENDING_REVIEW",
+            "APPROVED",
+            "REJECTED"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Sha256"
+        },
+        "expected_size_bytes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Size Bytes"
+        },
+        "expiry": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiry"
+        },
+        "intended_logical_path": {
+          "title": "Intended Logical Path",
+          "type": "string"
+        },
+        "likeness_privacy_basis": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Likeness Privacy Basis"
+        },
+        "provenance_record_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provenance Record Sha256"
+        },
+        "review_record_a_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Record A Sha256"
+        },
+        "review_record_b_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Record B Sha256"
+        },
+        "reviewer_a_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer A Ref"
+        },
+        "reviewer_b_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer B Ref"
+        },
+        "rights_basis": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rights Basis"
+        },
+        "source_category": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Category"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "subject_kind": {
+          "enum": [
+            "IMAGE_ASSET",
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "submission_status": {
+          "default": "NOT_SUBMITTED",
+          "enum": [
+            "NOT_SUBMITTED",
+            "SUBMITTED"
+          ],
+          "title": "Submission Status",
+          "type": "string"
+        },
+        "territory": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Territory"
+        },
+        "use_scope": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Use Scope"
+        }
+      },
+      "required": [
+        "subject_kind",
+        "subject_id",
+        "intended_logical_path"
+      ],
+      "title": "PilotRightsReviewRow",
+      "type": "object"
+    },
+    "PilotShotPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "bgm_direction": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Bgm Direction",
+          "type": "string"
+        },
+        "character_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Character Ids",
+          "type": "array"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "first_pass_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "First Pass Criteria",
+          "type": "array"
+        },
+        "ordinal": {
+          "maximum": 9,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "post_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Post Requirements",
+          "type": "array"
+        },
+        "required_asset_version_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Required Asset Version Ids",
+          "type": "array"
+        },
+        "scene_continuity_required": {
+          "title": "Scene Continuity Required",
+          "type": "boolean"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "shot_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "subtitle_text": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subtitle Text",
+          "type": "array"
+        },
+        "unacceptable_defects": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Unacceptable Defects",
+          "type": "array"
+        },
+        "visual_goal": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Goal",
+          "type": "string"
+        },
+        "voice_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Voice Line Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "shot_id",
+        "ordinal",
+        "start_ms",
+        "duration_ms",
+        "scene_id",
+        "character_ids",
+        "dialogue_line_ids",
+        "visual_goal",
+        "unacceptable_defects",
+        "required_asset_version_ids",
+        "voice_line_ids",
+        "subtitle_text",
+        "bgm_direction",
+        "post_requirements",
+        "first_pass_criteria",
+        "scene_continuity_required"
+      ],
+      "title": "PilotShotPlan",
+      "type": "object"
+    },
+    "PilotShotReviewTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_free": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Free"
+        },
+        "character_continuity": {
+          "items": {
+            "$ref": "#/$defs/PilotCharacterContinuityReview"
+          },
+          "minItems": 1,
+          "title": "Character Continuity",
+          "type": "array"
+        },
+        "critical_identity_break": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Critical Identity Break"
+        },
+        "failure_codes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Codes",
+          "type": "array"
+        },
+        "first_pass_usable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Pass Usable"
+        },
+        "human_edit_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Edit Ms"
+        },
+        "human_review_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Review Ms"
+        },
+        "media_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Sha256"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "review_record_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Record Sha256"
+        },
+        "reviewer_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer Ref"
+        },
+        "role": {
+          "enum": [
+            "EDITOR",
+            "INDEPENDENT"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "scene_continuity_pass": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scene Continuity Pass"
+        },
+        "scene_continuity_required": {
+          "title": "Scene Continuity Required",
+          "type": "boolean"
+        },
+        "shot_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "shot_intent_pass": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shot Intent Pass"
+        },
+        "status": {
+          "default": "UNFILLED",
+          "enum": [
+            "UNFILLED",
+            "COMPLETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shot_id",
+        "role",
+        "scene_continuity_required",
+        "character_continuity"
+      ],
+      "title": "PilotShotReviewTemplate",
+      "type": "object"
+    },
+    "PilotShotWorkRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "attempts": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attempts"
+        },
+        "failure_codes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Codes",
+          "type": "array"
+        },
+        "final_media_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Final Media Sha256"
+        },
+        "first_attempt_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Attempt Sha256"
+        },
+        "human_edit_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Human Edit Ms"
+        },
+        "provider_cost_cny_microunits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Cost Cny Microunits"
+        },
+        "provider_request_count": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Request Count"
+        },
+        "shot_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "source_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "IMPORTED_MEDIA",
+                "PROVIDER_GENERATED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Mode"
+        },
+        "status": {
+          "default": "UNFILLED",
+          "enum": [
+            "UNFILLED",
+            "COMPLETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shot_id"
+      ],
+      "title": "PilotShotWorkRecord",
+      "type": "object"
+    },
+    "PilotSyntheticRehearsal": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_decision": {
+          "const": "STOP",
+          "default": "STOP",
+          "title": "Expected Decision",
+          "type": "string"
+        },
+        "human_status": {
+          "const": "NOT_SCORED",
+          "default": "NOT_SCORED",
+          "title": "Human Status",
+          "type": "string"
+        },
+        "metric_status": {
+          "const": "NOT_SCORED_FIXTURE",
+          "default": "NOT_SCORED_FIXTURE",
+          "title": "Metric Status",
+          "type": "string"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "default": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "proves_content_quality": {
+          "const": false,
+          "default": false,
+          "title": "Proves Content Quality",
+          "type": "boolean"
+        },
+        "proves_provider_readiness": {
+          "const": false,
+          "default": false,
+          "title": "Proves Provider Readiness",
+          "type": "boolean"
+        },
+        "provider_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "source_mode": {
+          "const": "SYNTHETIC_FIXTURE",
+          "default": "SYNTHETIC_FIXTURE",
+          "title": "Source Mode",
+          "type": "string"
+        }
+      },
+      "title": "PilotSyntheticRehearsal",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "active_asset_version_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Active Asset Version Ids",
+      "type": "array"
+    },
+    "asset_requirements": {
+      "items": {
+        "$ref": "#/$defs/PilotAssetRequirement"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Asset Requirements",
+      "type": "array"
+    },
+    "audio_requirements": {
+      "items": {
+        "$ref": "#/$defs/PilotAudioRequirement"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Audio Requirements",
+      "type": "array"
+    },
+    "compilation_id": {
+      "pattern": "^creative_sample_[0-9a-f]{20}$",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "delivery_profile": {
+      "$ref": "#/$defs/PilotDeliveryProfile"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-pilot-pack",
+      "default": "sdc.creative-sample-pilot-pack",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "failure_taxonomy": {
+      "items": {
+        "$ref": "#/$defs/PilotFailureClass"
+      },
+      "maxItems": 21,
+      "minItems": 21,
+      "title": "Failure Taxonomy",
+      "type": "array"
+    },
+    "metrics_template": {
+      "$ref": "#/$defs/PilotMetricsTemplate"
+    },
+    "ordered_shot_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Ordered Shot Ids",
+      "type": "array"
+    },
+    "pack_id": {
+      "pattern": "^creative_pilot_pack_[0-9a-f]{20}$",
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "profile": {
+      "const": "creative-sample-pilot-pack-v1",
+      "default": "creative-sample-pilot-pack-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_batch_plan": {
+      "$ref": "#/$defs/PilotProviderBatchPlan"
+    },
+    "rights_review_rows": {
+      "items": {
+        "$ref": "#/$defs/PilotRightsReviewRow"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Rights Review Rows",
+      "type": "array"
+    },
+    "sample_spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sample Spec Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shot_plans": {
+      "items": {
+        "$ref": "#/$defs/PilotShotPlan"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Shot Plans",
+      "type": "array"
+    },
+    "shot_review_templates": {
+      "items": {
+        "$ref": "#/$defs/PilotShotReviewTemplate"
+      },
+      "maxItems": 20,
+      "minItems": 20,
+      "title": "Shot Review Templates",
+      "type": "array"
+    },
+    "shot_work_records": {
+      "items": {
+        "$ref": "#/$defs/PilotShotWorkRecord"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Shot Work Records",
+      "type": "array"
+    },
+    "synthetic_rehearsal": {
+      "$ref": "#/$defs/PilotSyntheticRehearsal"
+    },
+    "title": {
+      "const": "\u8f9e\u804c\u4fe1\u7167\u65e7",
+      "default": "\u8f9e\u804c\u4fe1\u7167\u65e7",
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pack_id",
+    "sample_spec_sha256",
+    "compilation_id",
+    "ordered_shot_ids",
+    "active_asset_version_ids",
+    "asset_requirements",
+    "audio_requirements",
+    "shot_plans",
+    "delivery_profile",
+    "rights_review_rows",
+    "shot_review_templates",
+    "shot_work_records",
+    "metrics_template",
+    "failure_taxonomy",
+    "synthetic_rehearsal",
+    "provider_batch_plan"
+  ],
+  "title": "CreativeSamplePilotPack",
+  "type": "object"
+}

@@ -1,0 +1,1861 @@
+{
+  "active_asset_version_ids": [
+    "character_asset_28b463fa86740ce9caa3",
+    "character_asset_80ccdca6364719a16638",
+    "scene_asset_a7dfe043dc5e69b2ec53",
+    "scene_asset_ff40fa1bcf23100a83e4"
+  ],
+  "asset_requirements": [
+    {
+      "asset_version_id": "character_asset_28b463fa86740ce9caa3",
+      "eligible_for_real_generation": false,
+      "intended_logical_path": "assets/characters/gu-yan/v1.png",
+      "media_type": "image/png",
+      "placeholder_label": "gu-yan",
+      "placeholder_sha256": "4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917",
+      "privacy_status": "PENDING_REVIEW",
+      "requirement_id": "pilot_asset_requirement_60e5309aa081b8cb4f22",
+      "rights_status": "PENDING_REVIEW",
+      "source_mode": "SYNTHETIC_PLACEHOLDER_ONLY",
+      "subject_id": "character_43019e6eefc52eee8f6b",
+      "subject_kind": "CHARACTER",
+      "submission_status": "NOT_SUBMITTED",
+      "visual_requirements": [
+        "未来真实文件必须来自单独审查的精确本地字节并冻结新内容摘要。",
+        "不得包含真实私密身份、品牌、可读个人信息或未授权第三方作品。",
+        "当前摘要仅绑定2x2合成占位PNG，不具备真实生成资格。"
+      ]
+    },
+    {
+      "asset_version_id": "character_asset_80ccdca6364719a16638",
+      "eligible_for_real_generation": false,
+      "intended_logical_path": "assets/characters/su-qing/v1.png",
+      "media_type": "image/png",
+      "placeholder_label": "su-qing",
+      "placeholder_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+      "privacy_status": "PENDING_REVIEW",
+      "requirement_id": "pilot_asset_requirement_9253ff7a52ea4656ddf7",
+      "rights_status": "PENDING_REVIEW",
+      "source_mode": "SYNTHETIC_PLACEHOLDER_ONLY",
+      "subject_id": "character_eac118bceb9733dc90a1",
+      "subject_kind": "CHARACTER",
+      "submission_status": "NOT_SUBMITTED",
+      "visual_requirements": [
+        "未来真实文件必须来自单独审查的精确本地字节并冻结新内容摘要。",
+        "不得包含真实私密身份、品牌、可读个人信息或未授权第三方作品。",
+        "当前摘要仅绑定2x2合成占位PNG，不具备真实生成资格。"
+      ]
+    },
+    {
+      "asset_version_id": "scene_asset_a7dfe043dc5e69b2ec53",
+      "eligible_for_real_generation": false,
+      "intended_logical_path": "assets/scenes/rooftop-dawn/v1.png",
+      "media_type": "image/png",
+      "placeholder_label": "rooftop-dawn",
+      "placeholder_sha256": "e999957460935f9a682c3f13916903b730c59a0f599bd134de7a3d58a1ba9a9a",
+      "privacy_status": "PENDING_REVIEW",
+      "requirement_id": "pilot_asset_requirement_302b540fea5ae4c9266c",
+      "rights_status": "PENDING_REVIEW",
+      "source_mode": "SYNTHETIC_PLACEHOLDER_ONLY",
+      "subject_id": "scene_58fe397959f557215593",
+      "subject_kind": "SCENE",
+      "submission_status": "NOT_SUBMITTED",
+      "visual_requirements": [
+        "未来真实文件必须来自单独审查的精确本地字节并冻结新内容摘要。",
+        "不得包含真实私密身份、品牌、可读个人信息或未授权第三方作品。",
+        "当前摘要仅绑定2x2合成占位PNG，不具备真实生成资格。"
+      ]
+    },
+    {
+      "asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+      "eligible_for_real_generation": false,
+      "intended_logical_path": "assets/scenes/office-night/v1.png",
+      "media_type": "image/png",
+      "placeholder_label": "office-night",
+      "placeholder_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+      "privacy_status": "PENDING_REVIEW",
+      "requirement_id": "pilot_asset_requirement_9d0fd96629e333feec00",
+      "rights_status": "PENDING_REVIEW",
+      "source_mode": "SYNTHETIC_PLACEHOLDER_ONLY",
+      "subject_id": "scene_3c1c4be2125f4ae91624",
+      "subject_kind": "SCENE",
+      "submission_status": "NOT_SUBMITTED",
+      "visual_requirements": [
+        "未来真实文件必须来自单独审查的精确本地字节并冻结新内容摘要。",
+        "不得包含真实私密身份、品牌、可读个人信息或未授权第三方作品。",
+        "当前摘要仅绑定2x2合成占位PNG，不具备真实生成资格。"
+      ]
+    }
+  ],
+  "audio_requirements": [
+    {
+      "direction": "苏晴成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 11600,
+      "exact_text": "辞职信在桌上。天亮前，我就走。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/00.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_65ea96ce3201083ff96f",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_5e62cefdd3228526dda7",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 6800,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "顾言成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 15600,
+      "exact_text": "我不同意。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/01.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_2086b57f33fe54845c7e",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_18b9eaa1ece9d1e224ae",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 14000,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "苏晴成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 24800,
+      "exact_text": "项目都停了，你拿什么留我？",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/02.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_72f37bc5d434536ce911",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_3ee5025e0df826c80c68",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 20900,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "顾言成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 32600,
+      "exact_text": "不是留你。跟我上天台。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/03.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_685d8e8ddc4ef11e0a62",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_0ea24c83e1f9350e8475",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 28900,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "顾言成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 41800,
+      "exact_text": "三个月前，我把你的方案投进了城南改造终审。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/04.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_bf8392058acb05cdc2c1",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_4848ebb5e2cc8b05dfbc",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 36900,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "苏晴成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 46100,
+      "exact_text": "你没问过我。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/05.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_23efbffb1c41cdb8e720",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_c9d206cbe21f1f601e81",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 44100,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "顾言成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 55600,
+      "exact_text": "所以今天不是替你决定，是请你自己选。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/06.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_7cccb7d8b6edaa29d71a",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_b2958eb2882848ed61e9",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 50900,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "顾言成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 62200,
+      "exact_text": "合伙人，或者自由建筑师。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/07.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_394d96060d7f03763924",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_5ad81839360be0ab6c6a",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 58900,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "苏晴成年自然中低声区，克制清晰；严格匹配原文，不得添加说话人标签或改写。",
+      "eligible_for_real_generation": false,
+      "end_ms": 70400,
+      "exact_text": "辞职信照旧。明天，我会以合伙人的身份回来。",
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/voices/08.wav",
+      "kind": "VOICE",
+      "line_id": "dialogue_8d2d6305b45e90b93509",
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_cc3a3d647a4c8f5c9e97",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 65700,
+      "submission_status": "NOT_SUBMITTED"
+    },
+    {
+      "direction": "无歌词稀疏钢琴起始，36秒前低脉冲，36秒后暖色铺底，58秒后克制解决；必须单独保留版权审查记录。",
+      "eligible_for_real_generation": false,
+      "end_ms": 72000,
+      "exact_text": null,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "intended_logical_path": "audio/bgm/background.wav",
+      "kind": "BGM",
+      "line_id": null,
+      "media_type": "audio/wav",
+      "provenance_record_sha256": null,
+      "requirement_id": "pilot_audio_requirement_706214a68fad912c1ea8",
+      "rights_status": "PENDING_REVIEW",
+      "sample_rate_hz": 48000,
+      "start_ms": 0,
+      "submission_status": "NOT_SUBMITTED"
+    }
+  ],
+  "compilation_id": "creative_sample_c43253e73fe962f1623d",
+  "delivery_profile": {
+    "audio_channels": 2,
+    "audio_codec": "aac",
+    "audio_sample_rate_hz": 48000,
+    "container": "mp4",
+    "display_aspect_ratio": "9:16",
+    "fps": 25,
+    "height": 1920,
+    "pixel_format": "yuv420p",
+    "subtitle_codec": "mov_text",
+    "video_codec": "h264",
+    "width": 1080
+  },
+  "document_type": "sdc.creative-sample-pilot-pack",
+  "failure_taxonomy": [
+    {
+      "code": "artifact.duplicate_media",
+      "disposition": "STOP",
+      "meaning": "两个镜头使用未声明的相同最终字节"
+    },
+    {
+      "code": "artifact.extra_person",
+      "disposition": "拒收媒体",
+      "meaning": "出现未声明人物或人物状前景"
+    },
+    {
+      "code": "artifact.face",
+      "disposition": "判定artifact-free失败",
+      "meaning": "面部变形、闪烁或时序不稳定"
+    },
+    {
+      "code": "artifact.hand",
+      "disposition": "判定artifact-free失败",
+      "meaning": "手部变形、融合或道具交互不可能"
+    },
+    {
+      "code": "artifact.static_or_placeholder",
+      "disposition": "STOP",
+      "meaning": "静态、纯色或夹具冒充内容"
+    },
+    {
+      "code": "artifact.text_or_watermark",
+      "disposition": "拒收媒体",
+      "meaning": "出现非预期可读文字、标志或水印"
+    },
+    {
+      "code": "audio.bgm_rights",
+      "disposition": "STOP并进入HUMAN_GATE",
+      "meaning": "音乐版权缺失、不明或过期"
+    },
+    {
+      "code": "audio.subtitle_timing",
+      "disposition": "技术QC失败",
+      "meaning": "字幕文字或时间偏离冻结对白"
+    },
+    {
+      "code": "audio.voice_quality",
+      "disposition": "首遍可用失败",
+      "meaning": "对白不可懂、成年角色不符或显著生硬"
+    },
+    {
+      "code": "content.character_drift",
+      "disposition": "角色连续性失败",
+      "meaning": "脸、头发、年龄、体型或角色发生漂移"
+    },
+    {
+      "code": "content.dialogue_lipsync",
+      "disposition": "镜头意图失败",
+      "meaning": "说话人错误、额外口型或阻塞同步失败"
+    },
+    {
+      "code": "content.identity_break",
+      "disposition": "STOP并进入HUMAN_GATE",
+      "meaning": "声明角色不再可辨认为同一人"
+    },
+    {
+      "code": "content.prop_drift",
+      "disposition": "意图或连续性失败",
+      "meaning": "信封或文件夹状态、颜色、位置或手别错误"
+    },
+    {
+      "code": "content.scene_drift",
+      "disposition": "场景连续性失败",
+      "meaning": "地点、光向或空间轴线错误变化"
+    },
+    {
+      "code": "content.shot_intent",
+      "disposition": "镜头意图失败",
+      "meaning": "冻结叙事、动作或机位意图未表达"
+    },
+    {
+      "code": "content.wardrobe_drift",
+      "disposition": "角色连续性失败",
+      "meaning": "固定服装变化、变色或出现标志"
+    },
+    {
+      "code": "provenance.unverified",
+      "disposition": "STOP",
+      "meaning": "来源无法绑定保留的本地记录"
+    },
+    {
+      "code": "review.disagreement",
+      "disposition": "记录并进入HUMAN_GATE",
+      "meaning": "两个复核人对任一评分声明不一致"
+    },
+    {
+      "code": "rights.unverified",
+      "disposition": "STOP并进入HUMAN_GATE",
+      "meaning": "内容、肖像或隐私权利不完整"
+    },
+    {
+      "code": "technical.duration",
+      "disposition": "技术QC失败",
+      "meaning": "媒体或成片时长偏离精确主时钟"
+    },
+    {
+      "code": "technical.frame",
+      "disposition": "技术QC失败",
+      "meaning": "画幅、尺寸、帧率、像素格式或可解码性错误"
+    }
+  ],
+  "metrics_template": {
+    "artifact_free_count": null,
+    "character_appearance_count": 17,
+    "character_continuity_pass_count": null,
+    "cost_cny_microunits": null,
+    "critical_identity_breaks": null,
+    "duplicate_media_count": null,
+    "failure_counts": null,
+    "first_pass_usable_count": null,
+    "human_edit_ms": null,
+    "human_review_ms": null,
+    "scene_boundary_count": 8,
+    "scene_continuity_pass_count": null,
+    "shot_count": 10,
+    "shot_intent_pass_count": null,
+    "status": "UNFILLED",
+    "total_attempts": null,
+    "total_elapsed_ms": null
+  },
+  "ordered_shot_ids": [
+    "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+    "storyboard_shot_v2_13822570b72c80607da5",
+    "storyboard_shot_v2_c506a9c24a958ea1645b",
+    "storyboard_shot_v2_70097fbd380d13f419f7",
+    "storyboard_shot_v2_c13ef471e7c016ef416f",
+    "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+    "storyboard_shot_v2_99634ba94f4c01b7de21",
+    "storyboard_shot_v2_8fe54fb039ee2c31e475",
+    "storyboard_shot_v2_433f35b18c478ab1428c",
+    "storyboard_shot_v2_64efc36a850a3781c7bb"
+  ],
+  "pack_id": "creative_pilot_pack_b1041dbe27fc145c73c8",
+  "profile": "creative-sample-pilot-pack-v1",
+  "provider_batch_plan": {
+    "current_gate": "HUMAN_GATE",
+    "exact_shot_ids": [
+      "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "storyboard_shot_v2_13822570b72c80607da5",
+      "storyboard_shot_v2_c506a9c24a958ea1645b",
+      "storyboard_shot_v2_70097fbd380d13f419f7",
+      "storyboard_shot_v2_c13ef471e7c016ef416f",
+      "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+      "storyboard_shot_v2_99634ba94f4c01b7de21",
+      "storyboard_shot_v2_8fe54fb039ee2c31e475",
+      "storyboard_shot_v2_433f35b18c478ab1428c",
+      "storyboard_shot_v2_64efc36a850a3781c7bb"
+    ],
+    "max_attempts_per_shot": 2,
+    "model": "doubao-seedance-2-0-260128",
+    "operation": "contents.generations.tasks.create",
+    "planned_image_requests": 0,
+    "planned_max_video_requests": 20,
+    "planned_voice_requests": 0,
+    "posts_allowed": 0,
+    "proposed_cost_ceiling_cny": 450,
+    "provider": "volcengine_ark",
+    "region": "cn-beijing",
+    "state": "NOT_AUTHORIZED",
+    "stop_conditions": [
+      "缺少独立复核、版权、来源或隐私审查时停止。",
+      "规格、素材、内容摘要、运行发布、队列、账本或部署绑定漂移时停止。",
+      "任何关键身份断裂、安全或合规问题出现时停止。",
+      "未解决的双人复核分歧出现时停止。",
+      "请求数达到20、成本达到CNY450或任一镜头达到Attempt 2时停止。",
+      "Provider明确拒绝、远端失败或返回结构不合格时停止且不得自动换供应商。",
+      "提交、事务提交结果或task ID持久化结果不明时进入SUBMISSION_UNKNOWN与HUMAN_GATE。",
+      "任何部分账本行、所有权冲突、过期证据或技术闭包验证失败时停止。"
+    ]
+  },
+  "rights_review_rows": [
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "assets/characters/gu-yan/v1.png",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "character_asset_28b463fa86740ce9caa3",
+      "subject_kind": "IMAGE_ASSET",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "assets/characters/su-qing/v1.png",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "character_asset_80ccdca6364719a16638",
+      "subject_kind": "IMAGE_ASSET",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "assets/scenes/rooftop-dawn/v1.png",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "scene_asset_a7dfe043dc5e69b2ec53",
+      "subject_kind": "IMAGE_ASSET",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "assets/scenes/office-night/v1.png",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "scene_asset_ff40fa1bcf23100a83e4",
+      "subject_kind": "IMAGE_ASSET",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/00.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_65ea96ce3201083ff96f",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/01.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_2086b57f33fe54845c7e",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/02.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_72f37bc5d434536ce911",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/03.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_685d8e8ddc4ef11e0a62",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/04.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_bf8392058acb05cdc2c1",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/05.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_23efbffb1c41cdb8e720",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/06.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_7cccb7d8b6edaa29d71a",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/07.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_394d96060d7f03763924",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/voices/08.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "dialogue_8d2d6305b45e90b93509",
+      "subject_kind": "VOICE",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    },
+    {
+      "decision": "PENDING_REVIEW",
+      "eligible_for_real_generation": false,
+      "expected_sha256": null,
+      "expected_size_bytes": null,
+      "expiry": null,
+      "intended_logical_path": "audio/bgm/background.wav",
+      "likeness_privacy_basis": null,
+      "provenance_record_sha256": null,
+      "review_record_a_sha256": null,
+      "review_record_b_sha256": null,
+      "reviewer_a_ref": null,
+      "reviewer_b_ref": null,
+      "rights_basis": null,
+      "source_category": null,
+      "subject_id": "pilot_audio_requirement_706214a68fad912c1ea8",
+      "subject_kind": "BGM",
+      "submission_status": "NOT_SUBMITTED",
+      "territory": null,
+      "use_scope": null
+    }
+  ],
+  "sample_spec_sha256": "221ccd64abeaa786f9271e89e70c2c8ab37e8f03790daa766f9b763aa25e0af4",
+  "schema_version": "1.0.0",
+  "shot_plans": [
+    {
+      "bgm_direction": "克制室内环境音与单个钢琴音；6000ms硬切。",
+      "character_ids": [
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [],
+      "duration_ms": 6000,
+      "first_pass_criteria": [
+        "动作在前2秒完成",
+        "苏晴身份和手部解剖稳定",
+        "信封最终位置正确"
+      ],
+      "ordinal": 0,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_ff40fa1bcf23100a83e4"
+      ],
+      "scene_continuity_required": false,
+      "scene_id": "scene_3c1c4be2125f4ae91624",
+      "shot_id": "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "start_ms": 0,
+      "subtitle_text": [],
+      "unacceptable_defects": [
+        "静态或纯色卡片",
+        "钩子晚于2秒",
+        "手或信封畸形",
+        "可读文字、额外人物、标志或水印"
+      ],
+      "visual_goal": "辞职信落在桌上，在解释原因之前形成钩子。 高机位静态近景；苏晴右手将奶油色信封放在浅木桌左前方，脸在浅景深背景中仍可辨认。",
+      "voice_line_ids": []
+    },
+    {
+      "bgm_direction": "稀疏钢琴维持最低音量，语音优先。",
+      "character_ids": [
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_65ea96ce3201083ff96f"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "苏晴身份稳定",
+        "整句清晰完整",
+        "道具与屏幕方向延续镜头0"
+      ],
+      "ordinal": 1,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_ff40fa1bcf23100a83e4"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_3c1c4be2125f4ae91624",
+      "shot_id": "storyboard_shot_v2_13822570b72c80607da5",
+      "start_ms": 6000,
+      "subtitle_text": [
+        "辞职信在桌上。天亮前，我就走。"
+      ],
+      "unacceptable_defects": [
+        "脸、头发、服装或眼睛闪烁",
+        "口型不匹配",
+        "信封移动",
+        "画外说话人被错误渲染"
+      ],
+      "visual_goal": "苏晴平静宣布离开，建立核心冲突。 眼平静态中近景；苏晴在画面左侧，信封作前景，从信封抬眼望向右侧门口并说完对白。",
+      "voice_line_ids": [
+        "dialogue_65ea96ce3201083ff96f"
+      ]
+    },
+    {
+      "bgm_direction": "引入安静低脉冲，不遮挡短对白。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_2086b57f33fe54845c7e"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "两人身份稳定",
+        "顾言为唯一说话人",
+        "蓝色文件夹始终在顾言左手"
+      ],
+      "ordinal": 2,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_ff40fa1bcf23100a83e4"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_3c1c4be2125f4ae91624",
+      "shot_id": "storyboard_shot_v2_c506a9c24a958ea1645b",
+      "start_ms": 13000,
+      "subtitle_text": [
+        "我不同意。"
+      ],
+      "unacceptable_defects": [
+        "额外人物",
+        "门或文件夹瞬移",
+        "文件夹换手",
+        "苏晴口型运动或越轴"
+      ],
+      "visual_goal": "顾言进门，以一句拒绝打断苏晴的决定。 眼平中景缓慢推进；顾言从右后玻璃门迈入一步后停下，左手垂持蓝色文件夹，苏晴背肩作左前景锚点。",
+      "voice_line_ids": [
+        "dialogue_2086b57f33fe54845c7e"
+      ]
+    },
+    {
+      "bgm_direction": "低脉冲轻微抬升，仍保持对白清晰。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_72f37bc5d434536ce911"
+      ],
+      "duration_ms": 8000,
+      "first_pass_criteria": [
+        "对抗关系清晰",
+        "仅苏晴说话",
+        "脸、空间和道具连续"
+      ],
+      "ordinal": 3,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_ff40fa1bcf23100a83e4"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_3c1c4be2125f4ae91624",
+      "shot_id": "storyboard_shot_v2_70097fbd380d13f419f7",
+      "start_ms": 20000,
+      "subtitle_text": [
+        "项目都停了，你拿什么留我？"
+      ],
+      "unacceptable_defects": [
+        "两人同时说话",
+        "视线错误或越轴",
+        "身份漂移",
+        "前景肩部变成第三人"
+      ],
+      "visual_goal": "苏晴转身质问，迫使顾言面对停摆的项目。 顾言肩后眼平静态中近景；苏晴转身约45度质问并保持目光，顾言闭口倾听。",
+      "voice_line_ids": [
+        "dialogue_72f37bc5d434536ce911"
+      ]
+    },
+    {
+      "bgm_direction": "对白后留动作空间，36000ms硬切屋顶。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_685d8e8ddc4ef11e0a62"
+      ],
+      "duration_ms": 8000,
+      "first_pass_criteria": [
+        "对白、取信封和转身为三个独立节拍",
+        "跨场道具状态精确成立"
+      ],
+      "ordinal": 4,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_ff40fa1bcf23100a83e4"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_3c1c4be2125f4ae91624",
+      "shot_id": "storyboard_shot_v2_c13ef471e7c016ef416f",
+      "start_ms": 28000,
+      "subtitle_text": [
+        "不是留你。跟我上天台。"
+      ],
+      "unacceptable_defects": [
+        "手部相交",
+        "提前拿取道具",
+        "道具换手",
+        "角色换位或错误口型"
+      ],
+      "visual_goal": "顾言不解释，只邀请苏晴到天台看答案。 眼平双人中景轻微推进；顾言在右侧说完转向门口，苏晴随后用右手拿起信封。",
+      "voice_line_ids": [
+        "dialogue_685d8e8ddc4ef11e0a62"
+      ]
+    },
+    {
+      "bgm_direction": "暖色铺底展开，但不得压对白。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_bf8392058acb05cdc2c1"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "屋顶场景立即可辨",
+        "角色、服装与道具跨场保持",
+        "人物始终在安全线内"
+      ],
+      "ordinal": 5,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_a7dfe043dc5e69b2ec53"
+      ],
+      "scene_continuity_required": false,
+      "scene_id": "scene_58fe397959f557215593",
+      "shot_id": "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+      "start_ms": 36000,
+      "subtitle_text": [
+        "三个月前，我把你的方案投进了城南改造终审。"
+      ],
+      "unacceptable_defects": [
+        "靠近或跨越屋顶边缘",
+        "人物或道具丢失",
+        "错误天气或场景替换",
+        "天际线可读标识"
+      ],
+      "visual_goal": "屋顶清晨，顾言揭示自己已把苏晴的方案送入终审。 眼平广角建立镜头缓慢推进；顾言右、苏晴左，两人距女儿墙至少1.5米，分别持文件夹与信封。",
+      "voice_line_ids": [
+        "dialogue_bf8392058acb05cdc2c1"
+      ]
+    },
+    {
+      "bgm_direction": "对白下压低音乐，保持短句清晰。",
+      "character_ids": [
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_23efbffb1c41cdb8e720"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "反应自然且身份可辨",
+        "声音清楚",
+        "屋顶边界连续"
+      ],
+      "ordinal": 6,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_a7dfe043dc5e69b2ec53"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_58fe397959f557215593",
+      "shot_id": "storyboard_shot_v2_99634ba94f4c01b7de21",
+      "start_ms": 43000,
+      "subtitle_text": [
+        "你没问过我。"
+      ],
+      "unacceptable_defects": [
+        "夸张哭泣",
+        "身份漂移",
+        "背景光向反转",
+        "信封换手或文件夹误入苏晴手中"
+      ],
+      "visual_goal": "苏晴对未经同意的决定提出短促异议。 眼平静态近景；苏晴先看向画外右侧文件夹，再看顾言，克制说出短句。",
+      "voice_line_ids": [
+        "dialogue_23efbffb1c41cdb8e720"
+      ]
+    },
+    {
+      "bgm_direction": "只保留柔和铺底，语气非胁迫。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_7cccb7d8b6edaa29d71a"
+      ],
+      "duration_ms": 8000,
+      "first_pass_criteria": [
+        "文件夹完整转移至平台",
+        "顾言为唯一说话人",
+        "道歉与归还选择权清晰"
+      ],
+      "ordinal": 7,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_a7dfe043dc5e69b2ec53"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_58fe397959f557215593",
+      "shot_id": "storyboard_shot_v2_8fe54fb039ee2c31e475",
+      "start_ms": 50000,
+      "subtitle_text": [
+        "所以今天不是替你决定，是请你自己选。"
+      ],
+      "unacceptable_defects": [
+        "生成文档文字",
+        "页面或手畸形",
+        "文件夹变色",
+        "苏晴提前抓取或威胁姿态"
+      ],
+      "visual_goal": "顾言将选择权归还给苏晴，而不是替她决定。 苏晴肩后眼平静态中近景；顾言把文件夹放上内侧平台，左手扶边、右手打开，页面无字。",
+      "voice_line_ids": [
+        "dialogue_7cccb7d8b6edaa29d71a"
+      ]
+    },
+    {
+      "bgm_direction": "开始和声解决，选项间保留自然停顿。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_394d96060d7f03763924"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "两个选项清楚",
+        "文件夹最终静止在中点",
+        "双方均不触碰文件夹"
+      ],
+      "ordinal": 8,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_a7dfe043dc5e69b2ec53"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_58fe397959f557215593",
+      "shot_id": "storyboard_shot_v2_433f35b18c478ab1428c",
+      "start_ms": 58000,
+      "subtitle_text": [
+        "合伙人，或者自由建筑师。"
+      ],
+      "unacceptable_defects": [
+        "同时交接或手融合",
+        "文件夹瞬移",
+        "顾言未撤手",
+        "越轴或不安全边缘位置"
+      ],
+      "visual_goal": "顾言给出合伙人或自由建筑师两个选项，并彻底撤回手。 眼平静态中广角双人镜头；顾言合上文件夹，推至中点并完全撤手，苏晴只看不碰。",
+      "voice_line_ids": [
+        "dialogue_394d96060d7f03763924"
+      ]
+    },
+    {
+      "bgm_direction": "70400ms后解决和弦，稳定画面保持到72000ms。",
+      "character_ids": [
+        "character_43019e6eefc52eee8f6b",
+        "character_eac118bceb9733dc90a1"
+      ],
+      "dialogue_line_ids": [
+        "dialogue_8d2d6305b45e90b93509"
+      ],
+      "duration_ms": 7000,
+      "first_pass_criteria": [
+        "取文件夹与对白顺序正确",
+        "双道具手别正确",
+        "身份稳定且结尾保持干净"
+      ],
+      "ordinal": 9,
+      "post_requirements": [
+        "只使用硬切和固定25fps/1080x1920画幅，不做生成式插帧或远程特效。",
+        "对白字幕必须逐字来自冻结DialogueLine并位于精确主时钟区间。",
+        "输出不得保留输入元数据、章节、本地路径、标志或水印。"
+      ],
+      "required_asset_version_ids": [
+        "character_asset_28b463fa86740ce9caa3",
+        "character_asset_80ccdca6364719a16638",
+        "scene_asset_a7dfe043dc5e69b2ec53"
+      ],
+      "scene_continuity_required": true,
+      "scene_id": "scene_58fe397959f557215593",
+      "shot_id": "storyboard_shot_v2_64efc36a850a3781c7bb",
+      "start_ms": 65000,
+      "subtitle_text": [
+        "辞职信照旧。明天，我会以合伙人的身份回来。"
+      ],
+      "unacceptable_defects": [
+        "道具缺失或换手",
+        "两人同时说话",
+        "夸张笑容或身份发型漂移",
+        "手融合或生成标题"
+      ],
+      "visual_goal": "苏晴保留辞职决定，却以合伙人身份选择回来。 眼平中近景缓慢推进；苏晴左手拿起文件夹、右手保留信封，说完望向晨光，顾言右肩作锚。",
+      "voice_line_ids": [
+        "dialogue_8d2d6305b45e90b93509"
+      ]
+    }
+  ],
+  "shot_review_templates": [
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": false,
+      "shot_id": "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": false,
+      "shot_id": "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_13822570b72c80607da5",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_13822570b72c80607da5",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_c506a9c24a958ea1645b",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_c506a9c24a958ea1645b",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_70097fbd380d13f419f7",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_70097fbd380d13f419f7",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_c13ef471e7c016ef416f",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_c13ef471e7c016ef416f",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": false,
+      "shot_id": "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": false,
+      "shot_id": "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_99634ba94f4c01b7de21",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_99634ba94f4c01b7de21",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_8fe54fb039ee2c31e475",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_8fe54fb039ee2c31e475",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_433f35b18c478ab1428c",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_433f35b18c478ab1428c",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "EDITOR",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_64efc36a850a3781c7bb",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    },
+    {
+      "artifact_free": null,
+      "character_continuity": [
+        {
+          "character_id": "character_43019e6eefc52eee8f6b",
+          "passed": null
+        },
+        {
+          "character_id": "character_eac118bceb9733dc90a1",
+          "passed": null
+        }
+      ],
+      "critical_identity_break": null,
+      "failure_codes": [],
+      "first_pass_usable": null,
+      "human_edit_ms": null,
+      "human_review_ms": null,
+      "media_sha256": null,
+      "notes": null,
+      "review_record_sha256": null,
+      "reviewer_ref": null,
+      "role": "INDEPENDENT",
+      "scene_continuity_pass": null,
+      "scene_continuity_required": true,
+      "shot_id": "storyboard_shot_v2_64efc36a850a3781c7bb",
+      "shot_intent_pass": null,
+      "status": "UNFILLED"
+    }
+  ],
+  "shot_work_records": [
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_13822570b72c80607da5",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_c506a9c24a958ea1645b",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_70097fbd380d13f419f7",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_c13ef471e7c016ef416f",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_99634ba94f4c01b7de21",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_8fe54fb039ee2c31e475",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_433f35b18c478ab1428c",
+      "source_mode": null,
+      "status": "UNFILLED"
+    },
+    {
+      "attempts": null,
+      "failure_codes": [],
+      "final_media_sha256": null,
+      "first_attempt_sha256": null,
+      "human_edit_ms": null,
+      "provider_cost_cny_microunits": null,
+      "provider_request_count": null,
+      "shot_id": "storyboard_shot_v2_64efc36a850a3781c7bb",
+      "source_mode": null,
+      "status": "UNFILLED"
+    }
+  ],
+  "synthetic_rehearsal": {
+    "expected_decision": "STOP",
+    "human_status": "NOT_SCORED",
+    "metric_status": "NOT_SCORED_FIXTURE",
+    "posts_allowed": 0,
+    "proves_content_quality": false,
+    "proves_provider_readiness": false,
+    "provider_requests": 0,
+    "source_mode": "SYNTHETIC_FIXTURE"
+  },
+  "title": "辞职信照旧"
+}
