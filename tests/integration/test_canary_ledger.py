@@ -710,6 +710,7 @@ async def test_cross_run_or_wrong_type_event_reusing_claim_identity_blocks_new_p
         await _seed_runtime(harness, (binding,), database_now)
         async with harness.sessions.begin() as session:
             session.add(RunRecord(id=event_run_id, state=RunState.RUNNING.value))
+            await session.flush()
             session.add(
                 EventRecord(
                     id=f"cross-run-wrong-type-event-{identity_field}",
@@ -1099,7 +1100,7 @@ def test_0008_legacy_rows_are_lossless_across_upgrade_downgrade_and_upgrade(
         asyncio.run(
             _scalar(
                 database_url,
-                "SELECT event_type || ':' || state || ':' || payload->>'kind' "
+                "SELECT event_type || ':' || state || ':' || (payload->>'kind') "
                 "FROM run_events WHERE id = 'legacy-event'",
             )
         )
