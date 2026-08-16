@@ -1,0 +1,215 @@
+{
+  "approved_count": 0,
+  "current_gate": "HUMAN_GATE",
+  "document_type": "sdc.creative-sample-real-asset-gap-report",
+  "execution_authorized": false,
+  "missing_count": 14,
+  "pending_count": 0,
+  "posts_allowed": 0,
+  "profile": "creative-sample-real-asset-intake-v1",
+  "provider_requests": 0,
+  "ready_for_rights_review": false,
+  "rejected_count": 0,
+  "report_id": "real_asset_gap_report_e6b930f29170ee37c1ca",
+  "rows": [
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "assets/characters/gu-yan/v1.png",
+      "ordinal": 0,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_50d397886c32b9049419"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "assets/characters/su-qing/v1.png",
+      "ordinal": 1,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_7d0344c51bc342b54c3f"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "assets/scenes/office-night/v1.png",
+      "ordinal": 2,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_797d2670209312b23543"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "assets/scenes/rooftop-dawn/v1.png",
+      "ordinal": 3,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_6dd0fffa130301db8d08"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/00.wav",
+      "ordinal": 4,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_1998798c7f2a4c465f4c"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/01.wav",
+      "ordinal": 5,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_69c873f2e6218744e82c"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/02.wav",
+      "ordinal": 6,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_b52d65701b5c2516bb6e"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/03.wav",
+      "ordinal": 7,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_3733148b545e57a7fd21"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/04.wav",
+      "ordinal": 8,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_9224d68194fac2679f61"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/05.wav",
+      "ordinal": 9,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_4fa7b3d37a320bc76ff0"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/06.wav",
+      "ordinal": 10,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_127b64cee82402124b54"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/07.wav",
+      "ordinal": 11,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_1ba989d830f67d8f80c6"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/voices/08.wav",
+      "ordinal": 12,
+      "replacement_guidance": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_4f72d4fa2dd33cf3ee5d"
+    },
+    {
+      "disposition": "MISSING",
+      "failures": [
+        "本地素材尚未由用户显式提交，不能推断、搜索或自动批准。"
+      ],
+      "logical_path": "audio/bgm/background.wav",
+      "ordinal": 13,
+      "replacement_guidance": [
+        "仅可由用户明确提供的无歌词72秒本地BGM WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "requirement_id": "real_asset_requirement_5255a7b57c08eafaf408"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "submission_id": null,
+  "template_id": "real_asset_intake_template_58cfac98339ce9e36dce"
+}

@@ -188,3 +188,16 @@ must produce a newly frozen spec and Asset Pack after rights review; the fixture
 their approval. The proposed future 20-request/CNY-450 finite batch is `NOT_AUTHORIZED`, has zero
 allowed POSTs and remains behind a full human gate. See
 `docs/runbooks/SDC-CREATIVE-SAMPLE-PILOT-V1.md`.
+
+Creative Sample Real Asset Intake v1 is the next offline, fail-closed preparation boundary. It
+accepts only an explicitly named local candidate set for the Pilot Pack's exact four PNG and ten
+WAV roles under `USER_PROVIDED_LOCAL` or `SEPARATELY_APPROVED_LOCAL_GENERATION`, freezes exact
+bytes as `FROZEN_UNREVIEWED`, records strict local technical evidence and requires two independent
+rights/privacy reviews for every member. Missing, changed, rejected, expired or disputed material
+remains at `HUMAN_GATE`; no filename, synthetic fixture or partial review is an approval. A fully
+reviewed candidate derives a new revision with `PASS_ASSET_INTAKE_ONLY`, new compilation and shot
+identities, but remains `NOT_AUTHORIZED` with zero Provider requests. The implementation is
+isolated in `real_asset_intake.py` and `real_asset_media.py`; it reads no Key, performs no network
+or Provider request and starts no service. Private source files and review evidence stay outside
+Git. See
+`docs/runbooks/SDC-CREATIVE-SAMPLE-REAL-ASSET-INTAKE-V1.md`.

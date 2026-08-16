@@ -7,6 +7,15 @@ from pydantic import BaseModel
 
 from sdc import contracts
 from sdc.creative_pilot import CreativeSamplePilotPack, CreativeSamplePilotSpecDocument
+from sdc.real_asset_intake import (
+    CreativeSampleFrozenRealAssetPackManifest,
+    CreativeSampleRealAssetGapReport,
+    CreativeSampleRealAssetIntakeTemplate,
+    CreativeSampleRealAssetRevision,
+    CreativeSampleRealAssetRightsManifest,
+    CreativeSampleRealAssetSpecDocument,
+    CreativeSampleRealAssetSubmission,
+)
 
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
@@ -52,6 +61,13 @@ MODELS: list[type[BaseModel]] = [
     contracts.EvidenceBundle,
     CreativeSamplePilotSpecDocument,
     CreativeSamplePilotPack,
+    CreativeSampleRealAssetIntakeTemplate,
+    CreativeSampleRealAssetSubmission,
+    CreativeSampleRealAssetGapReport,
+    CreativeSampleFrozenRealAssetPackManifest,
+    CreativeSampleRealAssetRightsManifest,
+    CreativeSampleRealAssetSpecDocument,
+    CreativeSampleRealAssetRevision,
 ]
 
 

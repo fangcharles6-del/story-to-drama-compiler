@@ -1,0 +1,266 @@
+{
+  "$defs": {
+    "RealAssetRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "end_ms": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Ms"
+        },
+        "exact_text": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact Text"
+        },
+        "forbidden_fixture_asset_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forbidden Fixture Asset Id"
+        },
+        "forbidden_fixture_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forbidden Fixture Sha256"
+        },
+        "kind": {
+          "enum": [
+            "IMAGE",
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "audio/wav"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 13,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "pilot_requirement_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Pilot Requirement Id",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "start_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Ms"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "subject_kind": {
+          "enum": [
+            "CHARACTER",
+            "SCENE",
+            "DIALOGUE",
+            "SCORE"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "substitution_options": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Substitution Options",
+          "type": "array"
+        },
+        "technical_profile": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Technical Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "requirement_id",
+        "kind",
+        "subject_kind",
+        "subject_id",
+        "pilot_requirement_id",
+        "logical_path",
+        "media_type",
+        "technical_profile",
+        "substitution_options"
+      ],
+      "title": "RealAssetRequirement",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-intake-template",
+      "default": "sdc.creative-sample-real-asset-intake-template",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "forbidden_fixture_asset_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Forbidden Fixture Asset Ids",
+      "type": "array"
+    },
+    "forbidden_fixture_sha256": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Forbidden Fixture Sha256",
+      "type": "array"
+    },
+    "pilot_compilation_id": {
+      "pattern": "^creative_sample_[0-9a-f]{20}$",
+      "title": "Pilot Compilation Id",
+      "type": "string"
+    },
+    "pilot_ordered_shot_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Pilot Ordered Shot Ids",
+      "type": "array"
+    },
+    "pilot_pack_id": {
+      "pattern": "^creative_pilot_pack_[0-9a-f]{20}$",
+      "title": "Pilot Pack Id",
+      "type": "string"
+    },
+    "pilot_sample_spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pilot Sample Spec Sha256",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-intake-v1",
+      "default": "creative-sample-real-asset-intake-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/RealAssetRequirement"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Requirements",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Status",
+      "type": "string"
+    },
+    "template_id": {
+      "pattern": "^real_asset_intake_template_[0-9a-f]{20}$",
+      "title": "Template Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "template_id",
+    "pilot_pack_id",
+    "pilot_sample_spec_sha256",
+    "pilot_compilation_id",
+    "pilot_ordered_shot_ids",
+    "forbidden_fixture_asset_ids",
+    "forbidden_fixture_sha256",
+    "requirements"
+  ],
+  "title": "CreativeSampleRealAssetIntakeTemplate",
+  "type": "object"
+}

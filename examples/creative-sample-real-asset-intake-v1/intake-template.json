@@ -1,0 +1,333 @@
+{
+  "document_type": "sdc.creative-sample-real-asset-intake-template",
+  "execution_authorized": false,
+  "forbidden_fixture_asset_ids": [
+    "character_asset_28b463fa86740ce9caa3",
+    "character_asset_80ccdca6364719a16638",
+    "scene_asset_a7dfe043dc5e69b2ec53",
+    "scene_asset_ff40fa1bcf23100a83e4"
+  ],
+  "forbidden_fixture_sha256": [
+    "4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917",
+    "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+    "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+    "e999957460935f9a682c3f13916903b730c59a0f599bd134de7a3d58a1ba9a9a"
+  ],
+  "pilot_compilation_id": "creative_sample_c43253e73fe962f1623d",
+  "pilot_ordered_shot_ids": [
+    "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+    "storyboard_shot_v2_13822570b72c80607da5",
+    "storyboard_shot_v2_c506a9c24a958ea1645b",
+    "storyboard_shot_v2_70097fbd380d13f419f7",
+    "storyboard_shot_v2_c13ef471e7c016ef416f",
+    "storyboard_shot_v2_c2f12fbc85044ad16dfb",
+    "storyboard_shot_v2_99634ba94f4c01b7de21",
+    "storyboard_shot_v2_8fe54fb039ee2c31e475",
+    "storyboard_shot_v2_433f35b18c478ab1428c",
+    "storyboard_shot_v2_64efc36a850a3781c7bb"
+  ],
+  "pilot_pack_id": "creative_pilot_pack_b1041dbe27fc145c73c8",
+  "pilot_sample_spec_sha256": "221ccd64abeaa786f9271e89e70c2c8ab37e8f03790daa766f9b763aa25e0af4",
+  "posts_allowed": 0,
+  "profile": "creative-sample-real-asset-intake-v1",
+  "provider_requests": 0,
+  "requirements": [
+    {
+      "end_ms": null,
+      "exact_text": null,
+      "forbidden_fixture_asset_id": "character_asset_28b463fa86740ce9caa3",
+      "forbidden_fixture_sha256": "4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917",
+      "kind": "IMAGE",
+      "logical_path": "assets/characters/gu-yan/v1.png",
+      "media_type": "image/png",
+      "ordinal": 0,
+      "pilot_requirement_id": "pilot_asset_requirement_60e5309aa081b8cb4f22",
+      "requirement_id": "real_asset_requirement_50d397886c32b9049419",
+      "start_ms": null,
+      "subject_id": "character_43019e6eefc52eee8f6b",
+      "subject_kind": "CHARACTER",
+      "substitution_options": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "technical_profile": "strict-png-real-reference-v1"
+    },
+    {
+      "end_ms": null,
+      "exact_text": null,
+      "forbidden_fixture_asset_id": "character_asset_80ccdca6364719a16638",
+      "forbidden_fixture_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+      "kind": "IMAGE",
+      "logical_path": "assets/characters/su-qing/v1.png",
+      "media_type": "image/png",
+      "ordinal": 1,
+      "pilot_requirement_id": "pilot_asset_requirement_9253ff7a52ea4656ddf7",
+      "requirement_id": "real_asset_requirement_7d0344c51bc342b54c3f",
+      "start_ms": null,
+      "subject_id": "character_eac118bceb9733dc90a1",
+      "subject_kind": "CHARACTER",
+      "substitution_options": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "technical_profile": "strict-png-real-reference-v1"
+    },
+    {
+      "end_ms": null,
+      "exact_text": null,
+      "forbidden_fixture_asset_id": "scene_asset_ff40fa1bcf23100a83e4",
+      "forbidden_fixture_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+      "kind": "IMAGE",
+      "logical_path": "assets/scenes/office-night/v1.png",
+      "media_type": "image/png",
+      "ordinal": 2,
+      "pilot_requirement_id": "pilot_asset_requirement_9d0fd96629e333feec00",
+      "requirement_id": "real_asset_requirement_797d2670209312b23543",
+      "start_ms": null,
+      "subject_id": "scene_3c1c4be2125f4ae91624",
+      "subject_kind": "SCENE",
+      "substitution_options": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "technical_profile": "strict-png-real-reference-v1"
+    },
+    {
+      "end_ms": null,
+      "exact_text": null,
+      "forbidden_fixture_asset_id": "scene_asset_a7dfe043dc5e69b2ec53",
+      "forbidden_fixture_sha256": "e999957460935f9a682c3f13916903b730c59a0f599bd134de7a3d58a1ba9a9a",
+      "kind": "IMAGE",
+      "logical_path": "assets/scenes/rooftop-dawn/v1.png",
+      "media_type": "image/png",
+      "ordinal": 3,
+      "pilot_requirement_id": "pilot_asset_requirement_302b540fea5ae4c9266c",
+      "requirement_id": "real_asset_requirement_6dd0fffa130301db8d08",
+      "start_ms": null,
+      "subject_id": "scene_58fe397959f557215593",
+      "subject_kind": "SCENE",
+      "substitution_options": [
+        "仅可由用户明确提供的同角色或同场景本地PNG替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同场景PNG。",
+        "任何编辑、转换或重新导出均是新字节，必须建立新来源记录和双人复核。"
+      ],
+      "technical_profile": "strict-png-real-reference-v1"
+    },
+    {
+      "end_ms": 11600,
+      "exact_text": "辞职信在桌上。天亮前，我就走。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/00.wav",
+      "media_type": "audio/wav",
+      "ordinal": 4,
+      "pilot_requirement_id": "pilot_audio_requirement_5e62cefdd3228526dda7",
+      "requirement_id": "real_asset_requirement_1998798c7f2a4c465f4c",
+      "start_ms": 6800,
+      "subject_id": "dialogue_65ea96ce3201083ff96f",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 15600,
+      "exact_text": "我不同意。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/01.wav",
+      "media_type": "audio/wav",
+      "ordinal": 5,
+      "pilot_requirement_id": "pilot_audio_requirement_18b9eaa1ece9d1e224ae",
+      "requirement_id": "real_asset_requirement_69c873f2e6218744e82c",
+      "start_ms": 14000,
+      "subject_id": "dialogue_2086b57f33fe54845c7e",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 24800,
+      "exact_text": "项目都停了，你拿什么留我？",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/02.wav",
+      "media_type": "audio/wav",
+      "ordinal": 6,
+      "pilot_requirement_id": "pilot_audio_requirement_3ee5025e0df826c80c68",
+      "requirement_id": "real_asset_requirement_b52d65701b5c2516bb6e",
+      "start_ms": 20900,
+      "subject_id": "dialogue_72f37bc5d434536ce911",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 32600,
+      "exact_text": "不是留你。跟我上天台。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/03.wav",
+      "media_type": "audio/wav",
+      "ordinal": 7,
+      "pilot_requirement_id": "pilot_audio_requirement_0ea24c83e1f9350e8475",
+      "requirement_id": "real_asset_requirement_3733148b545e57a7fd21",
+      "start_ms": 28900,
+      "subject_id": "dialogue_685d8e8ddc4ef11e0a62",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 41800,
+      "exact_text": "三个月前，我把你的方案投进了城南改造终审。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/04.wav",
+      "media_type": "audio/wav",
+      "ordinal": 8,
+      "pilot_requirement_id": "pilot_audio_requirement_4848ebb5e2cc8b05dfbc",
+      "requirement_id": "real_asset_requirement_9224d68194fac2679f61",
+      "start_ms": 36900,
+      "subject_id": "dialogue_bf8392058acb05cdc2c1",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 46100,
+      "exact_text": "你没问过我。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/05.wav",
+      "media_type": "audio/wav",
+      "ordinal": 9,
+      "pilot_requirement_id": "pilot_audio_requirement_c9d206cbe21f1f601e81",
+      "requirement_id": "real_asset_requirement_4fa7b3d37a320bc76ff0",
+      "start_ms": 44100,
+      "subject_id": "dialogue_23efbffb1c41cdb8e720",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 55600,
+      "exact_text": "所以今天不是替你决定，是请你自己选。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/06.wav",
+      "media_type": "audio/wav",
+      "ordinal": 10,
+      "pilot_requirement_id": "pilot_audio_requirement_b2958eb2882848ed61e9",
+      "requirement_id": "real_asset_requirement_127b64cee82402124b54",
+      "start_ms": 50900,
+      "subject_id": "dialogue_7cccb7d8b6edaa29d71a",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 62200,
+      "exact_text": "合伙人，或者自由建筑师。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/07.wav",
+      "media_type": "audio/wav",
+      "ordinal": 11,
+      "pilot_requirement_id": "pilot_audio_requirement_5ad81839360be0ab6c6a",
+      "requirement_id": "real_asset_requirement_1ba989d830f67d8f80c6",
+      "start_ms": 58900,
+      "subject_id": "dialogue_394d96060d7f03763924",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 70400,
+      "exact_text": "辞职信照旧。明天，我会以合伙人的身份回来。",
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "VOICE",
+      "logical_path": "audio/voices/08.wav",
+      "media_type": "audio/wav",
+      "ordinal": 12,
+      "pilot_requirement_id": "pilot_audio_requirement_cc3a3d647a4c8f5c9e97",
+      "requirement_id": "real_asset_requirement_4f72d4fa2dd33cf3ee5d",
+      "start_ms": 65700,
+      "subject_id": "dialogue_8d2d6305b45e90b93509",
+      "subject_kind": "DIALOGUE",
+      "substitution_options": [
+        "仅可由用户明确提供的同说话角色、精确台词和时段本地WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-mono-dialogue-v1"
+    },
+    {
+      "end_ms": 72000,
+      "exact_text": null,
+      "forbidden_fixture_asset_id": null,
+      "forbidden_fixture_sha256": null,
+      "kind": "BGM",
+      "logical_path": "audio/bgm/background.wav",
+      "media_type": "audio/wav",
+      "ordinal": 13,
+      "pilot_requirement_id": "pilot_audio_requirement_706214a68fad912c1ea8",
+      "requirement_id": "real_asset_requirement_5255a7b57c08eafaf408",
+      "start_ms": 0,
+      "subject_id": "pilot_audio_requirement_706214a68fad912c1ea8",
+      "subject_kind": "SCORE",
+      "substitution_options": [
+        "仅可由用户明确提供的无歌词72秒本地BGM WAV替换。",
+        "也可使用在另一任务中单独批准生成、随后本地交付的同角色或同用途WAV。",
+        "任何剪辑、降噪、重采样或响度处理均是新字节，必须重新技术检查和双人复核。"
+      ],
+      "technical_profile": "pcm16-48khz-stereo-score-72s-v1"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "status": "HUMAN_GATE",
+  "template_id": "real_asset_intake_template_58cfac98339ce9e36dce"
+}

@@ -1,0 +1,257 @@
+{
+  "$defs": {
+    "RealAssetRightsReview": {
+      "additionalProperties": false,
+      "properties": {
+        "content_role_approved": {
+          "title": "Content Role Approved",
+          "type": "boolean"
+        },
+        "copyright_approved": {
+          "title": "Copyright Approved",
+          "type": "boolean"
+        },
+        "copyright_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Copyright Basis",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "APPROVED",
+            "REJECTED"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "likeness_approved": {
+          "title": "Likeness Approved",
+          "type": "boolean"
+        },
+        "likeness_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Likeness Basis",
+          "type": "string"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "media_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Sha256",
+          "type": "string"
+        },
+        "media_size_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Media Size Bytes",
+          "type": "integer"
+        },
+        "ordinal": {
+          "maximum": 27,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "pack_id": {
+          "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "privacy_approved": {
+          "title": "Privacy Approved",
+          "type": "boolean"
+        },
+        "privacy_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Privacy Basis",
+          "type": "string"
+        },
+        "provenance_approved": {
+          "title": "Provenance Approved",
+          "type": "boolean"
+        },
+        "provenance_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provenance Record Sha256",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "review_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Review Record Sha256",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "title": "Reviewed At",
+          "type": "string"
+        },
+        "reviewer_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Reviewer Ref Sha256",
+          "type": "string"
+        },
+        "reviewer_role": {
+          "enum": [
+            "REVIEWER_A",
+            "REVIEWER_B"
+          ],
+          "title": "Reviewer Role",
+          "type": "string"
+        },
+        "source_authority": {
+          "enum": [
+            "USER_PROVIDED_LOCAL",
+            "SEPARATELY_APPROVED_LOCAL_GENERATION"
+          ],
+          "title": "Source Authority",
+          "type": "string"
+        },
+        "technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Record Sha256",
+          "type": "string"
+        },
+        "territory": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Territory",
+          "type": "string"
+        },
+        "territory_approved": {
+          "title": "Territory Approved",
+          "type": "boolean"
+        },
+        "use_scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Use Scope",
+          "type": "string"
+        },
+        "use_scope_approved": {
+          "title": "Use Scope Approved",
+          "type": "boolean"
+        },
+        "valid_until": {
+          "title": "Valid Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "pack_id",
+        "requirement_id",
+        "logical_path",
+        "reviewer_role",
+        "reviewer_ref_sha256",
+        "review_record_sha256",
+        "media_sha256",
+        "media_size_bytes",
+        "provenance_record_sha256",
+        "technical_record_sha256",
+        "source_authority",
+        "copyright_basis",
+        "likeness_basis",
+        "privacy_basis",
+        "territory",
+        "use_scope",
+        "reviewed_at",
+        "valid_until",
+        "provenance_approved",
+        "copyright_approved",
+        "likeness_approved",
+        "privacy_approved",
+        "territory_approved",
+        "use_scope_approved",
+        "content_role_approved",
+        "decision"
+      ],
+      "title": "RealAssetRightsReview",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-rights-manifest",
+      "default": "sdc.creative-sample-real-asset-rights-manifest",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "manifest_id": {
+      "pattern": "^real_asset_rights_[0-9a-f]{20}$",
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "pack_id": {
+      "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-intake-v1",
+      "default": "creative-sample-real-asset-intake-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "reviews": {
+      "items": {
+        "$ref": "#/$defs/RealAssetRightsReview"
+      },
+      "maxItems": 28,
+      "minItems": 28,
+      "title": "Reviews",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "REVIEW_CANDIDATE",
+      "default": "REVIEW_CANDIDATE",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_id",
+    "pack_id",
+    "reviews"
+  ],
+  "title": "CreativeSampleRealAssetRightsManifest",
+  "type": "object"
+}
