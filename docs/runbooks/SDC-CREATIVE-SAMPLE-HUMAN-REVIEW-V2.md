@@ -74,6 +74,48 @@ the trusted Python `finalize-evidence` operation. The resulting
 
 The browser draft is not the bundle. It has no stable bundle ID and cannot establish approval.
 
+#### Evidence v2.1 preparation readiness
+
+This is operator guidance for preparing the existing v2 evidence fields; “v2.1” does not name a
+new contract, change qualification semantics or add an approval path. Before typing, collect one
+retained Pack-level evidence record whose statements can be traced to the responsible people and
+source documents below. The record must describe the exact frozen Pack, distinguish fact from
+uncertainty and preserve references to the supporting private files.
+
+| Field | Required source category | Obtain it from | Format-only example (not a factual answer) |
+|---|---|---|---|
+| `evidence_record_sha256` | Byte identity of the completed, retained Pack-level evidence record | Select the actual record maintained by the rights coordinator or accountable project owner; let the local file picker compute its SHA-256 | `<64 lowercase hexadecimal characters>` |
+| `copyright_basis` | Authorship, ownership, licence and applicable-use evidence for every included image and audio asset | The creator or rights owner, licensing administrator and the retained creation records, licence terms, agreements or grants that applied when each asset was made or acquired | `依据：[记录/许可类型与引用]；权利主体：[主体]；许可行为及限制：[范围]` |
+| `likeness_basis` | Evidence covering depicted persons, character identity, performers, voices and any imitation or publicity-right concern | The depicted person or performer where applicable, producer/rights owner, and retained releases, consents, casting/voice records or documented synthetic-character provenance | `对象类别：[类别]；依据：[同意/来源记录引用]；限制：[限制或待决项]` |
+| `privacy_basis` | Personal-data source, consent or other documented processing basis, including any applicable retention/use constraints | The data subject where applicable, privacy owner or accountable producer, and retained consent, privacy assessment, collection/source and retention records | `数据类别：[类别]；处理依据：[文件引用]；用途及保留限制：[限制]` |
+| `territory` | Express geographic extent of the relevant rights | The licensor/rights owner or responsible legal/rights reviewer, using the governing agreement, grant or rights schedule | `[协议原文支持的地区表达]` |
+| `use_scope` | Express permitted media, channels, audience, publication/commercial status and modification or distribution limits | The licensor/rights owner or responsible legal/rights reviewer, using the governing licence, release, project grant or rights schedule | `[允许用途]；[允许渠道]；[禁止或限制事项]` |
+| `valid_until` | Express term or expiry evidence for every relied-upon right | The rights administrator, licensor or responsible legal/rights reviewer, using the controlling term clause or expiry schedule | `YYYY-MM-DDTHH:MM:SSZ` or `PERPETUAL` only when the retained evidence expressly says so |
+
+The examples show shape only. Do not copy them as answers, turn a placeholder into a conclusion,
+or infer missing scope from another field. A technical validation record can establish media
+format, duration, dimensions or byte identity, but cannot establish ownership or permission. A
+filename, folder name, generation prompt, tool label, SHA-256, source ledger entry or visual/audio
+inspection also cannot by itself prove copyright, likeness/privacy permission, territory, use
+scope or duration. “Looks fictional”, “sounds synthetic”, “generated locally” and “no obvious
+personal data” are observations, not substitutes for retained rights evidence.
+
+The Evidence UI has only two mechanical readiness states:
+
+- **Missing basis — stop.** A required source or field is missing, unclear, conflicting,
+  unsupported or known to be expired, or the referenced record is unavailable. Do not invent
+  text, export a candidate for finalization or proceed to reviewer preparation.
+- **Field form complete — untrusted draft may be exported.** All seven fields pass only the
+  browser's deterministic syntax checks. The browser does not verify that a manually entered
+  digest still identifies an available record, and it does not compare `valid_until` with the
+  current time. The operator must separately stop for an unavailable record or known expiry.
+  Export is only a data handoff to the trusted finalizer; it is not factual verification, human
+  approval, rights qualification or execution authorization.
+
+Neither state permits the UI to interpret evidence or recommend a rights conclusion. If the
+responsible person or controlling document cannot supply an answer, remain in the first state and
+stop. The finalizer continues to perform only the existing structural and byte-binding checks.
+
 ### 3. Prepare two evidence-bound reviewer workspaces
 
 After `finalize-evidence` produces the canonical bundle, prepare the `REVIEWER_A` and `REVIEWER_B`
