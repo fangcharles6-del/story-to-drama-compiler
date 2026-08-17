@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "ReviewPairIssueV2": {
+      "enum": [
+        "REVIEWER_A_MISSING",
+        "REVIEWER_B_MISSING",
+        "REVIEWER_IDENTITIES_NOT_DISTINCT",
+        "REVIEW_RECORDS_NOT_DISTINCT",
+        "REVIEWER_A_NOT_APPROVED",
+        "REVIEWER_B_NOT_APPROVED",
+        "APPROVALS_DISAGREE",
+        "REVIEWER_A_HAS_EXCEPTIONS",
+        "REVIEWER_B_HAS_EXCEPTIONS",
+        "REVIEWER_A_IN_FUTURE",
+        "REVIEWER_B_IN_FUTURE",
+        "RIGHTS_EXPIRED"
+      ],
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A zero-authority report over the two Pack reviews, not qualification.",
+  "properties": {
+    "asset_count": {
+      "const": 14,
+      "default": 14,
+      "title": "Asset Count",
+      "type": "integer"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-review-pair-check-v2",
+      "default": "sdc.creative-sample-real-asset-review-pair-check-v2",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evaluated_at": {
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "issue_codes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ReviewPairIssueV2"
+      },
+      "maxItems": 12,
+      "title": "Issue Codes",
+      "type": "array"
+    },
+    "pack_id": {
+      "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "pair_check_id": {
+      "pattern": "^real_asset_review_pair_check_v2_[0-9a-f]{20}$",
+      "title": "Pair Check Id",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-review-v2",
+      "default": "creative-sample-real-asset-review-v2",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "review_a_id": {
+      "anyOf": [
+        {
+          "pattern": "^real_asset_pack_review_v2_[0-9a-f]{20}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review A Id"
+    },
+    "review_a_record_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review A Record Sha256"
+    },
+    "review_b_id": {
+      "anyOf": [
+        {
+          "pattern": "^real_asset_pack_review_v2_[0-9a-f]{20}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review B Id"
+    },
+    "review_b_record_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review B Record Sha256"
+    },
+    "review_count": {
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Review Count",
+      "type": "integer"
+    },
+    "rights_evidence_bundle_id": {
+      "pattern": "^real_asset_rights_evidence_v2_[0-9a-f]{20}$",
+      "title": "Rights Evidence Bundle Id",
+      "type": "string"
+    },
+    "rights_manifest_created": {
+      "const": false,
+      "default": false,
+      "title": "Rights Manifest Created",
+      "type": "boolean"
+    },
+    "rights_qualification_performed": {
+      "const": false,
+      "default": false,
+      "title": "Rights Qualification Performed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "INCOMPLETE",
+        "DISAGREEMENT",
+        "READY_FOR_SEPARATE_QUALIFICATION_REVIEW"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pair_check_id",
+    "pack_id",
+    "rights_evidence_bundle_id",
+    "review_count",
+    "evaluated_at",
+    "status"
+  ],
+  "title": "CreativeSampleRealAssetReviewPairCheckV2",
+  "type": "object"
+}

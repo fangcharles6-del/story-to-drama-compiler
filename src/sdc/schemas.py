@@ -16,6 +16,11 @@ from sdc.real_asset_intake import (
     CreativeSampleRealAssetSpecDocument,
     CreativeSampleRealAssetSubmission,
 )
+from sdc.real_asset_review_v2 import (
+    CreativeSampleRealAssetHumanPackReviewV2,
+    CreativeSampleRealAssetReviewPairCheckV2,
+    CreativeSampleRealAssetRightsEvidenceBundleV2,
+)
 
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
@@ -68,6 +73,9 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetRightsManifest,
     CreativeSampleRealAssetSpecDocument,
     CreativeSampleRealAssetRevision,
+    CreativeSampleRealAssetRightsEvidenceBundleV2,
+    CreativeSampleRealAssetHumanPackReviewV2,
+    CreativeSampleRealAssetReviewPairCheckV2,
 ]
 
 
