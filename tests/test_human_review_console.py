@@ -296,8 +296,7 @@ def test_prepare_creates_three_independent_role_bound_draft_workspaces(
     for kind, workspace in workspaces.items():
         assert {path.name for path in workspace.root.iterdir()} == expected_files
         assert not any(
-            path.suffix.casefold() in {".png", ".wav"}
-            for path in workspace.root.iterdir()
+            path.suffix.casefold() in {".png", ".wav"} for path in workspace.root.iterdir()
         )
         context = json.loads(workspace.context_path.read_text(encoding="utf-8"))
         context_bytes = workspace.context_path.read_bytes()
@@ -313,9 +312,10 @@ def test_prepare_creates_three_independent_role_bound_draft_workspaces(
         else:
             projection = context["evidence_bundle"]
             assert projection["bundle_id"] == evidence.bundle_id
-            assert projection["bundle_sha256"] == hashlib.sha256(
-                evidence_path.read_bytes()
-            ).hexdigest()
+            assert (
+                projection["bundle_sha256"]
+                == hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+            )
             assert projection["evidence_record_sha256"] == evidence.evidence_record_sha256
             assert projection["read_only"] is True
             assert workspace.evidence_bundle_id == evidence.bundle_id
@@ -548,6 +548,452 @@ def test_static_console_has_no_network_storage_or_automatic_human_decisions() ->
     assert "review_record_sha256" not in script
 
 
+def test_evidence_guide_locks_sources_counterexamples_and_blank_inputs() -> None:
+    asset_root = Path(console_module.__file__).with_name("human_review_console_assets")
+    html = (asset_root / "index.html").read_text(encoding="utf-8")
+    script = (asset_root / "app.js").read_text(encoding="utf-8")
+    expected_guidance = {
+        "evidence-record-sha": (
+            "evidence-record-sha-guidance",
+            "负责人：保管 Pack 级权利证据记录的权利负责人。"
+            "取得：从其实际保存的独立证据记录文件计算。"
+            "不能替代：素材文件、来源记录、技术检查、空模板或口头说明。"
+            "格式示例：a3…7f（共 64 位小写十六进制字符）。",
+        ),
+        "copyright-basis": (
+            "copyright-basis-guidance",
+            "负责人：创作者、权利人、许可管理员或项目权利负责人。"
+            "取得：查看实际许可条款、创作记录、权利转让或授权文件。"
+            "输入：必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。"
+            "不能替代：技术合格结果、文件摘要或“由 AI 生成”说明。"
+            "格式示例：[证据名称] | [条款/章节] | [权利主体] | [与本 Pack 的对应关系]。",
+        ),
+        "likeness-basis": (
+            "likeness-basis-guidance",
+            "负责人：形象/声音权利人、素材创建或配音负责人及项目权利负责人。"
+            "取得：查看实际肖像/声音授权、角色创作记录及与具体素材的对应说明。"
+            "输入：必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。"
+            "不能替代：“看起来是虚构的”、个人印象或音画技术检查。"
+            "格式示例：[证据名称] | [对象/类别] | [授权范围] | [对应素材]。",
+        ),
+        "privacy-basis": (
+            "privacy-basis-guidance",
+            "负责人：隐私/合规负责人、相关信息主体或授权记录保管人。"
+            "取得：查看实际同意记录、隐私告知、个人信息清单及适用的处理依据。"
+            "输入：必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。"
+            "不能替代：“未上传网络”、文件无元数据或素材技术合格。"
+            "格式示例：[证据名称] | [信息类别] | [处理目的] | [适用范围]。",
+        ),
+        "territory": (
+            "territory-guidance",
+            "负责人：许可方、权利人或负责审查的权利/法务人员。"
+            "取得：查看许可协议或权利人授权中的地理范围条款。"
+            "不能替代：项目所在地、用户 IP、语言或自行推定的“全球”。"
+            "格式示例：[国家/地区名称；多项以逗号分隔]。",
+        ),
+        "valid-until": (
+            "valid-until-guidance",
+            "负责人：许可方、权利管理员或负责审查的权利/法务人员。"
+            "取得：查看许可、同意或授权文件的生效期和终止条款。"
+            "不能替代：文件修改时间、任务日期或自定期限。"
+            "格式示例：YYYY-MM-DDTHH:MM:SSZ；仅当实际证据明确永久有效时使用 "
+            "PERPETUAL。",
+        ),
+        "use-scope": (
+            "use-scope-guidance",
+            "负责人：许可方、权利人或负责审查的权利/法务人员。"
+            "取得：查看许可中的允许用途、媒介、渠道、商业性及改编限制条款。"
+            "输入：必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。"
+            "不能替代：内部使用计划、技术可用性或期望的发布方式。"
+            "格式示例：[用途] | [媒介/渠道] | [商业性] | [改编限制]。",
+        ),
+    }
+
+    assert len(expected_guidance) == 7
+    for control_id, (guidance_id, expected_text) in expected_guidance.items():
+        control_match = re.search(
+            rf"<(?P<tag>input|textarea)\b(?P<attributes>[^>]*\bid=\"{control_id}\"[^>]*)>",
+            html,
+        )
+        assert control_match is not None
+        attributes = control_match.group("attributes")
+        assert "required" in attributes
+        assert 'aria-invalid="true"' in attributes
+        assert f'aria-describedby="{guidance_id}"' in attributes
+        assert not re.search(r"\bvalue\s*=", attributes)
+        if control_match.group("tag") == "textarea":
+            textarea_match = re.search(
+                rf'<textarea\b[^>]*\bid="{control_id}"[^>]*>(?P<body>.*?)</textarea>',
+                html,
+                flags=re.DOTALL,
+            )
+            assert textarea_match is not None
+            assert textarea_match.group("body") == ""
+
+        guidance_match = re.search(
+            rf'<small id="{guidance_id}" class="field-guidance">(?P<body>.*?)</small>',
+            html,
+            flags=re.DOTALL,
+        )
+        assert guidance_match is not None
+        guidance_text = re.sub(r"<[^>]+>", "", guidance_match.group("body"))
+        guidance_text = re.sub(r"\s+", " ", guidance_text).strip()
+        assert guidance_text == expected_text
+
+    for factual_field_id in (
+        "copyright-basis",
+        "likeness-basis",
+        "privacy-basis",
+        "territory",
+        "use-scope",
+        "valid-until",
+    ):
+        assert not re.search(
+            rf'byId\("{factual_field_id}"\)\.value\s*=',
+            script,
+        )
+
+
+def test_evidence_readiness_has_two_mechanical_states_without_authority() -> None:
+    asset_root = Path(console_module.__file__).with_name("human_review_console_assets")
+    html = (asset_root / "index.html").read_text(encoding="utf-8")
+    script = (asset_root / "app.js").read_text(encoding="utf-8")
+
+    for element_id in (
+        "evidence-readiness",
+        "evidence-readiness-status",
+        "evidence-readiness-missing",
+    ):
+        assert html.count(f'id="{element_id}"') == 1
+    readiness_tag = re.search(
+        r'<aside id="evidence-readiness"(?P<attributes>[^>]*)>',
+        html,
+    )
+    assert readiness_tag is not None
+    assert 'data-state="NEEDS_EVIDENCE"' in readiness_tag.group("attributes")
+    initial_status = re.search(
+        r'<p id="evidence-readiness-status"[^>]*>(?P<text>[^<]+)</p>',
+        html,
+    )
+    assert initial_status is not None
+    assert initial_status.group("text") == "缺少依据，停止"
+    evidence_download = re.search(
+        r'<button id="download-evidence"(?P<attributes>[^>]*)>',
+        html,
+    )
+    assert evidence_download is not None
+    assert "disabled" in evidence_download.group("attributes")
+    assert 'aria-describedby="evidence-readiness-status"' in evidence_download.group("attributes")
+    assert "形式完整不等于批准" in html
+    assert "本页不能确认摘要对应记录仍可用" in html
+    assert "也不判断权利是否过期" in html
+    assert 'id="evidence-readiness-missing" aria-label="Evidence 准备度说明"' in html
+    readiness_html = re.search(
+        r'<aside id="evidence-readiness".*?</aside>',
+        html,
+        flags=re.DOTALL,
+    )
+    assert readiness_html is not None
+    assert readiness_html.group(0).count('aria-live="polite"') == 1
+    assert "APPROVED" not in readiness_html.group(0)
+    assert "qualification" not in readiness_html.group(0).casefold()
+
+    readiness_match = re.search(
+        r"  function renderEvidenceReadiness\(\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert readiness_match is not None
+    readiness_source = readiness_match.group(0)
+    assert re.findall(r'readiness\.dataset\.state = "([A-Z_]+)"', readiness_source) == [
+        "FORM_COMPLETE_DRAFT_ONLY",
+        "NEEDS_EVIDENCE",
+    ]
+    assert re.findall(r'status\.textContent = "([^"]+)"', readiness_source) == [
+        "字段形式完整，可导出未受信草稿",
+        "缺少依据，停止",
+    ]
+    assert "仅通过本页机械格式检查" in readiness_source
+    assert "请真人另行确认记录当前可用、期限未过期" in readiness_source
+    assert "APPROVED" not in readiness_source
+    assert "qualification" not in readiness_source.casefold()
+    assert "execution_authorized" not in readiness_source
+    assert "download.disabled = false" in readiness_source
+    assert "download.disabled = true" in readiness_source
+    assert 'setAttribute("aria-invalid", String(!check.valid))' in readiness_source
+
+    input_listener_match = re.search(
+        r"\[\s*(?P<ids>(?:\s*\"[^\"]+\",?)+)\s*\]\.forEach\("
+        r"\(id\) => byId\(id\)\.addEventListener\(\"input\", "
+        r"handleEvidenceInput\)\)",
+        script,
+        flags=re.DOTALL,
+    )
+    assert input_listener_match is not None
+    assert re.findall(r"\"([^\"]+)\"", input_listener_match.group("ids")) == [
+        "evidence-record-sha",
+        "copyright-basis",
+        "likeness-basis",
+        "privacy-basis",
+        "territory",
+        "use-scope",
+        "valid-until",
+    ]
+    assert re.search(
+        r"const hashing = hashSelectedFile\(.*?\);.*?void hashing\.then\(\(\) => \{.*?"
+        r"evidenceHashPending = false;.*?"
+        r"renderEvidenceReadiness\(\);.*?\}\)",
+        script,
+        flags=re.DOTALL,
+    )
+
+    download_handler = re.search(
+        r'byId\("download-evidence"\)\.addEventListener\("click", \(\) => \{'
+        r"(?P<body>.*?)^  \}\);",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert download_handler is not None
+    handler_body = download_handler.group("body")
+    assert "if (warnings.length !== 0)" in handler_body
+    assert "缺少依据，未导出草稿" in handler_body
+    assert handler_body.index("if (warnings.length !== 0)") < handler_body.index(
+        "downloadDraft(draft"
+    )
+
+
+def test_evidence_readiness_does_not_change_exported_draft_shape() -> None:
+    script_path = Path(console_module.__file__).with_name("human_review_console_assets") / "app.js"
+    script = script_path.read_text(encoding="utf-8")
+    draft_match = re.search(
+        r"  function buildEvidenceDraft\(\) \{\s*return \{(?P<body>.*?)^    \};\s*^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert draft_match is not None
+    assert re.findall(r"^      ([a-z][a-z0-9_]*):", draft_match.group("body"), re.MULTILINE) == [
+        "schema_version",
+        "document_type",
+        "profile",
+        "review_context_sha256",
+        "pack_id",
+        "pack_manifest_sha256",
+        "evidence_record_sha256",
+        "asset_bindings",
+        "copyright_basis",
+        "likeness_basis",
+        "privacy_basis",
+        "territory",
+        "use_scope",
+        "valid_until",
+        "status",
+        "current_gate",
+        "provider_state",
+        "execution_authorized",
+        "posts_allowed",
+        "provider_requests",
+    ]
+
+    readiness_match = re.search(
+        r"  function renderEvidenceReadiness\(\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert readiness_match is not None
+    readiness_source = readiness_match.group(0)
+    assert "const draft = buildEvidenceDraft();" in readiness_source
+    assert "const checks = evidenceFieldChecks(draft);" in readiness_source
+    assert "downloadDraft" not in readiness_source
+    assert not re.search(r"\bdraft(?:\.|\[)[^\n=]*=", readiness_source)
+
+
+def test_evidence_readiness_matches_finalizer_text_and_utc_syntax() -> None:
+    script_path = Path(console_module.__file__).with_name("human_review_console_assets") / "app.js"
+    script = script_path.read_text(encoding="utf-8")
+    portable_match = re.search(
+        r"  function isPortableEvidenceText\(value, maximum\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    utc_match = re.search(
+        r"  function isCanonicalUtcSeconds\(value\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    checks_match = re.search(
+        r"  function evidenceFieldChecks\(draft\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert portable_match is not None
+    assert utc_match is not None
+    assert checks_match is not None
+    checks_source = checks_match.group(0)
+    assert checks_source.count("isPortableEvidenceText(") == 5
+    assert "isCanonicalUtcSeconds(draft.valid_until)" in checks_source
+    assert "copyright_basis 尚未填写" not in checks_source
+    assert "著作权依据须为" in checks_source
+    assert "有效期须为" in checks_source
+
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is unavailable for the offline readiness syntax check")
+    probe = "\n".join(
+        (
+            "const UTC_SECONDS_PATTERN = "
+            "/^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+            "[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/;",
+            portable_match.group(0),
+            utc_match.group(0),
+            "process.stdout.write(JSON.stringify([",
+            '  isPortableEvidenceText("实际许可依据", 1000),',
+            '  isPortableEvidenceText("e\\u0301", 1000),',
+            '  isPortableEvidenceText("第一行\\n第二行", 1000),',
+            '  isCanonicalUtcSeconds("2028-02-29T23:59:59Z"),',
+            '  isCanonicalUtcSeconds("2026-02-31T12:00:00Z"),',
+            '  isCanonicalUtcSeconds("0000-01-01T00:00:00Z"),',
+            '  isCanonicalUtcSeconds("2026-01-01T24:00:00Z")',
+            "]));",
+        )
+    )
+    completed = subprocess.run(
+        [node, "-e", probe],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert json.loads(completed.stdout) == [True, False, False, True, False, False, False]
+
+
+def test_evidence_edits_invalidate_export_status_and_stale_file_hashes() -> None:
+    script_path = Path(console_module.__file__).with_name("human_review_console_assets") / "app.js"
+    script = script_path.read_text(encoding="utf-8")
+    assert "let evidenceDraftExported = false;" in script
+    assert "let evidenceDraftDirtySinceExport = false;" in script
+    assert "let evidenceHashPending = false;" in script
+    assert "先前下载的草稿不再对应当前表单" in script
+    assert "evidenceDraftExported = true;" in script
+    assert "evidenceDraftDirtySinceExport = false;" in script
+    mark_match = re.search(
+        r"  function markEvidenceDraftChanged\(\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert mark_match is not None
+    assert "evidenceDraftDirtySinceExport = true;" in mark_match.group(0)
+    assert "if (!evidenceDraftDirtySinceExport)" in mark_match.group(0)
+    assert "当前表单尚未下载" not in mark_match.group(0)
+
+    warnings_match = re.search(
+        r"  function evidenceWarnings\(draft\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert warnings_match is not None
+    assert "if (evidenceHashPending)" in warnings_match.group(0)
+    assert "证据记录摘要仍在本机计算中" in warnings_match.group(0)
+    assert "takeOverHashWithManualInput(" in script
+    assert 'byId("evidence-record-file")' in script
+    assert 'byId("reviewer-ref-sha").addEventListener("input"' in script
+    assert 'byId("reviewer-ref-file")' in script
+    assert "已清除文件选择；使用当前手工输入的摘要" in script
+
+    hash_match = re.search(
+        r"  async function hashSelectedFile\(.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert hash_match is not None
+    hash_source = hash_match.group(0)
+    assert hash_source.count('targetInput.value = "";') == 2
+    assert hash_source.count("fileInput.files[0] !== file") == 2
+    assert hash_source.count("hashGenerations.get(targetInput) !== generation") == 2
+    assert "正在本机内存中计算" in hash_source
+
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is unavailable for the offline hash-race check")
+    hex_match = re.search(
+        r"  function hexDigest\(buffer\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    invalidate_match = re.search(
+        r"  function invalidatePendingHash\(targetInput\) \{.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    takeover_match = re.search(
+        r"  function takeOverHashWithManualInput\(.*?^  \}",
+        script,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    assert hex_match is not None
+    assert invalidate_match is not None
+    assert takeover_match is not None
+    probe = "\n".join(
+        (
+            "const hashGenerations = new WeakMap();",
+            "let resolveDigest;",
+            "const crypto = {subtle: {digest: () => new Promise((resolve) => {",
+            "  resolveDigest = resolve;",
+            "})}};",
+            hex_match.group(0),
+            invalidate_match.group(0),
+            takeover_match.group(0),
+            hash_match.group(0),
+            "void (async () => {",
+            '  const file = {name: "A.bin", arrayBuffer: async () => new ArrayBuffer(1)};',
+            '  const fileInput = {files: [file], value: "A.bin"};',
+            '  const targetInput = {value: ""};',
+            '  const statusNode = {textContent: "", className: ""};',
+            "  const pending = hashSelectedFile(fileInput, targetInput, statusNode);",
+            '  while (typeof resolveDigest !== "function") { await Promise.resolve(); }',
+            '  targetInput.value = "b".repeat(64);',
+            "  takeOverHashWithManualInput(fileInput, targetInput, statusNode);",
+            "  resolveDigest(new Uint8Array([1]).buffer);",
+            "  const updated = await pending;",
+            "  crypto.subtle.digest = async () => new Uint8Array([2]).buffer;",
+            '  const file2 = {name: "C.bin", arrayBuffer: async () => new ArrayBuffer(1)};',
+            '  const fileInput2 = {files: [file2], value: "C.bin"};',
+            '  const targetInput2 = {value: ""};',
+            '  const statusNode2 = {textContent: "", className: ""};',
+            "  const completed = await hashSelectedFile(fileInput2, targetInput2, statusNode2);",
+            '  targetInput2.value = "c".repeat(64);',
+            "  takeOverHashWithManualInput(fileInput2, targetInput2, statusNode2);",
+            "  process.stdout.write(JSON.stringify({",
+            "    pending: {updated, value: targetInput.value, "
+            "file: fileInput.value, status: statusNode.textContent},",
+            "    completed: {updated: completed, value: targetInput2.value, "
+            "file: fileInput2.value, status: statusNode2.textContent}",
+            "  }));",
+            "})();",
+        )
+    )
+    completed = subprocess.run(
+        [node, "-e", probe],
+        check=True,
+        capture_output=True,
+        encoding="utf-8",
+        timeout=10,
+    )
+    assert json.loads(completed.stdout) == {
+        "pending": {
+            "updated": False,
+            "value": "b" * 64,
+            "file": "",
+            "status": "已清除文件选择；使用当前手工输入的摘要。",
+        },
+        "completed": {
+            "updated": True,
+            "value": "c" * 64,
+            "file": "",
+            "status": "已清除文件选择；使用当前手工输入的摘要。",
+        },
+    }
+
+
 def test_relative_media_paths_are_url_encoded_without_changing_traversal_segments() -> None:
     node = shutil.which("node")
     if node is None:
@@ -573,9 +1019,7 @@ def test_relative_media_paths_are_url_encoded_without_changing_traversal_segment
         timeout=10,
     )
     assert completed.stdout == (
-        "../%E5%86%BB%E7%BB%93%20%23100%25/"
-        "%E6%9C%89%20%E7%A9%BA%E6%A0%BC/"
-        "%E5%AF%B9%E7%99%BD.wav"
+        "../%E5%86%BB%E7%BB%93%20%23100%25/%E6%9C%89%20%E7%A9%BA%E6%A0%BC/%E5%AF%B9%E7%99%BD.wav"
     )
     assert "new URL(\n          encodeRelativeFilePath(asset.media_relative_path)" in script
 

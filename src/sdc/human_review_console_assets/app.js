@@ -5,6 +5,11 @@
   const contextSha256 = window.SDC_HUMAN_REVIEW_CONTEXT_SHA256;
   const SHA256_PATTERN = /^[0-9a-f]{64}$/;
   const UTC_SECONDS_PATTERN = /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/;
+  const hashGenerations = new WeakMap();
+  let evidenceDraftExported = false;
+  let evidenceDraftDirtySinceExport = false;
+  let evidenceHashPending = false;
+  let evidenceHashGeneration = 0;
   const approvalNames = [
     "provenance_approved",
     "copyright_approved",
@@ -166,19 +171,60 @@
     return Array.from(new Uint8Array(buffer), (value) => value.toString(16).padStart(2, "0")).join("");
   }
 
+  function invalidatePendingHash(targetInput) {
+    hashGenerations.set(targetInput, (hashGenerations.get(targetInput) || 0) + 1);
+  }
+
+  function takeOverHashWithManualInput(fileInput, targetInput, statusNode) {
+    const hashStatusActive =
+      statusNode.textContent.startsWith("正在本机内存中计算") ||
+      statusNode.textContent.startsWith("已在本机内存中计算") ||
+      statusNode.textContent.startsWith("当前本地浏览器不能计算摘要");
+    invalidatePendingHash(targetInput);
+    fileInput.value = "";
+    if (hashStatusActive) {
+      statusNode.textContent = "已清除文件选择；使用当前手工输入的摘要。";
+      statusNode.className = "status";
+    }
+  }
+
   async function hashSelectedFile(fileInput, targetInput, statusNode) {
     const file = fileInput.files && fileInput.files[0];
     if (!file) {
-      return;
+      statusNode.textContent = "未选择文件；可手工输入摘要。";
+      statusNode.className = "status";
+      return false;
     }
+    const generation = (hashGenerations.get(targetInput) || 0) + 1;
+    hashGenerations.set(targetInput, generation);
+    targetInput.value = "";
+    statusNode.textContent = `正在本机内存中计算 ${file.name} 的 SHA-256…`;
+    statusNode.className = "status";
     try {
       const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+      if (
+        hashGenerations.get(targetInput) !== generation ||
+        !fileInput.files ||
+        fileInput.files[0] !== file
+      ) {
+        return false;
+      }
       targetInput.value = hexDigest(digest);
       statusNode.textContent = `已在本机内存中计算 ${file.name} 的 SHA-256；文件未被复制。`;
       statusNode.className = "status is-complete";
+      return true;
     } catch (_error) {
+      if (
+        hashGenerations.get(targetInput) !== generation ||
+        !fileInput.files ||
+        fileInput.files[0] !== file
+      ) {
+        return false;
+      }
+      targetInput.value = "";
       statusNode.textContent = "当前本地浏览器不能计算摘要；请使用离线工具计算后手工粘贴。";
       statusNode.className = "status has-warnings";
+      return false;
     }
   }
 
@@ -226,20 +272,157 @@
     };
   }
 
-  function evidenceWarnings(draft) {
-    const warnings = [];
-    if (!SHA256_PATTERN.test(draft.evidence_record_sha256 || "")) {
-      warnings.push("证据记录摘要尚未填写为64位小写 SHA-256");
+  function isPortableEvidenceText(value, maximum) {
+    return (
+      typeof value === "string" &&
+      value.length > 0 &&
+      Array.from(value).length <= maximum &&
+      value === value.normalize("NFC") &&
+      !/[\u0000-\u001f\u007f]/u.test(value)
+    );
+  }
+
+  function isCanonicalUtcSeconds(value) {
+    if (typeof value !== "string" || !UTC_SECONDS_PATTERN.test(value)) {
+      return false;
     }
-    ["copyright_basis", "likeness_basis", "privacy_basis", "territory", "use_scope"].forEach((field) => {
-      if (!draft[field]) {
-        warnings.push(`${field} 尚未填写`);
-      }
-    });
-    if (!draft.valid_until || (draft.valid_until !== "PERPETUAL" && !UTC_SECONDS_PATTERN.test(draft.valid_until))) {
-      warnings.push("valid_until 尚未使用 PERPETUAL 或规范 UTC 秒格式");
+    const year = Number(value.slice(0, 4));
+    const month = Number(value.slice(5, 7));
+    const day = Number(value.slice(8, 10));
+    const hour = Number(value.slice(11, 13));
+    const minute = Number(value.slice(14, 16));
+    const second = Number(value.slice(17, 19));
+    const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return (
+      year >= 1 &&
+      month >= 1 &&
+      month <= 12 &&
+      day >= 1 &&
+      day <= daysInMonth[month - 1] &&
+      hour <= 23 &&
+      minute <= 59 &&
+      second <= 59
+    );
+  }
+
+  function evidenceFieldChecks(draft) {
+    return [
+      {
+        controlId: "evidence-record-sha",
+        valid: SHA256_PATTERN.test(draft.evidence_record_sha256 || ""),
+        warning: "证据记录摘要须为 64 位小写 SHA-256",
+      },
+      {
+        controlId: "copyright-basis",
+        valid: isPortableEvidenceText(draft.copyright_basis, 1000),
+        warning: "著作权依据须为 1–1000 个规范单行字符；粘贴异常时请离线转为 Unicode NFC",
+      },
+      {
+        controlId: "likeness-basis",
+        valid: isPortableEvidenceText(draft.likeness_basis, 1000),
+        warning: "形象或声音依据须为 1–1000 个规范单行字符；粘贴异常时请离线转为 Unicode NFC",
+      },
+      {
+        controlId: "privacy-basis",
+        valid: isPortableEvidenceText(draft.privacy_basis, 1000),
+        warning: "隐私依据须为 1–1000 个规范单行字符；粘贴异常时请离线转为 Unicode NFC",
+      },
+      {
+        controlId: "territory",
+        valid: isPortableEvidenceText(draft.territory, 256),
+        warning: "地域范围须为 1–256 个规范字符；粘贴异常时请离线转为 Unicode NFC",
+      },
+      {
+        controlId: "use-scope",
+        valid: isPortableEvidenceText(draft.use_scope, 1000),
+        warning: "用途范围须为 1–1000 个规范单行字符；粘贴异常时请离线转为 Unicode NFC",
+      },
+      {
+        controlId: "valid-until",
+        valid: draft.valid_until === "PERPETUAL" || isCanonicalUtcSeconds(draft.valid_until),
+        warning: "有效期须为 PERPETUAL 或真实有效的 UTC 秒时间",
+      },
+    ];
+  }
+
+  function evidenceWarnings(draft) {
+    const warnings = evidenceFieldChecks(draft)
+      .filter((check) => !check.valid)
+      .map((check) => check.warning);
+    if (evidenceHashPending) {
+      warnings.unshift("证据记录摘要仍在本机计算中");
     }
     return warnings;
+  }
+
+  function markEvidenceDraftChanged() {
+    if (evidenceDraftExported) {
+      evidenceDraftExported = false;
+      evidenceDraftDirtySinceExport = true;
+    }
+    if (!evidenceDraftDirtySinceExport) {
+      return;
+    }
+    const status = byId("evidence-status");
+    const message = "字段已更改；先前下载的草稿不再对应当前表单，请重新导出。";
+    if (status.textContent !== message) {
+      status.textContent = message;
+      status.className = "status has-warnings";
+    }
+  }
+
+  function handleEvidenceInput(event) {
+    if (event.currentTarget === byId("evidence-record-sha")) {
+      takeOverHashWithManualInput(
+        byId("evidence-record-file"),
+        event.currentTarget,
+        byId("evidence-status"),
+      );
+      if (evidenceHashPending) {
+        evidenceHashPending = false;
+        evidenceHashGeneration += 1;
+      }
+    }
+    markEvidenceDraftChanged();
+    renderEvidenceReadiness();
+  }
+
+  function renderEvidenceReadiness() {
+    const readiness = byId("evidence-readiness");
+    const status = byId("evidence-readiness-status");
+    const missing = byId("evidence-readiness-missing");
+    const download = byId("download-evidence");
+    const draft = buildEvidenceDraft();
+    const checks = evidenceFieldChecks(draft);
+    const warnings = evidenceWarnings(draft);
+    checks.forEach((check) => {
+      byId(check.controlId).setAttribute("aria-invalid", String(!check.valid));
+    });
+    missing.replaceChildren();
+    if (warnings.length === 0) {
+      download.disabled = false;
+      readiness.dataset.state = "FORM_COMPLETE_DRAFT_ONLY";
+      if (status.textContent !== "字段形式完整，可导出未受信草稿") {
+        status.textContent = "字段形式完整，可导出未受信草稿";
+      }
+      readiness.className = "readiness-card is-form-complete";
+      missing.append(
+        createText(
+          "li",
+          "",
+          "仅通过本页机械格式检查；请真人另行确认记录当前可用、期限未过期，并由本地 finalizer 严格验证。",
+        ),
+      );
+      return;
+    }
+    download.disabled = true;
+    readiness.dataset.state = "NEEDS_EVIDENCE";
+    if (status.textContent !== "缺少依据，停止") {
+      status.textContent = "缺少依据，停止";
+    }
+    readiness.className = "readiness-card is-stop";
+    warnings.forEach((warning) => missing.append(createText("li", "", warning)));
   }
 
   function createText(tag, className, value) {
@@ -515,6 +698,16 @@
   const reviewSection = byId("review-section");
   if (context.workspace_kind === "EVIDENCE") {
     reviewSection.hidden = true;
+    [
+      "evidence-record-sha",
+      "copyright-basis",
+      "likeness-basis",
+      "privacy-basis",
+      "territory",
+      "use-scope",
+      "valid-until",
+    ].forEach((id) => byId(id).addEventListener("input", handleEvidenceInput));
+    renderEvidenceReadiness();
   } else {
     evidenceSection.hidden = true;
     evidenceBindingSection.hidden = false;
@@ -534,7 +727,33 @@
   }
 
   byId("evidence-record-file").addEventListener("change", () => {
-    void hashSelectedFile(byId("evidence-record-file"), byId("evidence-record-sha"), byId("evidence-status"));
+    markEvidenceDraftChanged();
+    const generation = evidenceHashGeneration + 1;
+    evidenceHashGeneration = generation;
+    evidenceHashPending = Boolean(
+      byId("evidence-record-file").files && byId("evidence-record-file").files[0],
+    );
+    const hashing = hashSelectedFile(
+      byId("evidence-record-file"),
+      byId("evidence-record-sha"),
+      byId("evidence-status"),
+    );
+    renderEvidenceReadiness();
+    void hashing.then(() => {
+      if (generation !== evidenceHashGeneration) {
+        return;
+      }
+      evidenceHashPending = false;
+      markEvidenceDraftChanged();
+      renderEvidenceReadiness();
+    });
+  });
+  byId("reviewer-ref-sha").addEventListener("input", (event) => {
+    takeOverHashWithManualInput(
+      byId("reviewer-ref-file"),
+      event.currentTarget,
+      byId("review-status"),
+    );
   });
   byId("reviewer-ref-file").addEventListener("change", () => {
     void hashSelectedFile(byId("reviewer-ref-file"), byId("reviewer-ref-sha"), byId("review-status"));
@@ -543,7 +762,16 @@
   byId("download-evidence").addEventListener("click", () => {
     const draft = buildEvidenceDraft();
     const warnings = evidenceWarnings(draft);
+    renderEvidenceReadiness();
+    if (warnings.length !== 0) {
+      const status = byId("evidence-status");
+      status.textContent = `缺少依据，未导出草稿；请先闭合 ${warnings.length} 项。`;
+      status.className = "status has-warnings";
+      return;
+    }
     downloadDraft(draft, `rights-evidence-bundle-v2-draft-${context.pack_id}.json`);
+    evidenceDraftExported = true;
+    evidenceDraftDirtySinceExport = false;
     showDownloadStatus(byId("evidence-status"), warnings);
   });
 

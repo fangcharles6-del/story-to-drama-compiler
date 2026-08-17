@@ -79,11 +79,26 @@
       </div>
       <p class="help">权利依据只输入一次。这里记录证据内容，不代表审批；请勿填写无法由实际证据支持的结论。</p>
 
+      <aside id="evidence-readiness" class="readiness-card is-stop" data-state="NEEDS_EVIDENCE" aria-labelledby="evidence-readiness-heading">
+        <div>
+          <p class="label">只读准备度</p>
+          <h3 id="evidence-readiness-heading">Evidence Readiness Guide</h3>
+          <p class="readiness-disclaimer">只检查必填项与格式；本页不能确认摘要对应记录仍可用，也不判断权利是否过期。<strong>形式完整不等于批准</strong>，也不代表证据真实、权利充分或可执行。</p>
+        </div>
+        <div class="readiness-result">
+          <p id="evidence-readiness-status" class="readiness-status" role="status" aria-live="polite">缺少依据，停止</p>
+          <ul id="evidence-readiness-missing" aria-label="Evidence 准备度说明">
+            <li>尚未检查证据记录摘要与六项权利依据字段。</li>
+          </ul>
+        </div>
+      </aside>
+
       <form id="evidence-form" autocomplete="off">
         <div class="field-grid">
           <label>
             <span>evidence_record_sha256</span>
-            <input id="evidence-record-sha" type="text" inputmode="text" maxlength="64" placeholder="64位小写 SHA-256">
+            <input id="evidence-record-sha" type="text" inputmode="text" maxlength="64" placeholder="64位小写 SHA-256" required aria-invalid="true" aria-describedby="evidence-record-sha-guidance">
+            <small id="evidence-record-sha-guidance" class="field-guidance"><strong>负责人：</strong>保管 Pack 级权利证据记录的权利负责人。<strong>取得：</strong>从其实际保存的独立证据记录文件计算。<strong>不能替代：</strong>素材文件、来源记录、技术检查、空模板或口头说明。<strong>格式示例：</strong><code>a3…7f</code>（共 64 位小写十六进制字符）。</small>
           </label>
           <label class="file-field">
             <span>可选：在本机计算证据记录摘要</span>
@@ -92,31 +107,37 @@
           </label>
           <label class="wide">
             <span>copyright_basis</span>
-            <textarea id="copyright-basis" maxlength="1000" placeholder="实际著作权、许可或原创依据"></textarea>
+            <textarea id="copyright-basis" maxlength="1000" placeholder="实际著作权、许可或原创依据" required aria-invalid="true" aria-describedby="copyright-basis-guidance"></textarea>
+            <small id="copyright-basis-guidance" class="field-guidance"><strong>负责人：</strong>创作者、权利人、许可管理员或项目权利负责人。<strong>取得：</strong>查看实际许可条款、创作记录、权利转让或授权文件。<strong>输入：</strong>必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。<strong>不能替代：</strong>技术合格结果、文件摘要或“由 AI 生成”说明。<strong>格式示例：</strong><code>[证据名称] | [条款/章节] | [权利主体] | [与本 Pack 的对应关系]</code>。</small>
           </label>
           <label class="wide">
             <span>likeness_basis</span>
-            <textarea id="likeness-basis" maxlength="1000" placeholder="人物、声音、肖像或虚构形象依据"></textarea>
+            <textarea id="likeness-basis" maxlength="1000" placeholder="人物、声音、肖像或虚构形象依据" required aria-invalid="true" aria-describedby="likeness-basis-guidance"></textarea>
+            <small id="likeness-basis-guidance" class="field-guidance"><strong>负责人：</strong>形象/声音权利人、素材创建或配音负责人及项目权利负责人。<strong>取得：</strong>查看实际肖像/声音授权、角色创作记录及与具体素材的对应说明。<strong>输入：</strong>必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。<strong>不能替代：</strong>“看起来是虚构的”、个人印象或音画技术检查。<strong>格式示例：</strong><code>[证据名称] | [对象/类别] | [授权范围] | [对应素材]</code>。</small>
           </label>
           <label class="wide">
             <span>privacy_basis</span>
-            <textarea id="privacy-basis" maxlength="1000" placeholder="隐私及个人信息处理依据"></textarea>
+            <textarea id="privacy-basis" maxlength="1000" placeholder="隐私及个人信息处理依据" required aria-invalid="true" aria-describedby="privacy-basis-guidance"></textarea>
+            <small id="privacy-basis-guidance" class="field-guidance"><strong>负责人：</strong>隐私/合规负责人、相关信息主体或授权记录保管人。<strong>取得：</strong>查看实际同意记录、隐私告知、个人信息清单及适用的处理依据。<strong>输入：</strong>必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。<strong>不能替代：</strong>“未上传网络”、文件无元数据或素材技术合格。<strong>格式示例：</strong><code>[证据名称] | [信息类别] | [处理目的] | [适用范围]</code>。</small>
           </label>
           <label>
             <span>territory</span>
-            <input id="territory" type="text" maxlength="256" placeholder="证据明确允许的地域">
+            <input id="territory" type="text" maxlength="256" placeholder="证据明确允许的地域" required aria-invalid="true" aria-describedby="territory-guidance">
+            <small id="territory-guidance" class="field-guidance"><strong>负责人：</strong>许可方、权利人或负责审查的权利/法务人员。<strong>取得：</strong>查看许可协议或权利人授权中的地理范围条款。<strong>不能替代：</strong>项目所在地、用户 IP、语言或自行推定的“全球”。<strong>格式示例：</strong><code>[国家/地区名称；多项以逗号分隔]</code>。</small>
           </label>
           <label>
             <span>valid_until</span>
-            <input id="valid-until" type="text" maxlength="32" placeholder="PERPETUAL 或 YYYY-MM-DDTHH:MM:SSZ">
+            <input id="valid-until" type="text" maxlength="32" placeholder="PERPETUAL 或 YYYY-MM-DDTHH:MM:SSZ" required aria-invalid="true" aria-describedby="valid-until-guidance">
+            <small id="valid-until-guidance" class="field-guidance"><strong>负责人：</strong>许可方、权利管理员或负责审查的权利/法务人员。<strong>取得：</strong>查看许可、同意或授权文件的生效期和终止条款。<strong>不能替代：</strong>文件修改时间、任务日期或自定期限。<strong>格式示例：</strong><code>YYYY-MM-DDTHH:MM:SSZ</code>；仅当实际证据明确永久有效时使用 <code>PERPETUAL</code>。</small>
           </label>
           <label class="wide">
             <span>use_scope</span>
-            <textarea id="use-scope" maxlength="1000" placeholder="证据明确允许的用途范围"></textarea>
+            <textarea id="use-scope" maxlength="1000" placeholder="证据明确允许的用途范围" required aria-invalid="true" aria-describedby="use-scope-guidance"></textarea>
+            <small id="use-scope-guidance" class="field-guidance"><strong>负责人：</strong>许可方、权利人或负责审查的权利/法务人员。<strong>取得：</strong>查看许可中的允许用途、媒介、渠道、商业性及改编限制条款。<strong>输入：</strong>必须单行；若粘贴后提示规范化错误，请用离线文本工具转换为 Unicode NFC。<strong>不能替代：</strong>内部使用计划、技术可用性或期望的发布方式。<strong>格式示例：</strong><code>[用途] | [媒介/渠道] | [商业性] | [改编限制]</code>。</small>
           </label>
         </div>
         <div class="action-row">
-          <button id="download-evidence" type="button">下载 Evidence Bundle 草稿</button>
+          <button id="download-evidence" type="button" disabled aria-describedby="evidence-readiness-status">下载 Evidence Bundle 草稿</button>
           <p id="evidence-status" class="status" role="status">尚未下载。</p>
         </div>
       </form>
