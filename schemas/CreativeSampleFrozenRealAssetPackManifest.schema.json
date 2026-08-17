@@ -1,0 +1,373 @@
+{
+  "$defs": {
+    "FrozenRealAssetDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "audio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RealAudioTechnicalRecord"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RealImageTechnicalRecord"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "enum": [
+            "IMAGE",
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "audio/wav"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "object_path": {
+          "title": "Object Path",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 13,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "provenance_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provenance Record Sha256",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "source_authority": {
+          "enum": [
+            "USER_PROVIDED_LOCAL",
+            "SEPARATELY_APPROVED_LOCAL_GENERATION"
+          ],
+          "title": "Source Authority",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "technical_profile": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Technical Profile",
+          "type": "string"
+        },
+        "technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "requirement_id",
+        "kind",
+        "subject_id",
+        "logical_path",
+        "object_path",
+        "media_type",
+        "sha256",
+        "size_bytes",
+        "duration_ms",
+        "source_authority",
+        "provenance_record_sha256",
+        "technical_profile",
+        "technical_record_sha256"
+      ],
+      "title": "FrozenRealAssetDescriptor",
+      "type": "object"
+    },
+    "RealAudioTechnicalRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "channels": {
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Channels",
+          "type": "integer"
+        },
+        "clipped_sample_count": {
+          "const": 0,
+          "default": 0,
+          "title": "Clipped Sample Count",
+          "type": "integer"
+        },
+        "codec": {
+          "const": "pcm_s16le",
+          "default": "pcm_s16le",
+          "title": "Codec",
+          "type": "string"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "rms_millidbfs": {
+          "maximum": -6000,
+          "minimum": -40000,
+          "title": "Rms Millidbfs",
+          "type": "integer"
+        },
+        "sample_count": {
+          "exclusiveMinimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "sample_peak_millidbfs": {
+          "maximum": -100,
+          "minimum": -30000,
+          "title": "Sample Peak Millidbfs",
+          "type": "integer"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "default": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "semantic_content_reviewed": {
+          "const": false,
+          "default": false,
+          "title": "Semantic Content Reviewed",
+          "type": "boolean"
+        },
+        "silence_ppm": {
+          "maximum": 800000,
+          "minimum": 0,
+          "title": "Silence Ppm",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "channels",
+        "duration_ms",
+        "sample_count",
+        "rms_millidbfs",
+        "sample_peak_millidbfs",
+        "silence_ppm"
+      ],
+      "title": "RealAudioTechnicalRecord",
+      "type": "object"
+    },
+    "RealImageTechnicalRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "active_content_absent": {
+          "const": true,
+          "default": true,
+          "title": "Active Content Absent",
+          "type": "boolean"
+        },
+        "bit_depth": {
+          "const": 8,
+          "default": 8,
+          "title": "Bit Depth",
+          "type": "integer"
+        },
+        "color_space": {
+          "enum": [
+            "RGB",
+            "RGBA_OPAQUE"
+          ],
+          "title": "Color Space",
+          "type": "string"
+        },
+        "distinct_color_count": {
+          "minimum": 16,
+          "title": "Distinct Color Count",
+          "type": "integer"
+        },
+        "height": {
+          "maximum": 4096,
+          "minimum": 512,
+          "title": "Height",
+          "type": "integer"
+        },
+        "interlaced": {
+          "const": false,
+          "default": false,
+          "title": "Interlaced",
+          "type": "boolean"
+        },
+        "metadata_free": {
+          "const": true,
+          "default": true,
+          "title": "Metadata Free",
+          "type": "boolean"
+        },
+        "semantic_privacy_reviewed": {
+          "const": false,
+          "default": false,
+          "title": "Semantic Privacy Reviewed",
+          "type": "boolean"
+        },
+        "width": {
+          "maximum": 4096,
+          "minimum": 512,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "color_space",
+        "distinct_color_count"
+      ],
+      "title": "RealImageTechnicalRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-frozen-real-asset-pack",
+      "default": "sdc.creative-sample-frozen-real-asset-pack",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_real_generation": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Real Generation",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/FrozenRealAssetDescriptor"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Objects",
+      "type": "array"
+    },
+    "pack_id": {
+      "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "pilot_pack_id": {
+      "pattern": "^creative_pilot_pack_[0-9a-f]{20}$",
+      "title": "Pilot Pack Id",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-intake-v1",
+      "default": "creative-sample-real-asset-intake-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "const": "FROZEN_UNREVIEWED",
+      "default": "FROZEN_UNREVIEWED",
+      "title": "State",
+      "type": "string"
+    },
+    "submission_id": {
+      "pattern": "^real_asset_submission_[0-9a-f]{20}$",
+      "title": "Submission Id",
+      "type": "string"
+    },
+    "template_id": {
+      "pattern": "^real_asset_intake_template_[0-9a-f]{20}$",
+      "title": "Template Id",
+      "type": "string"
+    },
+    "total_size_bytes": {
+      "exclusiveMinimum": 0,
+      "maximum": 268435456,
+      "title": "Total Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "pack_id",
+    "template_id",
+    "submission_id",
+    "pilot_pack_id",
+    "objects",
+    "total_size_bytes"
+  ],
+  "title": "CreativeSampleFrozenRealAssetPackManifest",
+  "type": "object"
+}

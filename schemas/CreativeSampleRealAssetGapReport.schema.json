@@ -1,0 +1,181 @@
+{
+  "$defs": {
+    "RealAssetGapRow": {
+      "additionalProperties": false,
+      "properties": {
+        "disposition": {
+          "enum": [
+            "MISSING",
+            "IDENTITY_MISMATCH",
+            "TECHNICAL_REJECTED",
+            "REVIEW_PENDING",
+            "DISPUTED",
+            "EXPIRED",
+            "APPROVED"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "failures": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Failures",
+          "type": "array"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 13,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "replacement_guidance": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Replacement Guidance",
+          "type": "array"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "requirement_id",
+        "logical_path",
+        "disposition",
+        "failures",
+        "replacement_guidance"
+      ],
+      "title": "RealAssetGapRow",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approved_count": {
+      "maximum": 14,
+      "minimum": 0,
+      "title": "Approved Count",
+      "type": "integer"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-gap-report",
+      "default": "sdc.creative-sample-real-asset-gap-report",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "missing_count": {
+      "maximum": 14,
+      "minimum": 0,
+      "title": "Missing Count",
+      "type": "integer"
+    },
+    "pending_count": {
+      "maximum": 14,
+      "minimum": 0,
+      "title": "Pending Count",
+      "type": "integer"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-intake-v1",
+      "default": "creative-sample-real-asset-intake-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "ready_for_rights_review": {
+      "const": false,
+      "default": false,
+      "title": "Ready For Rights Review",
+      "type": "boolean"
+    },
+    "rejected_count": {
+      "maximum": 14,
+      "minimum": 0,
+      "title": "Rejected Count",
+      "type": "integer"
+    },
+    "report_id": {
+      "pattern": "^real_asset_gap_report_[0-9a-f]{20}$",
+      "title": "Report Id",
+      "type": "string"
+    },
+    "rows": {
+      "items": {
+        "$ref": "#/$defs/RealAssetGapRow"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Rows",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "submission_id": {
+      "anyOf": [
+        {
+          "pattern": "^real_asset_submission_[0-9a-f]{20}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Submission Id"
+    },
+    "template_id": {
+      "pattern": "^real_asset_intake_template_[0-9a-f]{20}$",
+      "title": "Template Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "report_id",
+    "template_id",
+    "rows",
+    "missing_count",
+    "rejected_count",
+    "pending_count",
+    "approved_count"
+  ],
+  "title": "CreativeSampleRealAssetGapReport",
+  "type": "object"
+}
