@@ -1,0 +1,243 @@
+{
+  "$defs": {
+    "RealAssetRightsEvidenceBindingV2": {
+      "additionalProperties": false,
+      "description": "Mechanical identity of one member of the exact frozen fourteen-object pack.",
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "IMAGE",
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "media_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Sha256",
+          "type": "string"
+        },
+        "media_size_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Media Size Bytes",
+          "type": "integer"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "audio/wav"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "object_path": {
+          "title": "Object Path",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 13,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "provenance_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provenance Record Sha256",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "source_authority": {
+          "enum": [
+            "USER_PROVIDED_LOCAL",
+            "SEPARATELY_APPROVED_LOCAL_GENERATION"
+          ],
+          "title": "Source Authority",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "technical_profile": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Technical Profile",
+          "type": "string"
+        },
+        "technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "requirement_id",
+        "kind",
+        "subject_id",
+        "logical_path",
+        "object_path",
+        "media_type",
+        "media_sha256",
+        "media_size_bytes",
+        "duration_ms",
+        "source_authority",
+        "provenance_record_sha256",
+        "technical_profile",
+        "technical_record_sha256"
+      ],
+      "title": "RealAssetRightsEvidenceBindingV2",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One normalized Pack-level declaration, never an approval or authorization.",
+  "properties": {
+    "asset_bindings": {
+      "items": {
+        "$ref": "#/$defs/RealAssetRightsEvidenceBindingV2"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Asset Bindings",
+      "type": "array"
+    },
+    "bundle_id": {
+      "pattern": "^real_asset_rights_evidence_v2_[0-9a-f]{20}$",
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "copyright_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Copyright Basis",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-rights-evidence-bundle-v2",
+      "default": "sdc.creative-sample-real-asset-rights-evidence-bundle-v2",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evidence_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Record Sha256",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "likeness_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Likeness Basis",
+      "type": "string"
+    },
+    "pack_id": {
+      "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+      "title": "Pack Id",
+      "type": "string"
+    },
+    "pack_manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pack Manifest Sha256",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "privacy_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Privacy Basis",
+      "type": "string"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-review-v2",
+      "default": "creative-sample-real-asset-review-v2",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "EVIDENCE_CANDIDATE",
+      "default": "EVIDENCE_CANDIDATE",
+      "title": "Status",
+      "type": "string"
+    },
+    "territory": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Territory",
+      "type": "string"
+    },
+    "use_scope": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Use Scope",
+      "type": "string"
+    },
+    "valid_until": {
+      "title": "Valid Until",
+      "type": "string"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "pack_id",
+    "pack_manifest_sha256",
+    "evidence_record_sha256",
+    "asset_bindings",
+    "copyright_basis",
+    "likeness_basis",
+    "privacy_basis",
+    "territory",
+    "use_scope",
+    "valid_until"
+  ],
+  "title": "CreativeSampleRealAssetRightsEvidenceBundleV2",
+  "type": "object"
+}

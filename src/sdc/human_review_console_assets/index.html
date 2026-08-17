@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'none'; worker-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>SDC 真人复核控制台 v2</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="review-context.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Creative Sample Real Asset Intake</p>
+      <h1>真人复核控制台 v2</h1>
+      <p class="subtitle">纯本地、无服务器、仅生成草稿</p>
+    </div>
+    <div class="gate" aria-label="当前安全状态">
+      <strong>HUMAN_GATE</strong>
+      <span>NOT_AUTHORIZED</span>
+      <span>execution_authorized=false</span>
+      <span>posts_allowed=0 · provider_requests=0</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel warning-panel" aria-labelledby="safety-heading">
+      <h2 id="safety-heading">先读这里</h2>
+      <ul>
+        <li>页面不会联网、上传、保存浏览器缓存，也不会启动任何服务。</li>
+        <li>所有审批布尔值和 decision 初始均为空，必须由真人独立选择。</li>
+        <li>下载的只是 JSON 草稿：没有复核时间、没有记录摘要，不构成 rights manifest，也不会执行 rights qualification。</li>
+        <li>冻结媒体只在点击“打开本地预览”时读取；页面不会修改或复制媒体。</li>
+      </ul>
+    </section>
+
+    <section class="panel pack-summary" aria-labelledby="pack-heading">
+      <div>
+        <p class="label">Frozen Pack</p>
+        <h2 id="pack-heading" data-pack-id>正在读取本地上下文…</h2>
+      </div>
+      <dl>
+        <div><dt>Pack manifest SHA-256</dt><dd data-pack-sha>—</dd></div>
+        <div><dt>冻结素材</dt><dd><span data-asset-count>0</span> 项</dd></div>
+        <div><dt>上下文</dt><dd>只读、已由 Python 离线重验</dd></div>
+      </dl>
+    </section>
+
+    <section id="evidence-binding-section" class="panel" aria-labelledby="evidence-binding-heading" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="label">只读 Evidence Bundle</p>
+          <h2 id="evidence-binding-heading" data-evidence-bundle-id>—</h2>
+        </div>
+        <span class="draft-badge">PACK-BOUND</span>
+      </div>
+      <p class="help">以下内容来自准备器按当前冻结 Pack 完整重建并验证的 canonical v2 bundle。Reviewer 只能阅读，不能在页面内改写。</p>
+      <dl class="evidence-projection">
+        <div><dt>Bundle 文件 SHA-256</dt><dd data-evidence-bundle-sha>—</dd></div>
+        <div><dt>Evidence record SHA-256</dt><dd data-evidence-record-sha>—</dd></div>
+        <div><dt>copyright_basis</dt><dd data-copyright-basis>—</dd></div>
+        <div><dt>likeness_basis</dt><dd data-likeness-basis>—</dd></div>
+        <div><dt>privacy_basis</dt><dd data-privacy-basis>—</dd></div>
+        <div><dt>territory</dt><dd data-territory>—</dd></div>
+        <div><dt>use_scope</dt><dd data-use-scope>—</dd></div>
+        <div><dt>valid_until</dt><dd data-valid-until>—</dd></div>
+      </dl>
+    </section>
+
+    <section id="evidence-section" class="panel" aria-labelledby="evidence-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">步骤 1</p>
+          <h2 id="evidence-heading">准备 Pack 级 Evidence Bundle 草稿</h2>
+        </div>
+        <span class="draft-badge">DRAFT ONLY</span>
+      </div>
+      <p class="help">权利依据只输入一次。这里记录证据内容，不代表审批；请勿填写无法由实际证据支持的结论。</p>
+
+      <form id="evidence-form" autocomplete="off">
+        <div class="field-grid">
+          <label>
+            <span>evidence_record_sha256</span>
+            <input id="evidence-record-sha" type="text" inputmode="text" maxlength="64" placeholder="64位小写 SHA-256">
+          </label>
+          <label class="file-field">
+            <span>可选：在本机计算证据记录摘要</span>
+            <input id="evidence-record-file" type="file">
+            <small>文件内容只在本页内存中计算，不会上传或复制。</small>
+          </label>
+          <label class="wide">
+            <span>copyright_basis</span>
+            <textarea id="copyright-basis" maxlength="1000" placeholder="实际著作权、许可或原创依据"></textarea>
+          </label>
+          <label class="wide">
+            <span>likeness_basis</span>
+            <textarea id="likeness-basis" maxlength="1000" placeholder="人物、声音、肖像或虚构形象依据"></textarea>
+          </label>
+          <label class="wide">
+            <span>privacy_basis</span>
+            <textarea id="privacy-basis" maxlength="1000" placeholder="隐私及个人信息处理依据"></textarea>
+          </label>
+          <label>
+            <span>territory</span>
+            <input id="territory" type="text" maxlength="256" placeholder="证据明确允许的地域">
+          </label>
+          <label>
+            <span>valid_until</span>
+            <input id="valid-until" type="text" maxlength="32" placeholder="PERPETUAL 或 YYYY-MM-DDTHH:MM:SSZ">
+          </label>
+          <label class="wide">
+            <span>use_scope</span>
+            <textarea id="use-scope" maxlength="1000" placeholder="证据明确允许的用途范围"></textarea>
+          </label>
+        </div>
+        <div class="action-row">
+          <button id="download-evidence" type="button">下载 Evidence Bundle 草稿</button>
+          <p id="evidence-status" class="status" role="status">尚未下载。</p>
+        </div>
+      </form>
+    </section>
+
+    <section id="review-section" class="panel" aria-labelledby="review-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">步骤 2</p>
+          <h2 id="review-heading">完成一名 Reviewer 的独立复核草稿</h2>
+        </div>
+        <span class="draft-badge">ONE REVIEWER</span>
+      </div>
+      <p class="help">Reviewer A 与 Reviewer B 必须在各自独立工作区操作。不要查看或复制另一人的选择。</p>
+
+      <form id="review-form" autocomplete="off">
+        <div class="field-grid">
+          <label>
+            <span>evidence_bundle_id（由工作区预绑定）</span>
+            <input id="evidence-bundle-id" type="text" maxlength="128" readonly>
+          </label>
+          <label>
+            <span>reviewer_role（由独立工作区预绑定）</span>
+            <input id="reviewer-role" type="text" readonly>
+          </label>
+          <label>
+            <span>reviewer_ref_sha256</span>
+            <input id="reviewer-ref-sha" type="text" inputmode="text" maxlength="64" placeholder="64位小写 SHA-256">
+          </label>
+          <label class="file-field">
+            <span>可选：在本机计算 Reviewer 证明摘要</span>
+            <input id="reviewer-ref-file" type="file">
+            <small>只记录摘要，不把身份文件写入草稿。</small>
+          </label>
+        </div>
+
+        <fieldset class="approval-group">
+          <legend>Pack 级六项人工判断</legend>
+          <p class="help">每项都必须由真人明确选择；页面不会预选或根据其他字段推断。</p>
+          <div class="approval-grid">
+            <fieldset data-approval="provenance_approved">
+              <legend>来源记录是否通过</legend>
+              <label><input type="radio" name="provenance_approved" value="true"> 是</label>
+              <label><input type="radio" name="provenance_approved" value="false"> 否</label>
+            </fieldset>
+            <fieldset data-approval="copyright_approved">
+              <legend>著作权依据是否通过</legend>
+              <label><input type="radio" name="copyright_approved" value="true"> 是</label>
+              <label><input type="radio" name="copyright_approved" value="false"> 否</label>
+            </fieldset>
+            <fieldset data-approval="likeness_approved">
+              <legend>形象/声音依据是否通过</legend>
+              <label><input type="radio" name="likeness_approved" value="true"> 是</label>
+              <label><input type="radio" name="likeness_approved" value="false"> 否</label>
+            </fieldset>
+            <fieldset data-approval="privacy_approved">
+              <legend>隐私依据是否通过</legend>
+              <label><input type="radio" name="privacy_approved" value="true"> 是</label>
+              <label><input type="radio" name="privacy_approved" value="false"> 否</label>
+            </fieldset>
+            <fieldset data-approval="territory_approved">
+              <legend>地域范围是否通过</legend>
+              <label><input type="radio" name="territory_approved" value="true"> 是</label>
+              <label><input type="radio" name="territory_approved" value="false"> 否</label>
+            </fieldset>
+            <fieldset data-approval="use_scope_approved">
+              <legend>使用范围是否通过</legend>
+              <label><input type="radio" name="use_scope_approved" value="true"> 是</label>
+              <label><input type="radio" name="use_scope_approved" value="false"> 否</label>
+            </fieldset>
+          </div>
+        </fieldset>
+
+        <div class="assets-heading">
+          <h3>逐项检查 14 个冻结媒体</h3>
+          <p><span id="inspection-progress">0</span>/14 已由真人确认查看</p>
+        </div>
+        <div id="asset-list" class="asset-list" aria-live="polite"></div>
+
+        <div class="field-grid review-ending">
+          <label class="wide">
+            <span>rejection_reason（仅在真人选择 REJECTED 时填写）</span>
+            <textarea id="rejection-reason" maxlength="1000" placeholder="实际拒绝依据；不得由页面推断"></textarea>
+          </label>
+        </div>
+        <fieldset class="decision-group">
+          <legend>decision</legend>
+          <label><input type="radio" name="decision" value="APPROVED"> APPROVED</label>
+          <label><input type="radio" name="decision" value="REJECTED"> REJECTED</label>
+          <small>这是该 Reviewer 的人工草稿选择，不是执行授权。</small>
+        </fieldset>
+
+        <div class="action-row">
+          <button id="download-review" type="button">下载 Reviewer 草稿</button>
+          <p id="review-status" class="status" role="status">尚未下载。</p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>本控制台始终保持 HUMAN_GATE / NOT_AUTHORIZED / execution_authorized=false / posts_allowed=0 / provider_requests=0。</p>
+  </footer>
+</body>
+</html>
