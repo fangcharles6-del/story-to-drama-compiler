@@ -16,6 +16,9 @@ from sdc.real_asset_intake import (
     CreativeSampleRealAssetSpecDocument,
     CreativeSampleRealAssetSubmission,
 )
+from sdc.real_asset_qualification_decision_instruction_v22 import (
+    CreativeSampleRealAssetQualificationDecisionInstructionV22,
+)
 from sdc.real_asset_qualification_v2 import (
     CreativeSampleRealAssetQualificationDecisionV2,
     CreativeSampleRealAssetQualificationRequestV2,
@@ -82,6 +85,7 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetReviewPairCheckV2,
     CreativeSampleRealAssetQualificationRequestV2,
     CreativeSampleRealAssetQualificationDecisionV2,
+    CreativeSampleRealAssetQualificationDecisionInstructionV22,
 ]
 
 
