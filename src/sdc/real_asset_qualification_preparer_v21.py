@@ -129,6 +129,123 @@ class _CreatedRequest:
     closed: bool = False
 
 
+if sys.platform == "win32":
+    import ctypes as _windows_ctypes
+    import msvcrt as _windows_msvcrt
+    from ctypes import wintypes as _windows_wintypes
+
+    def _acquire_windows_parent_guard(target: _OutputTarget) -> int:
+        create_file = _windows_ctypes.windll.kernel32.CreateFileW
+        create_file.argtypes = (
+            _windows_wintypes.LPCWSTR,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.LPVOID,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.HANDLE,
+        )
+        create_file.restype = _windows_wintypes.HANDLE
+        handle = create_file(
+            str(target.parent),
+            0x0080,  # FILE_READ_ATTRIBUTES
+            0x00000001 | 0x00000002,  # share read/write, deliberately deny delete/rename
+            None,
+            3,  # OPEN_EXISTING
+            0x02000000,  # FILE_FLAG_BACKUP_SEMANTICS
+            None,
+        )
+        invalid = _windows_ctypes.c_void_p(-1).value
+        if handle == invalid:
+            raise TrustedLocalRequestPreparationError(
+                "request output parent could not be guarded"
+            )
+        return int(handle)
+
+    def _close_windows_handle(handle: int) -> None:
+        _windows_ctypes.windll.kernel32.CloseHandle(handle)
+
+    def _open_windows_exclusive_request(target: _OutputTarget) -> int:
+        create_file = _windows_ctypes.windll.kernel32.CreateFileW
+        create_file.argtypes = (
+            _windows_wintypes.LPCWSTR,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.LPVOID,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.DWORD,
+            _windows_wintypes.HANDLE,
+        )
+        create_file.restype = _windows_wintypes.HANDLE
+        handle = create_file(
+            str(target.path),
+            0x80000000 | 0x40000000 | 0x00010000,  # read, write and delete exact handle
+            0x00000001,  # share read only; replacement/delete is denied while open
+            None,
+            1,  # CREATE_NEW
+            0x00000080,  # FILE_ATTRIBUTE_NORMAL
+            None,
+        )
+        invalid = _windows_ctypes.c_void_p(-1).value
+        if handle == invalid:
+            error = _windows_ctypes.get_last_error()
+            if error in {80, 183}:
+                raise FileExistsError(str(target.path))
+            raise OSError(error, "CreateFileW failed")
+        try:
+            return _windows_msvcrt.open_osfhandle(
+                int(handle), os.O_RDWR | getattr(os, "O_BINARY", 0)
+            )
+        except OSError:
+            _close_windows_handle(int(handle))
+            raise
+
+    def _delete_open_windows_request(descriptor: int) -> bool:
+        class FileDispositionInfo(_windows_ctypes.Structure):
+            _fields_ = (("DeleteFile", _windows_wintypes.BOOL),)
+
+        disposition = FileDispositionInfo(True)
+        handle = _windows_msvcrt.get_osfhandle(descriptor)
+        kernel32 = _windows_ctypes.WinDLL("kernel32", use_last_error=True)
+        set_information = kernel32.SetFileInformationByHandle
+        set_information.argtypes = (
+            _windows_wintypes.HANDLE,
+            _windows_ctypes.c_int,
+            _windows_wintypes.LPVOID,
+            _windows_wintypes.DWORD,
+        )
+        set_information.restype = _windows_wintypes.BOOL
+        return bool(
+            set_information(
+                handle,
+                4,
+                _windows_ctypes.byref(disposition),
+                _windows_ctypes.sizeof(disposition),
+            )
+        )
+
+else:
+
+    def _windows_unavailable() -> Never:
+        raise OSError("Windows-only request output helper is unavailable")
+
+    def _acquire_windows_parent_guard(target: _OutputTarget) -> int:
+        del target
+        return _windows_unavailable()
+
+    def _close_windows_handle(handle: int) -> None:
+        del handle
+        _windows_unavailable()
+
+    def _open_windows_exclusive_request(target: _OutputTarget) -> int:
+        del target
+        return _windows_unavailable()
+
+    def _delete_open_windows_request(descriptor: int) -> bool:
+        del descriptor
+        return _windows_unavailable()
+
+
 def _canonical_document(value: BaseModel) -> bytes:
     return (
         json.dumps(
@@ -698,7 +815,7 @@ def _revalidate_output_target(target: _OutputTarget, *, must_be_absent: bool) ->
 
 
 def _acquire_parent_guard(target: _OutputTarget) -> tuple[int, bool]:
-    if os.name != "nt":
+    if sys.platform != "win32":
         flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_CLOEXEC", 0)
         try:
             return os.open(target.parent, flags), False
@@ -707,85 +824,22 @@ def _acquire_parent_guard(target: _OutputTarget) -> tuple[int, bool]:
                 "request output parent could not be guarded"
             ) from exc
 
-    import ctypes
-    from ctypes import wintypes
-
-    create_file = ctypes.windll.kernel32.CreateFileW
-    create_file.argtypes = (
-        wintypes.LPCWSTR,
-        wintypes.DWORD,
-        wintypes.DWORD,
-        wintypes.LPVOID,
-        wintypes.DWORD,
-        wintypes.DWORD,
-        wintypes.HANDLE,
-    )
-    create_file.restype = wintypes.HANDLE
-    handle = create_file(
-        str(target.parent),
-        0x0080,  # FILE_READ_ATTRIBUTES
-        0x00000001 | 0x00000002,  # share read/write, deliberately deny delete/rename
-        None,
-        3,  # OPEN_EXISTING
-        0x02000000,  # FILE_FLAG_BACKUP_SEMANTICS
-        None,
-    )
-    invalid = ctypes.c_void_p(-1).value
-    if handle == invalid:
-        raise TrustedLocalRequestPreparationError("request output parent could not be guarded")
-    return int(handle), True
+    return _acquire_windows_parent_guard(target), True
 
 
 def _close_parent_guard(created: _CreatedRequest) -> None:
     if created.windows_parent_guard:
-        import ctypes
-
-        ctypes.windll.kernel32.CloseHandle(created.parent_guard)
+        _close_windows_handle(created.parent_guard)
     else:
         os.close(created.parent_guard)
 
 
 def _open_exclusive_request(target: _OutputTarget, parent_guard: int) -> int:
     flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
-    if os.name != "nt":
+    if sys.platform != "win32":
         flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
         return os.open(target.path.name, flags, 0o600, dir_fd=parent_guard)
-
-    import ctypes
-    import msvcrt
-    from ctypes import wintypes
-
-    create_file = ctypes.windll.kernel32.CreateFileW
-    create_file.argtypes = (
-        wintypes.LPCWSTR,
-        wintypes.DWORD,
-        wintypes.DWORD,
-        wintypes.LPVOID,
-        wintypes.DWORD,
-        wintypes.DWORD,
-        wintypes.HANDLE,
-    )
-    create_file.restype = wintypes.HANDLE
-    handle = create_file(
-        str(target.path),
-        0x80000000 | 0x40000000 | 0x00010000,  # read, write and delete exact handle
-        0x00000001,  # share read only; replacement/delete is denied while open
-        None,
-        1,  # CREATE_NEW
-        0x00000080,  # FILE_ATTRIBUTE_NORMAL
-        None,
-    )
-    invalid = ctypes.c_void_p(-1).value
-    if handle == invalid:
-        error = ctypes.get_last_error()
-        if error in {80, 183}:
-            raise FileExistsError(str(target.path))
-        raise OSError(error, "CreateFileW failed")
-    try:
-        return msvcrt.open_osfhandle(int(handle), os.O_RDWR | getattr(os, "O_BINARY", 0))
-    except OSError:
-        ctypes.windll.kernel32.CloseHandle(handle)
-        raise
+    return _open_windows_exclusive_request(target)
 
 
 def _stat_identity(value: os.stat_result) -> tuple[int, int, int, int]:
@@ -856,7 +910,7 @@ def _rollback_created_request(created: _CreatedRequest) -> None:
         opened = os.fstat(created.descriptor)
         opened_physical = (opened.st_dev, opened.st_ino)
         invalidated = _invalidate_open_request(created.descriptor)
-        if os.name == "nt":
+        if sys.platform == "win32":
             deleted = _delete_open_windows_request(created.descriptor)
         else:
             deleted = _unlink_open_posix_request(created, opened_physical)
@@ -891,35 +945,6 @@ def _invalidate_open_request(descriptor: int) -> bool:
         return os.read(descriptor, 1) == b"\0"
     except OSError:
         return False
-
-
-def _delete_open_windows_request(descriptor: int) -> bool:
-    import ctypes
-    import msvcrt
-    from ctypes import wintypes
-
-    class FileDispositionInfo(ctypes.Structure):
-        _fields_ = (("DeleteFile", wintypes.BOOL),)
-
-    disposition = FileDispositionInfo(True)
-    handle = msvcrt.get_osfhandle(descriptor)
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
-    set_information = kernel32.SetFileInformationByHandle
-    set_information.argtypes = (
-        wintypes.HANDLE,
-        ctypes.c_int,
-        wintypes.LPVOID,
-        wintypes.DWORD,
-    )
-    set_information.restype = wintypes.BOOL
-    return bool(
-        set_information(
-            handle,
-            4,
-            ctypes.byref(disposition),
-            ctypes.sizeof(disposition),
-        )
-    )
 
 
 def _unlink_open_posix_request(
@@ -995,9 +1020,7 @@ def _create_new_request(
     except FileExistsError as exc:
         if descriptor is None:
             if parent_guard[1]:
-                import ctypes
-
-                ctypes.windll.kernel32.CloseHandle(parent_guard[0])
+                _close_windows_handle(parent_guard[0])
             else:
                 os.close(parent_guard[0])
         raise TrustedLocalRequestPreparationError("request output must be one new file") from exc
@@ -1006,9 +1029,7 @@ def _create_new_request(
             _rollback_created_request(created)
         else:
             if parent_guard[1]:
-                import ctypes
-
-                ctypes.windll.kernel32.CloseHandle(parent_guard[0])
+                _close_windows_handle(parent_guard[0])
             else:
                 os.close(parent_guard[0])
         if isinstance(exc, TrustedLocalRequestPreparationError):
