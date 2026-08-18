@@ -195,6 +195,12 @@ PRE_REQUEST_PREPARER_SCHEMA_SHA256 = {
         "56ffb2aa14476dffa2e7cc19a29a9333cae9ebcdd022b4adf08e64860f6d12a9"
     ),
 }
+PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256 = {
+    **PRE_REQUEST_PREPARER_SCHEMA_SHA256,
+    "CreativeSampleRealAssetQualificationDecisionInstructionV22.schema.json": (
+        "a6823db740274fc0806f95f7c66cf2b2092dc3bdd575796e00bbe5e5a566c251"
+    ),
+}
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -214,6 +220,13 @@ def test_all_pre_qualification_schema_bytes_remain_unchanged() -> None:
 def test_all_pre_request_preparer_schema_bytes_remain_unchanged() -> None:
     assert len(PRE_REQUEST_PREPARER_SCHEMA_SHA256) == 55
     for name, digest in PRE_REQUEST_PREPARER_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
+def test_all_pre_instruction_preparer_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256) == 56
+    for name, digest in PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256.items():
         canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
