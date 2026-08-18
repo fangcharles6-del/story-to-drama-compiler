@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; media-src 'none'; connect-src 'none'; font-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'none'; worker-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>SDC Qualifier Instruction 草稿准备器 v2.3</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="instruction-context.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#human-input">跳到真人输入</a>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Trusted Local · file:// · v2.3</p>
+      <h1>Qualifier Instruction 草稿准备器</h1>
+      <p class="subtitle">纯本地、无服务器、只导出未受信草稿</p>
+    </div>
+    <div class="gate" aria-label="固定安全状态">
+      <strong>HUMAN_GATE</strong>
+      <span>NOT_AUTHORIZED</span>
+      <span>rights_qualification_performed=false</span>
+      <span>rights_manifest_created=false</span>
+      <span>eligible_for_separate_manifest_design_review=false</span>
+      <span>eligible_for_real_generation=false</span>
+      <span>execution_authorized=false</span>
+      <span>posts_allowed=0 · provider_requests=0</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel warning-panel" aria-labelledby="warning-heading">
+      <h2 id="warning-heading">这不是 Instruction，也不是资格决定</h2>
+      <ul>
+        <li>页面只读取同一工作区内由可信本地准备器生成并绑定的机械上下文。</li>
+        <li>页面只允许真人填写四个字段；不会填写当前时间、预选决定、建议依据或推断 issue codes。</li>
+        <li>下载文件固定标记为 <code>UNTRUSTED_DRAFT</code>；只能交给可信 Python <code>finalize-instruction</code> 重新核验，不得作为 canonical Instruction 输入 v2.2 Decision Finalizer。</li>
+        <li>页面不会联网、上传、保存浏览器状态、启动服务或创建任何权限。</li>
+      </ul>
+    </section>
+
+    <section class="panel" aria-labelledby="binding-heading">
+      <div class="section-heading">
+        <div>
+          <p class="label">只读机械绑定</p>
+          <h2 id="binding-heading">Request 与 Qualifier 上下文</h2>
+        </div>
+        <span class="badge">READ ONLY</span>
+      </div>
+      <p id="context-status" class="status" role="status" aria-live="polite">正在验证本地上下文…</p>
+      <dl id="context-bindings" class="binding-grid" hidden>
+        <div><dt>context_id</dt><dd data-context-field="context_id">—</dd></div>
+        <div><dt>context_sha256</dt><dd data-context-sha256>—</dd></div>
+        <div><dt>request_id</dt><dd data-context-field="request_id">—</dd></div>
+        <div><dt>request_sha256</dt><dd data-context-field="request_sha256">—</dd></div>
+        <div><dt>requested_at</dt><dd data-context-field="requested_at">—</dd></div>
+        <div><dt>prepared_at</dt><dd data-context-field="prepared_at">—</dd></div>
+        <div><dt>request_valid_until</dt><dd data-context-field="request_valid_until">—</dd></div>
+        <div><dt>policy_id</dt><dd data-context-field="policy_id">—</dd></div>
+        <div><dt>policy_version</dt><dd data-context-field="policy_version">—</dd></div>
+        <div><dt>policy_document_sha256</dt><dd data-context-field="policy_document_sha256">—</dd></div>
+        <div><dt>qualification_scope</dt><dd data-context-field="qualification_scope">—</dd></div>
+        <div><dt>qualifier_role</dt><dd data-context-field="qualifier_role">—</dd></div>
+        <div><dt>qualifier_ref_sha256</dt><dd data-context-field="qualifier_ref_sha256">—</dd></div>
+        <div><dt>draft_document_type</dt><dd data-context-field="draft_document_type">—</dd></div>
+      </dl>
+    </section>
+
+    <section id="human-input" class="panel" aria-labelledby="human-input-heading">
+      <div class="section-heading">
+        <div>
+          <p class="label">四项真人输入</p>
+          <h2 id="human-input-heading">独立 Qualifier 工作区</h2>
+        </div>
+        <span class="badge warning-badge">UNTRUSTED DRAFT</span>
+      </div>
+
+      <form id="instruction-draft-form" autocomplete="off" novalidate hidden>
+        <div class="field-block">
+          <label for="decision-at">decision_at</label>
+          <input id="decision-at" name="decision_at" type="text" maxlength="20" inputmode="text" autocomplete="off" spellcheck="false" placeholder="YYYY-MM-DDTHH:MM:SSZ" required aria-invalid="true" aria-describedby="decision-at-help">
+          <p id="decision-at-help" class="help">由真人明确填写 UTC 整秒；必须不早于 prepared_at，并早于 Request 的排他有效期。页面不读取或生成当前时间。</p>
+        </div>
+
+        <fieldset id="decision-fieldset" class="field-block" aria-invalid="true" aria-describedby="decision-help">
+          <legend>decision</legend>
+          <div class="choice-grid">
+            <label><input type="radio" name="decision" value="PASS_ASSET_INTAKE_ONLY" required> PASS_ASSET_INTAKE_ONLY</label>
+            <label><input type="radio" name="decision" value="REJECTED" required> REJECTED</label>
+            <label><input type="radio" name="decision" value="NEEDS_HUMAN_REVIEW" required> NEEDS_HUMAN_REVIEW</label>
+          </div>
+          <p id="decision-help" class="help">没有预选项；页面不会推荐或推断结果。</p>
+        </fieldset>
+
+        <fieldset id="issues-fieldset" class="field-block" aria-invalid="true" aria-describedby="issues-help">
+          <legend>qualification_issue_codes</legend>
+          <div class="choice-list">
+            <label class="empty-choice"><input id="issues-explicit-empty" type="checkbox" name="qualification_issue_codes" value="__EXPLICIT_EMPTY__"> 真人明确提供空集合</label>
+            <label><input type="checkbox" name="qualification_issue_codes" value="EVIDENCE_SCOPE_UNCLEAR"> EVIDENCE_SCOPE_UNCLEAR</label>
+            <label><input type="checkbox" name="qualification_issue_codes" value="POLICY_REQUIREMENT_NOT_MET"> POLICY_REQUIREMENT_NOT_MET</label>
+            <label><input type="checkbox" name="qualification_issue_codes" value="QUALIFIER_REJECTED_ASSET_INTAKE"> QUALIFIER_REJECTED_ASSET_INTAKE</label>
+            <label><input type="checkbox" name="qualification_issue_codes" value="OTHER_BLOCKING_ISSUE"> OTHER_BLOCKING_ISSUE</label>
+          </div>
+          <p id="issues-help" class="help">该字段必须由真人显式提供。空集合与一个或多个代码互斥；所选代码按固定显示顺序导出，不会自动补全。</p>
+        </fieldset>
+
+        <div class="field-block">
+          <label for="qualification-basis">qualification_basis</label>
+          <textarea id="qualification-basis" name="qualification_basis" rows="6" required aria-invalid="true" aria-describedby="basis-help"></textarea>
+          <p id="basis-help" class="help">必须由真人独立书写非空、首尾无空白、Unicode NFC、无控制字符的依据。页面不会起草、补全或建议内容。</p>
+        </div>
+
+        <aside class="rule-card" aria-labelledby="rule-heading">
+          <h3 id="rule-heading">合同组合规则</h3>
+          <ul>
+            <li><code>PASS_ASSET_INTAKE_ONLY</code>：issue codes 必须由真人显式提供为空。</li>
+            <li><code>REJECTED</code>：必须非空并包含 <code>QUALIFIER_REJECTED_ASSET_INTAKE</code>。</li>
+            <li><code>NEEDS_HUMAN_REVIEW</code>：必须非空且不得包含该 rejection code。</li>
+          </ul>
+          <p>这些是机械合同规则，不构成对任何结果的建议。</p>
+        </aside>
+
+        <div class="action-row">
+          <button id="download-draft" type="button" disabled aria-describedby="form-status">下载未受信草稿</button>
+          <p id="form-status" class="status" role="status" aria-live="polite">等待真人完整填写四个字段。</p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>本页不生成 canonical Instruction、Qualification Decision、rights manifest、entitlement 或 authorization。</p>
+  </footer>
+</body>
+</html>
