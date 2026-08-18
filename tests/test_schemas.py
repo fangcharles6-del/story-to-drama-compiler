@@ -8,6 +8,9 @@ from sdc.contracts import (
     ProviderFailure,
     ProviderPricingSnapshot,
 )
+from sdc.real_asset_qualification_decision_instruction_v22 import (
+    CreativeSampleRealAssetQualificationDecisionInstructionV22,
+)
 from sdc.real_asset_qualification_v2 import (
     QUALIFICATION_V2_POLICY_DOCUMENT_SHA256,
     CreativeSampleRealAssetQualificationDecisionV2,
@@ -217,7 +220,7 @@ def test_all_pre_request_preparer_schema_bytes_remain_unchanged() -> None:
 
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 55
+    assert len(model_names) == 56
     assert len(model_names) == len(set(model_names))
 
     expected = {f"{name}.schema.json" for name in model_names}
@@ -254,6 +257,32 @@ def test_qualification_v2_schemas_are_append_only_and_zero_authority() -> None:
         for field, expected in expected_constants.items():
             assert properties[field]["const"] == expected
         assert properties["rights_qualification_performed"]["const"] is performed
+
+
+def test_decision_instruction_v22_schema_is_append_only_and_zero_authority() -> None:
+    assert CreativeSampleRealAssetQualificationDecisionInstructionV22 in MODELS
+    schema = json.loads(
+        Path(
+            "schemas/CreativeSampleRealAssetQualificationDecisionInstructionV22.schema.json"
+        ).read_text()
+    )
+    properties = schema["properties"]
+    expected_constants = {
+        "schema_version": "2.2.0",
+        "qualification_scope": "ASSET_INTAKE_ONLY",
+        "qualifier_role": "INDEPENDENT_QUALIFIER",
+        "rights_manifest_created": False,
+        "rights_qualification_performed": False,
+        "eligible_for_separate_manifest_design_review": False,
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "eligible_for_real_generation": False,
+        "execution_authorized": False,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+    }
+    for field, expected in expected_constants.items():
+        assert properties[field]["const"] == expected
 
 
 def test_evidence_bound_authorization_has_a_distinct_committed_schema() -> None:

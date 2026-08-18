@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "RealAssetQualificationDecisionV2": {
+      "enum": [
+        "PASS_ASSET_INTAKE_ONLY",
+        "REJECTED",
+        "NEEDS_HUMAN_REVIEW"
+      ],
+      "type": "string"
+    },
+    "RealAssetQualificationIssueCodeV2": {
+      "enum": [
+        "EVIDENCE_SCOPE_UNCLEAR",
+        "POLICY_REQUIREMENT_NOT_MET",
+        "QUALIFIER_REJECTED_ASSET_INTAKE",
+        "OTHER_BLOCKING_ISSUE"
+      ],
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A retained, zero-authority instruction for one independent scoped decision.",
+  "properties": {
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/RealAssetQualificationDecisionV2"
+    },
+    "decision_at": {
+      "title": "Decision At",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-qualification-decision-instruction-v2.2",
+      "default": "sdc.creative-sample-real-asset-qualification-decision-instruction-v2.2",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_real_generation": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Real Generation",
+      "type": "boolean"
+    },
+    "eligible_for_separate_manifest_design_review": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Separate Manifest Design Review",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "instruction_id": {
+      "pattern": "^real_asset_qualification_decision_instruction_v22_[0-9a-f]{20}$",
+      "title": "Instruction Id",
+      "type": "string"
+    },
+    "policy_document_sha256": {
+      "const": "f6da348159f8ac4cc0a65000282445f5bd672dc9f2557b8969a02baa7982b031",
+      "default": "f6da348159f8ac4cc0a65000282445f5bd672dc9f2557b8969a02baa7982b031",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "creative-sample-real-asset-qualification-policy",
+      "default": "creative-sample-real-asset-qualification-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "2.0.0",
+      "default": "2.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-qualification-decision-finalization-v2.2",
+      "default": "creative-sample-real-asset-qualification-decision-finalization-v2.2",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "qualification_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Qualification Basis",
+      "type": "string"
+    },
+    "qualification_issue_codes": {
+      "items": {
+        "$ref": "#/$defs/RealAssetQualificationIssueCodeV2"
+      },
+      "maxItems": 4,
+      "title": "Qualification Issue Codes",
+      "type": "array"
+    },
+    "qualification_scope": {
+      "const": "ASSET_INTAKE_ONLY",
+      "default": "ASSET_INTAKE_ONLY",
+      "title": "Qualification Scope",
+      "type": "string"
+    },
+    "qualifier_ref_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualifier Ref Sha256",
+      "type": "string"
+    },
+    "qualifier_role": {
+      "const": "INDEPENDENT_QUALIFIER",
+      "default": "INDEPENDENT_QUALIFIER",
+      "title": "Qualifier Role",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^real_asset_qualification_request_v2_[0-9a-f]{20}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "rights_manifest_created": {
+      "const": false,
+      "default": false,
+      "title": "Rights Manifest Created",
+      "type": "boolean"
+    },
+    "rights_qualification_performed": {
+      "const": false,
+      "default": false,
+      "title": "Rights Qualification Performed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "2.2.0",
+      "default": "2.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "DECISION_INSTRUCTION_RECORDED",
+      "default": "DECISION_INSTRUCTION_RECORDED",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "instruction_id",
+    "request_id",
+    "request_sha256",
+    "qualifier_ref_sha256",
+    "decision_at",
+    "decision",
+    "qualification_issue_codes",
+    "qualification_basis"
+  ],
+  "title": "CreativeSampleRealAssetQualificationDecisionInstructionV22",
+  "type": "object"
+}
