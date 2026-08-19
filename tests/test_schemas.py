@@ -202,6 +202,12 @@ PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256 = {
         "a6823db740274fc0806f95f7c66cf2b2092dc3bdd575796e00bbe5e5a566c251"
     ),
 }
+PRE_MANIFEST_FINALIZER_SCHEMA_SHA256 = {
+    **PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256,
+    "CreativeSampleRealAssetRightsManifestV2.schema.json": (
+        "54eb14e54df22f4bb2b3c09ef2d2f1c9490c7843732faa9586c6738abb392f50"
+    ),
+}
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -228,6 +234,13 @@ def test_all_pre_request_preparer_schema_bytes_remain_unchanged() -> None:
 def test_all_pre_instruction_preparer_schema_bytes_remain_unchanged() -> None:
     assert len(PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256) == 56
     for name, digest in PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
+def test_all_pre_manifest_finalizer_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_MANIFEST_FINALIZER_SCHEMA_SHA256) == 57
+    for name, digest in PRE_MANIFEST_FINALIZER_SCHEMA_SHA256.items():
         canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
