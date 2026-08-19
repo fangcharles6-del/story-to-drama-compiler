@@ -148,6 +148,18 @@ def _manifest_output(tmp_path: Path, name: str = "rights-manifest-v2.json") -> P
     return parent / name
 
 
+def _assert_ordinary_rollback_result(output: Path) -> None:
+    if sys.platform == "win32":
+        assert not output.exists()
+        return
+
+    assert stat.S_ISREG(output.lstat().st_mode)
+    raw = output.read_bytes()
+    assert raw == b"" or raw.startswith(b"\0")
+    with pytest.raises(RealAssetRightsManifestV24Error):
+        parse_real_asset_rights_manifest_v2_json(raw)
+
+
 def _cli_args(paths: TrustedLocalRightsManifestPaths) -> list[str]:
     request = paths.decision_inputs.request_inputs
     values = [
@@ -1372,7 +1384,10 @@ def test_prewrite_and_postwrite_input_toctou_rolls_back(
     output = _manifest_output(tmp_path, f"manifest-drift-{mutate_after_capture}.json")
     with pytest.raises(TrustedLocalRightsManifestFinalizationError, match="drifted"):
         finalize_manifest(closure.paths, output, manifest_at=MANIFEST_AT)
-    assert not output.exists()
+    if mutate_after_capture == 1:
+        assert not output.exists()
+    else:
+        _assert_ordinary_rollback_result(output)
 
 
 def test_output_parent_identity_swap_is_rejected_before_create(
@@ -1632,10 +1647,10 @@ def test_postwrite_base_exception_rolls_back_before_propagation(
     monkeypatch.setattr(finalizer_module, "_capture_snapshot", interrupt_third_capture)
     with pytest.raises(interrupt):
         finalize_manifest(closure.paths, output, manifest_at=MANIFEST_AT)
-    assert not output.exists()
+    _assert_ordinary_rollback_result(output)
 
 
-def test_create_time_base_exception_removes_partial_manifest(
+def test_create_time_base_exception_invalidates_partial_manifest(
     closure: SyntheticManifestClosure,
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1654,7 +1669,7 @@ def test_create_time_base_exception_removes_partial_manifest(
     monkeypatch.setattr(os, "write", interrupt_first_write)
     with pytest.raises(KeyboardInterrupt):
         finalize_manifest(closure.paths, output, manifest_at=MANIFEST_AT)
-    assert not output.exists()
+    _assert_ordinary_rollback_result(output)
 
 
 def test_replacement_during_failure_is_never_deleted_as_created_manifest(
