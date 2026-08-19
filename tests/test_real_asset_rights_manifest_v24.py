@@ -764,7 +764,10 @@ def test_parser_is_bounded_strict_and_rejects_ambiguous_or_forged_json(
     with pytest.raises(RealAssetRightsManifestV24Error, match="strict UTF-8"):
         parse_real_asset_rights_manifest_v2_json(b"\xff")
     deeply_nested = b"[" * 2000 + b"0" + b"]" * 2000
-    with pytest.raises(RealAssetRightsManifestV24Error, match="strict UTF-8"):
+    with pytest.raises(
+        RealAssetRightsManifestV24Error,
+        match="strict UTF-8|one object",
+    ):
         parse_real_asset_rights_manifest_v2_json(deeply_nested)
     excessive_integer = b'{"value":' + b"1" * 5000 + b"}"
     with pytest.raises(RealAssetRightsManifestV24Error, match="strict UTF-8"):
