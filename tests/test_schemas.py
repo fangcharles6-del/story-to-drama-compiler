@@ -16,6 +16,7 @@ from sdc.real_asset_qualification_v2 import (
     CreativeSampleRealAssetQualificationDecisionV2,
     CreativeSampleRealAssetQualificationRequestV2,
 )
+from sdc.real_asset_rights_manifest_v24 import CreativeSampleRealAssetRightsManifestV2
 from sdc.schemas import MODELS
 
 PRE_V2_SCHEMA_SHA256 = {
@@ -233,7 +234,7 @@ def test_all_pre_instruction_preparer_schema_bytes_remain_unchanged() -> None:
 
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 56
+    assert len(model_names) == 57
     assert len(model_names) == len(set(model_names))
 
     expected = {f"{name}.schema.json" for name in model_names}
@@ -287,6 +288,32 @@ def test_decision_instruction_v22_schema_is_append_only_and_zero_authority() -> 
         "rights_manifest_created": False,
         "rights_qualification_performed": False,
         "eligible_for_separate_manifest_design_review": False,
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "eligible_for_real_generation": False,
+        "execution_authorized": False,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+    }
+    for field, expected in expected_constants.items():
+        assert properties[field]["const"] == expected
+
+
+def test_rights_manifest_v2_schema_is_append_only_and_zero_authority() -> None:
+    assert CreativeSampleRealAssetRightsManifestV2 in MODELS
+    schema = json.loads(
+        Path("schemas/CreativeSampleRealAssetRightsManifestV2.schema.json").read_text()
+    )
+    properties = schema["properties"]
+    expected_constants = {
+        "schema_version": "2.4.0",
+        "document_type": "sdc.creative-sample-real-asset-rights-manifest-v2",
+        "qualification_decision": "PASS_ASSET_INTAKE_ONLY",
+        "qualification_scope": "ASSET_INTAKE_ONLY",
+        "eligible_for_separate_manifest_design_review": True,
+        "status": "RIGHTS_MANIFEST_CREATED",
+        "rights_qualification_performed": True,
+        "rights_manifest_created": True,
         "current_gate": "HUMAN_GATE",
         "provider_state": "NOT_AUTHORIZED",
         "eligible_for_real_generation": False,
