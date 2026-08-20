@@ -713,6 +713,8 @@ def test_file_exists_is_winner_only_before_open_and_rolls_back_after_open(
         paths=normalized,
     )
     retained_guards: list[int] = []
+    original_os_close = finalizer_module.os.close
+    original_windows_close = finalizer_module._manifest_boundary._close_windows_handle
 
     def safely_rolled_back_then_fail(
         target: object,
@@ -726,8 +728,12 @@ def test_file_exists_is_winner_only_before_open_and_rolls_back_after_open(
         raise RuntimeError("synthetic failure after exact file rollback")
 
     def fail_parent_close(handle: int) -> None:
-        del handle
-        raise OSError("synthetic parent close failure")
+        if retained_guards and handle == retained_guards[-1]:
+            raise OSError("synthetic parent close failure")
+        if sys.platform == "win32":
+            original_windows_close(handle)
+        else:
+            original_os_close(handle)
 
     try:
         with monkeypatch.context() as scoped:
@@ -752,6 +758,7 @@ def test_file_exists_is_winner_only_before_open_and_rolls_back_after_open(
                     maximum_bytes=finalizer_module._PLAN_MAX_BYTES,
                     field="Use Plan",
                 )
+        assert len(retained_guards) == 1
     finally:
         for guard in retained_guards:
             if sys.platform == "win32":
