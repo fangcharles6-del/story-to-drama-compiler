@@ -17,6 +17,17 @@ from sdc.real_asset_qualification_v2 import (
     CreativeSampleRealAssetQualificationRequestV2,
 )
 from sdc.real_asset_rights_manifest_v24 import CreativeSampleRealAssetRightsManifestV2
+from sdc.real_asset_use_plan_v26 import (
+    USE_PLAN_V1_POLICY_DOCUMENT_SHA256,
+    CreativeSampleRealAssetUsePlanV1,
+)
+from sdc.real_asset_use_scope_review_v26 import (
+    USE_SCOPE_REVIEW_V1_POLICY_DOCUMENT_SHA256,
+    CreativeSampleRealAssetUseScopeReviewDecisionV1,
+    CreativeSampleRealAssetUseScopeReviewInstructionV1,
+    CreativeSampleRealAssetUseScopeReviewRecordV1,
+    CreativeSampleRealAssetUseScopeReviewRequestV1,
+)
 from sdc.schemas import MODELS
 
 PRE_V2_SCHEMA_SHA256 = {
@@ -247,7 +258,7 @@ def test_all_pre_manifest_finalizer_schema_bytes_remain_unchanged() -> None:
 
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 57
+    assert len(model_names) == 62
     assert len(model_names) == len(set(model_names))
 
     expected = {f"{name}.schema.json" for name in model_names}
@@ -336,6 +347,105 @@ def test_rights_manifest_v2_schema_is_append_only_and_zero_authority() -> None:
     }
     for field, expected in expected_constants.items():
         assert properties[field]["const"] == expected
+
+
+def test_use_plan_v1_schema_is_append_only_and_zero_authority() -> None:
+    assert CreativeSampleRealAssetUsePlanV1 in MODELS
+    schema = json.loads(
+        Path("schemas/CreativeSampleRealAssetUsePlanV1.schema.json").read_text()
+    )
+    properties = schema["properties"]
+    expected_constants = {
+        "schema_version": "1.0.0",
+        "document_type": "sdc.creative-sample-real-asset-use-plan-v1",
+        "plan_policy_document_sha256": USE_PLAN_V1_POLICY_DOCUMENT_SHA256,
+        "source_mode": "IMPORTED_MEDIA",
+        "consumer_scope": "OFFLINE_DESIGN_REVIEW_ONLY",
+        "shot_count": 10,
+        "proposed_attempts_per_shot": 2,
+        "proposed_provider_requests_max": 20,
+        "proposed_image_generation_requests": 0,
+        "proposed_audio_generation_requests": 0,
+        "proposed_cost_ceiling_cny": 450,
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "status": "USE_PLAN_CANDIDATE_CREATED",
+        "rights_manifest_created": True,
+        "use_scope_review_performed": False,
+        "eligible_for_separate_use_scope_review": True,
+        "eligible_for_separate_provider_proposal": False,
+        "eligible_for_separate_provider_approval": False,
+        "provider_approval_granted": False,
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "eligible_for_real_generation": False,
+        "generation_authorized": False,
+        "execution_authorized": False,
+        "publication_authorized": False,
+        "remote_processing_allowed": False,
+        "retention_allowed": False,
+        "training_allowed": False,
+        "publication_allowed": False,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+    }
+    for field, expected in expected_constants.items():
+        assert properties[field]["const"] == expected
+
+
+def test_use_scope_review_v1_schemas_are_partitioned_and_zero_authority() -> None:
+    module_models = (
+        CreativeSampleRealAssetUseScopeReviewRequestV1,
+        CreativeSampleRealAssetUseScopeReviewInstructionV1,
+        CreativeSampleRealAssetUseScopeReviewDecisionV1,
+    )
+    for model in (*module_models, CreativeSampleRealAssetUseScopeReviewRecordV1):
+        assert model in MODELS
+
+    expected_zero_authority = {
+        "review_policy_document_sha256": USE_SCOPE_REVIEW_V1_POLICY_DOCUMENT_SHA256,
+        "rights_manifest_created": True,
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "eligible_for_separate_provider_approval": False,
+        "provider_approval_granted": False,
+        "eligible_for_real_generation": False,
+        "generation_authorized": False,
+        "execution_authorized": False,
+        "publication_authorized": False,
+        "remote_processing_allowed": False,
+        "retention_allowed": False,
+        "training_allowed": False,
+        "publication_allowed": False,
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+    }
+    for model in module_models:
+        schema = json.loads(Path(f"schemas/{model.__name__}.schema.json").read_text())
+        properties = schema["properties"]
+        for field, expected in expected_zero_authority.items():
+            assert properties[field]["const"] == expected
+
+    record_schema = json.loads(
+        Path("schemas/CreativeSampleRealAssetUseScopeReviewRecordV1.schema.json").read_text()
+    )
+    record_properties = record_schema["properties"]
+    assert record_properties["request"]["$ref"].endswith(
+        "/CreativeSampleRealAssetUseScopeReviewRequestV1"
+    )
+    assert record_properties["instruction"]["$ref"].endswith(
+        "/CreativeSampleRealAssetUseScopeReviewInstructionV1"
+    )
+    assert record_properties["decision"]["$ref"].endswith(
+        "/CreativeSampleRealAssetUseScopeReviewDecisionV1"
+    )
+    assert {
+        "request_sha256",
+        "instruction_sha256",
+        "decision_sha256",
+    } <= set(record_properties)
 
 
 def test_evidence_bound_authorization_has_a_distinct_committed_schema() -> None:
