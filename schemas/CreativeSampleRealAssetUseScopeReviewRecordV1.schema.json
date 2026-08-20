@@ -1,0 +1,991 @@
+{
+  "$defs": {
+    "CreativeSampleRealAssetUseScopeReviewDecisionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_attempts": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Attempts",
+          "type": "integer"
+        },
+        "authorized_cost_cny": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Cost Cny",
+          "type": "integer"
+        },
+        "checker_identity_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Checker Identity Ref Sha256",
+          "type": "string"
+        },
+        "current_gate": {
+          "const": "HUMAN_GATE",
+          "default": "HUMAN_GATE",
+          "title": "Current Gate",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "PASS_FOR_PROVIDER_PROPOSAL_DESIGN_ONLY",
+            "NEEDS_REVISION",
+            "REJECTED"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "decision_at": {
+          "title": "Decision At",
+          "type": "string"
+        },
+        "decision_basis": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Decision Basis",
+          "type": "string"
+        },
+        "decision_id": {
+          "pattern": "^real_asset_use_scope_decision_v1_[0-9a-f]{20}$",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "document_type": {
+          "const": "sdc.creative-sample-real-asset-use-scope-review-decision-v1",
+          "default": "sdc.creative-sample-real-asset-use-scope-review-decision-v1",
+          "title": "Document Type",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_approval": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Separate Provider Approval",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_proposal": {
+          "title": "Eligible For Separate Provider Proposal",
+          "type": "boolean"
+        },
+        "evaluated_at": {
+          "title": "Evaluated At",
+          "type": "string"
+        },
+        "evidence_valid_until": {
+          "title": "Evidence Valid Until",
+          "type": "string"
+        },
+        "execution_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Execution Authorized",
+          "type": "boolean"
+        },
+        "generation_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Generation Authorized",
+          "type": "boolean"
+        },
+        "instruction_id": {
+          "pattern": "^real_asset_use_scope_instruction_v1_[0-9a-f]{20}$",
+          "title": "Instruction Id",
+          "type": "string"
+        },
+        "instruction_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Instruction Sha256",
+          "type": "string"
+        },
+        "issue_codes": {
+          "items": {
+            "enum": [
+              "COPYRIGHT_USE_SCOPE_NOT_CONFIRMED",
+              "LIKENESS_USE_SCOPE_NOT_CONFIRMED",
+              "PRIVACY_USE_SCOPE_NOT_CONFIRMED",
+              "TERRITORY_USE_SCOPE_NOT_CONFIRMED",
+              "CONTENT_ROLE_USE_SCOPE_NOT_CONFIRMED",
+              "OFFLINE_ONLY_RESTRICTIONS_NOT_CONFIRMED",
+              "CHECKER_REJECTED_USE_SCOPE"
+            ],
+            "type": "string"
+          },
+          "maxItems": 7,
+          "title": "Issue Codes",
+          "type": "array"
+        },
+        "maker_identity_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Maker Identity Ref Sha256",
+          "type": "string"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "default": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "profile": {
+          "const": "creative-sample-real-asset-use-scope-review-v2.6",
+          "default": "creative-sample-real-asset-use-scope-review-v2.6",
+          "title": "Profile",
+          "type": "string"
+        },
+        "provider_approval_granted": {
+          "const": false,
+          "default": false,
+          "title": "Provider Approval Granted",
+          "type": "boolean"
+        },
+        "provider_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "provider_state": {
+          "const": "NOT_AUTHORIZED",
+          "default": "NOT_AUTHORIZED",
+          "title": "Provider State",
+          "type": "string"
+        },
+        "publication_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Publication Allowed",
+          "type": "boolean"
+        },
+        "publication_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Publication Authorized",
+          "type": "boolean"
+        },
+        "remote_processing_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Remote Processing Allowed",
+          "type": "boolean"
+        },
+        "request_id": {
+          "pattern": "^real_asset_use_scope_request_v1_[0-9a-f]{20}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Sha256",
+          "type": "string"
+        },
+        "request_valid_until": {
+          "title": "Request Valid Until",
+          "type": "string"
+        },
+        "requested_at": {
+          "title": "Requested At",
+          "type": "string"
+        },
+        "requested_outcome_scope": {
+          "const": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "default": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "title": "Requested Outcome Scope",
+          "type": "string"
+        },
+        "retention_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Retention Allowed",
+          "type": "boolean"
+        },
+        "review_policy_document_sha256": {
+          "const": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "default": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "title": "Review Policy Document Sha256",
+          "type": "string"
+        },
+        "review_policy_id": {
+          "const": "creative-sample-real-asset-use-scope-review-policy",
+          "default": "creative-sample-real-asset-use-scope-review-policy",
+          "title": "Review Policy Id",
+          "type": "string"
+        },
+        "review_policy_version": {
+          "const": "2.6.0",
+          "default": "2.6.0",
+          "title": "Review Policy Version",
+          "type": "string"
+        },
+        "review_scope": {
+          "const": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "default": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "title": "Review Scope",
+          "type": "string"
+        },
+        "review_valid_until": {
+          "title": "Review Valid Until",
+          "type": "string"
+        },
+        "rights_manifest_created": {
+          "const": true,
+          "default": true,
+          "title": "Rights Manifest Created",
+          "type": "boolean"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        },
+        "rights_qualification_performed": {
+          "const": true,
+          "default": true,
+          "title": "Rights Qualification Performed",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "const": "USE_SCOPE_REVIEW_COMPLETE",
+          "default": "USE_SCOPE_REVIEW_COMPLETE",
+          "title": "Status",
+          "type": "string"
+        },
+        "training_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Training Allowed",
+          "type": "boolean"
+        },
+        "use_plan_id": {
+          "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+          "title": "Use Plan Id",
+          "type": "string"
+        },
+        "use_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Plan Sha256",
+          "type": "string"
+        },
+        "use_scope_review_performed": {
+          "const": true,
+          "default": true,
+          "title": "Use Scope Review Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "decision_id",
+        "request_id",
+        "request_sha256",
+        "instruction_id",
+        "instruction_sha256",
+        "use_plan_id",
+        "use_plan_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "maker_identity_ref_sha256",
+        "checker_identity_ref_sha256",
+        "requested_at",
+        "request_valid_until",
+        "evaluated_at",
+        "decision_at",
+        "evidence_valid_until",
+        "review_valid_until",
+        "decision",
+        "issue_codes",
+        "decision_basis",
+        "eligible_for_separate_provider_proposal"
+      ],
+      "title": "CreativeSampleRealAssetUseScopeReviewDecisionV1",
+      "type": "object"
+    },
+    "CreativeSampleRealAssetUseScopeReviewInstructionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_attempts": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Attempts",
+          "type": "integer"
+        },
+        "authorized_cost_cny": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Cost Cny",
+          "type": "integer"
+        },
+        "checker_basis": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Checker Basis",
+          "type": "string"
+        },
+        "checker_identity_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Checker Identity Ref Sha256",
+          "type": "string"
+        },
+        "checker_role": {
+          "const": "CHECKER",
+          "default": "CHECKER",
+          "title": "Checker Role",
+          "type": "string"
+        },
+        "current_gate": {
+          "const": "HUMAN_GATE",
+          "default": "HUMAN_GATE",
+          "title": "Current Gate",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "PASS_FOR_PROVIDER_PROPOSAL_DESIGN_ONLY",
+            "NEEDS_REVISION",
+            "REJECTED"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "document_type": {
+          "const": "sdc.creative-sample-real-asset-use-scope-review-instruction-v1",
+          "default": "sdc.creative-sample-real-asset-use-scope-review-instruction-v1",
+          "title": "Document Type",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_approval": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Separate Provider Approval",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_proposal": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Separate Provider Proposal",
+          "type": "boolean"
+        },
+        "evaluated_at": {
+          "title": "Evaluated At",
+          "type": "string"
+        },
+        "evidence_valid_until": {
+          "title": "Evidence Valid Until",
+          "type": "string"
+        },
+        "execution_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Execution Authorized",
+          "type": "boolean"
+        },
+        "gate_results": {
+          "items": {
+            "$ref": "#/$defs/UseScopeGateResultV1"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "title": "Gate Results",
+          "type": "array"
+        },
+        "generation_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Generation Authorized",
+          "type": "boolean"
+        },
+        "instruction_id": {
+          "pattern": "^real_asset_use_scope_instruction_v1_[0-9a-f]{20}$",
+          "title": "Instruction Id",
+          "type": "string"
+        },
+        "maker_identity_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Maker Identity Ref Sha256",
+          "type": "string"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "default": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "profile": {
+          "const": "creative-sample-real-asset-use-scope-review-v2.6",
+          "default": "creative-sample-real-asset-use-scope-review-v2.6",
+          "title": "Profile",
+          "type": "string"
+        },
+        "provider_approval_granted": {
+          "const": false,
+          "default": false,
+          "title": "Provider Approval Granted",
+          "type": "boolean"
+        },
+        "provider_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "provider_state": {
+          "const": "NOT_AUTHORIZED",
+          "default": "NOT_AUTHORIZED",
+          "title": "Provider State",
+          "type": "string"
+        },
+        "publication_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Publication Allowed",
+          "type": "boolean"
+        },
+        "publication_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Publication Authorized",
+          "type": "boolean"
+        },
+        "remote_processing_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Remote Processing Allowed",
+          "type": "boolean"
+        },
+        "request_id": {
+          "pattern": "^real_asset_use_scope_request_v1_[0-9a-f]{20}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Sha256",
+          "type": "string"
+        },
+        "request_valid_until": {
+          "title": "Request Valid Until",
+          "type": "string"
+        },
+        "requested_at": {
+          "title": "Requested At",
+          "type": "string"
+        },
+        "requested_outcome_scope": {
+          "const": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "default": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "title": "Requested Outcome Scope",
+          "type": "string"
+        },
+        "retention_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Retention Allowed",
+          "type": "boolean"
+        },
+        "review_policy_document_sha256": {
+          "const": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "default": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "title": "Review Policy Document Sha256",
+          "type": "string"
+        },
+        "review_policy_id": {
+          "const": "creative-sample-real-asset-use-scope-review-policy",
+          "default": "creative-sample-real-asset-use-scope-review-policy",
+          "title": "Review Policy Id",
+          "type": "string"
+        },
+        "review_policy_version": {
+          "const": "2.6.0",
+          "default": "2.6.0",
+          "title": "Review Policy Version",
+          "type": "string"
+        },
+        "review_scope": {
+          "const": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "default": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "title": "Review Scope",
+          "type": "string"
+        },
+        "rights_manifest_created": {
+          "const": true,
+          "default": true,
+          "title": "Rights Manifest Created",
+          "type": "boolean"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        },
+        "rights_qualification_performed": {
+          "const": true,
+          "default": true,
+          "title": "Rights Qualification Performed",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "const": "USE_SCOPE_CHECK_RECORDED",
+          "default": "USE_SCOPE_CHECK_RECORDED",
+          "title": "Status",
+          "type": "string"
+        },
+        "training_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Training Allowed",
+          "type": "boolean"
+        },
+        "use_plan_id": {
+          "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+          "title": "Use Plan Id",
+          "type": "string"
+        },
+        "use_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Plan Sha256",
+          "type": "string"
+        },
+        "use_scope_review_performed": {
+          "const": false,
+          "default": false,
+          "title": "Use Scope Review Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "instruction_id",
+        "request_id",
+        "request_sha256",
+        "use_plan_id",
+        "use_plan_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "maker_identity_ref_sha256",
+        "checker_identity_ref_sha256",
+        "requested_at",
+        "request_valid_until",
+        "evidence_valid_until",
+        "evaluated_at",
+        "gate_results",
+        "disposition",
+        "checker_basis"
+      ],
+      "title": "CreativeSampleRealAssetUseScopeReviewInstructionV1",
+      "type": "object"
+    },
+    "CreativeSampleRealAssetUseScopeReviewRequestV1": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_attempts": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Attempts",
+          "type": "integer"
+        },
+        "authorized_cost_cny": {
+          "const": 0,
+          "default": 0,
+          "title": "Authorized Cost Cny",
+          "type": "integer"
+        },
+        "current_gate": {
+          "const": "HUMAN_GATE",
+          "default": "HUMAN_GATE",
+          "title": "Current Gate",
+          "type": "string"
+        },
+        "document_type": {
+          "const": "sdc.creative-sample-real-asset-use-scope-review-request-v1",
+          "default": "sdc.creative-sample-real-asset-use-scope-review-request-v1",
+          "title": "Document Type",
+          "type": "string"
+        },
+        "eligible_for_real_generation": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Real Generation",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_approval": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Separate Provider Approval",
+          "type": "boolean"
+        },
+        "eligible_for_separate_provider_proposal": {
+          "const": false,
+          "default": false,
+          "title": "Eligible For Separate Provider Proposal",
+          "type": "boolean"
+        },
+        "evidence_valid_until": {
+          "title": "Evidence Valid Until",
+          "type": "string"
+        },
+        "execution_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Execution Authorized",
+          "type": "boolean"
+        },
+        "generation_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Generation Authorized",
+          "type": "boolean"
+        },
+        "maker_identity_ref_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Maker Identity Ref Sha256",
+          "type": "string"
+        },
+        "maker_role": {
+          "const": "MAKER",
+          "default": "MAKER",
+          "title": "Maker Role",
+          "type": "string"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "default": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "profile": {
+          "const": "creative-sample-real-asset-use-scope-review-v2.6",
+          "default": "creative-sample-real-asset-use-scope-review-v2.6",
+          "title": "Profile",
+          "type": "string"
+        },
+        "provider_approval_granted": {
+          "const": false,
+          "default": false,
+          "title": "Provider Approval Granted",
+          "type": "boolean"
+        },
+        "provider_requests": {
+          "const": 0,
+          "default": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "provider_state": {
+          "const": "NOT_AUTHORIZED",
+          "default": "NOT_AUTHORIZED",
+          "title": "Provider State",
+          "type": "string"
+        },
+        "publication_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Publication Allowed",
+          "type": "boolean"
+        },
+        "publication_authorized": {
+          "const": false,
+          "default": false,
+          "title": "Publication Authorized",
+          "type": "boolean"
+        },
+        "remote_processing_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Remote Processing Allowed",
+          "type": "boolean"
+        },
+        "request_basis": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Request Basis",
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^real_asset_use_scope_request_v1_[0-9a-f]{20}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "request_valid_until": {
+          "title": "Request Valid Until",
+          "type": "string"
+        },
+        "requested_at": {
+          "title": "Requested At",
+          "type": "string"
+        },
+        "requested_outcome_scope": {
+          "const": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "default": "PROVIDER_PROPOSAL_DESIGN_ONLY",
+          "title": "Requested Outcome Scope",
+          "type": "string"
+        },
+        "retention_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Retention Allowed",
+          "type": "boolean"
+        },
+        "review_policy_document_sha256": {
+          "const": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "default": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+          "title": "Review Policy Document Sha256",
+          "type": "string"
+        },
+        "review_policy_id": {
+          "const": "creative-sample-real-asset-use-scope-review-policy",
+          "default": "creative-sample-real-asset-use-scope-review-policy",
+          "title": "Review Policy Id",
+          "type": "string"
+        },
+        "review_policy_version": {
+          "const": "2.6.0",
+          "default": "2.6.0",
+          "title": "Review Policy Version",
+          "type": "string"
+        },
+        "review_scope": {
+          "const": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "default": "OFFLINE_USE_PLAN_AND_RIGHTS_ALIGNMENT_ONLY",
+          "title": "Review Scope",
+          "type": "string"
+        },
+        "rights_manifest_at": {
+          "title": "Rights Manifest At",
+          "type": "string"
+        },
+        "rights_manifest_created": {
+          "const": true,
+          "default": true,
+          "title": "Rights Manifest Created",
+          "type": "boolean"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        },
+        "rights_qualification_performed": {
+          "const": true,
+          "default": true,
+          "title": "Rights Qualification Performed",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "const": "USE_SCOPE_REVIEW_REQUESTED",
+          "default": "USE_SCOPE_REVIEW_REQUESTED",
+          "title": "Status",
+          "type": "string"
+        },
+        "training_allowed": {
+          "const": false,
+          "default": false,
+          "title": "Training Allowed",
+          "type": "boolean"
+        },
+        "use_plan_id": {
+          "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+          "title": "Use Plan Id",
+          "type": "string"
+        },
+        "use_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Plan Sha256",
+          "type": "string"
+        },
+        "use_scope_review_performed": {
+          "const": false,
+          "default": false,
+          "title": "Use Scope Review Performed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "use_plan_id",
+        "use_plan_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "rights_manifest_at",
+        "evidence_valid_until",
+        "maker_identity_ref_sha256",
+        "requested_at",
+        "request_valid_until",
+        "request_basis"
+      ],
+      "title": "CreativeSampleRealAssetUseScopeReviewRequestV1",
+      "type": "object"
+    },
+    "UseScopeGateResultV1": {
+      "additionalProperties": false,
+      "properties": {
+        "approved": {
+          "title": "Approved",
+          "type": "boolean"
+        },
+        "gate": {
+          "enum": [
+            "COPYRIGHT_USE_SCOPE",
+            "LIKENESS_USE_SCOPE",
+            "PRIVACY_USE_SCOPE",
+            "TERRITORY_USE_SCOPE",
+            "CONTENT_ROLE_USE_SCOPE",
+            "OFFLINE_ONLY_RESTRICTIONS"
+          ],
+          "title": "Gate",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "gate",
+        "approved"
+      ],
+      "title": "UseScopeGateResultV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "$ref": "#/$defs/CreativeSampleRealAssetUseScopeReviewDecisionV1"
+    },
+    "decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-use-scope-review-record-v1",
+      "default": "sdc.creative-sample-real-asset-use-scope-review-record-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "instruction": {
+      "$ref": "#/$defs/CreativeSampleRealAssetUseScopeReviewInstructionV1"
+    },
+    "instruction_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Instruction Sha256",
+      "type": "string"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-use-scope-review-v2.6",
+      "default": "creative-sample-real-asset-use-scope-review-v2.6",
+      "title": "Profile",
+      "type": "string"
+    },
+    "record_id": {
+      "pattern": "^real_asset_use_scope_review_record_v1_[0-9a-f]{20}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "request": {
+      "$ref": "#/$defs/CreativeSampleRealAssetUseScopeReviewRequestV1"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "review_policy_document_sha256": {
+      "const": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+      "default": "0a2745b52d92335e8894b79ee7ff5588dea79d5bbfd021489c45c3bec5f7a969",
+      "title": "Review Policy Document Sha256",
+      "type": "string"
+    },
+    "review_policy_id": {
+      "const": "creative-sample-real-asset-use-scope-review-policy",
+      "default": "creative-sample-real-asset-use-scope-review-policy",
+      "title": "Review Policy Id",
+      "type": "string"
+    },
+    "review_policy_version": {
+      "const": "2.6.0",
+      "default": "2.6.0",
+      "title": "Review Policy Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "use_plan_id": {
+      "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+      "title": "Use Plan Id",
+      "type": "string"
+    },
+    "use_plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Use Plan Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "record_id",
+    "use_plan_id",
+    "use_plan_sha256",
+    "request",
+    "request_sha256",
+    "instruction",
+    "instruction_sha256",
+    "decision",
+    "decision_sha256"
+  ],
+  "title": "CreativeSampleRealAssetUseScopeReviewRecordV1",
+  "type": "object"
+}

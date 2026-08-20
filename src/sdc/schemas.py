@@ -29,6 +29,13 @@ from sdc.real_asset_review_v2 import (
     CreativeSampleRealAssetRightsEvidenceBundleV2,
 )
 from sdc.real_asset_rights_manifest_v24 import CreativeSampleRealAssetRightsManifestV2
+from sdc.real_asset_use_plan_v26 import CreativeSampleRealAssetUsePlanV1
+from sdc.real_asset_use_scope_review_v26 import (
+    CreativeSampleRealAssetUseScopeReviewDecisionV1,
+    CreativeSampleRealAssetUseScopeReviewInstructionV1,
+    CreativeSampleRealAssetUseScopeReviewRecordV1,
+    CreativeSampleRealAssetUseScopeReviewRequestV1,
+)
 
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
@@ -88,6 +95,11 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetQualificationDecisionV2,
     CreativeSampleRealAssetQualificationDecisionInstructionV22,
     CreativeSampleRealAssetRightsManifestV2,
+    CreativeSampleRealAssetUsePlanV1,
+    CreativeSampleRealAssetUseScopeReviewRequestV1,
+    CreativeSampleRealAssetUseScopeReviewInstructionV1,
+    CreativeSampleRealAssetUseScopeReviewDecisionV1,
+    CreativeSampleRealAssetUseScopeReviewRecordV1,
 ]
 
 

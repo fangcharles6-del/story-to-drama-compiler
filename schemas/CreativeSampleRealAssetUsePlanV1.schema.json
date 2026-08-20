@@ -1,0 +1,1842 @@
+{
+  "$defs": {
+    "AssemblyItem": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id",
+        "start_ms",
+        "duration_ms"
+      ],
+      "title": "AssemblyItem",
+      "type": "object"
+    },
+    "AssemblyPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "clock_id": {
+          "title": "Clock Id",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/AssemblyItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "clock_id",
+        "items"
+      ],
+      "title": "AssemblyPlan",
+      "type": "object"
+    },
+    "AudioCue": {
+      "additionalProperties": false,
+      "properties": {
+        "end_ms": {
+          "minimum": 0,
+          "title": "End Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_id": {
+          "title": "Shot Id",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "shot_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "title": "AudioCue",
+      "type": "object"
+    },
+    "AudioMasterClock": {
+      "additionalProperties": false,
+      "properties": {
+        "cues": {
+          "items": {
+            "$ref": "#/$defs/AudioCue"
+          },
+          "title": "Cues",
+          "type": "array"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "sample_rate_hz": {
+          "const": 48000,
+          "default": 48000,
+          "title": "Sample Rate Hz",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "duration_ms",
+        "cues"
+      ],
+      "title": "AudioMasterClock",
+      "type": "object"
+    },
+    "CharacterAssetBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character_id",
+        "asset_version_id"
+      ],
+      "title": "CharacterAssetBinding",
+      "type": "object"
+    },
+    "CharacterAssetVersion": {
+      "additionalProperties": false,
+      "description": "Portable, immutable reference to one approved character asset version.",
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "default": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "character_id",
+        "version",
+        "content_sha256",
+        "approval_ref",
+        "visual_description"
+      ],
+      "title": "CharacterAssetVersion",
+      "type": "object"
+    },
+    "CharacterBible": {
+      "additionalProperties": false,
+      "properties": {
+        "active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Active Asset Version Id",
+          "type": "string"
+        },
+        "asset_versions": {
+          "items": {
+            "$ref": "#/$defs/CharacterAssetVersion"
+          },
+          "minItems": 1,
+          "title": "Asset Versions",
+          "type": "array"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character_id",
+        "name",
+        "visual_description",
+        "asset_versions",
+        "active_asset_version_id"
+      ],
+      "title": "CharacterBible",
+      "type": "object"
+    },
+    "CreativeCameraAngle": {
+      "enum": [
+        "EYE_LEVEL",
+        "LOW_ANGLE",
+        "HIGH_ANGLE",
+        "DUTCH_ANGLE",
+        "OVERHEAD",
+        "POV"
+      ],
+      "title": "CreativeCameraAngle",
+      "type": "string"
+    },
+    "CreativeCameraMovement": {
+      "enum": [
+        "STATIC",
+        "PAN",
+        "TILT",
+        "DOLLY",
+        "TRUCK",
+        "PEDESTAL",
+        "HANDHELD",
+        "CRANE",
+        "ZOOM",
+        "ORBIT"
+      ],
+      "title": "CreativeCameraMovement",
+      "type": "string"
+    },
+    "CreativeSampleCompilation": {
+      "additionalProperties": false,
+      "properties": {
+        "assembly_plan": {
+          "$ref": "#/$defs/AssemblyPlan"
+        },
+        "audio_clock": {
+          "$ref": "#/$defs/AudioMasterClock"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "job_graph": {
+          "$ref": "#/$defs/JobGraph"
+        },
+        "nir": {
+          "$ref": "#/$defs/NIRV2"
+        },
+        "pir": {
+          "$ref": "#/$defs/PIRV2"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "spec_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Spec Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "spec_sha256",
+        "nir",
+        "pir",
+        "audio_clock",
+        "job_graph",
+        "assembly_plan"
+      ],
+      "title": "CreativeSampleCompilation",
+      "type": "object"
+    },
+    "CreativeSampleShotSpec": {
+      "additionalProperties": false,
+      "description": "ID-free source shot; compilation derives the immutable StoryboardShotV2 ID.",
+      "properties": {
+        "action": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "camera_angle": {
+          "$ref": "#/$defs/CreativeCameraAngle"
+        },
+        "camera_movement": {
+          "$ref": "#/$defs/CreativeCameraMovement"
+        },
+        "character_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Character Ids",
+          "type": "array"
+        },
+        "continuity_notes": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "emotion_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Emotion By Character",
+          "type": "object"
+        },
+        "narrative": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "props": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Props",
+          "type": "array"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_size": {
+          "$ref": "#/$defs/CreativeShotSize"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "visual_direction": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Direction",
+          "type": "string"
+        },
+        "wardrobe_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Wardrobe By Character",
+          "type": "object"
+        }
+      },
+      "required": [
+        "ordinal",
+        "scene_id",
+        "narrative",
+        "visual_direction",
+        "emotion_by_character",
+        "action",
+        "shot_size",
+        "camera_angle",
+        "camera_movement",
+        "wardrobe_by_character",
+        "props",
+        "continuity_notes",
+        "start_ms",
+        "duration_ms",
+        "character_ids",
+        "dialogue_line_ids"
+      ],
+      "title": "CreativeSampleShotSpec",
+      "type": "object"
+    },
+    "CreativeSampleSpec": {
+      "additionalProperties": false,
+      "description": "Portable, deterministic source for one 60-90 second creative sample.",
+      "properties": {
+        "character_bibles": {
+          "items": {
+            "$ref": "#/$defs/CharacterBible"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Character Bibles",
+          "type": "array"
+        },
+        "dialogue": {
+          "items": {
+            "$ref": "#/$defs/DialogueLine"
+          },
+          "minItems": 1,
+          "title": "Dialogue",
+          "type": "array"
+        },
+        "duration_ms": {
+          "maximum": 90000,
+          "minimum": 60000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "scene_bibles": {
+          "items": {
+            "$ref": "#/$defs/SceneBible"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Scene Bibles",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/CreativeSampleShotSpec"
+          },
+          "maxItems": 12,
+          "minItems": 8,
+          "title": "Shots",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "seed",
+        "duration_ms",
+        "character_bibles",
+        "scene_bibles",
+        "dialogue",
+        "shots"
+      ],
+      "title": "CreativeSampleSpec",
+      "type": "object"
+    },
+    "CreativeShotSize": {
+      "enum": [
+        "EXTREME_CLOSE_UP",
+        "CLOSE_UP",
+        "MEDIUM_CLOSE_UP",
+        "MEDIUM",
+        "MEDIUM_WIDE",
+        "WIDE",
+        "EXTREME_WIDE"
+      ],
+      "title": "CreativeShotSize",
+      "type": "string"
+    },
+    "DialogueLine": {
+      "additionalProperties": false,
+      "properties": {
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "end_ms": {
+          "minimum": 0,
+          "title": "End Ms",
+          "type": "integer"
+        },
+        "line_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Line Id",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "ordinal",
+        "scene_id",
+        "character_id",
+        "text",
+        "start_ms",
+        "end_ms"
+      ],
+      "title": "DialogueLine",
+      "type": "object"
+    },
+    "GenerationJob": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "max_attempts": {
+          "const": 2,
+          "default": 2,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_id": {
+          "title": "Shot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "shot_id",
+        "prompt",
+        "duration_ms",
+        "idempotency_key"
+      ],
+      "title": "GenerationJob",
+      "type": "object"
+    },
+    "JobGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "jobs": {
+          "items": {
+            "$ref": "#/$defs/GenerationJob"
+          },
+          "title": "Jobs",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "jobs"
+      ],
+      "title": "JobGraph",
+      "type": "object"
+    },
+    "ManifestClosureBindingV26": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "pattern": "^real_asset_rights_evidence_v2_[0-9a-f]{20}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "evidence_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Sha256",
+          "type": "string"
+        },
+        "evidence_territory": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Evidence Territory",
+          "type": "string"
+        },
+        "evidence_use_scope": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Evidence Use Scope",
+          "type": "string"
+        },
+        "evidence_valid_until": {
+          "title": "Evidence Valid Until",
+          "type": "string"
+        },
+        "pack_id": {
+          "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "pack_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pack Manifest Sha256",
+          "type": "string"
+        },
+        "pair_check_id": {
+          "pattern": "^real_asset_review_pair_check_v2_[0-9a-f]{20}$",
+          "title": "Pair Check Id",
+          "type": "string"
+        },
+        "pair_check_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pair Check Sha256",
+          "type": "string"
+        },
+        "qualification_decision_id": {
+          "pattern": "^real_asset_qualification_decision_v2_[0-9a-f]{20}$",
+          "title": "Qualification Decision Id",
+          "type": "string"
+        },
+        "qualification_decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Qualification Decision Sha256",
+          "type": "string"
+        },
+        "qualification_instruction_id": {
+          "pattern": "^real_asset_qualification_decision_instruction_v22_[0-9a-f]{20}$",
+          "title": "Qualification Instruction Id",
+          "type": "string"
+        },
+        "qualification_instruction_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Qualification Instruction Sha256",
+          "type": "string"
+        },
+        "qualification_request_id": {
+          "pattern": "^real_asset_qualification_request_v2_[0-9a-f]{20}$",
+          "title": "Qualification Request Id",
+          "type": "string"
+        },
+        "qualification_request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Qualification Request Sha256",
+          "type": "string"
+        },
+        "review_a_id": {
+          "pattern": "^real_asset_pack_review_v2_[0-9a-f]{20}$",
+          "title": "Review A Id",
+          "type": "string"
+        },
+        "review_a_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Review A Sha256",
+          "type": "string"
+        },
+        "review_b_id": {
+          "pattern": "^real_asset_pack_review_v2_[0-9a-f]{20}$",
+          "title": "Review B Id",
+          "type": "string"
+        },
+        "review_b_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Review B Sha256",
+          "type": "string"
+        },
+        "rights_manifest_at": {
+          "title": "Rights Manifest At",
+          "type": "string"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pack_id",
+        "pack_manifest_sha256",
+        "evidence_id",
+        "evidence_sha256",
+        "evidence_territory",
+        "evidence_use_scope",
+        "evidence_valid_until",
+        "review_a_id",
+        "review_a_sha256",
+        "review_b_id",
+        "review_b_sha256",
+        "pair_check_id",
+        "pair_check_sha256",
+        "qualification_request_id",
+        "qualification_request_sha256",
+        "qualification_instruction_id",
+        "qualification_instruction_sha256",
+        "qualification_decision_id",
+        "qualification_decision_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "rights_manifest_at"
+      ],
+      "title": "ManifestClosureBindingV26",
+      "type": "object"
+    },
+    "MediaMappingV26": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "exact_text": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact Text"
+        },
+        "kind": {
+          "enum": [
+            "IMAGE",
+            "VOICE",
+            "BGM"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "logical_path": {
+          "title": "Logical Path",
+          "type": "string"
+        },
+        "mapping_id": {
+          "pattern": "^real_asset_use_mapping_v1_[0-9a-f]{20}$",
+          "title": "Mapping Id",
+          "type": "string"
+        },
+        "media_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Sha256",
+          "type": "string"
+        },
+        "media_size_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Media Size Bytes",
+          "type": "integer"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "audio/wav"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "object_path": {
+          "title": "Object Path",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 13,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "provenance_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provenance Record Sha256",
+          "type": "string"
+        },
+        "requirement_id": {
+          "pattern": "^real_asset_requirement_[0-9a-f]{20}$",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "source_authority": {
+          "enum": [
+            "USER_PROVIDED_LOCAL",
+            "SEPARATELY_APPROVED_LOCAL_GENERATION"
+          ],
+          "title": "Source Authority",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "subject_kind": {
+          "enum": [
+            "CHARACTER",
+            "SCENE",
+            "DIALOGUE",
+            "SCORE"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "target_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "technical_profile": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Technical Profile",
+          "type": "string"
+        },
+        "technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Record Sha256",
+          "type": "string"
+        },
+        "timeline_end_ms": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeline End Ms"
+        },
+        "timeline_start_ms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeline Start Ms"
+        },
+        "use_role": {
+          "enum": [
+            "CHARACTER_REFERENCE",
+            "SCENE_REFERENCE",
+            "DIALOGUE_AUDIO",
+            "BACKGROUND_MUSIC"
+          ],
+          "title": "Use Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mapping_id",
+        "ordinal",
+        "requirement_id",
+        "kind",
+        "subject_kind",
+        "subject_id",
+        "logical_path",
+        "object_path",
+        "media_type",
+        "media_sha256",
+        "media_size_bytes",
+        "duration_ms",
+        "source_authority",
+        "provenance_record_sha256",
+        "technical_profile",
+        "technical_record_sha256",
+        "use_role",
+        "target_id"
+      ],
+      "title": "MediaMappingV26",
+      "type": "object"
+    },
+    "NIRSceneV2": {
+      "additionalProperties": false,
+      "properties": {
+        "character_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Character Ids",
+          "type": "array"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "narrative": {
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Asset Version Id",
+          "type": "string"
+        },
+        "scene_bible_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Bible Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "scene_bible_id",
+        "scene_asset_version_id",
+        "ordinal",
+        "narrative",
+        "start_ms",
+        "duration_ms",
+        "character_ids",
+        "dialogue_line_ids"
+      ],
+      "title": "NIRSceneV2",
+      "type": "object"
+    },
+    "NIRV2": {
+      "additionalProperties": false,
+      "properties": {
+        "character_bibles": {
+          "items": {
+            "$ref": "#/$defs/CharacterBible"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Character Bibles",
+          "type": "array"
+        },
+        "dialogue": {
+          "items": {
+            "$ref": "#/$defs/DialogueLine"
+          },
+          "minItems": 1,
+          "title": "Dialogue",
+          "type": "array"
+        },
+        "duration_ms": {
+          "maximum": 90000,
+          "minimum": 60000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "scene_bibles": {
+          "items": {
+            "$ref": "#/$defs/SceneBible"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Scene Bibles",
+          "type": "array"
+        },
+        "scenes": {
+          "items": {
+            "$ref": "#/$defs/NIRSceneV2"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Scenes",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "seed",
+        "duration_ms",
+        "character_bibles",
+        "scene_bibles",
+        "dialogue",
+        "scenes"
+      ],
+      "title": "NIRV2",
+      "type": "object"
+    },
+    "PIRV2": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "maximum": 90000,
+          "minimum": 60000,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "nir_id": {
+          "title": "Nir Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/StoryboardShotV2"
+          },
+          "maxItems": 12,
+          "minItems": 8,
+          "title": "Shots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "nir_id",
+        "duration_ms",
+        "shots"
+      ],
+      "title": "PIRV2",
+      "type": "object"
+    },
+    "ProviderNeutralBaselineProjectionV26": {
+      "additionalProperties": false,
+      "properties": {
+        "intake_template_document_sha256": {
+          "const": "0c969aba4e885b8dc1fadd36d934c19dbc37cc5c0241651605ebdc6c7cdfccc8",
+          "title": "Intake Template Document Sha256",
+          "type": "string"
+        },
+        "intake_template_id": {
+          "const": "real_asset_intake_template_58cfac98339ce9e36dce",
+          "title": "Intake Template Id",
+          "type": "string"
+        },
+        "pilot_compilation_document_sha256": {
+          "const": "cd5a441fc1610435663ae3add96a14af9c2afe3c089202711ae9189181b3c8d5",
+          "title": "Pilot Compilation Document Sha256",
+          "type": "string"
+        },
+        "pilot_compilation_id": {
+          "const": "creative_sample_c43253e73fe962f1623d",
+          "title": "Pilot Compilation Id",
+          "type": "string"
+        },
+        "pilot_ordered_shot_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 10,
+          "title": "Pilot Ordered Shot Ids",
+          "type": "array"
+        },
+        "pilot_pack_id": {
+          "const": "creative_pilot_pack_b1041dbe27fc145c73c8",
+          "title": "Pilot Pack Id",
+          "type": "string"
+        },
+        "pilot_spec_document_sha256": {
+          "const": "43f7cb9949796a2d212e8b85aa23dc4e46eef22f1a2fcf10ad978d994ace261b",
+          "title": "Pilot Spec Document Sha256",
+          "type": "string"
+        },
+        "pilot_spec_payload_sha256": {
+          "const": "221ccd64abeaa786f9271e89e70c2c8ab37e8f03790daa766f9b763aa25e0af4",
+          "title": "Pilot Spec Payload Sha256",
+          "type": "string"
+        },
+        "projection_sha256": {
+          "const": "b888bdb0dfd76444905b0287d6b424525463e2618e3f17d5fc49b3538f1aff11",
+          "title": "Projection Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pilot_pack_id",
+        "pilot_spec_payload_sha256",
+        "pilot_spec_document_sha256",
+        "pilot_compilation_id",
+        "pilot_compilation_document_sha256",
+        "pilot_ordered_shot_ids",
+        "intake_template_id",
+        "intake_template_document_sha256",
+        "projection_sha256"
+      ],
+      "title": "ProviderNeutralBaselineProjectionV26",
+      "type": "object"
+    },
+    "SceneAssetVersion": {
+      "additionalProperties": false,
+      "description": "Portable, immutable reference to one approved scene asset version.",
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "default": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "default": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scene_id",
+        "version",
+        "content_sha256",
+        "approval_ref",
+        "visual_description"
+      ],
+      "title": "SceneAssetVersion",
+      "type": "object"
+    },
+    "SceneBible": {
+      "additionalProperties": false,
+      "properties": {
+        "active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Active Asset Version Id",
+          "type": "string"
+        },
+        "asset_versions": {
+          "items": {
+            "$ref": "#/$defs/SceneAssetVersion"
+          },
+          "minItems": 1,
+          "title": "Asset Versions",
+          "type": "array"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "visual_description": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scene_id",
+        "ordinal",
+        "name",
+        "visual_description",
+        "asset_versions",
+        "active_asset_version_id"
+      ],
+      "title": "SceneBible",
+      "type": "object"
+    },
+    "StoryboardShotV2": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "camera_angle": {
+          "$ref": "#/$defs/CreativeCameraAngle"
+        },
+        "camera_movement": {
+          "$ref": "#/$defs/CreativeCameraMovement"
+        },
+        "character_assets": {
+          "items": {
+            "$ref": "#/$defs/CharacterAssetBinding"
+          },
+          "maxItems": 2,
+          "title": "Character Assets",
+          "type": "array"
+        },
+        "continuity_notes": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "dialogue_line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dialogue Line Ids",
+          "type": "array"
+        },
+        "duration_ms": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "emotion_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Emotion By Character",
+          "type": "object"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "narrative": {
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "nir_scene_id": {
+          "title": "Nir Scene Id",
+          "type": "string"
+        },
+        "ordinal": {
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "props": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Props",
+          "type": "array"
+        },
+        "scene_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Asset Version Id",
+          "type": "string"
+        },
+        "scene_bible_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Bible Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "2.0.0",
+          "default": "2.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "shot_size": {
+          "$ref": "#/$defs/CreativeShotSize"
+        },
+        "start_ms": {
+          "minimum": 0,
+          "title": "Start Ms",
+          "type": "integer"
+        },
+        "visual_direction": {
+          "minLength": 1,
+          "title": "Visual Direction",
+          "type": "string"
+        },
+        "wardrobe_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "maxProperties": 2,
+          "title": "Wardrobe By Character",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "nir_scene_id",
+        "scene_bible_id",
+        "scene_asset_version_id",
+        "ordinal",
+        "narrative",
+        "visual_direction",
+        "emotion_by_character",
+        "action",
+        "shot_size",
+        "camera_angle",
+        "camera_movement",
+        "wardrobe_by_character",
+        "props",
+        "continuity_notes",
+        "prompt",
+        "start_ms",
+        "duration_ms",
+        "character_assets",
+        "dialogue_line_ids"
+      ],
+      "title": "StoryboardShotV2",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authorized_attempts": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "baseline": {
+      "$ref": "#/$defs/ProviderNeutralBaselineProjectionV26"
+    },
+    "consumer_scope": {
+      "const": "OFFLINE_DESIGN_REVIEW_ONLY",
+      "default": "OFFLINE_DESIGN_REVIEW_ONLY",
+      "title": "Consumer Scope",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-use-plan-v1",
+      "default": "sdc.creative-sample-real-asset-use-plan-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_real_generation": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Real Generation",
+      "type": "boolean"
+    },
+    "eligible_for_separate_provider_approval": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Separate Provider Approval",
+      "type": "boolean"
+    },
+    "eligible_for_separate_provider_proposal": {
+      "const": false,
+      "default": false,
+      "title": "Eligible For Separate Provider Proposal",
+      "type": "boolean"
+    },
+    "eligible_for_separate_use_scope_review": {
+      "const": true,
+      "default": true,
+      "title": "Eligible For Separate Use Scope Review",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "manifest_closure": {
+      "$ref": "#/$defs/ManifestClosureBindingV26"
+    },
+    "media_mappings": {
+      "items": {
+        "$ref": "#/$defs/MediaMappingV26"
+      },
+      "maxItems": 14,
+      "minItems": 14,
+      "title": "Media Mappings",
+      "type": "array"
+    },
+    "plan_id": {
+      "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "plan_policy_document_sha256": {
+      "const": "68ce2b32bfac11e88a19b3155d3935f47dc7334d79e97496245f046836b28775",
+      "default": "68ce2b32bfac11e88a19b3155d3935f47dc7334d79e97496245f046836b28775",
+      "title": "Plan Policy Document Sha256",
+      "type": "string"
+    },
+    "plan_policy_id": {
+      "const": "creative-sample-real-asset-use-plan-policy",
+      "default": "creative-sample-real-asset-use-plan-policy",
+      "title": "Plan Policy Id",
+      "type": "string"
+    },
+    "plan_policy_version": {
+      "const": "2.6.0",
+      "default": "2.6.0",
+      "title": "Plan Policy Version",
+      "type": "string"
+    },
+    "planned_compilation": {
+      "$ref": "#/$defs/CreativeSampleCompilation"
+    },
+    "planned_compilation_document_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Planned Compilation Document Sha256",
+      "type": "string"
+    },
+    "planned_compilation_id": {
+      "pattern": "^creative_sample_[0-9a-f]{20}$",
+      "title": "Planned Compilation Id",
+      "type": "string"
+    },
+    "planned_shot_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "title": "Planned Shot Ids",
+      "type": "array"
+    },
+    "planned_spec": {
+      "$ref": "#/$defs/CreativeSampleSpec"
+    },
+    "planned_spec_document_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Planned Spec Document Sha256",
+      "type": "string"
+    },
+    "planned_spec_payload_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Planned Spec Payload Sha256",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-use-plan-consumer-v2.6",
+      "default": "creative-sample-real-asset-use-plan-consumer-v2.6",
+      "title": "Profile",
+      "type": "string"
+    },
+    "proposed_attempts_per_shot": {
+      "const": 2,
+      "default": 2,
+      "title": "Proposed Attempts Per Shot",
+      "type": "integer"
+    },
+    "proposed_audio_generation_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Proposed Audio Generation Requests",
+      "type": "integer"
+    },
+    "proposed_cost_ceiling_cny": {
+      "const": 450,
+      "default": 450,
+      "title": "Proposed Cost Ceiling Cny",
+      "type": "integer"
+    },
+    "proposed_image_generation_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Proposed Image Generation Requests",
+      "type": "integer"
+    },
+    "proposed_provider_requests_max": {
+      "const": 20,
+      "default": 20,
+      "title": "Proposed Provider Requests Max",
+      "type": "integer"
+    },
+    "provider_approval_granted": {
+      "const": false,
+      "default": false,
+      "title": "Provider Approval Granted",
+      "type": "boolean"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "retention_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "rights_manifest_created": {
+      "const": true,
+      "default": true,
+      "title": "Rights Manifest Created",
+      "type": "boolean"
+    },
+    "rights_qualification_performed": {
+      "const": true,
+      "default": true,
+      "title": "Rights Qualification Performed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "shot_count": {
+      "const": 10,
+      "default": 10,
+      "title": "Shot Count",
+      "type": "integer"
+    },
+    "source_mode": {
+      "const": "IMPORTED_MEDIA",
+      "default": "IMPORTED_MEDIA",
+      "title": "Source Mode",
+      "type": "string"
+    },
+    "status": {
+      "const": "USE_PLAN_CANDIDATE_CREATED",
+      "default": "USE_PLAN_CANDIDATE_CREATED",
+      "title": "Status",
+      "type": "string"
+    },
+    "training_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "use_scope_review_performed": {
+      "const": false,
+      "default": false,
+      "title": "Use Scope Review Performed",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "plan_id",
+    "manifest_closure",
+    "baseline",
+    "planned_spec_payload_sha256",
+    "planned_spec_document_sha256",
+    "planned_compilation_id",
+    "planned_compilation_document_sha256",
+    "planned_spec",
+    "planned_compilation",
+    "planned_shot_ids",
+    "media_mappings"
+  ],
+  "title": "CreativeSampleRealAssetUsePlanV1",
+  "type": "object"
+}
