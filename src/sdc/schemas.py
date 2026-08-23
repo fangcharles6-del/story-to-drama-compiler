@@ -37,6 +37,14 @@ from sdc.real_asset_use_scope_review_v26 import (
     CreativeSampleRealAssetUseScopeReviewRequestV1,
 )
 
+from .real_asset_fresh_status_evidence_v30 import (
+    CreativeSampleRealAssetFreshStatusDecisionV1,
+    CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
+    CreativeSampleRealAssetFreshStatusInstructionV1,
+    CreativeSampleRealAssetFreshStatusRequestV1,
+    CreativeSampleRealAssetFreshStatusSourceObservationV1,
+)
+
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
     contracts.NIR,
@@ -100,6 +108,11 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetUseScopeReviewInstructionV1,
     CreativeSampleRealAssetUseScopeReviewDecisionV1,
     CreativeSampleRealAssetUseScopeReviewRecordV1,
+    CreativeSampleRealAssetFreshStatusSourceObservationV1,
+    CreativeSampleRealAssetFreshStatusRequestV1,
+    CreativeSampleRealAssetFreshStatusInstructionV1,
+    CreativeSampleRealAssetFreshStatusDecisionV1,
+    CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
 ]
 
 
