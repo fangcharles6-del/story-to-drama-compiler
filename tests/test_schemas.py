@@ -8,6 +8,13 @@ from sdc.contracts import (
     ProviderFailure,
     ProviderPricingSnapshot,
 )
+from sdc.real_asset_fresh_status_evidence_v30 import (
+    CreativeSampleRealAssetFreshStatusDecisionV1,
+    CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
+    CreativeSampleRealAssetFreshStatusInstructionV1,
+    CreativeSampleRealAssetFreshStatusRequestV1,
+    CreativeSampleRealAssetFreshStatusSourceObservationV1,
+)
 from sdc.real_asset_qualification_decision_instruction_v22 import (
     CreativeSampleRealAssetQualificationDecisionInstructionV22,
 )
@@ -43,9 +50,7 @@ PRE_V2_SCHEMA_SHA256 = {
     "CanaryExecution.schema.json": (
         "9bc5d46a1771e96c28cdab82038dc93baa74d55acfa7a9b757b291e321b64a16"
     ),
-    "CanaryPlan.schema.json": (
-        "63cc1b14fdd34ecbf80a3693e097b29f9bc79d64015ab001f891cb29a90366bf"
-    ),
+    "CanaryPlan.schema.json": ("63cc1b14fdd34ecbf80a3693e097b29f9bc79d64015ab001f891cb29a90366bf"),
     "CancelResult.schema.json": (
         "1b1b0e698bb7c88433de74761b151a4f8d288512f9e3d1e3d00cf84c3122eeac"
     ),
@@ -115,27 +120,15 @@ PRE_V2_SCHEMA_SHA256 = {
     "GenerationJob.schema.json": (
         "376cfa1f0096ba77a98cfd23128be4b432ee9a362d34f8f66d589e07f0e62bab"
     ),
-    "JobGraph.schema.json": (
-        "17d312d080a7d5d849725cb0c96c1898e090281c2cbb8b826f00a0e3616c9132"
-    ),
+    "JobGraph.schema.json": ("17d312d080a7d5d849725cb0c96c1898e090281c2cbb8b826f00a0e3616c9132"),
     "LiveAuthorization.schema.json": (
         "d18d571c9ff374a1ce128de9b005d0aaff02d61de8b7f456c37f16089f0ec6ce"
     ),
-    "NIR.schema.json": (
-        "ddc2ca8ce2da365724a52c58d175f61ddd86285dcfa08618720e7decda08ad05"
-    ),
-    "NIRSceneV2.schema.json": (
-        "3c67d0a01e106c0a27fcda34d215a66916d9e21479dc60648df1130206b368bc"
-    ),
-    "NIRV2.schema.json": (
-        "6f818b5cddb72b37ea6e424099bc417542fcf638e10e8344346273ff77c2dfae"
-    ),
-    "PIR.schema.json": (
-        "48533b52f1886eee001282efe096591a216b5df8a6d914bfe31b830b8fb4dec4"
-    ),
-    "PIRV2.schema.json": (
-        "38a4c595bb66bd23d6363a638df4b743cbecbba053c54b3e47925fc759b0b034"
-    ),
+    "NIR.schema.json": ("ddc2ca8ce2da365724a52c58d175f61ddd86285dcfa08618720e7decda08ad05"),
+    "NIRSceneV2.schema.json": ("3c67d0a01e106c0a27fcda34d215a66916d9e21479dc60648df1130206b368bc"),
+    "NIRV2.schema.json": ("6f818b5cddb72b37ea6e424099bc417542fcf638e10e8344346273ff77c2dfae"),
+    "PIR.schema.json": ("48533b52f1886eee001282efe096591a216b5df8a6d914bfe31b830b8fb4dec4"),
+    "PIRV2.schema.json": ("38a4c595bb66bd23d6363a638df4b743cbecbba053c54b3e47925fc759b0b034"),
     "ProviderCapabilitySnapshot.schema.json": (
         "2aef9e8142d2f04ec126711036b7369b82c28a1ad6841d6c27ca82171a71643f"
     ),
@@ -157,30 +150,20 @@ PRE_V2_SCHEMA_SHA256 = {
     "ProviderTaskSnapshot.schema.json": (
         "ad1d836abd9c16e4888f4723f86991077f6f31ed4ed54e4ef5771587b7340cb1"
     ),
-    "QCEvidence.schema.json": (
-        "fef0d47246737c98a7d8d99ed5fc86fb822485b1cd318300aa4f7a1ccdb9b548"
-    ),
-    "QCReport.schema.json": (
-        "e05f308ea9d0cf82792fe2a910819df0ce01a7b394b9258e4d867b30f0c9f8b6"
-    ),
+    "QCEvidence.schema.json": ("fef0d47246737c98a7d8d99ed5fc86fb822485b1cd318300aa4f7a1ccdb9b548"),
+    "QCReport.schema.json": ("e05f308ea9d0cf82792fe2a910819df0ce01a7b394b9258e4d867b30f0c9f8b6"),
     "ReleaseManifest.schema.json": (
         "5232a09b390cdaed8019b18d58134eb56ece3a9ac01c4419a17c7b4ccc8b44a5"
     ),
-    "RunEvent.schema.json": (
-        "ebc5626785cee74705f49798de58cb34ce4f18690bba9f894b782c855b14bc76"
-    ),
+    "RunEvent.schema.json": ("ebc5626785cee74705f49798de58cb34ce4f18690bba9f894b782c855b14bc76"),
     "SceneAssetVersion.schema.json": (
         "3118c9c20e6c89a854faf2c5b85ebc6e3a903b1a5473b22854ea9293d6282759"
     ),
-    "SceneBible.schema.json": (
-        "b3902530148acb261976d387a9547d13269c2fb7d793040f8f4712f44813831f"
-    ),
+    "SceneBible.schema.json": ("b3902530148acb261976d387a9547d13269c2fb7d793040f8f4712f44813831f"),
     "StoryboardShotV2.schema.json": (
         "1f4060808e92e021701daf0f41fb574c9838af471e18d99da04568ed38160b69"
     ),
-    "StoryInput.schema.json": (
-        "4042419ae5c3fe068fe3b53105cca8110eb67fb2274ab935dea02c2dffc8b6c5"
-    ),
+    "StoryInput.schema.json": ("4042419ae5c3fe068fe3b53105cca8110eb67fb2274ab935dea02c2dffc8b6c5"),
 }
 
 PRE_QUALIFICATION_REVIEW_V2_SCHEMA_SHA256 = {
@@ -217,6 +200,24 @@ PRE_MANIFEST_FINALIZER_SCHEMA_SHA256 = {
     **PRE_INSTRUCTION_PREPARER_SCHEMA_SHA256,
     "CreativeSampleRealAssetRightsManifestV2.schema.json": (
         "54eb14e54df22f4bb2b3c09ef2d2f1c9490c7843732faa9586c6738abb392f50"
+    ),
+}
+PRE_FRESH_STATUS_V30_SCHEMA_SHA256 = {
+    **PRE_MANIFEST_FINALIZER_SCHEMA_SHA256,
+    "CreativeSampleRealAssetUsePlanV1.schema.json": (
+        "61fb95fc2016d72dff843a96bafe5fdfb9a6be047f48e9a0dd597bc956bb6a91"
+    ),
+    "CreativeSampleRealAssetUseScopeReviewRequestV1.schema.json": (
+        "0bf762a9615794d74f5831e6adce8fa88ec633ca4df54125e895c1d1cd9e11db"
+    ),
+    "CreativeSampleRealAssetUseScopeReviewInstructionV1.schema.json": (
+        "6b9cac6ac7d886dd68e55530acf2a4e1f7b6121d187ea6324f4640373f3da2ae"
+    ),
+    "CreativeSampleRealAssetUseScopeReviewDecisionV1.schema.json": (
+        "3bb910d1ed25dd79cc32626ed2c0011c508ecc698771608dbe94352da5707754"
+    ),
+    "CreativeSampleRealAssetUseScopeReviewRecordV1.schema.json": (
+        "c6453c24fd541505b3873a99a7e907b39437964df008203a298190de764fc4b8"
     ),
 }
 
@@ -256,9 +257,16 @@ def test_all_pre_manifest_finalizer_schema_bytes_remain_unchanged() -> None:
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_fresh_status_v30_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_FRESH_STATUS_V30_SCHEMA_SHA256) == 62
+    for name, digest in PRE_FRESH_STATUS_V30_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 62
+    assert len(model_names) == 67
     assert len(model_names) == len(set(model_names))
 
     expected = {f"{name}.schema.json" for name in model_names}
@@ -351,9 +359,7 @@ def test_rights_manifest_v2_schema_is_append_only_and_zero_authority() -> None:
 
 def test_use_plan_v1_schema_is_append_only_and_zero_authority() -> None:
     assert CreativeSampleRealAssetUsePlanV1 in MODELS
-    schema = json.loads(
-        Path("schemas/CreativeSampleRealAssetUsePlanV1.schema.json").read_text()
-    )
+    schema = json.loads(Path("schemas/CreativeSampleRealAssetUsePlanV1.schema.json").read_text())
     properties = schema["properties"]
     expected_constants = {
         "schema_version": "1.0.0",
@@ -440,6 +446,55 @@ def test_use_scope_review_v1_schemas_are_partitioned_and_zero_authority() -> Non
     )
     assert record_properties["decision"]["$ref"].endswith(
         "/CreativeSampleRealAssetUseScopeReviewDecisionV1"
+    )
+    assert {
+        "request_sha256",
+        "instruction_sha256",
+        "decision_sha256",
+    } <= set(record_properties)
+
+
+def test_fresh_status_v1_schemas_are_registered_partitioned_and_zero_authority() -> None:
+    module_models = (
+        CreativeSampleRealAssetFreshStatusRequestV1,
+        CreativeSampleRealAssetFreshStatusInstructionV1,
+        CreativeSampleRealAssetFreshStatusDecisionV1,
+    )
+    all_models = (
+        CreativeSampleRealAssetFreshStatusSourceObservationV1,
+        *module_models,
+        CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
+    )
+    for model in all_models:
+        assert model in MODELS
+
+    expected_zero_authority = {
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "execution_authorized": False,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+        "automated_execution_allowed": False,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+    }
+    for model in all_models:
+        schema = json.loads(Path(f"schemas/{model.__name__}.schema.json").read_text())
+        properties = schema["properties"]
+        for field, expected in expected_zero_authority.items():
+            assert properties[field]["const"] == expected
+
+    record_schema = json.loads(
+        Path("schemas/CreativeSampleRealAssetFreshStatusEvidenceRecordV1.schema.json").read_text()
+    )
+    record_properties = record_schema["properties"]
+    assert record_properties["request"]["$ref"].endswith(
+        "/CreativeSampleRealAssetFreshStatusRequestV1"
+    )
+    assert record_properties["instruction"]["$ref"].endswith(
+        "/CreativeSampleRealAssetFreshStatusInstructionV1"
+    )
+    assert record_properties["decision"]["$ref"].endswith(
+        "/CreativeSampleRealAssetFreshStatusDecisionV1"
     )
     assert {
         "request_sha256",

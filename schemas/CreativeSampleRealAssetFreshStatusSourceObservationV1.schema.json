@@ -1,0 +1,502 @@
+{
+  "$defs": {
+    "FreshStatusChainHeadRefV1": {
+      "additionalProperties": false,
+      "properties": {
+        "chain_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Chain Sha256",
+          "type": "string"
+        },
+        "observation_id": {
+          "pattern": "^real_asset_fresh_status_observation_v1_[0-9a-f]{20}$",
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "observation_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Observation Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observation_id",
+        "observation_sha256",
+        "chain_sha256"
+      ],
+      "title": "FreshStatusChainHeadRefV1",
+      "type": "object"
+    },
+    "FreshStatusChainLinkV1": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_heads": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/FreshStatusChainHeadRefV1"
+          },
+          "maxItems": 8,
+          "title": "Branch Heads",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "GENESIS",
+            "SUCCESSOR",
+            "RECONCILIATION"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "previous_chain_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Chain Sha256"
+        },
+        "previous_claim_value": {
+          "anyOf": [
+            {
+              "enum": [
+                "PRESENT",
+                "ABSENT_WITH_EVIDENCE",
+                "UNKNOWN",
+                "NOT_ASSESSED",
+                "CONFLICT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Claim Value"
+        },
+        "previous_observation_id": {
+          "anyOf": [
+            {
+              "pattern": "^real_asset_fresh_status_observation_v1_[0-9a-f]{20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Observation Id"
+        },
+        "previous_observation_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Observation Sha256"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "FreshStatusChainLinkV1",
+      "type": "object"
+    },
+    "FreshStatusSubjectClosureV1": {
+      "additionalProperties": false,
+      "properties": {
+        "closure_id": {
+          "pattern": "^real_asset_fresh_status_subject_closure_v1_[0-9a-f]{20}$",
+          "title": "Closure Id",
+          "type": "string"
+        },
+        "closure_profile": {
+          "const": "creative-sample-real-asset-fresh-status-subject-closure-v1",
+          "default": "creative-sample-real-asset-fresh-status-subject-closure-v1",
+          "title": "Closure Profile",
+          "type": "string"
+        },
+        "closure_profile_document_sha256": {
+          "const": "76d151b7a73dcef7aafa6a928e20e024f353ead30fa91a0b7522078eca3f3c7e",
+          "default": "76d151b7a73dcef7aafa6a928e20e024f353ead30fa91a0b7522078eca3f3c7e",
+          "title": "Closure Profile Document Sha256",
+          "type": "string"
+        },
+        "pack_id": {
+          "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "pack_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pack Manifest Sha256",
+          "type": "string"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        },
+        "use_plan_id": {
+          "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+          "title": "Use Plan Id",
+          "type": "string"
+        },
+        "use_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Plan Sha256",
+          "type": "string"
+        },
+        "use_scope_review_record_id": {
+          "pattern": "^real_asset_use_scope_review_record_v1_[0-9a-f]{20}$",
+          "title": "Use Scope Review Record Id",
+          "type": "string"
+        },
+        "use_scope_review_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Scope Review Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "closure_id",
+        "pack_id",
+        "pack_manifest_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "use_plan_id",
+        "use_plan_sha256",
+        "use_scope_review_record_id",
+        "use_scope_review_record_sha256"
+      ],
+      "title": "FreshStatusSubjectClosureV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authorized_attempts": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "basis_code": {
+      "enum": [
+        "HOLD_IMPOSED",
+        "HOLD_RELEASED",
+        "REVOCATION_ISSUED",
+        "RIGHTS_REINSTATED",
+        "COMPLAINT_RECEIVED",
+        "COMPLAINT_RESOLVED",
+        "DISPUTE_OPENED",
+        "DISPUTE_RESOLVED",
+        "RIGHTS_GRANTED_OR_RENEWED",
+        "RIGHTS_EXPIRED_TERMINATED_OR_SUSPENDED",
+        "IDENTITY_VERIFIED_OR_REBOUND",
+        "IDENTITY_EXPIRED_REVOKED_OR_SUPERSEDED",
+        "POLICY_REVIEWED_COMPATIBLE",
+        "POLICY_CHANGED_OR_INCOMPATIBLE",
+        "INITIAL_STATUS_UNKNOWN",
+        "INITIAL_STATUS_NOT_ASSESSED",
+        "STATUS_RECONFIRMED",
+        "STATUS_BECAME_UNKNOWN",
+        "CONFLICT_IDENTIFIED",
+        "CONFLICT_RECONCILED"
+      ],
+      "title": "Basis Code",
+      "type": "string"
+    },
+    "basis_note": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Basis Note",
+      "type": "string"
+    },
+    "chain_link": {
+      "$ref": "#/$defs/FreshStatusChainLinkV1"
+    },
+    "claim_value": {
+      "enum": [
+        "PRESENT",
+        "ABSENT_WITH_EVIDENCE",
+        "UNKNOWN",
+        "NOT_ASSESSED",
+        "CONFLICT"
+      ],
+      "title": "Claim Value",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-fresh-status-source-observation-v1",
+      "default": "sdc.creative-sample-real-asset-fresh-status-source-observation-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evidence_scope": {
+      "const": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "default": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "title": "Evidence Scope",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "limitation_codes": {
+      "items": {
+        "enum": [
+          "SOURCE_AUTHENTICITY_NOT_PROVEN",
+          "SOURCE_COMPLETENESS_NOT_PROVEN",
+          "CHAIN_COMPLETENESS_NOT_PROVEN",
+          "REALITY_CURRENTNESS_NOT_PROVEN",
+          "SCOPE_LIMITED_TO_DECLARED_SUBJECT",
+          "TIME_WINDOW_LIMITED",
+          "LEGAL_EFFECT_NOT_DETERMINED"
+        ],
+        "type": "string"
+      },
+      "maxItems": 7,
+      "minItems": 4,
+      "title": "Limitation Codes",
+      "type": "array"
+    },
+    "observation_id": {
+      "pattern": "^real_asset_fresh_status_observation_v1_[0-9a-f]{20}$",
+      "title": "Observation Id",
+      "type": "string"
+    },
+    "observed_at": {
+      "title": "Observed At",
+      "type": "string"
+    },
+    "policy_document_sha256": {
+      "const": "ce1a486ba2ce4021ab6a5bf47a859216a90ac600bc4054b1742d64f68c242b58",
+      "default": "ce1a486ba2ce4021ab6a5bf47a859216a90ac600bc4054b1742d64f68c242b58",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "creative-sample-real-asset-fresh-status-evidence-policy",
+      "default": "creative-sample-real-asset-fresh-status-evidence-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "3.0.0",
+      "default": "3.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-fresh-status-evidence-v3.0",
+      "default": "creative-sample-real-asset-fresh-status-evidence-v3.0",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "retention_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_event_at": {
+      "title": "Source Event At",
+      "type": "string"
+    },
+    "source_identity_ref_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Identity Ref Sha256",
+      "type": "string"
+    },
+    "source_kind": {
+      "enum": [
+        "RIGHTS_HOLDER_DECLARATION",
+        "LICENSOR_DECLARATION",
+        "INTERNAL_HOLD_RECORD",
+        "REVOCATION_NOTICE",
+        "COMPLAINT_RECORD",
+        "DISPUTE_RECORD",
+        "IDENTITY_BINDING_RECORD",
+        "POLICY_EVALUATION_RECORD"
+      ],
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "source_locator_ref_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Locator Ref Sha256"
+    },
+    "source_media_type": {
+      "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]{0,63}/[a-z0-9][a-z0-9!#$&^_.+-]{0,63}$",
+      "title": "Source Media Type",
+      "type": "string"
+    },
+    "source_object_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Object Sha256",
+      "type": "string"
+    },
+    "source_object_size_bytes": {
+      "minimum": 1,
+      "title": "Source Object Size Bytes",
+      "type": "integer"
+    },
+    "status": {
+      "const": "FRESH_STATUS_SOURCE_OBSERVATION_RECORDED",
+      "default": "FRESH_STATUS_SOURCE_OBSERVATION_RECORDED",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_category": {
+      "enum": [
+        "HOLD_ACTIVE",
+        "REVOCATION_EFFECTIVE",
+        "COMPLAINT_OPEN",
+        "DISPUTE_OPEN",
+        "RIGHTS_BASIS_CURRENT",
+        "IDENTITY_BINDING_CURRENT",
+        "POLICY_COMPATIBILITY_CURRENT"
+      ],
+      "title": "Status Category",
+      "type": "string"
+    },
+    "subject_closure": {
+      "$ref": "#/$defs/FreshStatusSubjectClosureV1"
+    },
+    "training_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "default": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    },
+    "valid_from": {
+      "title": "Valid From",
+      "type": "string"
+    },
+    "valid_until": {
+      "title": "Valid Until",
+      "type": "string"
+    }
+  },
+  "required": [
+    "observation_id",
+    "subject_closure",
+    "status_category",
+    "claim_value",
+    "source_kind",
+    "source_identity_ref_sha256",
+    "source_object_sha256",
+    "source_object_size_bytes",
+    "source_media_type",
+    "source_event_at",
+    "observed_at",
+    "valid_from",
+    "valid_until",
+    "basis_code",
+    "basis_note",
+    "limitation_codes",
+    "chain_link"
+  ],
+  "title": "CreativeSampleRealAssetFreshStatusSourceObservationV1",
+  "type": "object"
+}
