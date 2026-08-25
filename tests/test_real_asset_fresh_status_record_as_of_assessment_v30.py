@@ -1354,10 +1354,14 @@ def test_only_deterministic_datetime_parsing_is_imported() -> None:
 
 
 def test_as_of_result_and_all_prior_process_results_are_not_persistent_schemas() -> None:
+    from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
+        CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
+    )
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 67
-    assert sum("FreshStatus" in model.__name__ for model in MODELS) == 5
+    assert len(MODELS) == 68
+    assert sum("FreshStatus" in model.__name__ for model in MODELS) == 6
+    assert MODELS[-1] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert FreshStatusExplicitFiniteChainReplayResultV1 not in MODELS
     assert FreshStatusRecordChainInputV1 not in MODELS
     assert FreshStatusRecordChainCoverageSummaryV1 not in MODELS
@@ -1365,19 +1369,27 @@ def test_as_of_result_and_all_prior_process_results_are_not_persistent_schemas()
     assert FreshStatusEvidenceRecordJointReplayResultV1 not in MODELS
     assert FreshStatusEvidenceRecordAsOfAssessmentResultV1 not in MODELS
     assert not Path("schemas/FreshStatusEvidenceRecordAsOfAssessmentResultV1.schema.json").exists()
+    assert Path(
+        "schemas/CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.schema.json"
+    ).is_file()
     schema_registry_source = Path("src/sdc/schemas.py").read_text(encoding="utf-8")
     assert "real_asset_fresh_status_record_as_of_assessment_v30" not in schema_registry_source
+    assert "real_asset_fresh_status_record_as_of_assessment_receipt_v30" in (schema_registry_source)
 
 
 def test_all_sixty_seven_committed_schema_bytes_remain_unchanged() -> None:
     from sdc.schemas import MODELS
 
+    receipt_schema = "CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.schema.json"
     expected = {
         **PRE_FRESH_STATUS_V30_SCHEMA_SHA256,
         **FRESH_STATUS_V30_SCHEMA_SHA256,
     }
     assert len(expected) == 67
-    assert set(expected) == {f"{model.__name__}.schema.json" for model in MODELS}
+    registered = {f"{model.__name__}.schema.json" for model in MODELS}
+    assert len(MODELS) == 68
+    assert registered == {*expected, receipt_schema}
+    assert {path.name for path in Path("schemas").glob("*.schema.json")} == registered
     for name, expected_sha256 in expected.items():
         canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(canonical_lf).hexdigest() == expected_sha256, name

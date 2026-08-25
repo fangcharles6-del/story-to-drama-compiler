@@ -44,6 +44,9 @@ from .real_asset_fresh_status_evidence_v30 import (
     CreativeSampleRealAssetFreshStatusRequestV1,
     CreativeSampleRealAssetFreshStatusSourceObservationV1,
 )
+from .real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
+    CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
+)
 
 MODELS: list[type[BaseModel]] = [
     contracts.StoryInput,
@@ -113,6 +116,7 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetFreshStatusInstructionV1,
     CreativeSampleRealAssetFreshStatusDecisionV1,
     CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
+    CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
 ]
 
 

@@ -265,9 +265,18 @@ def test_all_pre_fresh_status_v30_schema_bytes_remain_unchanged() -> None:
 
 
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
+    from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
+        CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
+    )
+
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 67
+    assert len(model_names) == 68
     assert len(model_names) == len(set(model_names))
+    assert MODELS[-1] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
+    assert (
+        model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
+        == 1
+    )
 
     expected = {f"{name}.schema.json" for name in model_names}
     committed = {path.name for path in Path("schemas").glob("*.schema.json")}
