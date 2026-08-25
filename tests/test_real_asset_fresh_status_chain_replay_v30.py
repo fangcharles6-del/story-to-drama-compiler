@@ -975,11 +975,21 @@ def test_production_module_has_no_io_clock_provider_or_execution_surface() -> No
 
 
 def test_replay_result_is_not_registered_as_a_persistent_schema() -> None:
+    from pathlib import Path
+
+    from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
+        CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
+    )
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 67
+    assert len(MODELS) == 68
+    assert sum("FreshStatus" in model.__name__ for model in MODELS) == 6
+    assert MODELS[-1] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert FreshStatusExplicitFiniteChainReplayResultV1 not in MODELS
-    assert sum("FreshStatus" in model.__name__ for model in MODELS) == 5
+    assert not Path("schemas/FreshStatusExplicitFiniteChainReplayResultV1.schema.json").exists()
+    assert Path(
+        "schemas/CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.schema.json"
+    ).is_file()
 
 
 def test_public_surface_is_exact() -> None:

@@ -1,0 +1,456 @@
+{
+  "$defs": {
+    "FreshStatusSubjectClosureV1": {
+      "additionalProperties": false,
+      "properties": {
+        "closure_id": {
+          "pattern": "^real_asset_fresh_status_subject_closure_v1_[0-9a-f]{20}$",
+          "title": "Closure Id",
+          "type": "string"
+        },
+        "closure_profile": {
+          "const": "creative-sample-real-asset-fresh-status-subject-closure-v1",
+          "default": "creative-sample-real-asset-fresh-status-subject-closure-v1",
+          "title": "Closure Profile",
+          "type": "string"
+        },
+        "closure_profile_document_sha256": {
+          "const": "76d151b7a73dcef7aafa6a928e20e024f353ead30fa91a0b7522078eca3f3c7e",
+          "default": "76d151b7a73dcef7aafa6a928e20e024f353ead30fa91a0b7522078eca3f3c7e",
+          "title": "Closure Profile Document Sha256",
+          "type": "string"
+        },
+        "pack_id": {
+          "pattern": "^real_asset_pack_[0-9a-f]{20}$",
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "pack_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pack Manifest Sha256",
+          "type": "string"
+        },
+        "rights_manifest_id": {
+          "pattern": "^real_asset_rights_manifest_v2_[0-9a-f]{20}$",
+          "title": "Rights Manifest Id",
+          "type": "string"
+        },
+        "rights_manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Manifest Sha256",
+          "type": "string"
+        },
+        "use_plan_id": {
+          "pattern": "^real_asset_use_plan_v1_[0-9a-f]{20}$",
+          "title": "Use Plan Id",
+          "type": "string"
+        },
+        "use_plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Plan Sha256",
+          "type": "string"
+        },
+        "use_scope_review_record_id": {
+          "pattern": "^real_asset_use_scope_review_record_v1_[0-9a-f]{20}$",
+          "title": "Use Scope Review Record Id",
+          "type": "string"
+        },
+        "use_scope_review_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Use Scope Review Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "closure_id",
+        "pack_id",
+        "pack_manifest_sha256",
+        "rights_manifest_id",
+        "rights_manifest_sha256",
+        "use_plan_id",
+        "use_plan_sha256",
+        "use_scope_review_record_id",
+        "use_scope_review_record_sha256"
+      ],
+      "title": "FreshStatusSubjectClosureV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Immutable historical Receipt for one exact freshly replayed Slice 5 assessment.",
+  "properties": {
+    "as_of": {
+      "title": "As Of",
+      "type": "string"
+    },
+    "as_of_assessment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "As Of Assessment Sha256",
+      "type": "string"
+    },
+    "as_of_window_state": {
+      "enum": [
+        "WITHIN_EXPLICIT_BOUND_WINDOW",
+        "EXPIRED_NOT_CURRENT"
+      ],
+      "title": "As Of Window State",
+      "type": "string"
+    },
+    "assessment_profile": {
+      "const": "creative-sample-real-asset-fresh-status-record-as-of-assessment-v1",
+      "default": "creative-sample-real-asset-fresh-status-record-as-of-assessment-v1",
+      "title": "Assessment Profile",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "default": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "coverage_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Coverage Set Sha256",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "default": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "decision_id": {
+      "pattern": "^real_asset_fresh_status_decision_v1_[0-9a-f]{20}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-real-asset-fresh-status-record-as-of-assessment-receipt-v1",
+      "default": "sdc.creative-sample-real-asset-fresh-status-record-as-of-assessment-receipt-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "evaluated_at": {
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "evidence_record_id": {
+      "pattern": "^real_asset_fresh_status_evidence_record_v1_[0-9a-f]{20}$",
+      "title": "Evidence Record Id",
+      "type": "string"
+    },
+    "evidence_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Record Sha256",
+      "type": "string"
+    },
+    "evidence_scope": {
+      "const": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "default": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "title": "Evidence Scope",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "explicit_as_of_window_assessment_consistent": {
+      "const": true,
+      "default": true,
+      "title": "Explicit As Of Window Assessment Consistent",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "joint_replay_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Joint Replay Sha256",
+      "type": "string"
+    },
+    "limitation_codes": {
+      "default": [
+        "SOURCE_AUTHENTICITY_NOT_PROVEN",
+        "SOURCE_COMPLETENESS_NOT_PROVEN",
+        "CHAIN_COMPLETENESS_NOT_PROVEN",
+        "REALITY_CURRENTNESS_NOT_PROVEN",
+        "SCOPE_LIMITED_TO_DECLARED_SUBJECT",
+        "TIME_WINDOW_LIMITED",
+        "LEGAL_EFFECT_NOT_DETERMINED"
+      ],
+      "items": {
+        "enum": [
+          "SOURCE_AUTHENTICITY_NOT_PROVEN",
+          "SOURCE_COMPLETENESS_NOT_PROVEN",
+          "CHAIN_COMPLETENESS_NOT_PROVEN",
+          "REALITY_CURRENTNESS_NOT_PROVEN",
+          "SCOPE_LIMITED_TO_DECLARED_SUBJECT",
+          "TIME_WINDOW_LIMITED",
+          "LEGAL_EFFECT_NOT_DETERMINED"
+        ],
+        "type": "string"
+      },
+      "title": "Limitation Codes",
+      "type": "array"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "default": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "present_currentness_asserted": {
+      "const": false,
+      "default": false,
+      "title": "Present Currentness Asserted",
+      "type": "boolean"
+    },
+    "profile": {
+      "const": "creative-sample-real-asset-fresh-status-record-as-of-assessment-receipt-v1",
+      "default": "creative-sample-real-asset-fresh-status-record-as-of-assessment-receipt-v1",
+      "title": "Profile",
+      "type": "string"
+    },
+    "provided_record_joint_replay_consistent": {
+      "const": true,
+      "default": true,
+      "title": "Provided Record Joint Replay Consistent",
+      "type": "boolean"
+    },
+    "provider_requests": {
+      "const": 0,
+      "default": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "default": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "default": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "receipt_id": {
+      "pattern": "^real_asset_fresh_status_record_as_of_assessment_receipt_v1_[0-9a-f]{20}$",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "receipt_purpose": {
+      "const": "HISTORICAL_EXPLICIT_AS_OF_ASSESSMENT_ONLY",
+      "default": "HISTORICAL_EXPLICIT_AS_OF_ASSESSMENT_ONLY",
+      "title": "Receipt Purpose",
+      "type": "string"
+    },
+    "recorded_blocking_categories": {
+      "items": {
+        "enum": [
+          "HOLD_ACTIVE",
+          "REVOCATION_EFFECTIVE",
+          "COMPLAINT_OPEN",
+          "DISPUTE_OPEN",
+          "RIGHTS_BASIS_CURRENT",
+          "IDENTITY_BINDING_CURRENT",
+          "POLICY_COMPATIBILITY_CURRENT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 7,
+      "title": "Recorded Blocking Categories",
+      "type": "array"
+    },
+    "recorded_disposition": {
+      "enum": [
+        "BLOCKING_STATUS_RECORDED",
+        "INSUFFICIENT_OR_CONFLICTING_EVIDENCE",
+        "NO_BLOCKING_STATUS_OBSERVED_WITHIN_EXPLICIT_BOUND_SET"
+      ],
+      "title": "Recorded Disposition",
+      "type": "string"
+    },
+    "recorded_indeterminate_categories": {
+      "items": {
+        "enum": [
+          "HOLD_ACTIVE",
+          "REVOCATION_EFFECTIVE",
+          "COMPLAINT_OPEN",
+          "DISPUTE_OPEN",
+          "RIGHTS_BASIS_CURRENT",
+          "IDENTITY_BINDING_CURRENT",
+          "POLICY_COMPATIBILITY_CURRENT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 7,
+      "title": "Recorded Indeterminate Categories",
+      "type": "array"
+    },
+    "reliance_requirement": {
+      "const": "FULL_CLOSURE_AND_EXPLICIT_AS_OF_REPLAY_REQUIRED",
+      "default": "FULL_CLOSURE_AND_EXPLICIT_AS_OF_REPLAY_REQUIRED",
+      "title": "Reliance Requirement",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "request_id": {
+      "pattern": "^real_asset_fresh_status_request_v1_[0-9a-f]{20}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_assessment_result_type": {
+      "const": "FRESH_STATUS_EVIDENCE_RECORD_AS_OF_ASSESSMENT_RESULT_V1",
+      "default": "FRESH_STATUS_EVIDENCE_RECORD_AS_OF_ASSESSMENT_RESULT_V1",
+      "title": "Source Assessment Result Type",
+      "type": "string"
+    },
+    "source_assessment_status": {
+      "const": "FRESH_STATUS_EVIDENCE_RECORD_AS_OF_ASSESSMENT_COMPLETED",
+      "default": "FRESH_STATUS_EVIDENCE_RECORD_AS_OF_ASSESSMENT_COMPLETED",
+      "title": "Source Assessment Status",
+      "type": "string"
+    },
+    "source_chain_replay_profile": {
+      "const": "creative-sample-real-asset-fresh-status-explicit-chain-replay-v1",
+      "default": "creative-sample-real-asset-fresh-status-explicit-chain-replay-v1",
+      "title": "Source Chain Replay Profile",
+      "type": "string"
+    },
+    "source_evidence_policy_document_sha256": {
+      "const": "ce1a486ba2ce4021ab6a5bf47a859216a90ac600bc4054b1742d64f68c242b58",
+      "default": "ce1a486ba2ce4021ab6a5bf47a859216a90ac600bc4054b1742d64f68c242b58",
+      "title": "Source Evidence Policy Document Sha256",
+      "type": "string"
+    },
+    "source_evidence_policy_version": {
+      "const": "3.0.0",
+      "default": "3.0.0",
+      "title": "Source Evidence Policy Version",
+      "type": "string"
+    },
+    "source_evidence_profile": {
+      "const": "creative-sample-real-asset-fresh-status-evidence-v3.0",
+      "default": "creative-sample-real-asset-fresh-status-evidence-v3.0",
+      "title": "Source Evidence Profile",
+      "type": "string"
+    },
+    "source_joint_replay_profile": {
+      "const": "creative-sample-real-asset-fresh-status-record-joint-replay-v1",
+      "default": "creative-sample-real-asset-fresh-status-record-joint-replay-v1",
+      "title": "Source Joint Replay Profile",
+      "type": "string"
+    },
+    "source_record_chain_coverage_profile": {
+      "const": "creative-sample-real-asset-fresh-status-record-chain-coverage-v1",
+      "default": "creative-sample-real-asset-fresh-status-record-chain-coverage-v1",
+      "title": "Source Record Chain Coverage Profile",
+      "type": "string"
+    },
+    "status": {
+      "const": "FRESH_STATUS_RECORD_AS_OF_ASSESSMENT_RECEIPT_RECORDED",
+      "default": "FRESH_STATUS_RECORD_AS_OF_ASSESSMENT_RECEIPT_RECORDED",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_valid_until": {
+      "title": "Status Valid Until",
+      "type": "string"
+    },
+    "subject_closure": {
+      "$ref": "#/$defs/FreshStatusSubjectClosureV1"
+    },
+    "training_allowed": {
+      "const": false,
+      "default": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "default": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    },
+    "window_semantics": {
+      "const": "EVALUATED_AT_INCLUSIVE_STATUS_VALID_UNTIL_EXCLUSIVE",
+      "default": "EVALUATED_AT_INCLUSIVE_STATUS_VALID_UNTIL_EXCLUSIVE",
+      "title": "Window Semantics",
+      "type": "string"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "evidence_record_id",
+    "evidence_record_sha256",
+    "request_id",
+    "request_sha256",
+    "decision_id",
+    "decision_sha256",
+    "subject_closure",
+    "coverage_set_sha256",
+    "joint_replay_sha256",
+    "as_of",
+    "evaluated_at",
+    "status_valid_until",
+    "recorded_disposition",
+    "recorded_blocking_categories",
+    "recorded_indeterminate_categories",
+    "as_of_window_state",
+    "as_of_assessment_sha256"
+  ],
+  "title": "CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1",
+  "type": "object"
+}
