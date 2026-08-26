@@ -25,7 +25,7 @@ _MAX_INSPECTION_VALUES = 32
 _MAX_INSPECTION_LENGTH = 65536
 _URI_LIKE = re.compile(
     r"(?:\b[A-Za-z][A-Za-z0-9+.-]*://|(?<![\w.])www\."
-    r"|(?<![\w.+-])file:(?://|[A-Za-z]:[\\/]|[\\/])"
+    r"|(?<![\w.+-])file:(?://|[A-Za-z](?::|\|)[\\/]|[\\/])"
     r"|(?<![\w.+-])data:[^,\s]{0,128},"
     r"|(?<![\w.+-])javascript:\s*\S+"
     r"|(?<![\w.+-])mailto:[^@\s]+@[^\s]+"
@@ -40,6 +40,20 @@ _SCHEMELESS_URL = re.compile(
 )
 # A standalone /... token cannot be distinguished safely from an absolute local path.
 _ROOTED_POSIX_TOKEN = re.compile(r"(?<![\w/])/{1,}(?=[^/\s])")
+_WINDOWS_ABSOLUTE_OR_DEVICE_PATH = re.compile(
+    r"(?<!\w)[A-Za-z]:[\\/]"
+    r"|\\{2,}(?:[?.][\\/]|[^\\/\s]+[\\/])"
+    r"|(?<![\w\\])\\(?:\?\?|device|globalroot)[\\/]",
+    re.IGNORECASE,
+)
+_ROOTED_WINDOWS_TOKEN = re.compile(r"(?<![\w\\])\\+(?=[^\\/\s])")
+_ROOTED_URI_LIKE = re.compile(
+    r"(?<![A-Za-z0-9])[A-Za-z][A-Za-z0-9+._-]*:\s*/+(?=[^/\s])",
+    re.IGNORECASE,
+)
+_URL_ROOTED_POSIX_TOKEN = re.compile(r"(?:(?<![\w/])/{1,}(?=[^/\s])|/{2,}(?=[^/\s]))")
+_URL_DOUBLE_ROOT_TOKEN = re.compile(r"/{2,}")
+_URI_SEPARATOR_WHITESPACE = re.compile(r"\s*:\s*")
 _EXPLICIT_LOCAL_PATH = re.compile(
     r"(?:^(?:[A-Za-z]:[\\/]|\\\\|/|(?:\.{1,2}|~(?:[A-Za-z0-9._-]+)?)[\\/])"
     r"|[\s<({\['\"=;](?:[A-Za-z]:[\\/]|\\\\[^\\\s]+[\\/]"
@@ -159,13 +173,15 @@ def _looks_like_structured_private_data(value: str) -> bool:
     """Reject high-confidence structures, not opaque values that resemble public IDs."""
 
     for candidate in _inspection_values(value):
-        if _contains_control(candidate) or any(
+        compact_uri = _URI_SEPARATOR_WHITESPACE.sub(":", candidate)
+        if _contains_control(candidate) or _URI_LIKE.search(compact_uri) is not None or any(
             pattern.search(candidate)
             for pattern in (
-                _URI_LIKE,
                 _EMAIL_LIKE,
                 _SCHEMELESS_URL,
                 _ROOTED_POSIX_TOKEN,
+                _WINDOWS_ABSOLUTE_OR_DEVICE_PATH,
+                _ROOTED_WINDOWS_TOKEN,
                 _EXPLICIT_LOCAL_PATH,
                 _CREDENTIAL_ASSIGNMENT,
                 _HIGH_CONFIDENCE_CREDENTIAL,
@@ -279,6 +295,31 @@ def _path_contains_email(value: str) -> bool:
     return False
 
 
+def _url_path_root_count(value: str) -> int:
+    payload = value[1:] if value.startswith("/") else value
+    return sum(1 for _ in _URL_ROOTED_POSIX_TOKEN.finditer(payload))
+
+
+def _url_path_introduces_posix_root(raw_path: str, candidate: str) -> bool:
+    if candidate == raw_path:
+        return False
+    return candidate.count("/") > raw_path.count("/") and _url_path_root_count(
+        candidate
+    ) > _url_path_root_count(raw_path)
+
+
+def _url_path_contains_local_reference(raw_path: str, candidate: str) -> bool:
+    compact_uri = _URI_SEPARATOR_WHITESPACE.sub(":", candidate)
+    return (
+        "\\" in candidate
+        or _URI_LIKE.search(compact_uri) is not None
+        or _WINDOWS_ABSOLUTE_OR_DEVICE_PATH.search(compact_uri) is not None
+        or _ROOTED_URI_LIKE.search(compact_uri) is not None
+        or _URL_DOUBLE_ROOT_TOKEN.search(candidate) is not None
+        or _url_path_introduces_posix_root(raw_path, candidate)
+    )
+
+
 def sanitize_public_source_url(value: object) -> str | None:
     """Return an HTTP(S) page URL with userinfo, query, and fragment removed."""
 
@@ -316,7 +357,11 @@ def sanitize_public_source_url(value: object) -> str | None:
     if _contains_control(parsed.path):
         return None
     for decoded_path in _inspection_values(parsed.path):
-        if _contains_control(decoded_path) or _path_contains_email(decoded_path):
+        if (
+            _contains_control(decoded_path)
+            or _path_contains_email(decoded_path)
+            or _url_path_contains_local_reference(parsed.path, decoded_path)
+        ):
             return None
         if any(
             pattern.search(decoded_path)
