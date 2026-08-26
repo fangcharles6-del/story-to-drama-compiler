@@ -1,6 +1,6 @@
 # SDC-ADR-039: Deterministic Visual Prompt Profiles
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-26
 - Depends on: SDC-ADR-038 / Production Adapter Foundation v1
 - Source assessment: `freestylefly/awesome-gpt-image-2@685469889fb72fd5adefae45e1645d527edcb5e7`
