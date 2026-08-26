@@ -1,6 +1,6 @@
 # SDC-ADR-040: Visual Prompt Profiles Phase 1 Projection Manifest
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-26
 - Depends on: SDC-ADR-039 / Deterministic Visual Prompt Profiles
 - Baseline: `af255151bed510237da6a48fa77281faca39bbb9`
