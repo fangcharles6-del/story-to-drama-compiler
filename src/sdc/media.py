@@ -2,6 +2,7 @@
 
 import asyncio
 import hashlib
+from collections.abc import Sequence
 from pathlib import Path
 
 from sdc.compiler import stable_id
@@ -14,9 +15,30 @@ async def _run(*args: str) -> None:
         raise RuntimeError(f"command failed: {' '.join(args)}")
 
 
+def _ffconcat_quote(path: Path) -> str:
+    """Quote one resolved path for FFmpeg's concat-demuxer text format."""
+
+    if not isinstance(path, Path):
+        raise TypeError("FFmpeg concat entries must be Path objects")
+    value = path.resolve().as_posix()
+    if not value or any(character in value for character in ("\x00", "\r", "\n")):
+        raise ValueError("FFmpeg concat paths must not contain control characters")
+    return "'" + value.replace("'", "'\\''") + "'"
+
+
+def _ffconcat_document(segments: Sequence[Path]) -> str:
+    """Build a deterministic UTF-8/LF concat manifest with safely quoted paths."""
+
+    if not segments:
+        raise ValueError("at least one segment is required")
+    return "ffconcat version 1.0\n" + "".join(
+        f"file {_ffconcat_quote(segment)}\n" for segment in segments
+    )
+
+
 async def assemble(segments: list[Path], clock: AudioMasterClock, output: Path) -> None:
-    concat = output.parent / "segments.txt"
-    concat.write_text("".join(f"file '{p.resolve()}'\n" for p in segments))
+    concat = output.with_name(f".{output.name}.segments.ffconcat")
+    concat.write_text(_ffconcat_document(segments), encoding="utf-8", newline="\n")
     duration = f"{clock.duration_ms / 1000:.3f}"
     await _run(
         "ffmpeg",
