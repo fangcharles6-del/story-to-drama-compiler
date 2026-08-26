@@ -104,6 +104,24 @@ def test_builder_drops_recognizable_private_shapes_from_allowlisted_fields() -> 
         "s3:private-bucket/path/OBJECT_LEAK",
         "https%3A%2F%2Fcdn.invalid%2Fvideo.mp4%3Ftoken%3DENCODED_URL_LEAK",
         "token%3DENCODED_QUERY_LEAK%26expires%3Dnever",
+        "api+key%3DPLUS_ENCODED_LEAK",
+        "Authorization%3A+Bearer+PLUS_AUTH_LEAK",
+        "client+secret%3DPLUS_CLIENT_SECRET_LEAK",
+        "api%252Bkey%253DDOUBLE_PLUS_ENCODED_LEAK",
+        "Authorization%253A%252BBearer%252BDOUBLE_PLUS_AUTH_LEAK",
+        "api%00key%3DNULL_CONTROL_LEAK",
+        "Authorization%00Bearer%20NULL_CONTROL_LEAK",
+        "api%C2%80key%3DUNICODE_CONTROL_LEAK",
+        "api%C2%9Fkey%3DUNICODE_CONTROL_LEAK",
+        "api%E2%80%8Bkey%3DZERO_WIDTH_LEAK",
+        "Authorization%E2%80%8B%3A%E2%80%8BBearer%E2%80%8BFORMAT_LEAK",
+        "api%20key%EF%BC%9DFULLWIDTH_EQUALS_LEAK",
+        "api%C0%80key%3DINVALID_UTF8_LEAK",
+        "api＋key＝FULLWIDTH_PLUS_LEAK",
+        "api%EF%BC%8Bkey%EF%BC%9DFULLWIDTH_ENCODED_LEAK",
+        "api％2Bkey％3DTRANSFORM_LEAK",
+        "api%EF%BC%852Bkey%EF%BC%853DENCODED_TRANSFORM_LEAK",
+        "Authorization＋Bearer＋FULLWIDTH_AUTH_LEAK",
         "clip?id=QUERY_LEAK",
         "api_key=QUERY_LEAK&expires=never",
         "page=GENERIC_QUERY_LEAK&size=1",
@@ -113,6 +131,11 @@ def test_builder_drops_recognizable_private_shapes_from_allowlisted_fields() -> 
         "clips from /private/work/POSIX_LEAK.mp4",
         "clips from /home/user/HOME_PATH_LEAK.mp4",
         "clips from /tmp/TMP_PATH_LEAK.mp4",
+        "clips from /custom/private/run-1/ABSOLUTE_PATH_LEAK.mp4",
+        "clips,/custom/private/run-1/PUNCTUATED_PATH_LEAK.mp4",
+        "clips from ///custom/private/run-1/TRIPLE_SLASH_PATH_LEAK.mp4",
+        "clips from %2F%2F%2Fcustom%2Fprivate%2FENCODED_TRIPLE_PATH_LEAK.mp4",
+        "clips+from+%2Ftenant%2Fbuild%2FABSOLUTE_PATH_LEAK.mp4",
         "source /Users/USER_PATH_LEAK",
         "local path:/private/work/LABEL_PATH_LEAK",
         r"source local_file=C:\private\WINDOWS_LABEL_LEAK",
@@ -163,7 +186,6 @@ def test_builder_drops_recognizable_private_free_text_shapes(unsafe: str) -> Non
         "file: scene notes",
         "The Secret: Garden",
         "signature: style",
-        "Use /api endpoint",
         "Bearer of bad news",
         "Basic concepts",
         "Basic animation techniques",
@@ -178,9 +200,6 @@ def test_builder_drops_recognizable_private_free_text_shapes(unsafe: str) -> Non
         "api-key-security",
         "2026/08/26",
         "director/writer/producer",
-        "Use /api/v1 endpoint",
-        "Use /api/v1/users endpoint",
-        "Visit /docs/getting-started/intro",
         "File / Edit menu",
         "workspace / design",
         "scene.final.cut",
@@ -192,6 +211,11 @@ def test_builder_drops_recognizable_private_free_text_shapes(unsafe: str) -> Non
         "R&D=Growth",
         "OPENAI_API_KEY documentation",
         "password: reset guide",
+        "C++ tutorial",
+        "A+B Studio",
+        "api+key+security",
+        "Director 👩‍💻 Studio",
+        "Ｃ＋＋ tutorial",
     ),
 )
 def test_builder_preserves_safe_public_free_text(safe: str) -> None:
@@ -205,6 +229,28 @@ def test_builder_preserves_safe_public_free_text(safe: str) -> None:
     public = material_source_record_to_public_dict(record)
     assert public["search_term"] == safe
     assert public["creator"] == {"name": safe}
+
+
+@pytest.mark.parametrize(
+    "rooted_text",
+    (
+        "Use /api endpoint",
+        "Use /api/v1/users endpoint",
+        "Visit /docs/getting-started/intro",
+        "clips from /custom/private/run-1",
+    ),
+)
+def test_builder_fails_closed_on_ambiguous_rooted_posix_text(rooted_text: str) -> None:
+    record = build_material_source_record(
+        provider="local",
+        local_path="clip.mp4",
+        duration_ms=4000,
+        source_info={"search_term": rooted_text, "creator": rooted_text},
+    )
+
+    public = material_source_record_to_public_dict(record)
+    assert "search_term" not in public
+    assert "creator" not in public
 
 
 @pytest.mark.parametrize(
@@ -388,6 +434,87 @@ def test_public_url_sanitizer_rejects_credentials_and_non_http_schemes() -> None
     assert sanitize_public_source_url("https://example.com/user:password@in-path") is None
     assert sanitize_public_source_url("https://example.com/secret-garden") == (
         "https://example.com/secret-garden"
+    )
+
+
+@pytest.mark.parametrize(
+    "unsafe_url",
+    (
+        "https://user%3Apass%40example.com/path",
+        "https://user%253Apass%2540example.com/path",
+        "https://api_key%3DHOST_SECRET.example.com/path",
+        "https://example.com%3Ftoken%3DHOST_SECRET/path",
+        "https://exa%0Ample.com/path",
+        "https://exa mple.com/path",
+        "https://exa\\mple.com/path",
+        "https://exa​mple.com/path",
+        "https://api_key=HOST_SECRET.example.com/path",
+        "https://-bad.example/path",
+        "https://bad-.example/path",
+        "https://bad..example/path",
+        "https://_service.example/path",
+        "https://example.com./path",
+        "https://example.com/api+key%3DPLUS_URL_LEAK",
+        "https://example.com/Authorization%3A+Bearer+PLUS_AUTH_URL_LEAK",
+        "https://example.com/users/private_EMAIL_LEAK@example.com",
+        "https://example.com/users/private_EMAIL_LEAK@example.com.",
+        "https://example.com/users/private_EMAIL_LEAK%40example.com",
+        "https://example.com/users/private_EMAIL_LEAK%2540example.com",
+        "https://example.com/users/private+tag%40example.com",
+        "https://example.com/users/private%252Btag%2540example.com",
+        "https://example.com/users/@private@example.com",
+        "https://example.com/users/%40private%40example.com",
+        "https://example.com/users/x@private@example.com",
+        "https://example.com/users/private%E2%80%8B%40example.com",
+        "https://example.com/api%C2%80key%3DUNICODE_CONTROL_URL_LEAK",
+        "https://example.com/api＋key＝FULLWIDTH_URL_LEAK",
+        "https://example.com/api％2Bkey％3DFULLWIDTH_PERCENT_URL_LEAK",
+    ),
+)
+def test_public_url_sanitizer_rejects_encoded_or_malformed_private_data(
+    unsafe_url: str,
+) -> None:
+    assert sanitize_public_source_url(unsafe_url) is None
+
+    record = build_material_source_record(
+        provider="local",
+        local_path="clip.mp4",
+        duration_ms=4000,
+        source_info={
+            "source_page": unsafe_url,
+            "creator": {"profile_url": unsafe_url},
+        },
+    )
+    public = material_source_record_to_public_dict(record)
+    assert "source_page" not in public
+    assert "creator" not in public
+
+    with pytest.raises(ValueError, match="profile_page"):
+        MaterialCreator(profile_page=unsafe_url)
+    with pytest.raises(ValueError, match="source_page"):
+        MaterialSourceRecord(
+            provider="local",
+            local_file="clip.mp4",
+            duration_ms=4000,
+            source_page=unsafe_url,
+        )
+
+
+def test_public_url_sanitizer_keeps_handles_and_canonicalizes_hosts() -> None:
+    assert sanitize_public_source_url("https://EXAMPLE.com/@creator?tracking=1") == (
+        "https://example.com/@creator"
+    )
+    assert sanitize_public_source_url("https://[2001:db8::1]:8443/video") == (
+        "https://[2001:db8::1]:8443/video"
+    )
+    assert sanitize_public_source_url("https://example.com/C++?tracking=1") == (
+        "https://example.com/C++"
+    )
+    assert sanitize_public_source_url("https://example.com/C%2B%2B/guide") == (
+        "https://example.com/C%2B%2B/guide"
+    )
+    assert sanitize_public_source_url("https://xn--r8jz45g.xn--zckzah/path") == (
+        "https://xn--r8jz45g.xn--zckzah/path"
     )
 
 

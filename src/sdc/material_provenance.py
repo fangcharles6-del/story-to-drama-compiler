@@ -8,16 +8,21 @@ semantically public values because opaque identifiers cannot reveal their meanin
 from __future__ import annotations
 
 import ast
+import ipaddress
 import json
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import unquote, urlsplit, urlunsplit
+from unicodedata import category, normalize
+from urllib.parse import unquote, unquote_plus, urlsplit, urlunsplit
 
 _PROVIDER_ID = re.compile(r"^[a-z][a-z0-9._-]{0,63}$")
 _PUBLIC_IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+_DNS_LABEL = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$")
 _MAX_MAPPING_DELIMITERS = 32
+_MAX_INSPECTION_VALUES = 32
+_MAX_INSPECTION_LENGTH = 65536
 _URI_LIKE = re.compile(
     r"(?:\b[A-Za-z][A-Za-z0-9+.-]*://|(?<![\w.])www\."
     r"|(?<![\w.+-])file:(?://|[A-Za-z]:[\\/]|[\\/])"
@@ -33,6 +38,8 @@ _SCHEMELESS_URL = re.compile(
     r"|(?:\d{1,3}\.){3}\d{1,3})(?:/|\?)[^\s<>]*",
     re.IGNORECASE,
 )
+# A standalone /... token cannot be distinguished safely from an absolute local path.
+_ROOTED_POSIX_TOKEN = re.compile(r"(?<![\w/])/{1,}(?=[^/\s])")
 _EXPLICIT_LOCAL_PATH = re.compile(
     r"(?:^(?:[A-Za-z]:[\\/]|\\\\|/|(?:\.{1,2}|~(?:[A-Za-z0-9._-]+)?)[\\/])"
     r"|[\s<({\['\"=;](?:[A-Za-z]:[\\/]|\\\\[^\\\s]+[\\/]"
@@ -80,7 +87,13 @@ _COMPACT_TOKEN = re.compile(
 
 
 def _contains_control(value: str) -> bool:
-    return any(ord(character) < 32 or ord(character) == 127 for character in value)
+    return any(
+        category(character) in {"Cc", "Cs"} or character == "\ufffd" for character in value
+    )
+
+
+def _contains_format_character(value: str) -> bool:
+    return any(category(character) == "Cf" for character in value)
 
 
 def _optional_text(value: object, *, max_length: int) -> str | None:
@@ -102,25 +115,66 @@ def _fully_unquote(value: str) -> str:
     return decoded
 
 
+def _fully_unquote_plus(value: str) -> str:
+    decoded = value
+    for _ in range(len(value) + 1):
+        candidate = unquote_plus(decoded)
+        if candidate == decoded:
+            return decoded
+        decoded = candidate
+    return decoded
+
+
+def _inspection_values(value: str) -> tuple[str, ...]:
+    values: list[str] = []
+    seen: set[str] = set()
+    pending = [value]
+    while pending:
+        current = pending.pop()
+        if current in seen:
+            continue
+        if len(current) > _MAX_INSPECTION_LENGTH or len(values) >= _MAX_INSPECTION_VALUES:
+            return (*values, "\x00")
+        seen.add(current)
+        values.append(current)
+
+        normalized = normalize("NFKC", current)
+        candidates = (
+            _fully_unquote(current),
+            _fully_unquote_plus(current),
+            normalized,
+            "".join(
+                character for character in normalized if category(character) != "Cf"
+            ),
+            "".join(
+                " " if category(character) == "Cf" else character
+                for character in normalized
+            ),
+        )
+        pending.extend(candidate for candidate in candidates if candidate not in seen)
+    return tuple(values)
+
+
 def _looks_like_structured_private_data(value: str) -> bool:
     """Reject high-confidence structures, not opaque values that resemble public IDs."""
 
-    candidate = _fully_unquote(value)
-    if any(
-        pattern.search(candidate)
-        for pattern in (
-            _URI_LIKE,
-            _EMAIL_LIKE,
-            _SCHEMELESS_URL,
-            _EXPLICIT_LOCAL_PATH,
-            _CREDENTIAL_ASSIGNMENT,
-            _HIGH_CONFIDENCE_CREDENTIAL,
-            _QUERY_STRING,
-            _COMPACT_TOKEN,
-        )
-    ):
-        return True
-    return _contains_mapping_literal(candidate)
+    for candidate in _inspection_values(value):
+        if _contains_control(candidate) or any(
+            pattern.search(candidate)
+            for pattern in (
+                _URI_LIKE,
+                _EMAIL_LIKE,
+                _SCHEMELESS_URL,
+                _ROOTED_POSIX_TOKEN,
+                _EXPLICIT_LOCAL_PATH,
+                _CREDENTIAL_ASSIGNMENT,
+                _HIGH_CONFIDENCE_CREDENTIAL,
+                _QUERY_STRING,
+                _COMPACT_TOKEN,
+            )
+        ) or _contains_mapping_literal(candidate):
+            return True
+    return False
 
 
 def _is_mapping_literal(value: str) -> bool:
@@ -193,40 +247,88 @@ def _optional_identifier(value: object, *, max_length: int = 128) -> str | None:
     return candidate
 
 
+def _canonical_public_hostname(value: str) -> str | None:
+    """Return one canonical IP literal or IDNA DNS hostname."""
+
+    try:
+        address = ipaddress.ip_address(value)
+    except ValueError:
+        try:
+            hostname = value.encode("idna").decode("ascii")
+        except UnicodeError:
+            return None
+        if (
+            not hostname
+            or len(hostname) > 253
+            or any(_DNS_LABEL.fullmatch(label) is None for label in hostname.split("."))
+        ):
+            return None
+        return hostname.lower()
+    if address.version == 6:
+        return f"[{address.compressed}]"
+    return address.compressed
+
+
+def _path_contains_email(value: str) -> bool:
+    for segment in value.split("/"):
+        at_count = segment.count("@")
+        if at_count > 1:
+            return True
+        if at_count == 1 and not segment.startswith("@"):
+            return True
+    return False
+
+
 def sanitize_public_source_url(value: object) -> str | None:
     """Return an HTTP(S) page URL with userinfo, query, and fragment removed."""
 
     candidate = _optional_text(value, max_length=2048)
-    if candidate is None:
+    if (
+        candidate is None
+        or "\\" in candidate
+        or any(character.isspace() for character in candidate)
+    ):
         return None
     try:
         parsed = urlsplit(candidate)
         port = parsed.port
+        parsed_hostname = parsed.hostname
     except ValueError:
         return None
     if parsed.scheme.lower() not in {"http", "https"}:
         return None
-    if parsed.hostname is None or parsed.username is not None or parsed.password is not None:
+    authority = parsed.netloc
+    if (
+        parsed_hostname is None
+        or parsed.username is not None
+        or parsed.password is not None
+        or "@" in authority
+        or "%" in authority
+        or _fully_unquote_plus(authority) != authority
+        or _contains_control(authority)
+        or _contains_format_character(authority)
+        or any(character.isspace() for character in authority)
+    ):
+        return None
+    hostname = _canonical_public_hostname(parsed_hostname)
+    if hostname is None:
         return None
     if _contains_control(parsed.path):
         return None
-    decoded_path = _fully_unquote(parsed.path)
-    if _contains_control(decoded_path):
-        return None
-    if any(
-        pattern.search(decoded_path)
-        for pattern in (
-            _CREDENTIAL_ASSIGNMENT,
-            _HIGH_CONFIDENCE_CREDENTIAL,
-            _QUERY_STRING,
-            _PATH_USERINFO,
-        )
-    ):
-        return None
+    for decoded_path in _inspection_values(parsed.path):
+        if _contains_control(decoded_path) or _path_contains_email(decoded_path):
+            return None
+        if any(
+            pattern.search(decoded_path)
+            for pattern in (
+                _CREDENTIAL_ASSIGNMENT,
+                _HIGH_CONFIDENCE_CREDENTIAL,
+                _QUERY_STRING,
+                _PATH_USERINFO,
+            )
+        ):
+            return None
 
-    hostname = parsed.hostname.lower()
-    if ":" in hostname and not hostname.startswith("["):
-        hostname = f"[{hostname}]"
     netloc = hostname if port is None else f"{hostname}:{port}"
     return urlunsplit((parsed.scheme.lower(), netloc, parsed.path, "", ""))
 
