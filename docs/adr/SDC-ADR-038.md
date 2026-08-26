@@ -1,6 +1,6 @@
 # SDC-ADR-038: Production Adapter Foundation v1
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-25
 - Source assessment: `harry0703/MoneyPrinterTurbo@6cd36b5a2c56b49b24621463038e4db3963f0a43`
 - License observed at source revision: MIT
