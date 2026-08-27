@@ -36,6 +36,10 @@ from sdc.real_asset_use_scope_review_v26 import (
     CreativeSampleRealAssetUseScopeReviewRecordV1,
     CreativeSampleRealAssetUseScopeReviewRequestV1,
 )
+from sdc.visual_prompt_compiler import (
+    CreativeSampleVisualPromptCompileRequestV1,
+    CreativeSampleVisualPromptSidecarV1,
+)
 
 from .real_asset_fresh_status_evidence_v30 import (
     CreativeSampleRealAssetFreshStatusDecisionV1,
@@ -117,6 +121,8 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetFreshStatusDecisionV1,
     CreativeSampleRealAssetFreshStatusEvidenceRecordV1,
     CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
+    CreativeSampleVisualPromptCompileRequestV1,
+    CreativeSampleVisualPromptSidecarV1,
 ]
 
 

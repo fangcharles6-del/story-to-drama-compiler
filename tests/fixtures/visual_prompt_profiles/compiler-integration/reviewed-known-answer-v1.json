@@ -1,0 +1,379 @@
+{
+  "authority_scope": "NO_RIGHTS_PROVIDER_EXECUTION_QUALIFICATION_OR_PUBLICATION_AUTHORITY",
+  "cases": [
+    {
+      "base_compilation_id": "creative_sample_c43253e73fe962f1623d",
+      "case_id": "basic-narrative",
+      "case_semantics": "ONE_CHARACTER_BASIC_NARRATIVE_WITH_NO_DIALOGUE",
+      "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+      "catalog_version": "1.0.0",
+      "profile_id": "sdc.narrative-shot.cinematic.v1",
+      "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+      "profile_version": "1.0.0",
+      "prompt": "Narrative: 辞职信落在桌上，在解释原因之前形成钩子。\nVisual Direction: 高机位静态近景；苏晴右手将奶油色信封放在浅木桌左前方，脸在浅景深背景中仍可辨认。\nAction: 右手放下信封，停顿半秒后收回\nShot Size: CLOSE_UP\nCamera Angle: HIGH_ANGLE\nCamera Movement: STATIC\nCharacter Asset Bindings: [{\"asset_content_sha256\":\"a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4\",\"asset_version_id\":\"character_asset_80ccdca6364719a16638\",\"character_id\":\"character_eac118bceb9733dc90a1\"}]\nScene Asset Binding: {\"asset_content_sha256\":\"cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179\",\"asset_version_id\":\"scene_asset_ff40fa1bcf23100a83e4\",\"scene_id\":\"scene_3c1c4be2125f4ae91624\"}\nEmotion by Character: {\"character_eac118bceb9733dc90a1\":\"克制、疲惫，但决定已经做出，不哭泣\"}\nWardrobe by Character: {\"character_eac118bceb9733dc90a1\":\"象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾\"}\nProps: [\"cream-envelope\"]\nContinuity Notes: 苏晴位于画面左侧；信封长边平行桌沿，最终停在桌面左前部。\nDialogue: []\nPositive Prompt Constraints:\n- Render one coherent cinematic storyboard frame from the supplied shot values.\n- Preserve every supplied character and scene asset identity.\n- Keep action, emotion, wardrobe, props, dialogue context, and continuity mutually consistent.\nNegative Prompt Constraints:\n- Do not introduce unbound characters, locations, props, text, logos, or watermarks.\n- Do not contradict the supplied camera, wardrobe, emotion, or continuity values.\n",
+      "prompt_render_receipt": {
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "automated_execution_allowed": false,
+        "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+        "catalog_version": "1.0.0",
+        "current_gate": "HUMAN_GATE",
+        "eligible_for_asset_promotion": false,
+        "execution_authorized": false,
+        "generation_authorized": false,
+        "grants_execution_authority": false,
+        "grants_qualification": false,
+        "grants_rights": false,
+        "posts_allowed": 0,
+        "profile_id": "sdc.narrative-shot.cinematic.v1",
+        "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+        "profile_version": "1.0.0",
+        "prompt_render_receipt_sha256": "21d5860e184f78a74bcc72252eb2655a352c4b4c3f8e2040c3c2f67c83618e15",
+        "prompt_sha256": "cfdb88c9885e9fc91969f5ca8166493e431efd4f6af0618b11ac1175a53f0e04",
+        "prompt_size_bytes": 1621,
+        "provider_requests": 0,
+        "provider_state": "NOT_AUTHORIZED",
+        "publication_allowed": false,
+        "publication_authorized": false,
+        "receipt_purpose": "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY",
+        "remote_processing_allowed": false,
+        "render_input_sha256": "614db70a4d78d3027452feab75a4cff692a7290688a550dface43e0eae17f47f",
+        "renderer_id": "sdc.visual-prompt-renderer",
+        "renderer_version": "1.0.0",
+        "replaces_rights_manifest": false,
+        "retention_allowed": false,
+        "training_allowed": false,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+      },
+      "prompt_render_receipt_sha256": "21d5860e184f78a74bcc72252eb2655a352c4b4c3f8e2040c3c2f67c83618e15",
+      "prompt_sha256": "cfdb88c9885e9fc91969f5ca8166493e431efd4f6af0618b11ac1175a53f0e04",
+      "prompt_size_bytes": 1621,
+      "render_input": {
+        "action": "右手放下信封，停顿半秒后收回",
+        "camera_angle": "HIGH_ANGLE",
+        "camera_movement": "STATIC",
+        "character_asset_bindings": [
+          {
+            "asset_content_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+            "asset_version_id": "character_asset_80ccdca6364719a16638",
+            "character_id": "character_eac118bceb9733dc90a1"
+          }
+        ],
+        "continuity_notes": "苏晴位于画面左侧；信封长边平行桌沿，最终停在桌面左前部。",
+        "dialogue": [],
+        "emotion_by_character": {
+          "character_eac118bceb9733dc90a1": "克制、疲惫，但决定已经做出，不哭泣"
+        },
+        "input_kind": "NARRATIVE_SHOT",
+        "narrative": "辞职信落在桌上，在解释原因之前形成钩子。",
+        "props": [
+          "cream-envelope"
+        ],
+        "scene_asset_binding": {
+          "asset_content_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+          "asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+          "scene_id": "scene_3c1c4be2125f4ae91624"
+        },
+        "shot_size": "CLOSE_UP",
+        "visual_direction": "高机位静态近景；苏晴右手将奶油色信封放在浅木桌左前方，脸在浅景深背景中仍可辨认。",
+        "wardrobe_by_character": {
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      "render_input_sha256": "614db70a4d78d3027452feab75a4cff692a7290688a550dface43e0eae17f47f",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "sidecar_sha256": "d35e931e71aa0f85250b61ea590569861111eac2c281ace2ea08a7d42fc28b1a",
+      "sidecar_shot_count": 10,
+      "source_shot_id": "storyboard_shot_v2_6efad69a2a84e32dbc5b",
+      "source_shot_ordinal": 0,
+      "source_spec_variant": "EXISTING_SYNTHETIC_PILOT_SPEC",
+      "spec_sha256": "221ccd64abeaa786f9271e89e70c2c8ab37e8f03790daa766f9b763aa25e0af4"
+    },
+    {
+      "base_compilation_id": "creative_sample_c43253e73fe962f1623d",
+      "case_id": "unicode-nfc",
+      "case_semantics": "UNICODE_NFC_NARRATIVE_PROMPT_AND_RECEIPT",
+      "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+      "catalog_version": "1.0.0",
+      "profile_id": "sdc.narrative-shot.cinematic.v1",
+      "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+      "profile_version": "1.0.0",
+      "prompt": "Narrative: 苏晴平静宣布离开，建立核心冲突。\nVisual Direction: 眼平静态中近景；苏晴在画面左侧，信封作前景，从信封抬眼望向右侧门口并说完对白。\nAction: 看信封后抬眼望向右侧门口并说完对白\nShot Size: MEDIUM_CLOSE_UP\nCamera Angle: EYE_LEVEL\nCamera Movement: STATIC\nCharacter Asset Bindings: [{\"asset_content_sha256\":\"a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4\",\"asset_version_id\":\"character_asset_80ccdca6364719a16638\",\"character_id\":\"character_eac118bceb9733dc90a1\"}]\nScene Asset Binding: {\"asset_content_sha256\":\"cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179\",\"asset_version_id\":\"scene_asset_ff40fa1bcf23100a83e4\",\"scene_id\":\"scene_3c1c4be2125f4ae91624\"}\nEmotion by Character: {\"character_eac118bceb9733dc90a1\":\"平静外表下的失望，尾句坚定\"}\nWardrobe by Character: {\"character_eac118bceb9733dc90a1\":\"象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾\"}\nProps: [\"cream-envelope\"]\nContinuity Notes: 延续镜头0的脸、发型、服装、屏幕方向和桌上信封位置。\nDialogue: [{\"character_id\":\"character_eac118bceb9733dc90a1\",\"line_id\":\"dialogue_65ea96ce3201083ff96f\",\"ordinal\":0,\"text\":\"辞职信在桌上。天亮前，我就走。\"}]\nPositive Prompt Constraints:\n- Render one coherent cinematic storyboard frame from the supplied shot values.\n- Preserve every supplied character and scene asset identity.\n- Keep action, emotion, wardrobe, props, dialogue context, and continuity mutually consistent.\nNegative Prompt Constraints:\n- Do not introduce unbound characters, locations, props, text, logos, or watermarks.\n- Do not contradict the supplied camera, wardrobe, emotion, or continuity values.\n",
+      "prompt_render_receipt": {
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "automated_execution_allowed": false,
+        "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+        "catalog_version": "1.0.0",
+        "current_gate": "HUMAN_GATE",
+        "eligible_for_asset_promotion": false,
+        "execution_authorized": false,
+        "generation_authorized": false,
+        "grants_execution_authority": false,
+        "grants_qualification": false,
+        "grants_rights": false,
+        "posts_allowed": 0,
+        "profile_id": "sdc.narrative-shot.cinematic.v1",
+        "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+        "profile_version": "1.0.0",
+        "prompt_render_receipt_sha256": "8ad4e5e52068a97d4b8c28a3308548b2bccb897fd33fd00a8edf6a911bcbebd1",
+        "prompt_sha256": "0a7fa08c80ad5fb99bec842f6342535a56306d679362994992c04738fc6a3643",
+        "prompt_size_bytes": 1759,
+        "provider_requests": 0,
+        "provider_state": "NOT_AUTHORIZED",
+        "publication_allowed": false,
+        "publication_authorized": false,
+        "receipt_purpose": "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY",
+        "remote_processing_allowed": false,
+        "render_input_sha256": "c3626bb4dd56ef7afec6da40df2cd48cc69b59e813f6f29953bab8b1c4888311",
+        "renderer_id": "sdc.visual-prompt-renderer",
+        "renderer_version": "1.0.0",
+        "replaces_rights_manifest": false,
+        "retention_allowed": false,
+        "training_allowed": false,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+      },
+      "prompt_render_receipt_sha256": "8ad4e5e52068a97d4b8c28a3308548b2bccb897fd33fd00a8edf6a911bcbebd1",
+      "prompt_sha256": "0a7fa08c80ad5fb99bec842f6342535a56306d679362994992c04738fc6a3643",
+      "prompt_size_bytes": 1759,
+      "render_input": {
+        "action": "看信封后抬眼望向右侧门口并说完对白",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "STATIC",
+        "character_asset_bindings": [
+          {
+            "asset_content_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+            "asset_version_id": "character_asset_80ccdca6364719a16638",
+            "character_id": "character_eac118bceb9733dc90a1"
+          }
+        ],
+        "continuity_notes": "延续镜头0的脸、发型、服装、屏幕方向和桌上信封位置。",
+        "dialogue": [
+          {
+            "character_id": "character_eac118bceb9733dc90a1",
+            "line_id": "dialogue_65ea96ce3201083ff96f",
+            "ordinal": 0,
+            "text": "辞职信在桌上。天亮前，我就走。"
+          }
+        ],
+        "emotion_by_character": {
+          "character_eac118bceb9733dc90a1": "平静外表下的失望，尾句坚定"
+        },
+        "input_kind": "NARRATIVE_SHOT",
+        "narrative": "苏晴平静宣布离开，建立核心冲突。",
+        "props": [
+          "cream-envelope"
+        ],
+        "scene_asset_binding": {
+          "asset_content_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+          "asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+          "scene_id": "scene_3c1c4be2125f4ae91624"
+        },
+        "shot_size": "MEDIUM_CLOSE_UP",
+        "visual_direction": "眼平静态中近景；苏晴在画面左侧，信封作前景，从信封抬眼望向右侧门口并说完对白。",
+        "wardrobe_by_character": {
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      "render_input_sha256": "c3626bb4dd56ef7afec6da40df2cd48cc69b59e813f6f29953bab8b1c4888311",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "sidecar_sha256": "d35e931e71aa0f85250b61ea590569861111eac2c281ace2ea08a7d42fc28b1a",
+      "sidecar_shot_count": 10,
+      "source_shot_id": "storyboard_shot_v2_13822570b72c80607da5",
+      "source_shot_ordinal": 1,
+      "source_spec_variant": "EXISTING_SYNTHETIC_PILOT_SPEC",
+      "spec_sha256": "221ccd64abeaa786f9271e89e70c2c8ab37e8f03790daa766f9b763aa25e0af4"
+    },
+    {
+      "base_compilation_id": "creative_sample_e82133b043a156cdddaf",
+      "case_id": "no-character-no-dialogue",
+      "case_semantics": "EMPTY_CHARACTER_BINDINGS_MAPS_AND_DIALOGUE",
+      "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+      "catalog_version": "1.0.0",
+      "profile_id": "sdc.narrative-shot.cinematic.v1",
+      "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+      "profile_version": "1.0.0",
+      "prompt": "Narrative: 奶油色信封静置在空无一人的浅木桌上。\nVisual Direction: 高机位静态近景；空置办公室内，信封位于桌面左前方。\nAction: 信封保持静止，晨光中的窗帘投影轻微移动\nShot Size: CLOSE_UP\nCamera Angle: HIGH_ANGLE\nCamera Movement: STATIC\nCharacter Asset Bindings: []\nScene Asset Binding: {\"asset_content_sha256\":\"cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179\",\"asset_version_id\":\"scene_asset_ff40fa1bcf23100a83e4\",\"scene_id\":\"scene_3c1c4be2125f4ae91624\"}\nEmotion by Character: {}\nWardrobe by Character: {}\nProps: [\"cream-envelope\"]\nContinuity Notes: 保持空桌、信封位置与晨光方向在前后镜头中一致。\nDialogue: []\nPositive Prompt Constraints:\n- Render one coherent cinematic storyboard frame from the supplied shot values.\n- Preserve every supplied character and scene asset identity.\n- Keep action, emotion, wardrobe, props, dialogue context, and continuity mutually consistent.\nNegative Prompt Constraints:\n- Do not introduce unbound characters, locations, props, text, logos, or watermarks.\n- Do not contradict the supplied camera, wardrobe, emotion, or continuity values.\n",
+      "prompt_render_receipt": {
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "automated_execution_allowed": false,
+        "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+        "catalog_version": "1.0.0",
+        "current_gate": "HUMAN_GATE",
+        "eligible_for_asset_promotion": false,
+        "execution_authorized": false,
+        "generation_authorized": false,
+        "grants_execution_authority": false,
+        "grants_qualification": false,
+        "grants_rights": false,
+        "posts_allowed": 0,
+        "profile_id": "sdc.narrative-shot.cinematic.v1",
+        "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+        "profile_version": "1.0.0",
+        "prompt_render_receipt_sha256": "ad1b20d65245a774747a1aac2d6429558a698521898f962c69a2ddb339985f60",
+        "prompt_sha256": "6c238ce710fc8e189e82ed5321d9058310c094aff8dfa5af1b0e7eb23d3a812d",
+        "prompt_size_bytes": 1171,
+        "provider_requests": 0,
+        "provider_state": "NOT_AUTHORIZED",
+        "publication_allowed": false,
+        "publication_authorized": false,
+        "receipt_purpose": "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY",
+        "remote_processing_allowed": false,
+        "render_input_sha256": "a79cca2e2d75d1691a0fc68a15d3f5de9caca267a94cec1598abf5802f3d6cb8",
+        "renderer_id": "sdc.visual-prompt-renderer",
+        "renderer_version": "1.0.0",
+        "replaces_rights_manifest": false,
+        "retention_allowed": false,
+        "training_allowed": false,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+      },
+      "prompt_render_receipt_sha256": "ad1b20d65245a774747a1aac2d6429558a698521898f962c69a2ddb339985f60",
+      "prompt_sha256": "6c238ce710fc8e189e82ed5321d9058310c094aff8dfa5af1b0e7eb23d3a812d",
+      "prompt_size_bytes": 1171,
+      "render_input": {
+        "action": "信封保持静止，晨光中的窗帘投影轻微移动",
+        "camera_angle": "HIGH_ANGLE",
+        "camera_movement": "STATIC",
+        "character_asset_bindings": [],
+        "continuity_notes": "保持空桌、信封位置与晨光方向在前后镜头中一致。",
+        "dialogue": [],
+        "emotion_by_character": {},
+        "input_kind": "NARRATIVE_SHOT",
+        "narrative": "奶油色信封静置在空无一人的浅木桌上。",
+        "props": [
+          "cream-envelope"
+        ],
+        "scene_asset_binding": {
+          "asset_content_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+          "asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+          "scene_id": "scene_3c1c4be2125f4ae91624"
+        },
+        "shot_size": "CLOSE_UP",
+        "visual_direction": "高机位静态近景；空置办公室内，信封位于桌面左前方。",
+        "wardrobe_by_character": {}
+      },
+      "render_input_sha256": "a79cca2e2d75d1691a0fc68a15d3f5de9caca267a94cec1598abf5802f3d6cb8",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "sidecar_sha256": "e3809a8f7a50dddba71f58c7768e70ead89dd6c03c8638507ff034e3fd0ac85c",
+      "sidecar_shot_count": 10,
+      "source_shot_id": "storyboard_shot_v2_d54845a99f168fb39e6c",
+      "source_shot_ordinal": 0,
+      "source_spec_variant": "DETERMINISTIC_LOCAL_NO_CHARACTER_NO_DIALOGUE_VARIANT",
+      "spec_sha256": "b133ea7603baebe29a8f1dff842ae4bd0f140cbaf22b933aa92552885ccf0f9a"
+    },
+    {
+      "base_compilation_id": "creative_sample_74e13ab2a848a2f48227",
+      "case_id": "multi-character-ordered-dialogue-active-assets",
+      "case_semantics": "TWO_CHARACTERS_ORDERED_DIALOGUE_AND_ACTIVE_ASSET_CONTENT_HASHES",
+      "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+      "catalog_version": "1.0.0",
+      "profile_id": "sdc.narrative-shot.cinematic.v1",
+      "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+      "profile_version": "1.0.0",
+      "prompt": "Narrative: 顾言进门，以一句拒绝打断苏晴的决定。\nVisual Direction: 眼平中景缓慢推进；顾言从右后玻璃门迈入一步后停下，左手垂持蓝色文件夹，苏晴背肩作左前景锚点。\nAction: 顾言入门、停步并说话，苏晴保持静止\nShot Size: MEDIUM\nCamera Angle: EYE_LEVEL\nCamera Movement: DOLLY\nCharacter Asset Bindings: [{\"asset_content_sha256\":\"4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917\",\"asset_version_id\":\"character_asset_28b463fa86740ce9caa3\",\"character_id\":\"character_43019e6eefc52eee8f6b\"},{\"asset_content_sha256\":\"a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4\",\"asset_version_id\":\"character_asset_80ccdca6364719a16638\",\"character_id\":\"character_eac118bceb9733dc90a1\"}]\nScene Asset Binding: {\"asset_content_sha256\":\"cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179\",\"asset_version_id\":\"scene_asset_ff40fa1bcf23100a83e4\",\"scene_id\":\"scene_3c1c4be2125f4ae91624\"}\nEmotion by Character: {\"character_43019e6eefc52eee8f6b\":\"错愕后压住焦急\",\"character_eac118bceb9733dc90a1\":\"戒备，不回头\"}\nWardrobe by Character: {\"character_43019e6eefc52eee8f6b\":\"海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤\",\"character_eac118bceb9733dc90a1\":\"象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾\"}\nProps: [\"blue-partner-folder\",\"cream-envelope\"]\nContinuity Notes: 苏晴保持画面左侧；顾言从右侧进入，蓝色文件夹始终在左手。\nDialogue: [{\"character_id\":\"character_43019e6eefc52eee8f6b\",\"line_id\":\"dialogue_2086b57f33fe54845c7e\",\"ordinal\":1,\"text\":\"我不同意。\"},{\"character_id\":\"character_eac118bceb9733dc90a1\",\"line_id\":\"dialogue_656fef8b9fd9e4b12a3f\",\"ordinal\":2,\"text\":\"第二句第一方合成对白，保持 NFC。\"}]\nPositive Prompt Constraints:\n- Render one coherent cinematic storyboard frame from the supplied shot values.\n- Preserve every supplied character and scene asset identity.\n- Keep action, emotion, wardrobe, props, dialogue context, and continuity mutually consistent.\nNegative Prompt Constraints:\n- Do not introduce unbound characters, locations, props, text, logos, or watermarks.\n- Do not contradict the supplied camera, wardrobe, emotion, or continuity values.\n",
+      "prompt_render_receipt": {
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "automated_execution_allowed": false,
+        "catalog_sha256": "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2",
+        "catalog_version": "1.0.0",
+        "current_gate": "HUMAN_GATE",
+        "eligible_for_asset_promotion": false,
+        "execution_authorized": false,
+        "generation_authorized": false,
+        "grants_execution_authority": false,
+        "grants_qualification": false,
+        "grants_rights": false,
+        "posts_allowed": 0,
+        "profile_id": "sdc.narrative-shot.cinematic.v1",
+        "profile_sha256": "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+        "profile_version": "1.0.0",
+        "prompt_render_receipt_sha256": "09b0720e56447c979c8635804afc74b111ff53ca9cda42cc9c9edbfb9c624630",
+        "prompt_sha256": "678880b9f1c63d15a32ee797e864b18c604f4182cd0670fd479f9d4bf58f76d4",
+        "prompt_size_bytes": 2272,
+        "provider_requests": 0,
+        "provider_state": "NOT_AUTHORIZED",
+        "publication_allowed": false,
+        "publication_authorized": false,
+        "receipt_purpose": "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY",
+        "remote_processing_allowed": false,
+        "render_input_sha256": "d6eccc55863fdd74ebfaa6f9c4eccfca9d311327e1fba3a5a3d9dfe3d59429f2",
+        "renderer_id": "sdc.visual-prompt-renderer",
+        "renderer_version": "1.0.0",
+        "replaces_rights_manifest": false,
+        "retention_allowed": false,
+        "training_allowed": false,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+      },
+      "prompt_render_receipt_sha256": "09b0720e56447c979c8635804afc74b111ff53ca9cda42cc9c9edbfb9c624630",
+      "prompt_sha256": "678880b9f1c63d15a32ee797e864b18c604f4182cd0670fd479f9d4bf58f76d4",
+      "prompt_size_bytes": 2272,
+      "render_input": {
+        "action": "顾言入门、停步并说话，苏晴保持静止",
+        "camera_angle": "EYE_LEVEL",
+        "camera_movement": "DOLLY",
+        "character_asset_bindings": [
+          {
+            "asset_content_sha256": "4838f501bdae9ea9a8469389d31d5f96bff07d073dffc4f52348dce9cdf7e917",
+            "asset_version_id": "character_asset_28b463fa86740ce9caa3",
+            "character_id": "character_43019e6eefc52eee8f6b"
+          },
+          {
+            "asset_content_sha256": "a8cde3be65d13caa964a9c31b4ec4bef618aca9a2ed920873655b30faf247de4",
+            "asset_version_id": "character_asset_80ccdca6364719a16638",
+            "character_id": "character_eac118bceb9733dc90a1"
+          }
+        ],
+        "continuity_notes": "苏晴保持画面左侧；顾言从右侧进入，蓝色文件夹始终在左手。",
+        "dialogue": [
+          {
+            "character_id": "character_43019e6eefc52eee8f6b",
+            "line_id": "dialogue_2086b57f33fe54845c7e",
+            "ordinal": 1,
+            "text": "我不同意。"
+          },
+          {
+            "character_id": "character_eac118bceb9733dc90a1",
+            "line_id": "dialogue_656fef8b9fd9e4b12a3f",
+            "ordinal": 2,
+            "text": "第二句第一方合成对白，保持 NFC。"
+          }
+        ],
+        "emotion_by_character": {
+          "character_43019e6eefc52eee8f6b": "错愕后压住焦急",
+          "character_eac118bceb9733dc90a1": "戒备，不回头"
+        },
+        "input_kind": "NARRATIVE_SHOT",
+        "narrative": "顾言进门，以一句拒绝打断苏晴的决定。",
+        "props": [
+          "blue-partner-folder",
+          "cream-envelope"
+        ],
+        "scene_asset_binding": {
+          "asset_content_sha256": "cde24bbf3242680a93a12f0d2203a035e3c024948fffe42bf559f51aee16e179",
+          "asset_version_id": "scene_asset_ff40fa1bcf23100a83e4",
+          "scene_id": "scene_3c1c4be2125f4ae91624"
+        },
+        "shot_size": "MEDIUM",
+        "visual_direction": "眼平中景缓慢推进；顾言从右后玻璃门迈入一步后停下，左手垂持蓝色文件夹，苏晴背肩作左前景锚点。",
+        "wardrobe_by_character": {
+          "character_43019e6eefc52eee8f6b": "海军蓝无标识工作夹克、浅灰色衬衫、炭灰色长裤",
+          "character_eac118bceb9733dc90a1": "象牙白无标识衬衫、炭灰色直筒裤、黑色平底鞋、黑色低马尾"
+        }
+      },
+      "render_input_sha256": "d6eccc55863fdd74ebfaa6f9c4eccfca9d311327e1fba3a5a3d9dfe3d59429f2",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "sidecar_sha256": "9735ab0d91bbe5ba0d98890389f56e9a6cde5780ce566f0629411e52b97da12f",
+      "sidecar_shot_count": 10,
+      "source_shot_id": "storyboard_shot_v2_ec2bc7888bf42c0d394b",
+      "source_shot_ordinal": 2,
+      "source_spec_variant": "DETERMINISTIC_LOCAL_MULTI_CHARACTER_ORDERED_DIALOGUE_VARIANT",
+      "spec_sha256": "b0c2cb501f075458ed75c6c0a23d251f0e56848e9a6b264b51a5c28956e2d9e2"
+    }
+  ],
+  "packet_purpose": "HUMAN_REVIEW_OF_SYNTHETIC_VISUAL_PROMPT_COMPILER_KNOWN_ANSWERS",
+  "packet_version": "1.0.0",
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "source_scope": "EXISTING_SYNTHETIC_PILOT_SPEC_AND_DETERMINISTIC_LOCAL_VARIANTS_ONLY"
+}
