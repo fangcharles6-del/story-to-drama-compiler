@@ -453,20 +453,9 @@ def _mutate_projection_at_path(value: object, path: tuple[str | int, ...]) -> ob
 
 
 def _synthetic_admitted_catalog() -> PromptProfileCatalog:
-    """Return test-only admission metadata; the committed source remains DRAFT."""
+    """Return the reviewed catalog used by the existing pure-renderer tests."""
 
-    catalog = load_visual_prompt_profile_source()
-    entries = tuple(
-        replace(
-            entry,
-            offline_render_admission_status=(
-                OfflineRenderAdmissionStatus.HUMAN_REVIEWED_FOR_OFFLINE_RENDER
-            ),
-            profile_text_provenance_status=(ProfileTextProvenanceStatus.FIRST_PARTY_TEXT_REVIEWED),
-        )
-        for entry in catalog.profiles
-    )
-    return replace(catalog, profiles=entries)
+    return load_visual_prompt_profile_source()
 
 
 def _narrative_input() -> NarrativeShotPromptRenderInput:
@@ -603,12 +592,14 @@ def test_semantic_hash_domains_are_exact_and_separate_from_raw_hashes() -> None:
         profiles_module.CATALOG_SHA256_DOMAIN,
         profiles_module.RENDER_INPUT_SHA256_DOMAIN,
         profiles_module.PROMPT_RENDER_RECEIPT_SHA256_DOMAIN,
+        profiles_module.CATALOG_DIGEST_RECEIPT_SHA256_DOMAIN,
     )
     assert domains == (
         b"sdc:visual-prompt-profile:v1\0",
         b"sdc:visual-prompt-catalog:v1\0",
         b"sdc:visual-prompt-render-input:v1\0",
         b"sdc:visual-prompt-render-receipt:v1\0",
+        b"sdc:visual-prompt-catalog-digest-receipt:v1\0",
     )
 
     projection = {"same": "projection"}
@@ -636,15 +627,15 @@ def test_display_and_status_metadata_change_only_the_catalog_hash() -> None:
     assert changed.catalog_sha256 != catalog.catalog_sha256
 
 
-def test_exact_resolver_rejects_draft_and_every_identity_mismatch() -> None:
-    draft = load_visual_prompt_profile_source()
+def test_exact_resolver_admits_reviewed_profiles_and_rejects_every_identity_mismatch() -> None:
+    catalog = load_visual_prompt_profile_source()
     assert tuple(
         (
             entry.profile.profile_id,
             entry.profile.profile_version,
             entry.profile.asset_purpose,
         )
-        for entry in draft.profiles
+        for entry in catalog.profiles
     ) == (
         (
             "sdc.character-reference.cinematic.v1",
@@ -662,44 +653,60 @@ def test_exact_resolver_rejects_draft_and_every_identity_mismatch() -> None:
             AssetPurpose.SCENE_REFERENCE_ASSET,
         ),
     )
-    assert tuple(item.value for item in draft.profiles[0].profile.reference_asset_types) == (
+    assert tuple(item.value for item in catalog.profiles[0].profile.reference_asset_types) == (
         "CHARACTER_IDENTITY_SHEET",
         "CHARACTER_POSE_REFERENCE",
         "CHARACTER_EXPRESSION_REFERENCE",
     )
-    assert draft.profiles[1].profile.reference_asset_types == ()
-    assert tuple(item.value for item in draft.profiles[2].profile.reference_asset_types) == (
+    assert catalog.profiles[1].profile.reference_asset_types == ()
+    assert tuple(item.value for item in catalog.profiles[2].profile.reference_asset_types) == (
         "SCENE_ESTABLISHING_REFERENCE",
         "SCENE_LIGHTING_REFERENCE",
         "SCENE_MATERIAL_REFERENCE",
         "SCENE_PROP_PLACEMENT_REFERENCE",
     )
-    for entry in draft.profiles:
+    assert catalog.catalog_reviewer_ref == "github.fangcharles6-del"
+    assert catalog.catalog_reviewed_at == "2026-08-27T03:06:32Z"
+    assert catalog.source_revision == "sdc.visual-prompt-profiles.phase1-reviewed.1"
+    assert (
+        catalog.catalog_sha256 == "cbf0e0baa8ca1bc63f8643b6e9f0982134a9bf2386e8d8c1db8adc31e7cf2fc2"
+    )
+    assert (
+        catalog.catalog_sha256 != "aaf1e0caf4781da4d0c334b228284d984ed0cdd5590f072ec4ae3c6222e3e9f6"
+    )
+    assert tuple(entry.profile_sha256 for entry in catalog.profiles) == (
+        "54901f50bc718eb6f51d866c842c70791c7d341e7f9c20c37281ee0bc840434d",
+        "3da25632ad7798921a88200c591cd8774b65e533b6dd54a35be4c96802365181",
+        "ea62abd6c0f35da2fa2ccc0d79ecc5e629aed84f14378dce0e14d88f49f11b0d",
+    )
+    for entry in catalog.profiles:
         assert entry.provider_syntax_compatibility_observations == ()
-        assert entry.offline_render_admission_status is OfflineRenderAdmissionStatus.DRAFT
+        assert (
+            entry.offline_render_admission_status
+            is OfflineRenderAdmissionStatus.HUMAN_REVIEWED_FOR_OFFLINE_RENDER
+        )
         assert (
             entry.profile_text_provenance_status
-            is ProfileTextProvenanceStatus.RIGHTS_REVIEW_REQUIRED
+            is ProfileTextProvenanceStatus.FIRST_PARTY_TEXT_REVIEWED
         )
-        with pytest.raises(VisualPromptProfileError, match="does not admit"):
-            resolve_visual_prompt_profile(
-                draft,
-                catalog_version=draft.catalog_version,
-                catalog_sha256=draft.catalog_sha256,
-                profile_id=entry.profile.profile_id,
-                profile_version=entry.profile.profile_version,
-                profile_sha256=entry.profile_sha256,
-            )
+        resolved = resolve_visual_prompt_profile(
+            catalog,
+            catalog_version=catalog.catalog_version,
+            catalog_sha256=catalog.catalog_sha256,
+            profile_id=entry.profile.profile_id,
+            profile_version=entry.profile.profile_version,
+            profile_sha256=entry.profile_sha256,
+        )
+        assert resolved.profile == entry.profile
 
         with pytest.raises(VisualPromptProfileError, match="resolver-only"):
             VisualPromptProfileSnapshot(
                 profile=entry.profile,
                 profile_sha256=entry.profile_sha256,
-                catalog_version=draft.catalog_version,
-                catalog_sha256=draft.catalog_sha256,
+                catalog_version=catalog.catalog_version,
+                catalog_sha256=catalog.catalog_sha256,
             )
 
-    catalog = _synthetic_admitted_catalog()
     entry = catalog.profiles[1]
     exact_identity = {
         "catalog_version": catalog.catalog_version,

@@ -22,14 +22,43 @@ PROFILE_SHA256_DOMAIN = b"sdc:visual-prompt-profile:v1\0"
 CATALOG_SHA256_DOMAIN = b"sdc:visual-prompt-catalog:v1\0"
 RENDER_INPUT_SHA256_DOMAIN = b"sdc:visual-prompt-render-input:v1\0"
 PROMPT_RENDER_RECEIPT_SHA256_DOMAIN = b"sdc:visual-prompt-render-receipt:v1\0"
+CATALOG_DIGEST_RECEIPT_SHA256_DOMAIN = b"sdc:visual-prompt-catalog-digest-receipt:v1\0"
 
 VISUAL_PROMPT_RENDERER_ID = "sdc.visual-prompt-renderer"
 VISUAL_PROMPT_RENDERER_VERSION = "1.0.0"
+VISUAL_PROMPT_GENERATOR_ID = "sdc.visual-prompt-profile-generator"
+VISUAL_PROMPT_GENERATOR_VERSION = "1.0.0"
 
 PROMPT_RENDER_RECEIPT_PURPOSE = "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY"
+CATALOG_DIGEST_RECEIPT_PURPOSE = "CATALOG_SOURCE_AND_GENERATED_ARTIFACT_FRESHNESS_EVIDENCE_ONLY"
 CURRENT_GATE = "HUMAN_GATE"
 PROVIDER_STATE = "NOT_AUTHORIZED"
 USAGE_RESTRICTION = "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+
+VISUAL_PROMPT_SOURCE_PATH = "src/sdc/visual_prompt_profiles.json"
+VISUAL_PROMPT_REVIEWED_KNOWN_ANSWER_PATH = (
+    "tests/fixtures/visual_prompt_profiles/reviewed-known-answer-v1.json"
+)
+VISUAL_PROMPT_GENERATED_ARTIFACT_PATHS = (
+    "docs/reference/visual-prompt-agent-authoring.md",
+    "docs/reference/visual-prompt-profiles.md",
+    "src/sdc/visual_prompt_catalog.py",
+    (
+        "tests/fixtures/visual_prompt_profiles/generated/"
+        "character-reference-basic.prompt-render-receipt.json"
+    ),
+    "tests/fixtures/visual_prompt_profiles/generated/character-reference-basic.prompt.txt",
+    (
+        "tests/fixtures/visual_prompt_profiles/generated/"
+        "narrative-shot-unicode.prompt-render-receipt.json"
+    ),
+    "tests/fixtures/visual_prompt_profiles/generated/narrative-shot-unicode.prompt.txt",
+    (
+        "tests/fixtures/visual_prompt_profiles/generated/"
+        "scene-reference-basic.prompt-render-receipt.json"
+    ),
+    "tests/fixtures/visual_prompt_profiles/generated/scene-reference-basic.prompt.txt",
+)
 
 MAX_PROMPT_BYTES = 65_536
 MAX_STRICT_NON_NEGATIVE_INT = 9_223_372_036_854_775_807
@@ -269,6 +298,22 @@ def _validate_utc_second(value: object, field: str) -> str:
     )
     if roundtrip != text:
         _invalid(f"{field} must be a canonical UTC-second instant")
+    return text
+
+
+def _validate_portable_path(value: object, field: str) -> str:
+    text = _validate_canonical_text(value, field)
+    if not 1 <= len(text) <= 512:
+        _invalid(f"{field} must contain 1..512 Unicode scalar values")
+    if text.startswith(("/", "\\")) or "\\" in text or "\x00" in text:
+        _invalid(f"{field} must be a repository-relative PortablePath using / only")
+    segments = text.split("/")
+    if any(not 1 <= len(segment) <= 128 for segment in segments):
+        _invalid(f"{field} PortablePath segments must contain 1..128 values")
+    if any(segment in {".", ".."} for segment in segments):
+        _invalid(f"{field} PortablePath must not contain . or .. segments")
+    if ":" in segments[0]:
+        _invalid(f"{field} PortablePath must not contain a drive prefix")
     return text
 
 
@@ -1216,6 +1261,181 @@ class PromptRenderReceipt:
             _invalid("prompt_render_receipt_sha256 does not bind the exact receipt projection")
 
 
+@dataclass(frozen=True, slots=True)
+class CatalogDigestProfileRef:
+    profile_id: str
+    profile_sha256: str
+    profile_version: str
+
+    def __post_init__(self) -> None:
+        _validate_portable_id(self.profile_id, "catalog digest profile_id")
+        _validate_lower_sha256(self.profile_sha256, "catalog digest profile_sha256")
+        _validate_semantic_version(self.profile_version, "catalog digest profile_version")
+
+
+@dataclass(frozen=True, slots=True)
+class GeneratedArtifactDigest:
+    artifact_path: str
+    artifact_sha256: str
+    artifact_size_bytes: int
+
+    def __post_init__(self) -> None:
+        _validate_portable_path(self.artifact_path, "artifact_path")
+        _validate_lower_sha256(self.artifact_sha256, "artifact_sha256")
+        _validate_non_negative_int(self.artifact_size_bytes, "artifact_size_bytes")
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogDigestReceipt:
+    receipt_purpose: str
+    source_path: str
+    source_sha256: str
+    source_size_bytes: int
+    catalog_version: str
+    catalog_sha256: str
+    profile_refs: tuple[CatalogDigestProfileRef, ...]
+    generator_id: str
+    generator_version: str
+    renderer_id: str
+    renderer_version: str
+    generated_artifacts: tuple[GeneratedArtifactDigest, ...]
+    reviewed_known_answer_path: str
+    reviewed_known_answer_sha256: str
+    reviewed_known_answer_size_bytes: int
+    current_gate: str
+    provider_state: str
+    generation_authorized: bool
+    execution_authorized: bool
+    publication_authorized: bool
+    remote_processing_allowed: bool
+    retention_allowed: bool
+    training_allowed: bool
+    publication_allowed: bool
+    automated_execution_allowed: bool
+    authorized_attempts: int
+    authorized_cost_cny: int
+    posts_allowed: int
+    provider_requests: int
+    usage_restriction: str
+    grants_rights: bool
+    grants_qualification: bool
+    grants_execution_authority: bool
+    eligible_for_asset_promotion: bool
+    replaces_rights_manifest: bool
+    catalog_digest_receipt_sha256: str
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.receipt_purpose) is not str
+            or self.receipt_purpose != CATALOG_DIGEST_RECEIPT_PURPOSE
+        ):
+            _invalid("catalog receipt_purpose must equal the frozen freshness literal")
+        _validate_portable_path(self.source_path, "source_path")
+        if self.source_path != VISUAL_PROMPT_SOURCE_PATH:
+            _invalid("source_path must equal the frozen visual Prompt source path")
+        _validate_lower_sha256(self.source_sha256, "source_sha256")
+        _validate_non_negative_int(self.source_size_bytes, "source_size_bytes")
+        _validate_semantic_version(self.catalog_version, "catalog_version")
+        _validate_lower_sha256(self.catalog_sha256, "catalog_sha256")
+
+        profile_refs = _require_tuple(self.profile_refs, "profile_refs")
+        if not 1 <= len(profile_refs) <= 64 or any(
+            type(item) is not CatalogDigestProfileRef for item in profile_refs
+        ):
+            _invalid("profile_refs must contain 1..64 exact profile references")
+        typed_profile_refs = cast(tuple[CatalogDigestProfileRef, ...], profile_refs)
+        profile_keys = tuple(
+            (item.profile_id, _semantic_version_key(item.profile_version))
+            for item in typed_profile_refs
+        )
+        if profile_keys != tuple(sorted(profile_keys)) or len(set(profile_keys)) != len(
+            profile_keys
+        ):
+            _invalid("profile_refs must use unique canonical catalog-entry order")
+
+        if type(self.generator_id) is not str or self.generator_id != VISUAL_PROMPT_GENERATOR_ID:
+            _invalid("generator_id must equal the frozen generator identity")
+        if (
+            type(self.generator_version) is not str
+            or self.generator_version != VISUAL_PROMPT_GENERATOR_VERSION
+        ):
+            _invalid("generator_version must equal 1.0.0")
+        if type(self.renderer_id) is not str or self.renderer_id != VISUAL_PROMPT_RENDERER_ID:
+            _invalid("catalog receipt renderer_id must equal the frozen renderer identity")
+        if (
+            type(self.renderer_version) is not str
+            or self.renderer_version != VISUAL_PROMPT_RENDERER_VERSION
+        ):
+            _invalid("catalog receipt renderer_version must equal 1.0.0")
+
+        artifacts = _require_tuple(self.generated_artifacts, "generated_artifacts")
+        if len(artifacts) != len(VISUAL_PROMPT_GENERATED_ARTIFACT_PATHS) or any(
+            type(item) is not GeneratedArtifactDigest for item in artifacts
+        ):
+            _invalid("generated_artifacts must contain the exact nine artifact values")
+        typed_artifacts = cast(tuple[GeneratedArtifactDigest, ...], artifacts)
+        if tuple(item.artifact_path for item in typed_artifacts) != (
+            VISUAL_PROMPT_GENERATED_ARTIFACT_PATHS
+        ):
+            _invalid("generated_artifacts must use the frozen allowlist order")
+
+        _validate_portable_path(
+            self.reviewed_known_answer_path,
+            "reviewed_known_answer_path",
+        )
+        if self.reviewed_known_answer_path != VISUAL_PROMPT_REVIEWED_KNOWN_ANSWER_PATH:
+            _invalid("reviewed_known_answer_path must equal the frozen reviewed path")
+        _validate_lower_sha256(
+            self.reviewed_known_answer_sha256,
+            "reviewed_known_answer_sha256",
+        )
+        _validate_non_negative_int(
+            self.reviewed_known_answer_size_bytes,
+            "reviewed_known_answer_size_bytes",
+        )
+        if type(self.current_gate) is not str or self.current_gate != CURRENT_GATE:
+            _invalid("catalog receipt current_gate must be HUMAN_GATE")
+        if type(self.provider_state) is not str or self.provider_state != PROVIDER_STATE:
+            _invalid("catalog receipt provider_state must be NOT_AUTHORIZED")
+        for field_name in (
+            "generation_authorized",
+            "execution_authorized",
+            "publication_authorized",
+            "remote_processing_allowed",
+            "retention_allowed",
+            "training_allowed",
+            "publication_allowed",
+            "automated_execution_allowed",
+            "grants_rights",
+            "grants_qualification",
+            "grants_execution_authority",
+            "eligible_for_asset_promotion",
+            "replaces_rights_manifest",
+        ):
+            _validate_fixed_bool(getattr(self, field_name), False, f"catalog receipt {field_name}")
+        for field_name in (
+            "authorized_attempts",
+            "authorized_cost_cny",
+            "posts_allowed",
+            "provider_requests",
+        ):
+            _validate_fixed_zero(getattr(self, field_name), f"catalog receipt {field_name}")
+        if type(self.usage_restriction) is not str or self.usage_restriction != USAGE_RESTRICTION:
+            _invalid(
+                "catalog receipt usage_restriction must equal the frozen manual-review restriction"
+            )
+        _validate_lower_sha256(
+            self.catalog_digest_receipt_sha256,
+            "catalog_digest_receipt_sha256",
+        )
+        expected = _semantic_sha256(
+            CATALOG_DIGEST_RECEIPT_SHA256_DOMAIN,
+            catalog_digest_receipt_projection(self),
+        )
+        if self.catalog_digest_receipt_sha256 != expected:
+            _invalid("catalog_digest_receipt_sha256 does not bind the exact receipt projection")
+
+
 def prompt_constraint_set_projection(value: PromptConstraintSet) -> dict[str, object]:
     _require_exact_type(value, PromptConstraintSet, "constraint_set")
     return {
@@ -1541,6 +1761,85 @@ def prompt_render_receipt_document_projection(value: PromptRenderReceipt) -> dic
     return {**projection, "prompt_render_receipt_sha256": value.prompt_render_receipt_sha256}
 
 
+def catalog_digest_profile_ref_projection(
+    value: CatalogDigestProfileRef,
+) -> dict[str, object]:
+    _require_exact_type(value, CatalogDigestProfileRef, "catalog digest profile reference")
+    return {
+        "profile_id": value.profile_id,
+        "profile_sha256": value.profile_sha256,
+        "profile_version": value.profile_version,
+    }
+
+
+def generated_artifact_digest_projection(
+    value: GeneratedArtifactDigest,
+) -> dict[str, object]:
+    _require_exact_type(value, GeneratedArtifactDigest, "generated artifact digest")
+    return {
+        "artifact_path": value.artifact_path,
+        "artifact_sha256": value.artifact_sha256,
+        "artifact_size_bytes": value.artifact_size_bytes,
+    }
+
+
+def catalog_digest_receipt_projection(value: CatalogDigestReceipt) -> dict[str, object]:
+    """Project every Catalog Receipt field except its self digest."""
+
+    _require_exact_type(value, CatalogDigestReceipt, "Catalog Digest Receipt")
+    return {
+        "receipt_purpose": value.receipt_purpose,
+        "source_path": value.source_path,
+        "source_sha256": value.source_sha256,
+        "source_size_bytes": value.source_size_bytes,
+        "catalog_version": value.catalog_version,
+        "catalog_sha256": value.catalog_sha256,
+        "profile_refs": [
+            catalog_digest_profile_ref_projection(item) for item in value.profile_refs
+        ],
+        "generator_id": value.generator_id,
+        "generator_version": value.generator_version,
+        "renderer_id": value.renderer_id,
+        "renderer_version": value.renderer_version,
+        "generated_artifacts": [
+            generated_artifact_digest_projection(item) for item in value.generated_artifacts
+        ],
+        "reviewed_known_answer_path": value.reviewed_known_answer_path,
+        "reviewed_known_answer_sha256": value.reviewed_known_answer_sha256,
+        "reviewed_known_answer_size_bytes": value.reviewed_known_answer_size_bytes,
+        "current_gate": value.current_gate,
+        "provider_state": value.provider_state,
+        "generation_authorized": value.generation_authorized,
+        "execution_authorized": value.execution_authorized,
+        "publication_authorized": value.publication_authorized,
+        "remote_processing_allowed": value.remote_processing_allowed,
+        "retention_allowed": value.retention_allowed,
+        "training_allowed": value.training_allowed,
+        "publication_allowed": value.publication_allowed,
+        "automated_execution_allowed": value.automated_execution_allowed,
+        "authorized_attempts": value.authorized_attempts,
+        "authorized_cost_cny": value.authorized_cost_cny,
+        "posts_allowed": value.posts_allowed,
+        "provider_requests": value.provider_requests,
+        "usage_restriction": value.usage_restriction,
+        "grants_rights": value.grants_rights,
+        "grants_qualification": value.grants_qualification,
+        "grants_execution_authority": value.grants_execution_authority,
+        "eligible_for_asset_promotion": value.eligible_for_asset_promotion,
+        "replaces_rights_manifest": value.replaces_rights_manifest,
+    }
+
+
+def catalog_digest_receipt_document_projection(
+    value: CatalogDigestReceipt,
+) -> dict[str, object]:
+    projection = catalog_digest_receipt_projection(value)
+    return {
+        **projection,
+        "catalog_digest_receipt_sha256": value.catalog_digest_receipt_sha256,
+    }
+
+
 def _canonical_compact_json(value: object) -> bytes:
     try:
         return json.dumps(
@@ -1574,6 +1873,113 @@ def prompt_render_receipt_sha256(value: PromptRenderReceipt) -> str:
     return _semantic_sha256(
         PROMPT_RENDER_RECEIPT_SHA256_DOMAIN,
         prompt_render_receipt_projection(value),
+    )
+
+
+def catalog_digest_receipt_sha256(value: CatalogDigestReceipt) -> str:
+    return _semantic_sha256(
+        CATALOG_DIGEST_RECEIPT_SHA256_DOMAIN,
+        catalog_digest_receipt_projection(value),
+    )
+
+
+def build_catalog_digest_receipt(
+    *,
+    source_sha256: str,
+    source_size_bytes: int,
+    catalog: PromptProfileCatalog,
+    generated_artifacts: tuple[GeneratedArtifactDigest, ...],
+    reviewed_known_answer_sha256: str,
+    reviewed_known_answer_size_bytes: int,
+) -> CatalogDigestReceipt:
+    """Build one zero-authority receipt from explicit raw-byte evidence."""
+
+    _require_exact_type(catalog, PromptProfileCatalog, "catalog")
+    profile_refs = tuple(
+        CatalogDigestProfileRef(
+            profile_id=entry.profile.profile_id,
+            profile_sha256=entry.profile_sha256,
+            profile_version=entry.profile.profile_version,
+        )
+        for entry in catalog.profiles
+    )
+    payload: dict[str, object] = {
+        "receipt_purpose": CATALOG_DIGEST_RECEIPT_PURPOSE,
+        "source_path": VISUAL_PROMPT_SOURCE_PATH,
+        "source_sha256": source_sha256,
+        "source_size_bytes": source_size_bytes,
+        "catalog_version": catalog.catalog_version,
+        "catalog_sha256": catalog.catalog_sha256,
+        "profile_refs": [catalog_digest_profile_ref_projection(item) for item in profile_refs],
+        "generator_id": VISUAL_PROMPT_GENERATOR_ID,
+        "generator_version": VISUAL_PROMPT_GENERATOR_VERSION,
+        "renderer_id": VISUAL_PROMPT_RENDERER_ID,
+        "renderer_version": VISUAL_PROMPT_RENDERER_VERSION,
+        "generated_artifacts": [
+            generated_artifact_digest_projection(item) for item in generated_artifacts
+        ],
+        "reviewed_known_answer_path": VISUAL_PROMPT_REVIEWED_KNOWN_ANSWER_PATH,
+        "reviewed_known_answer_sha256": reviewed_known_answer_sha256,
+        "reviewed_known_answer_size_bytes": reviewed_known_answer_size_bytes,
+        "current_gate": CURRENT_GATE,
+        "provider_state": PROVIDER_STATE,
+        "generation_authorized": False,
+        "execution_authorized": False,
+        "publication_authorized": False,
+        "remote_processing_allowed": False,
+        "retention_allowed": False,
+        "training_allowed": False,
+        "publication_allowed": False,
+        "automated_execution_allowed": False,
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+        "usage_restriction": USAGE_RESTRICTION,
+        "grants_rights": False,
+        "grants_qualification": False,
+        "grants_execution_authority": False,
+        "eligible_for_asset_promotion": False,
+        "replaces_rights_manifest": False,
+    }
+    digest = _semantic_sha256(CATALOG_DIGEST_RECEIPT_SHA256_DOMAIN, payload)
+    return CatalogDigestReceipt(
+        receipt_purpose=CATALOG_DIGEST_RECEIPT_PURPOSE,
+        source_path=VISUAL_PROMPT_SOURCE_PATH,
+        source_sha256=source_sha256,
+        source_size_bytes=source_size_bytes,
+        catalog_version=catalog.catalog_version,
+        catalog_sha256=catalog.catalog_sha256,
+        profile_refs=profile_refs,
+        generator_id=VISUAL_PROMPT_GENERATOR_ID,
+        generator_version=VISUAL_PROMPT_GENERATOR_VERSION,
+        renderer_id=VISUAL_PROMPT_RENDERER_ID,
+        renderer_version=VISUAL_PROMPT_RENDERER_VERSION,
+        generated_artifacts=generated_artifacts,
+        reviewed_known_answer_path=VISUAL_PROMPT_REVIEWED_KNOWN_ANSWER_PATH,
+        reviewed_known_answer_sha256=reviewed_known_answer_sha256,
+        reviewed_known_answer_size_bytes=reviewed_known_answer_size_bytes,
+        current_gate=CURRENT_GATE,
+        provider_state=PROVIDER_STATE,
+        generation_authorized=False,
+        execution_authorized=False,
+        publication_authorized=False,
+        remote_processing_allowed=False,
+        retention_allowed=False,
+        training_allowed=False,
+        publication_allowed=False,
+        automated_execution_allowed=False,
+        authorized_attempts=0,
+        authorized_cost_cny=0,
+        posts_allowed=0,
+        provider_requests=0,
+        usage_restriction=USAGE_RESTRICTION,
+        grants_rights=False,
+        grants_qualification=False,
+        grants_execution_authority=False,
+        eligible_for_asset_promotion=False,
+        replaces_rights_manifest=False,
+        catalog_digest_receipt_sha256=digest,
     )
 
 
@@ -2678,10 +3084,13 @@ __all__ = [
     "AssetPurpose",
     "CameraAngleV1",
     "CameraMovementV1",
+    "CatalogDigestProfileRef",
+    "CatalogDigestReceipt",
     "CharacterAssetPromptBinding",
     "CharacterReferenceAssetRecipe",
     "CharacterReferencePromptRenderInput",
     "DialoguePromptLine",
+    "GeneratedArtifactDigest",
     "NarrativeContext",
     "NarrativeShotPromptRenderInput",
     "OfflineRenderAdmissionStatus",
@@ -2707,9 +3116,15 @@ __all__ = [
     "VisualPromptProfileError",
     "VisualPromptProfileSnapshot",
     "VisualStyleId",
+    "build_catalog_digest_receipt",
+    "catalog_digest_profile_ref_projection",
+    "catalog_digest_receipt_document_projection",
+    "catalog_digest_receipt_projection",
+    "catalog_digest_receipt_sha256",
     "character_asset_prompt_binding_projection",
     "character_reference_asset_recipe_projection",
     "dialogue_prompt_line_projection",
+    "generated_artifact_digest_projection",
     "prompt_constraint_set_projection",
     "prompt_profile_catalog_entry_projection",
     "prompt_profile_catalog_projection",

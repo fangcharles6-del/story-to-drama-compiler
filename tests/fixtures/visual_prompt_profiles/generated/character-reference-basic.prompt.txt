@@ -1,0 +1,29 @@
+Character Context: Synthetic character Nova reference for a fictional archive scene.
+Visual Direction: Neutral studio reference sheet with even first-party lighting.
+Reference Action: Stand in a neutral reference pose with both hands visible.
+Primary Character Binding: [{"asset_content_sha256":"1111111111111111111111111111111111111111111111111111111111111111","asset_version_id":"asset-synthetic-nova-v1","character_id":"character-nova"}]
+Expression Direction: {"character-nova":"Calm, alert, and clearly readable."}
+Wardrobe Direction: {"character-nova":"Plain charcoal jacket with no logos or insignia."}
+Continuity Notes: Keep every synthetic identity anchor unchanged across panels.
+Positive Prompt Constraints:
+- Preserve the supplied character identity across every reference panel.
+- Keep facial structure, hairstyle, wardrobe, and body proportions consistent.
+- Present the requested reference views with clear production-readable separation.
+Negative Prompt Constraints:
+- Do not add unrequested characters, garments, accessories, text, logos, or watermarks.
+- Do not merge reference panels or alter the supplied character identity.
+Reference Asset Recipe:
+Recipe kind: CHARACTER_REFERENCE
+Reference asset types: ["CHARACTER_IDENTITY_SHEET","CHARACTER_POSE_REFERENCE","CHARACTER_EXPRESSION_REFERENCE"]
+Face identity anchors: ["Preserve facial geometry, feature spacing, eye shape, nose shape, and jawline."]
+Hairstyle anchors: ["Preserve hair length, silhouette, parting, texture, and color."]
+Wardrobe anchors: ["Preserve garment silhouette, layering, palette, materials, and distinctive accessories."]
+Body proportion anchors: ["Preserve the supplied head-to-body ratio, build, limb length, and stance."]
+Expression range: ["Show a controlled range from neutral through focused, concerned, and joyful expressions."]
+Forbidden identity drift: ["Do not substitute, blend, beautify, age, or otherwise redesign the character identity."]
+Forbidden hairstyle drift: ["Do not change hair length, silhouette, parting, texture, or color."]
+Forbidden wardrobe drift: ["Do not replace, simplify, recolor, or add unrequested wardrobe elements."]
+Forbidden body proportion drift: ["Do not change body scale, build, limb proportions, or apparent age."]
+Sheet layout requirements: ["Arrange views in a legible reference-sheet grid with consistent scale and spacing."]
+Background requirements: ["Use a clean neutral background with clear silhouette separation."]
+Required primary binding fields: ["character_id","asset_version_id","asset_content_sha256"]

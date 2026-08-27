@@ -1,0 +1,25 @@
+Scene Context: Synthetic orbital archive hall before any fictional characters arrive.
+Visual Direction: Neutral establishing reference with readable synthetic spatial depth.
+Reference Action: Keep the fictional architecture and furniture completely static.
+Primary Scene Binding: {"asset_content_sha256":"5555555555555555555555555555555555555555555555555555555555555555","asset_version_id":"asset-synthetic-orbit-hall-v1","scene_id":"scene-orbit-hall"}
+Props: []
+Continuity Notes: Preserve the north skylight and central table relationship.
+Positive Prompt Constraints:
+- Preserve the supplied scene identity across every reference panel.
+- Keep geography, layout, lighting, palette, materials, and prop placement mutually consistent.
+- Present the requested scene references with clear production-readable separation.
+Negative Prompt Constraints:
+- Do not add unrequested locations, structures, props, signage, text, logos, or watermarks.
+- Do not change the supplied scene identity, geography, lighting logic, or material language.
+Reference Asset Recipe:
+Recipe kind: SCENE_REFERENCE
+Reference asset types: ["SCENE_ESTABLISHING_REFERENCE","SCENE_LIGHTING_REFERENCE","SCENE_MATERIAL_REFERENCE","SCENE_PROP_PLACEMENT_REFERENCE"]
+Layout requirements: ["Show a coherent establishing view and supporting references at consistent spatial scale."]
+Geography anchors: ["Preserve entrances, exits, sight lines, elevation changes, and landmark relationships."]
+Lighting anchors: ["Preserve key-light direction, softness, color temperature, contrast, and practical-light placement."]
+Palette anchors: ["Preserve the dominant, supporting, and accent color relationships."]
+Material anchors: ["Preserve surface type, finish, wear, reflectivity, and texture scale."]
+Prop placement anchors: ["Preserve each named prop position, orientation, scale, and relationship to fixed landmarks."]
+Continuity requirements: ["Preserve spatial relationships, light direction, material assignments, and prop positions across views."]
+Forbidden drift: ["Do not relocate architecture, reverse geography, change light direction, or replace anchored materials and props."]
+Required primary binding fields: ["scene_id","asset_version_id","asset_content_sha256"]

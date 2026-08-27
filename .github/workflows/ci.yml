@@ -9,6 +9,7 @@ jobs:
         with: {version: "0.8.8", enable-cache: true}
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: make bootstrap
+      - run: make visual-prompt-profiles-check
       - run: make lint
       - run: make typecheck
       - run: make test
@@ -28,3 +29,17 @@ jobs:
         timeout-minutes: 12
       - if: always()
         run: docker compose logs --no-color
+  visual-prompt-profiles-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {version: "0.8.8", enable-cache: true}
+      - run: uv sync --frozen
+      - name: visual-prompt-profiles-check
+        run: uv run python -m sdc.visual_prompt_profile_codegen --check
+      - run: >-
+          uv run pytest -q
+          tests/test_visual_prompt_profile_source.py
+          tests/test_visual_prompt_profiles.py
+          tests/test_visual_prompt_profile_codegen.py

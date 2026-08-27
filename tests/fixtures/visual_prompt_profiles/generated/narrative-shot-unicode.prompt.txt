@@ -1,0 +1,20 @@
+Narrative: Synthetic characters Ember and Lumen compare two unbranded cards in a fictional café archive.
+Visual Direction: Soft amber light, restrained framing, and a fully synthetic décor.
+Action: They place the two résumé cards side by side on the table.
+Shot Size: MEDIUM
+Camera Angle: EYE_LEVEL
+Camera Movement: STATIC
+Character Asset Bindings: [{"asset_content_sha256":"2222222222222222222222222222222222222222222222222222222222222222","asset_version_id":"asset-synthetic-ember-v1","character_id":"character-ember"},{"asset_content_sha256":"3333333333333333333333333333333333333333333333333333333333333333","asset_version_id":"asset-synthetic-lumen-v1","character_id":"character-lumen"}]
+Scene Asset Binding: {"asset_content_sha256":"4444444444444444444444444444444444444444444444444444444444444444","asset_version_id":"asset-synthetic-glass-archive-v1","scene_id":"scene-glass-archive"}
+Emotion by Character: {"character-ember":"Focused and calm.","character-lumen":"Careful but composed."}
+Wardrobe by Character: {"character-ember":"Unbranded charcoal coat.","character-lumen":"Unbranded navy jacket."}
+Props: ["blue card","brass key"]
+Continuity Notes: Keep the blue card to the left of the brass key.
+Dialogue: [{"character_id":"character-ember","line_id":"dialogue-10","ordinal":10,"text":"The synthetic marks match exactly."},{"character_id":"character-lumen","line_id":"dialogue-20","ordinal":20,"text":"Then record the café clue."}]
+Positive Prompt Constraints:
+- Render one coherent cinematic storyboard frame from the supplied shot values.
+- Preserve every supplied character and scene asset identity.
+- Keep action, emotion, wardrobe, props, dialogue context, and continuity mutually consistent.
+Negative Prompt Constraints:
+- Do not introduce unbound characters, locations, props, text, logos, or watermarks.
+- Do not contradict the supplied camera, wardrobe, emotion, or continuity values.

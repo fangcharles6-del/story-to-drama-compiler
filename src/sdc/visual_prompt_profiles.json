@@ -2,8 +2,8 @@
   "authorized_attempts": 0,
   "authorized_cost_cny": 0,
   "automated_execution_allowed": false,
-  "catalog_reviewed_at": "2026-08-27T00:00:00Z",
-  "catalog_reviewer_ref": "sdc.phase1-draft-machine-review",
+  "catalog_reviewed_at": "2026-08-27T03:06:32Z",
+  "catalog_reviewer_ref": "github.fangcharles6-del",
   "catalog_version": "1.0.0",
   "current_gate": "HUMAN_GATE",
   "execution_authorized": false,
@@ -17,7 +17,7 @@
       "grants_execution_authority": false,
       "grants_qualification": false,
       "grants_rights": false,
-      "offline_render_admission_status": "DRAFT",
+      "offline_render_admission_status": "HUMAN_REVIEWED_FOR_OFFLINE_RENDER",
       "profile": {
         "asset_purpose": "CHARACTER_REFERENCE_ASSET",
         "constraint_set": {
@@ -132,7 +132,7 @@
         "shot_type": "REFERENCE_SHEET",
         "visual_style_id": "sdc.cinematic-storyboard.v1"
       },
-      "profile_text_provenance_status": "RIGHTS_REVIEW_REQUIRED",
+      "profile_text_provenance_status": "FIRST_PARTY_TEXT_REVIEWED",
       "provider_syntax_compatibility_observations": []
     },
     {
@@ -142,7 +142,7 @@
       "grants_execution_authority": false,
       "grants_qualification": false,
       "grants_rights": false,
-      "offline_render_admission_status": "DRAFT",
+      "offline_render_admission_status": "HUMAN_REVIEWED_FOR_OFFLINE_RENDER",
       "profile": {
         "asset_purpose": "NARRATIVE_SHOT",
         "constraint_set": {
@@ -241,7 +241,7 @@
         "shot_type": "NARRATIVE_FRAME",
         "visual_style_id": "sdc.cinematic-storyboard.v1"
       },
-      "profile_text_provenance_status": "RIGHTS_REVIEW_REQUIRED",
+      "profile_text_provenance_status": "FIRST_PARTY_TEXT_REVIEWED",
       "provider_syntax_compatibility_observations": []
     },
     {
@@ -251,7 +251,7 @@
       "grants_execution_authority": false,
       "grants_qualification": false,
       "grants_rights": false,
-      "offline_render_admission_status": "DRAFT",
+      "offline_render_admission_status": "HUMAN_REVIEWED_FOR_OFFLINE_RENDER",
       "profile": {
         "asset_purpose": "SCENE_REFERENCE_ASSET",
         "constraint_set": {
@@ -354,7 +354,7 @@
         "shot_type": "REFERENCE_SHEET",
         "visual_style_id": "sdc.cinematic-storyboard.v1"
       },
-      "profile_text_provenance_status": "RIGHTS_REVIEW_REQUIRED",
+      "profile_text_provenance_status": "FIRST_PARTY_TEXT_REVIEWED",
       "provider_syntax_compatibility_observations": []
     }
   ],
@@ -366,7 +366,7 @@
   "renderer_id": "sdc.visual-prompt-renderer",
   "renderer_version": "1.0.0",
   "retention_allowed": false,
-  "source_revision": "sdc.visual-prompt-profiles.phase1-draft.1",
+  "source_revision": "sdc.visual-prompt-profiles.phase1-reviewed.1",
   "training_allowed": false,
   "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
 }
