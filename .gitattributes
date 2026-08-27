@@ -1,0 +1,6 @@
+/src/sdc/visual_prompt_profiles.json text eol=lf
+/src/sdc/visual_prompt_catalog.py text eol=lf
+/docs/reference/visual-prompt-profiles.md text eol=lf
+/docs/reference/visual-prompt-agent-authoring.md text eol=lf
+/docs/reference/visual-prompt-catalog-digest-receipt.json text eol=lf
+/tests/fixtures/visual_prompt_profiles/** text eol=lf
