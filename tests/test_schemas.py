@@ -220,6 +220,97 @@ PRE_FRESH_STATUS_V30_SCHEMA_SHA256 = {
         "c6453c24fd541505b3873a99a7e907b39437964df008203a298190de764fc4b8"
     ),
 }
+PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256 = {
+    **PRE_FRESH_STATUS_V30_SCHEMA_SHA256,
+    "CreativeSampleRealAssetFreshStatusSourceObservationV1.schema.json": (
+        "42e4c98388e61f4601d48694de3321b1df7d1363c8e81373d182bf7c21c85edf"
+    ),
+    "CreativeSampleRealAssetFreshStatusRequestV1.schema.json": (
+        "1ed275c92bf6d85fe2cec086bb9f28c3a9e54b2da4efacb7f5e7290ad7ff4e56"
+    ),
+    "CreativeSampleRealAssetFreshStatusInstructionV1.schema.json": (
+        "0a3834758f907c975f8ae3cb83609b19549d4178b4d957848864f9b1b6ad2163"
+    ),
+    "CreativeSampleRealAssetFreshStatusDecisionV1.schema.json": (
+        "5ac58dbb91dc521528f32257a1e361ca30b2f4810a43aff25996314e42127507"
+    ),
+    "CreativeSampleRealAssetFreshStatusEvidenceRecordV1.schema.json": (
+        "6d9d5c210ffa2ba6bbaa9ab5d24dc3251827026b214df0d1eb9ef55a90a20b78"
+    ),
+    "CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.schema.json": (
+        "e833c5a707569ff413a068076794feca71d8f757ae9d30ae257595b24049352b"
+    ),
+}
+PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES = (
+    "StoryInput",
+    "NIR",
+    "PIR",
+    "AudioMasterClock",
+    "JobGraph",
+    "GenerationJob",
+    "AssemblyPlan",
+    "CharacterAssetVersion",
+    "CharacterBible",
+    "SceneAssetVersion",
+    "SceneBible",
+    "DialogueLine",
+    "CreativeSampleShotSpec",
+    "CreativeSampleSpec",
+    "NIRSceneV2",
+    "NIRV2",
+    "CharacterAssetBinding",
+    "StoryboardShotV2",
+    "PIRV2",
+    "CreativeSampleMetrics",
+    "CreativeSampleCompilation",
+    "RunEvent",
+    "QCReport",
+    "QCEvidence",
+    "ReleaseManifest",
+    "ProviderProfile",
+    "ProviderRequest",
+    "ProviderSubmission",
+    "ProviderTaskSnapshot",
+    "DownloadedArtifact",
+    "ProviderFailure",
+    "CancelResult",
+    "ProviderCapabilitySnapshot",
+    "ProviderPricingSnapshot",
+    "ArkCanaryEntitlementSnapshot",
+    "LiveAuthorization",
+    "CanaryPlan",
+    "EvidenceBoundCanaryPlan",
+    "EvidenceBoundLiveAuthorization",
+    "CanaryExecution",
+    "EvidenceBundle",
+    "CreativeSamplePilotSpecDocument",
+    "CreativeSamplePilotPack",
+    "CreativeSampleRealAssetIntakeTemplate",
+    "CreativeSampleRealAssetSubmission",
+    "CreativeSampleRealAssetGapReport",
+    "CreativeSampleFrozenRealAssetPackManifest",
+    "CreativeSampleRealAssetRightsManifest",
+    "CreativeSampleRealAssetSpecDocument",
+    "CreativeSampleRealAssetRevision",
+    "CreativeSampleRealAssetRightsEvidenceBundleV2",
+    "CreativeSampleRealAssetHumanPackReviewV2",
+    "CreativeSampleRealAssetReviewPairCheckV2",
+    "CreativeSampleRealAssetQualificationRequestV2",
+    "CreativeSampleRealAssetQualificationDecisionV2",
+    "CreativeSampleRealAssetQualificationDecisionInstructionV22",
+    "CreativeSampleRealAssetRightsManifestV2",
+    "CreativeSampleRealAssetUsePlanV1",
+    "CreativeSampleRealAssetUseScopeReviewRequestV1",
+    "CreativeSampleRealAssetUseScopeReviewInstructionV1",
+    "CreativeSampleRealAssetUseScopeReviewDecisionV1",
+    "CreativeSampleRealAssetUseScopeReviewRecordV1",
+    "CreativeSampleRealAssetFreshStatusSourceObservationV1",
+    "CreativeSampleRealAssetFreshStatusRequestV1",
+    "CreativeSampleRealAssetFreshStatusInstructionV1",
+    "CreativeSampleRealAssetFreshStatusDecisionV1",
+    "CreativeSampleRealAssetFreshStatusEvidenceRecordV1",
+    "CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1",
+)
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -264,15 +355,34 @@ def test_all_pre_fresh_status_v30_schema_bytes_remain_unchanged() -> None:
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_visual_prompt_compiler_integration_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256) == 68
+    assert len(PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES) == 68
+    assert tuple(model.__name__ for model in MODELS[:68]) == (
+        PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES
+    )
+    expected_prefix = {
+        f"{model.__name__}.schema.json" for model in MODELS[:68]
+    }
+    assert set(PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
         CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 68
+    assert len(model_names) == 70
     assert len(model_names) == len(set(model_names))
-    assert MODELS[-1] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
+    assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
+    assert [model.__name__ for model in MODELS[-2:]] == [
+        "CreativeSampleVisualPromptCompileRequestV1",
+        "CreativeSampleVisualPromptSidecarV1",
+    ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
         == 1

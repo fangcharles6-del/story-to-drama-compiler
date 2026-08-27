@@ -1,0 +1,857 @@
+{
+  "$defs": {
+    "CameraAngleV1": {
+      "enum": [
+        "EYE_LEVEL",
+        "LOW_ANGLE",
+        "HIGH_ANGLE",
+        "DUTCH_ANGLE",
+        "OVERHEAD",
+        "POV"
+      ],
+      "title": "CameraAngleV1",
+      "type": "string"
+    },
+    "CameraMovementV1": {
+      "enum": [
+        "STATIC",
+        "PAN",
+        "TILT",
+        "DOLLY",
+        "TRUCK",
+        "PEDESTAL",
+        "HANDHELD",
+        "CRANE",
+        "ZOOM",
+        "ORBIT"
+      ],
+      "title": "CameraMovementV1",
+      "type": "string"
+    },
+    "NarrativeContext": {
+      "enum": [
+        "DIALOGUE",
+        "ACTION",
+        "ESTABLISHING",
+        "TRANSITION",
+        "REFERENCE_DEVELOPMENT"
+      ],
+      "title": "NarrativeContext",
+      "type": "string"
+    },
+    "PlaceholderId": {
+      "enum": [
+        "narrative",
+        "visual_direction",
+        "action",
+        "shot_size",
+        "camera_angle",
+        "camera_movement",
+        "character_asset_bindings",
+        "scene_asset_binding",
+        "emotion_by_character",
+        "wardrobe_by_character",
+        "props",
+        "continuity_notes",
+        "dialogue"
+      ],
+      "title": "PlaceholderId",
+      "type": "string"
+    },
+    "ShotSizeV1": {
+      "enum": [
+        "EXTREME_CLOSE_UP",
+        "CLOSE_UP",
+        "MEDIUM_CLOSE_UP",
+        "MEDIUM",
+        "MEDIUM_WIDE",
+        "WIDE",
+        "EXTREME_WIDE"
+      ],
+      "title": "ShotSizeV1",
+      "type": "string"
+    },
+    "_CharacterAssetPromptBindingV1": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Asset Content Sha256",
+          "type": "string"
+        },
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_content_sha256",
+        "asset_version_id",
+        "character_id"
+      ],
+      "title": "_CharacterAssetPromptBindingV1",
+      "type": "object"
+    },
+    "_CreativeSampleVisualPromptShotV1": {
+      "additionalProperties": false,
+      "properties": {
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "prompt_render_receipt": {
+          "$ref": "#/$defs/_PromptRenderReceiptV1"
+        },
+        "prompt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Sha256",
+          "type": "string"
+        },
+        "prompt_size_bytes": {
+          "maximum": 65536,
+          "minimum": 1,
+          "title": "Prompt Size Bytes",
+          "type": "integer"
+        },
+        "render_input": {
+          "$ref": "#/$defs/_NarrativeShotPromptRenderInputV1"
+        },
+        "render_input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Render Input Sha256",
+          "type": "string"
+        },
+        "source_shot_id": {
+          "pattern": "^storyboard_shot_v2_[0-9a-f]{20}$",
+          "title": "Source Shot Id",
+          "type": "string"
+        },
+        "source_shot_ordinal": {
+          "maximum": 11,
+          "minimum": 0,
+          "title": "Source Shot Ordinal",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_shot_id",
+        "source_shot_ordinal",
+        "render_input",
+        "render_input_sha256",
+        "prompt",
+        "prompt_sha256",
+        "prompt_size_bytes",
+        "prompt_render_receipt"
+      ],
+      "title": "_CreativeSampleVisualPromptShotV1",
+      "type": "object"
+    },
+    "_DialoguePromptLineV1": {
+      "additionalProperties": false,
+      "properties": {
+        "character_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Character Id",
+          "type": "string"
+        },
+        "line_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Line Id",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character_id",
+        "line_id",
+        "ordinal",
+        "text"
+      ],
+      "title": "_DialoguePromptLineV1",
+      "type": "object"
+    },
+    "_NarrativeShotPromptRenderInputV1": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "camera_angle": {
+          "$ref": "#/$defs/CameraAngleV1"
+        },
+        "camera_movement": {
+          "$ref": "#/$defs/CameraMovementV1"
+        },
+        "character_asset_bindings": {
+          "items": {
+            "$ref": "#/$defs/_CharacterAssetPromptBindingV1"
+          },
+          "title": "Character Asset Bindings",
+          "type": "array"
+        },
+        "continuity_notes": {
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "dialogue": {
+          "items": {
+            "$ref": "#/$defs/_DialoguePromptLineV1"
+          },
+          "title": "Dialogue",
+          "type": "array"
+        },
+        "emotion_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Emotion By Character",
+          "type": "object"
+        },
+        "input_kind": {
+          "const": "NARRATIVE_SHOT",
+          "title": "Input Kind",
+          "type": "string"
+        },
+        "narrative": {
+          "title": "Narrative",
+          "type": "string"
+        },
+        "props": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Props",
+          "type": "array"
+        },
+        "scene_asset_binding": {
+          "$ref": "#/$defs/_SceneAssetPromptBindingV1"
+        },
+        "shot_size": {
+          "$ref": "#/$defs/ShotSizeV1"
+        },
+        "visual_direction": {
+          "title": "Visual Direction",
+          "type": "string"
+        },
+        "wardrobe_by_character": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Wardrobe By Character",
+          "type": "object"
+        }
+      },
+      "required": [
+        "action",
+        "camera_angle",
+        "camera_movement",
+        "character_asset_bindings",
+        "continuity_notes",
+        "dialogue",
+        "emotion_by_character",
+        "input_kind",
+        "narrative",
+        "props",
+        "scene_asset_binding",
+        "shot_size",
+        "visual_direction",
+        "wardrobe_by_character"
+      ],
+      "title": "_NarrativeShotPromptRenderInputV1",
+      "type": "object"
+    },
+    "_PromptConstraintSetV1": {
+      "additionalProperties": false,
+      "properties": {
+        "negative_prompt_constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Negative Prompt Constraints",
+          "type": "array"
+        },
+        "positive_prompt_constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Positive Prompt Constraints",
+          "type": "array"
+        },
+        "qc_expectations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Qc Expectations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "negative_prompt_constraints",
+        "positive_prompt_constraints",
+        "qc_expectations"
+      ],
+      "title": "_PromptConstraintSetV1",
+      "type": "object"
+    },
+    "_PromptRenderReceiptV1": {
+      "additionalProperties": false,
+      "properties": {
+        "authorized_attempts": {
+          "const": 0,
+          "title": "Authorized Attempts",
+          "type": "integer"
+        },
+        "authorized_cost_cny": {
+          "const": 0,
+          "title": "Authorized Cost Cny",
+          "type": "integer"
+        },
+        "automated_execution_allowed": {
+          "const": false,
+          "title": "Automated Execution Allowed",
+          "type": "boolean"
+        },
+        "catalog_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Catalog Sha256",
+          "type": "string"
+        },
+        "catalog_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Catalog Version",
+          "type": "string"
+        },
+        "current_gate": {
+          "const": "HUMAN_GATE",
+          "title": "Current Gate",
+          "type": "string"
+        },
+        "eligible_for_asset_promotion": {
+          "const": false,
+          "title": "Eligible For Asset Promotion",
+          "type": "boolean"
+        },
+        "execution_authorized": {
+          "const": false,
+          "title": "Execution Authorized",
+          "type": "boolean"
+        },
+        "generation_authorized": {
+          "const": false,
+          "title": "Generation Authorized",
+          "type": "boolean"
+        },
+        "grants_execution_authority": {
+          "const": false,
+          "title": "Grants Execution Authority",
+          "type": "boolean"
+        },
+        "grants_qualification": {
+          "const": false,
+          "title": "Grants Qualification",
+          "type": "boolean"
+        },
+        "grants_rights": {
+          "const": false,
+          "title": "Grants Rights",
+          "type": "boolean"
+        },
+        "posts_allowed": {
+          "const": 0,
+          "title": "Posts Allowed",
+          "type": "integer"
+        },
+        "profile_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "profile_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Profile Sha256",
+          "type": "string"
+        },
+        "profile_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "prompt_render_receipt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Render Receipt Sha256",
+          "type": "string"
+        },
+        "prompt_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prompt Sha256",
+          "type": "string"
+        },
+        "prompt_size_bytes": {
+          "maximum": 65536,
+          "minimum": 1,
+          "title": "Prompt Size Bytes",
+          "type": "integer"
+        },
+        "provider_requests": {
+          "const": 0,
+          "title": "Provider Requests",
+          "type": "integer"
+        },
+        "provider_state": {
+          "const": "NOT_AUTHORIZED",
+          "title": "Provider State",
+          "type": "string"
+        },
+        "publication_allowed": {
+          "const": false,
+          "title": "Publication Allowed",
+          "type": "boolean"
+        },
+        "publication_authorized": {
+          "const": false,
+          "title": "Publication Authorized",
+          "type": "boolean"
+        },
+        "receipt_purpose": {
+          "const": "DETERMINISTIC_PROMPT_RENDER_PROCESS_EVIDENCE_ONLY",
+          "title": "Receipt Purpose",
+          "type": "string"
+        },
+        "remote_processing_allowed": {
+          "const": false,
+          "title": "Remote Processing Allowed",
+          "type": "boolean"
+        },
+        "render_input_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Render Input Sha256",
+          "type": "string"
+        },
+        "renderer_id": {
+          "const": "sdc.visual-prompt-renderer",
+          "title": "Renderer Id",
+          "type": "string"
+        },
+        "renderer_version": {
+          "const": "1.0.0",
+          "title": "Renderer Version",
+          "type": "string"
+        },
+        "replaces_rights_manifest": {
+          "const": false,
+          "title": "Replaces Rights Manifest",
+          "type": "boolean"
+        },
+        "retention_allowed": {
+          "const": false,
+          "title": "Retention Allowed",
+          "type": "boolean"
+        },
+        "training_allowed": {
+          "const": false,
+          "title": "Training Allowed",
+          "type": "boolean"
+        },
+        "usage_restriction": {
+          "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+          "title": "Usage Restriction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "current_gate",
+        "provider_state",
+        "generation_authorized",
+        "execution_authorized",
+        "publication_authorized",
+        "remote_processing_allowed",
+        "retention_allowed",
+        "training_allowed",
+        "publication_allowed",
+        "automated_execution_allowed",
+        "authorized_attempts",
+        "authorized_cost_cny",
+        "posts_allowed",
+        "provider_requests",
+        "grants_rights",
+        "grants_qualification",
+        "grants_execution_authority",
+        "eligible_for_asset_promotion",
+        "replaces_rights_manifest",
+        "usage_restriction",
+        "receipt_purpose",
+        "profile_id",
+        "profile_version",
+        "profile_sha256",
+        "catalog_version",
+        "catalog_sha256",
+        "render_input_sha256",
+        "renderer_id",
+        "renderer_version",
+        "prompt_sha256",
+        "prompt_size_bytes",
+        "prompt_render_receipt_sha256"
+      ],
+      "title": "_PromptRenderReceiptV1",
+      "type": "object"
+    },
+    "_PromptSectionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        },
+        "placeholder": {
+          "$ref": "#/$defs/PlaceholderId"
+        },
+        "section_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Section Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "heading",
+        "placeholder",
+        "section_id"
+      ],
+      "title": "_PromptSectionV1",
+      "type": "object"
+    },
+    "_SceneAssetPromptBindingV1": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Asset Content Sha256",
+          "type": "string"
+        },
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "scene_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Scene Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_content_sha256",
+        "asset_version_id",
+        "scene_id"
+      ],
+      "title": "_SceneAssetPromptBindingV1",
+      "type": "object"
+    },
+    "_VisualPromptProfileSnapshotV1": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_purpose": {
+          "const": "NARRATIVE_SHOT",
+          "title": "Asset Purpose",
+          "type": "string"
+        },
+        "catalog_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Catalog Sha256",
+          "type": "string"
+        },
+        "catalog_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Catalog Version",
+          "type": "string"
+        },
+        "constraint_set": {
+          "$ref": "#/$defs/_PromptConstraintSetV1"
+        },
+        "narrative_contexts": {
+          "items": {
+            "$ref": "#/$defs/NarrativeContext"
+          },
+          "title": "Narrative Contexts",
+          "type": "array"
+        },
+        "profile_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "profile_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Profile Sha256",
+          "type": "string"
+        },
+        "profile_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "reference_asset_recipe": {
+          "title": "Reference Asset Recipe",
+          "type": "null"
+        },
+        "reference_asset_types": {
+          "maxItems": 0,
+          "minItems": 0,
+          "title": "Reference Asset Types",
+          "type": "array"
+        },
+        "renderer_version": {
+          "const": "1.0.0",
+          "title": "Renderer Version",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/_PromptSectionV1"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "shot_type": {
+          "const": "NARRATIVE_FRAME",
+          "title": "Shot Type",
+          "type": "string"
+        },
+        "visual_style_id": {
+          "const": "sdc.cinematic-storyboard.v1",
+          "title": "Visual Style Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_purpose",
+        "constraint_set",
+        "narrative_contexts",
+        "profile_id",
+        "profile_version",
+        "reference_asset_recipe",
+        "reference_asset_types",
+        "renderer_version",
+        "sections",
+        "shot_type",
+        "visual_style_id",
+        "profile_sha256",
+        "catalog_version",
+        "catalog_sha256"
+      ],
+      "title": "_VisualPromptProfileSnapshotV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Immutable offline Prompt sidecar bound to one unchanged Creative Sample v2 compilation.",
+  "properties": {
+    "artifact_purpose": {
+      "const": "OFFLINE_VISUAL_PROMPT_COMPILATION_SIDECAR",
+      "title": "Artifact Purpose",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "base_compilation_id": {
+      "pattern": "^creative_sample_[0-9a-f]{20}$",
+      "title": "Base Compilation Id",
+      "type": "string"
+    },
+    "base_compiler_contract": {
+      "const": "CREATIVE_SAMPLE_V2",
+      "title": "Base Compiler Contract",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile_snapshot": {
+      "$ref": "#/$defs/_VisualPromptProfileSnapshotV1"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "selection_decision_kind": {
+      "const": "HUMAN_DECISION",
+      "title": "Selection Decision Kind",
+      "type": "string"
+    },
+    "selection_decision_ref": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Selection Decision Ref",
+      "type": "string"
+    },
+    "selection_scope": {
+      "const": "ALL_NARRATIVE_SHOTS",
+      "title": "Selection Scope",
+      "type": "string"
+    },
+    "shot_prompts": {
+      "items": {
+        "$ref": "#/$defs/_CreativeSampleVisualPromptShotV1"
+      },
+      "maxItems": 12,
+      "minItems": 8,
+      "title": "Shot Prompts",
+      "type": "array"
+    },
+    "sidecar_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sidecar Sha256",
+      "type": "string"
+    },
+    "spec_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Spec Sha256",
+      "type": "string"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "artifact_purpose",
+    "base_compiler_contract",
+    "selection_scope",
+    "base_compilation_id",
+    "spec_sha256",
+    "selection_decision_kind",
+    "selection_decision_ref",
+    "profile_snapshot",
+    "shot_prompts",
+    "sidecar_sha256"
+  ],
+  "title": "CreativeSampleVisualPromptSidecarV1",
+  "type": "object"
+}

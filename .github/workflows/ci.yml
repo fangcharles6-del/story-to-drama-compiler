@@ -43,3 +43,4 @@ jobs:
           tests/test_visual_prompt_profile_source.py
           tests/test_visual_prompt_profiles.py
           tests/test_visual_prompt_profile_codegen.py
+          tests/test_visual_prompt_compiler_integration.py

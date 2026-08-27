@@ -982,9 +982,9 @@ def test_replay_result_is_not_registered_as_a_persistent_schema() -> None:
     )
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 68
+    assert len(MODELS) == 70
     assert sum("FreshStatus" in model.__name__ for model in MODELS) == 6
-    assert MODELS[-1] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
+    assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert FreshStatusExplicitFiniteChainReplayResultV1 not in MODELS
     assert not Path("schemas/FreshStatusExplicitFiniteChainReplayResultV1.schema.json").exists()
     assert Path(
