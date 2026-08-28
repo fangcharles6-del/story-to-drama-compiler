@@ -312,6 +312,25 @@ PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES = (
     "CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1",
 )
 
+# The approved Windows checkout observations over raw CRLF bytes were
+# b169a809cba261c9930b624c935723ebbcd8bf95e7d8b837062c7afe3baf7c27 and
+# b9e8af2091dde873274d1d98e833cad04ddc9d2743bfe80d31add6f5baf39828.
+# Committed Schema identity follows the cross-platform canonical-LF/Git-blob policy.
+PRE_REFERENCE_PROMPT_COMPILER_SCHEMA_SHA256 = {
+    **PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256,
+    "CreativeSampleVisualPromptCompileRequestV1.schema.json": (
+        "c3d2f61840ff2f1214b638e746ec3d9ca3ee9decbc74cc75a38e88449e7b1bf5"
+    ),
+    "CreativeSampleVisualPromptSidecarV1.schema.json": (
+        "00cb4984018c261d2aed99753f149107bace1b5f19c5fcc3d6831e8c599edfae"
+    ),
+}
+PRE_REFERENCE_PROMPT_COMPILER_MODEL_NAMES = (
+    *PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES,
+    "CreativeSampleVisualPromptCompileRequestV1",
+    "CreativeSampleVisualPromptSidecarV1",
+)
+
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
     assert len(PRE_V2_SCHEMA_SHA256) == 50
@@ -361,11 +380,22 @@ def test_all_pre_visual_prompt_compiler_integration_schema_bytes_remain_unchange
     assert tuple(model.__name__ for model in MODELS[:68]) == (
         PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_MODEL_NAMES
     )
-    expected_prefix = {
-        f"{model.__name__}.schema.json" for model in MODELS[:68]
-    }
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:68]}
     assert set(PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256) == expected_prefix
     for name, digest in PRE_VISUAL_PROMPT_COMPILER_INTEGRATION_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
+def test_all_pre_reference_prompt_compiler_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_REFERENCE_PROMPT_COMPILER_SCHEMA_SHA256) == 70
+    assert len(PRE_REFERENCE_PROMPT_COMPILER_MODEL_NAMES) == 70
+    assert tuple(model.__name__ for model in MODELS[:70]) == (
+        PRE_REFERENCE_PROMPT_COMPILER_MODEL_NAMES
+    )
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:70]}
+    assert set(PRE_REFERENCE_PROMPT_COMPILER_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_REFERENCE_PROMPT_COMPILER_SCHEMA_SHA256.items():
         canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
@@ -376,12 +406,16 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 70
+    assert len(model_names) == 72
     assert len(model_names) == len(set(model_names))
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
-    assert [model.__name__ for model in MODELS[-2:]] == [
+    assert [model.__name__ for model in MODELS[68:70]] == [
         "CreativeSampleVisualPromptCompileRequestV1",
         "CreativeSampleVisualPromptSidecarV1",
+    ]
+    assert [model.__name__ for model in MODELS[70:72]] == [
+        "CreativeSampleReferenceVisualPromptCompileRequestV1",
+        "CreativeSampleReferenceVisualPromptArtifactV1",
     ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
@@ -391,6 +425,91 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     expected = {f"{name}.schema.json" for name in model_names}
     committed = {path.name for path in Path("schemas").glob("*.schema.json")}
     assert committed == expected
+
+
+def test_reference_prompt_compiler_schemas_are_closed_and_all_fields_required() -> None:
+    schema_names = (
+        "CreativeSampleReferenceVisualPromptCompileRequestV1",
+        "CreativeSampleReferenceVisualPromptArtifactV1",
+    )
+    schemas = {
+        name: json.loads(Path(f"schemas/{name}.schema.json").read_text()) for name in schema_names
+    }
+
+    expected_top_level_fields = {
+        "CreativeSampleReferenceVisualPromptCompileRequestV1": 38,
+        "CreativeSampleReferenceVisualPromptArtifactV1": 41,
+    }
+    for name, expected_count in expected_top_level_fields.items():
+        schema = schemas[name]
+        assert schema["additionalProperties"] is False
+        assert len(schema["properties"]) == expected_count
+        assert len(schema["required"]) == expected_count
+        assert set(schema["required"]) == set(schema["properties"])
+
+    artifact_schema = schemas["CreativeSampleReferenceVisualPromptArtifactV1"]
+    closed_inline_definitions = {
+        "_CharacterReferenceSourceV1",
+        "_SceneReferenceSourceV1",
+        "_CharacterVisualPromptProfileSnapshotV1",
+        "_SceneVisualPromptProfileSnapshotV1",
+        "_CharacterReferenceAssetRecipeV1",
+        "_SceneReferenceAssetRecipeV1",
+        "_CharacterReferencePromptRenderInputV1",
+        "_SceneReferencePromptRenderInputV1",
+        "_PromptRenderReceiptV1",
+    }
+    assert closed_inline_definitions <= set(artifact_schema["$defs"])
+    receipt_schema = artifact_schema["$defs"]["_PromptRenderReceiptV1"]
+    assert len(receipt_schema["properties"]) == 32
+    assert len(receipt_schema["required"]) == 32
+
+    request_definitions = schemas["CreativeSampleReferenceVisualPromptCompileRequestV1"]["$defs"]
+    for source_name in ("_CharacterReferenceSourceV1", "_SceneReferenceSourceV1"):
+        source_properties = request_definitions[source_name]["properties"]
+        assert source_properties["narrative"]["minLength"] == 1
+        assert source_properties["narrative"]["maxLength"] == 4000
+        assert source_properties["action"]["minLength"] == 1
+        assert source_properties["action"]["maxLength"] == 2000
+    props_schema = request_definitions["_SceneReferenceSourceV1"]["properties"]["props"]
+    assert props_schema["minItems"] == 0
+    assert props_schema["maxItems"] == 16
+    assert props_schema["uniqueItems"] is True
+    assert props_schema["items"]["minLength"] == 1
+    assert props_schema["items"]["maxLength"] == 128
+
+    character_input = artifact_schema["$defs"]["_CharacterReferencePromptRenderInputV1"]
+    for map_name in ("emotion_by_character", "wardrobe_by_character"):
+        map_schema = character_input["properties"][map_name]
+        assert map_schema["minProperties"] == 1
+        assert map_schema["maxProperties"] == 1
+        assert map_schema["additionalProperties"] is False
+        assert len(map_schema["patternProperties"]) == 1
+    assert character_input["properties"]["character_asset_bindings"]["minItems"] == 1
+    assert character_input["properties"]["character_asset_bindings"]["maxItems"] == 1
+
+    character_snapshot = artifact_schema["$defs"]["_CharacterVisualPromptProfileSnapshotV1"]
+    scene_snapshot = artifact_schema["$defs"]["_SceneVisualPromptProfileSnapshotV1"]
+    assert character_snapshot["properties"]["reference_asset_types"]["minItems"] == 3
+    assert character_snapshot["properties"]["reference_asset_types"]["maxItems"] == 3
+    assert len(character_snapshot["properties"]["reference_asset_types"]["prefixItems"]) == 3
+    assert scene_snapshot["properties"]["reference_asset_types"]["minItems"] == 4
+    assert scene_snapshot["properties"]["reference_asset_types"]["maxItems"] == 4
+    assert len(scene_snapshot["properties"]["reference_asset_types"]["prefixItems"]) == 4
+
+    for schema_name, schema in schemas.items():
+        declared_objects = {"<root>": schema, **schema.get("$defs", {})}
+        for object_name, object_schema in declared_objects.items():
+            if object_schema.get("type") != "object" or "properties" not in object_schema:
+                continue
+            assert object_schema.get("additionalProperties") is False, (
+                schema_name,
+                object_name,
+            )
+            assert set(object_schema.get("required", ())) == set(object_schema["properties"]), (
+                schema_name,
+                object_name,
+            )
 
 
 def test_committed_schemas_have_not_drifted() -> None:

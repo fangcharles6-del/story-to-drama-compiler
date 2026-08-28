@@ -10,6 +10,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: make bootstrap
       - run: make visual-prompt-profiles-check
+      - run: make visual-reference-prompt-compiler-check
       - run: make lint
       - run: make typecheck
       - run: make test
@@ -44,3 +45,16 @@ jobs:
           tests/test_visual_prompt_profiles.py
           tests/test_visual_prompt_profile_codegen.py
           tests/test_visual_prompt_compiler_integration.py
+  visual-reference-prompt-compiler-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {version: "0.8.8", enable-cache: true}
+      - run: uv sync --frozen
+      - name: visual-reference-prompt-compiler-check
+        run: uv run python -m sdc.visual_reference_prompt_compiler_codegen --check
+      - run: >-
+          uv run pytest -q
+          tests/test_visual_reference_prompt_compiler.py
+          tests/test_visual_reference_prompt_compiler_codegen.py

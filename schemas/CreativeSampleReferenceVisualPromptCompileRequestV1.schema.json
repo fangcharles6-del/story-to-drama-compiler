@@ -1,0 +1,369 @@
+{
+  "$defs": {
+    "_CharacterReferenceSourceV1": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "continuity_notes": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "emotion_direction": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Emotion Direction",
+          "type": "string"
+        },
+        "narrative": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "source_kind": {
+          "const": "CHARACTER_REFERENCE_SOURCE",
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "visual_direction": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Direction",
+          "type": "string"
+        },
+        "wardrobe_direction": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Wardrobe Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_kind",
+        "narrative",
+        "visual_direction",
+        "action",
+        "emotion_direction",
+        "wardrobe_direction",
+        "continuity_notes"
+      ],
+      "title": "_CharacterReferenceSourceV1",
+      "type": "object"
+    },
+    "_SceneReferenceSourceV1": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "continuity_notes": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Continuity Notes",
+          "type": "string"
+        },
+        "narrative": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Narrative",
+          "type": "string"
+        },
+        "props": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 0,
+          "title": "Props",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_kind": {
+          "const": "SCENE_REFERENCE_SOURCE",
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "visual_direction": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Visual Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_kind",
+        "narrative",
+        "visual_direction",
+        "action",
+        "props",
+        "continuity_notes"
+      ],
+      "title": "_SceneReferenceSourceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One exact human-selected, human-authored, zero-authority reference request.",
+  "properties": {
+    "asset_purpose": {
+      "enum": [
+        "CHARACTER_REFERENCE_ASSET",
+        "SCENE_REFERENCE_ASSET"
+      ],
+      "title": "Asset Purpose",
+      "type": "string"
+    },
+    "authoring_decision_kind": {
+      "const": "HUMAN_DECISION",
+      "title": "Authoring Decision Kind",
+      "type": "string"
+    },
+    "authoring_decision_ref": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Authoring Decision Ref",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "catalog_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Catalog Sha256",
+      "type": "string"
+    },
+    "catalog_version": {
+      "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "expected_active_asset_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expected Active Asset Content Sha256",
+      "type": "string"
+    },
+    "expected_active_asset_version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Expected Active Asset Version Id",
+      "type": "string"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "profile_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Sha256",
+      "type": "string"
+    },
+    "profile_version": {
+      "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "reference_source": {
+      "discriminator": {
+        "mapping": {
+          "CHARACTER_REFERENCE_SOURCE": "#/$defs/_CharacterReferenceSourceV1",
+          "SCENE_REFERENCE_SOURCE": "#/$defs/_SceneReferenceSourceV1"
+        },
+        "propertyName": "source_kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/_CharacterReferenceSourceV1"
+        },
+        {
+          "$ref": "#/$defs/_SceneReferenceSourceV1"
+        }
+      ],
+      "title": "Reference Source"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "request_purpose": {
+      "const": "COMPILE_OFFLINE_REFERENCE_VISUAL_PROMPT",
+      "title": "Request Purpose",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "selection_decision_kind": {
+      "const": "HUMAN_DECISION",
+      "title": "Selection Decision Kind",
+      "type": "string"
+    },
+    "selection_decision_ref": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Selection Decision Ref",
+      "type": "string"
+    },
+    "selection_scope": {
+      "const": "ONE_REFERENCE_SUBJECT",
+      "title": "Selection Scope",
+      "type": "string"
+    },
+    "source_contract": {
+      "const": "CHARACTER_OR_SCENE_BIBLE_V1",
+      "title": "Source Contract",
+      "type": "string"
+    },
+    "subject_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "request_purpose",
+    "source_contract",
+    "selection_scope",
+    "asset_purpose",
+    "subject_id",
+    "expected_active_asset_version_id",
+    "expected_active_asset_content_sha256",
+    "reference_source",
+    "catalog_version",
+    "catalog_sha256",
+    "profile_id",
+    "profile_version",
+    "profile_sha256",
+    "selection_decision_kind",
+    "selection_decision_ref",
+    "authoring_decision_kind",
+    "authoring_decision_ref"
+  ],
+  "title": "CreativeSampleReferenceVisualPromptCompileRequestV1",
+  "type": "object"
+}
