@@ -43,10 +43,10 @@ not formal Compiler input or artifact contracts. No released Compiler function c
 where the authoring text comes from, how it is closed against a Bible-declared active imported
 AssetVersion, how the result is identified or what a verifier may claim.
 
-This ADR defines that missing input boundary. While its status is `Proposed`, it authorizes no
-implementation, formal Contract, Schema, registry change, digest use, generation, Candidate,
-Qualification, Provider input or Runtime connection. Acceptance would permit only a separately
-reviewed offline BUILD conforming to the exact boundary below.
+This ADR defines that missing input boundary. Acceptance records the architecture only and
+authorizes no implementation, formal Contract, Schema, registry change, digest use, generation,
+Candidate, Qualification, Provider input or Runtime connection. A separately approved and reviewed
+offline BUILD is still required to implement the exact boundary below.
 
 ## Decision summary
 
@@ -64,8 +64,8 @@ The first reference-Prompt Compiler slice will:
 - render exactly one composite reference-sheet Prompt with the existing Phase 1 renderer;
 - return one independent immutable offline Prompt Artifact containing the complete source,
   Snapshot, render input, exact Prompt, Receipt and integrity closure; and
-- if and only if this ADR is later Accepted and a BUILD is approved, add exactly two top-level
-  formal Pydantic contracts and two committed Schema files.
+- only after a separate BUILD is approved, add exactly two top-level formal Pydantic contracts and
+  two committed Schema files.
 
 The first slice will not:
 
@@ -76,13 +76,9 @@ The first slice will not:
 - connect the Artifact to Runtime, Provider, Retry, QC automation, Rights execution,
   Qualification, AssetVersion promotion, publication, retention or training.
 
-## Proposed-status gate
+## Acceptance record and implementation gate
 
-No implementation source, test, Schema, fixture, generator, registry entry or committed known answer
-may be created for this decision while its status is `Proposed`. No reserved literal or digest
-domain in this ADR may be used as if it were accepted.
-
-Moving this ADR to `Accepted` requires an explicit human decision on at least:
+Acceptance explicitly confirms:
 
 1. the one-Bible/one-composite-Prompt scope;
 2. the explicit human-authoring source projection and its non-proof semantics;
@@ -144,9 +140,35 @@ creative_sample_reference_visual_prompt_artifact_projection
 creative_sample_reference_visual_prompt_artifact_sha256
 ```
 
-Adding or renaming a public export requires amending this ADR before Acceptance. The module must
-not be imported or called by the current client, CLI, workflow, worker, Runtime, Provider or QC
-modules.
+The public Artifact helper contracts are frozen to:
+
+```python
+creative_sample_reference_visual_prompt_artifact_projection(
+    value: CreativeSampleReferenceVisualPromptArtifactV1,
+) -> dict[str, object]
+
+creative_sample_reference_visual_prompt_artifact_sha256(
+    value: CreativeSampleReferenceVisualPromptArtifactV1,
+) -> str
+```
+
+Both helpers accept only an exact `CreativeSampleReferenceVisualPromptArtifactV1` instance, reject
+subclasses and fully strict-revalidate the complete value. Revalidation rejects forged construction
+or `model_copy` values and unknown, cyclic or dynamically typed nested values. Integrity validation
+locally re-renders from the embedded reference Snapshot and render input, then requires exact Prompt
+and Prompt Receipt equality. It performs no Catalog, Bible, filesystem, environment or network
+lookup and no authority action.
+
+The projection helper returns the explicit closed semantic projection of every Artifact field except
+`artifact_sha256`. The hash helper hashes exactly that projection under
+`VISUAL_REFERENCE_PROMPT_COMPILER_ARTIFACT_SHA256_DOMAIN`. Neither helper derives its projection
+from incidental Pydantic, dataclass or `__dict__` serialization. On any failure, both helpers raise
+`VisualReferencePromptCompilerError`, preserve the original exception as the cause and return no
+partial value or sentinel. Exact human-readable error text is not a compatibility interface.
+
+Adding or renaming a public export requires an explicit ADR amendment and review before
+implementation. The module must not be imported or called by the current client, CLI, workflow,
+worker, Runtime, Provider or QC modules.
 
 The function performs these operations in order:
 
@@ -233,7 +255,7 @@ literal text in a Prompt and must not be represented as such.
 
 ## Future formal request contract
 
-If this ADR is Accepted and a separate BUILD is approved, the first new top-level model is
+Under a separately approved conforming BUILD, the first new top-level model is
 `CreativeSampleReferenceVisualPromptCompileRequestV1`. Its committed file will be
 `schemas/CreativeSampleReferenceVisualPromptCompileRequestV1.schema.json`.
 
@@ -519,7 +541,7 @@ future Provider semantics. It requires a new version and a separately accepted d
 
 ## Future formal Artifact contract
 
-If this ADR is Accepted and a separate BUILD is approved, the second new top-level model is
+Under a separately approved conforming BUILD, the second new top-level model is
 `CreativeSampleReferenceVisualPromptArtifactV1`. Its committed file will be
 `schemas/CreativeSampleReferenceVisualPromptArtifactV1.schema.json`.
 
@@ -604,7 +626,7 @@ asset, approval or authorization.
 
 ## Artifact identity
 
-This ADR proposes and, only upon Acceptance, reserves exactly one new semantic digest domain:
+This Accepted ADR reserves and freezes exactly one new semantic digest domain:
 
 ```python
 b"sdc:visual-prompt-reference-compiler-artifact:v1\0"
@@ -858,8 +880,8 @@ Profile, latest Catalog entry or existing Creative Sample Prompt.
 
 ## Future validation and implementation gates
 
-No implementation begins until this ADR is Accepted. A conforming separately approved BUILD must
-then prove at least:
+Acceptance does not authorize implementation. A conforming separately approved BUILD must prove at
+least:
 
 1. current authoritative `main`, baseline and all three ADR dependencies before editing;
 2. exactly two new top-level models, exactly two new Schema files and Registry growth from 70 to
@@ -897,7 +919,11 @@ then prove at least:
 25. proof that no Candidate, media, role binding, AssetVersion or promotion result is created;
 26. structural rejection by Runtime, JobGraph, Provider request and Canary execution paths;
 27. static and runtime denial of network, credentials, environment, clock, randomness, persistence
-   and dynamic import inputs;
+   and dynamic import inputs at the Compiler entrypoint, Request and Artifact validation, and the
+   public projection and hash helpers; codegen is outside this no-persistence runtime scope,
+   `--check` is wholly read-only and `--update` writing exactly the fixed derived-fixture allowlist
+   above is the sole persistence exception, granting no other file or operation persistence
+   authority;
 28. exact raw and in-memory resource size, depth and asset-version-count boundaries;
 29. `pydantic.ValidationError` versus `VisualReferencePromptCompilerError` behavior;
 30. integrity-only model validation with no hidden Catalog/Bible lookup, exact-Bible Compiler source
@@ -925,9 +951,9 @@ not approval of an implementation PR.
 
 ## Contract and Schema impact
 
-This Proposed ADR changes no Contract, Schema or Registry entry.
+This ADR-only decision changes no Contract, Schema or Registry entry.
 
-If later Accepted and implemented exactly, the append-only impact is:
+If separately authorized and implemented exactly, the append-only impact is:
 
 ```text
 CreativeSampleReferenceVisualPromptCompileRequestV1
@@ -983,7 +1009,7 @@ The following alternatives are rejected for the first slice:
 | Important | Bible IDs indirectly bind descriptions and are mistaken for Prompt text reuse | Preserve ID validation but prohibit literal-description dataflow into the authoring source or Prompt |
 | Important | New reference contracts drift released outputs or existing Schema bytes | Use a new isolated module, append exactly two Schemas and hash all 70 existing Schema files |
 | Important | Receipt, Catalog or compatibility metadata is mistaken for authorization | Carry direct false/zero fields and exclude Provider compatibility from the Artifact projection |
-| Important | Raw Prompt SHA and domain-separated semantic hashes are confused | Reuse each accepted domain exactly and reserve one unique Artifact domain only after Acceptance |
+| Important | Raw Prompt SHA and domain-separated semantic hashes are confused | Reuse each accepted domain exactly and use the unique Artifact domain frozen by this ADR |
 | Minor | Full-spec batch orchestration is not included | Defer collection order, batch identity and partial-failure policy |
 | Minor | CLI, persistence, display labels and localization are absent | Keep presentation and storage outside the first semantic boundary |
 
@@ -991,7 +1017,7 @@ The following alternatives are rejected for the first slice:
 
 This ADR does not approve or specify:
 
-- any implementation while the ADR is Proposed;
+- any implementation without separate BUILD approval;
 - a formal Contract, Schema, registry update or code generator in this task;
 - Profile-driven v1 compilation;
 - changes to Creative Sample v2 or the ADR-041 narrative sidecar;
@@ -1012,7 +1038,7 @@ This ADR does not approve or specify:
 
 ## Permitted claims and explicit non-proofs
 
-Only after Acceptance and a separately approved conforming implementation may SDC claim that one
+Only after a separately approved conforming implementation may SDC claim that one
 exact human selection assertion, one unauthenticated human-authoring assertion, one expected and
 Bible-derived active binding from the exact supplied Bible value, and one compile-time-admitted
 reference Profile deterministically produced one immutable offline composite reference Prompt
@@ -1061,6 +1087,6 @@ Costs:
 - any source, projection, role-cardinality or digest change requires explicit versioning, a unique
   domain and new known-answer review.
 
-Until this ADR is explicitly Accepted and a separate implementation passes its complete review,
-SDC must continue to claim that no Character/Scene Reference Prompt Compiler input contract,
-formal reference Prompt Artifact or reference Compiler Artifact digest exists.
+Until a separately approved implementation passes its complete review, SDC must continue to claim
+that no Character/Scene Reference Prompt Compiler input contract, formal reference Prompt Artifact
+or reference Compiler Artifact digest exists.
