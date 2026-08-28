@@ -40,6 +40,10 @@ from sdc.visual_prompt_compiler import (
     CreativeSampleVisualPromptCompileRequestV1,
     CreativeSampleVisualPromptSidecarV1,
 )
+from sdc.visual_reference_prompt_compiler import (
+    CreativeSampleReferenceVisualPromptArtifactV1,
+    CreativeSampleReferenceVisualPromptCompileRequestV1,
+)
 
 from .real_asset_fresh_status_evidence_v30 import (
     CreativeSampleRealAssetFreshStatusDecisionV1,
@@ -123,6 +127,8 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     CreativeSampleVisualPromptCompileRequestV1,
     CreativeSampleVisualPromptSidecarV1,
+    CreativeSampleReferenceVisualPromptCompileRequestV1,
+    CreativeSampleReferenceVisualPromptArtifactV1,
 ]
 
 

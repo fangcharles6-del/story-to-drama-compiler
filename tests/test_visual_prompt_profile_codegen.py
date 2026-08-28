@@ -566,7 +566,7 @@ def test_cli_has_only_explicit_modes_and_root_is_cwd_environment_independent(
 
 
 def test_schema_boundary_reflects_the_accepted_compiler_integration_append() -> None:
-    assert len(schemas.MODELS) == 70
+    assert len(schemas.MODELS) == 72
 
 
 def test_codegen_has_no_network_provider_credentials_clock_or_dynamic_execution() -> None:
