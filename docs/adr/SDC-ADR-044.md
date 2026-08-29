@@ -62,12 +62,12 @@ closure, policy values and digest domains are not reusable for generated-referen
 SDC-ADR-043 requires a future generated Rights Manifest and a future append-only current-status
 boundary. It also contains wording that the Manifest must bind the current-status closure used by
 a consumer while separately allowing the Manifest to be assessed later. A direct implementation
-of both directions would create a digest cycle. This Proposed ADR resolves that ambiguity before
+of both directions would create a digest cycle. This ADR resolves that ambiguity before
 any Contract or BUILD work.
 
 ## Decision summary
 
-This Proposed decision recommends a generated-specific, offline, zero-authority Rights and
+This Accepted decision establishes a generated-specific, offline, zero-authority Rights and
 current-status boundary with this strict order:
 
 1. revalidate the exact ADR-042 Artifact and complete ADR-043 Outcome, Candidate, Request and
@@ -85,9 +85,9 @@ current-status boundary with this strict order:
 The Manifest never embeds or hashes a later status subject, Record, Result or Receipt. The status
 subject binds the exact Manifest. A later consumer must jointly supply and revalidate the exact
 Manifest and exact current-status closure. This is the only permitted interpretation of the
-SDC-ADR-043 consumer-binding requirement if this ADR is accepted.
+SDC-ADR-043 consumer-binding requirement under this Accepted ADR.
 
-If accepted, this ADR narrowly supersedes only two SDC-ADR-043 statements whose implementation
+This ADR narrowly supersedes only two SDC-ADR-043 statements whose implementation
 details were deferred to this boundary:
 
 1. the Rights Manifest interface item requiring the Manifest itself to bind the consumer's
@@ -100,12 +100,12 @@ details were deferred to this boundary:
 
 Every other SDC-ADR-043 decision remains unchanged.
 
-This Proposed ADR does not approve implementation. It creates no Contract, Schema, Manifest,
+This Accepted ADR does not approve implementation. It creates no Contract, Schema, Manifest,
 Observation, status result, Receipt or promoted asset.
 
-## Proposed acceptance record and implementation gate
+## Acceptance record and implementation gate
 
-Acceptance of this ADR would explicitly accept these six trade-offs:
+This ADR records acceptance of these six trade-offs:
 
 1. a one-way `Manifest -> status subject -> Record -> Receipt` digest DAG rather than embedding a
    current-status Receipt in the Manifest;
@@ -121,16 +121,16 @@ Acceptance of this ADR would explicitly accept these six trade-offs:
 6. structural and replay invalidity fails without a status rather than being represented as
    `INDETERMINATE`; that value remains a successful-policy result only.
 
-Acceptance would also approve the role rule that the Manifest Maker and Checker are distinct and
+This ADR also establishes the role rule that the Manifest Maker and Checker are distinct and
 that the Manifest Checker is distinct from the ADR-043 Qualification qualifier. Retained identity
 records establish only deterministic record separation; they do not authenticate a real person.
 
-No BUILD may begin merely because this document exists or is later accepted. A separate explicit
+This ADR's Accepted status does not authorize BUILD. A separate explicit
 BUILD approval, new clean `codex/` branch, synthetic known-answer review and Draft PR are required.
 
 ## Frozen compatibility boundary
 
-This Proposed decision and any later conforming implementation must not change the behavior,
+This Accepted decision and any later conforming implementation must not change the behavior,
 serialized value, Schema or deterministic identity of:
 
 - `compile_story` or any v1 product;
@@ -192,7 +192,7 @@ publication permission, retention permission or training permission.
 
 ## Acyclic subject and digest DAG
 
-The proposed identity graph is exactly one-way:
+The frozen identity graph is exactly one-way:
 
 ```text
 ADR-042 Artifact
@@ -289,7 +289,7 @@ Equality with `qualification_valid_until` is expired and produces no Manifest. A
 expiry requires a new exact Qualification Request and Decision. No operation may renew, extend or
 edit the historical Decision.
 
-V1 proposes one finite Manifest interval:
+V1 freezes one finite Manifest interval:
 
 ```text
 [manifest_at, manifest_valid_until)
@@ -504,7 +504,7 @@ raw digests and cannot alias a formal semantic digest, Prompt digest or media di
 
 ## Frozen Manifest review policy
 
-The Proposed V1 Manifest gate order is:
+The frozen V1 Manifest gate order is:
 
 ```text
 PROVENANCE_AND_CANDIDATE_CLOSURE
@@ -530,7 +530,7 @@ The gate order is part of the semantic projection. Prompt constraints, QC expect
 `qualification`/`rights`/`compatibility` metadata and Provider compatibility observations cannot
 satisfy a Manifest gate.
 
-The Proposed Manifest policy projection is:
+The frozen Manifest policy projection is:
 
 ```json
 {
@@ -771,7 +771,7 @@ this closure in reverse.
 
 ## Current-status categories and claim values
 
-The Proposed policy uses these nine categories in exact order:
+The frozen policy uses these nine categories in exact order:
 
 ```text
 HOLD_ACTIVE
@@ -1018,7 +1018,7 @@ cannot supply, omit, reorder or select these deterministic results.
 
 ## Status time windows
 
-The proposed finite windows are:
+The frozen finite windows are:
 
 ```text
 manifest_at <= requested_at < manifest_valid_until
@@ -1067,7 +1067,7 @@ coverage omission or failed joint replay is an operation failure, not a status v
 no Receipt. After that boundary the category tuple is always exactly nine values; a category is
 never absent from a structurally successful result.
 
-After complete replay, the proposed precedence is:
+After complete replay, the frozen precedence is:
 
 ```text
 EXPIRED
@@ -1110,7 +1110,7 @@ read later.
 
 ## Frozen current-status policy
 
-The Proposed current-status policy projection is:
+The frozen current-status policy projection is:
 
 ```json
 {
@@ -1708,9 +1708,9 @@ historical finite assessment, not a claim about the time when the Receipt is lat
 
 ## Contract and Schema Registry impact
 
-This Proposed ADR changes no current Contract, Schema or Registry entry.
+This Accepted ADR changes no current Contract, Schema or Registry entry.
 
-If accepted and later implemented under separate approvals, the complete boundary will append
+If later implemented under separate approvals, the complete boundary will append
 exactly seven top-level Contracts and seven committed Schemas:
 
 ```text
@@ -2221,7 +2221,7 @@ Prompt, PNG, retained identity/action and external evidence file SHA-256 values 
 raw byte digests. Semantic identities use explicit projected values and distinct NUL-terminated
 domains.
 
-The Proposed domains are:
+The frozen domains are:
 
 ```text
 sdc:generated-reference-rights-manifest-review-payload:v1\0
@@ -2497,8 +2497,8 @@ overwrite, repair, quarantine or real private evidence processing.
 
 ## Validation and future implementation gates
 
-A future BUILD may proceed only after this ADR is Accepted and a separate explicit implementation
-approval is recorded. It must:
+A future BUILD may proceed only under a separate explicit implementation approval; this ADR's
+Accepted status alone is insufficient. It must:
 
 1. begin from the exact newly verified authoritative `main`;
 2. use an isolated `codex/` branch and modify only the reviewed allowlist;
@@ -2719,7 +2719,7 @@ promotion or multi-role input type exists.
 
 ## Non-goals
 
-This Proposed ADR does not approve or specify:
+This Accepted ADR does not approve or specify:
 
 - implementation through proposal or acceptance alone;
 - any current Contract, Schema, Registry, fixture or code-generator change;
@@ -2799,11 +2799,11 @@ Costs and limitations:
 
 ## Current task boundary
 
-This task may add only this Proposed ADR file. It must not:
+This documentation-only formalization task may modify only this Accepted ADR file. It must not:
 
-- change the status to Accepted;
+- alter the Accepted status or any accepted semantic decision;
 - modify any Contract, Schema, fixture, test, source or codegen file;
-- create a branch, commit, PR or release;
+- create any implementation branch, implementation commit, additional PR or release;
 - run schema generation, tests, formatting or code generation;
 - create a Manifest, status document, Receipt or promoted value; or
 - begin BUILD, promotion, Provider-input or Runtime work.
