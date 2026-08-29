@@ -5,7 +5,7 @@ import copy
 import hashlib
 import json
 from collections.abc import Iterator, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cache
 from pathlib import Path
 from typing import Any, cast
@@ -15,6 +15,16 @@ from pydantic import BaseModel, ValidationError
 
 import sdc.generated_reference_rights_current_status as rights
 import sdc.generated_reference_rights_current_status_codegen as codegen
+from sdc.contracts import (
+    CharacterAssetVersion,
+    CharacterBible,
+    GenerationJob,
+    InputMaterial,
+    JobGraph,
+    ProviderRequest,
+    SceneAssetVersion,
+    SceneBible,
+)
 
 ROOT = Path(__file__).parents[1]
 
@@ -602,6 +612,26 @@ def _rehash_manifest_values(
     return values
 
 
+def _rehash_contract_values(
+    value: BaseModel,
+    mutate: Any,
+    *,
+    domain: bytes,
+    id_field: str,
+    sha_field: str,
+    stem: str,
+) -> dict[str, object]:
+    values = cast(dict[str, object], value.model_dump(mode="python"))
+    mutate(values)
+    projection = {
+        key: item for key, item in values.items() if key not in {id_field, sha_field}
+    }
+    digest = _semantic_sha256(domain, projection)
+    values[id_field] = f"{stem}{digest[:20]}"
+    values[sha_field] = digest
+    return values
+
+
 def _manifest_builder_kwargs(materials: _ManifestMaterials) -> dict[str, object]:
     upstream = materials.upstream
     closure = materials.manifest_closure
@@ -805,6 +835,208 @@ def test_request_evaluation_upper_bound_is_exclusive() -> None:
             evaluated_at=evaluated_at,
             checker_basis=checker_basis,
         )
+
+
+@pytest.mark.parametrize(
+    ("requested_at", "request_valid_until"),
+    (
+        ("2026-08-29T01:59:59Z", "2026-08-30T01:59:59Z"),
+        ("2026-08-30T02:00:00Z", "2026-08-30T02:00:00Z"),
+    ),
+)
+def test_request_time_must_be_inside_the_manifest_half_open_window(
+    requested_at: str,
+    request_valid_until: str,
+) -> None:
+    closure = _current_closure()
+    assert closure.manifest.manifest_at == "2026-08-29T02:00:00Z"
+    assert closure.manifest.manifest_valid_until == "2026-08-30T02:00:00Z"
+
+    def outside_manifest(values: dict[str, object]) -> None:
+        values["requested_at"] = requested_at
+        values["request_valid_until"] = request_valid_until
+
+    with pytest.raises(ValidationError, match="outside the Rights Manifest window"):
+        rights.CreativeSampleGeneratedReferenceCurrentStatusRequestV1.model_validate(
+            _rehash_contract_values(
+                closure.request,
+                outside_manifest,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_REQUEST_SHA256_DOMAIN,
+                id_field="request_id",
+                sha_field="request_sha256",
+                stem="generated_reference_current_status_request_v1_",
+            )
+        )
+
+
+def test_request_builder_preserves_manifest_window_failure_code() -> None:
+    closure = _current_closure()
+    with pytest.raises(rights.GeneratedReferenceRightsCurrentStatusError) as error:
+        rights.build_generated_reference_current_status_request(
+            subject_closure=closure.subject_closure,
+            status_preparer_identity_bytes=closure.status_preparer_identity_bytes,
+            status_preparer_action_bytes=closure.status_preparer_action_bytes,
+            requested_at=closure.manifest.manifest_valid_until,
+            target_observations=closure.observation_inputs,
+            request_basis=closure.request.request_basis,
+        )
+    assert error.value.code == "REQUEST_CONTRACT_INVALID"
+
+
+def test_observation_validity_window_is_at_most_86400_seconds() -> None:
+    observation = _current_closure().observation_inputs[0].observation
+
+    def valid_exact_upper_bound(values: dict[str, object]) -> None:
+        values["valid_from"] = "2026-08-29T01:30:00Z"
+
+    exact_values = _rehash_contract_values(
+        observation,
+        valid_exact_upper_bound,
+        domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_SOURCE_OBSERVATION_SHA256_DOMAIN,
+        id_field="observation_id",
+        sha_field="observation_sha256",
+        stem="generated_reference_current_status_source_observation_v1_",
+    )
+    exact = rights.CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1.model_validate(
+        exact_values
+    )
+    assert exact.valid_until == "2026-08-30T01:30:00Z"
+
+    def exceeds_upper_bound(values: dict[str, object]) -> None:
+        values["valid_from"] = "2026-08-29T01:29:59Z"
+
+    with pytest.raises(ValidationError, match="exceeds 86400 seconds"):
+        rights.CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1.model_validate(
+            _rehash_contract_values(
+                observation,
+                exceeds_upper_bound,
+                domain=(
+                    rights.GENERATED_REFERENCE_CURRENT_STATUS_SOURCE_OBSERVATION_SHA256_DOMAIN
+                ),
+                id_field="observation_id",
+                sha_field="observation_sha256",
+                stem="generated_reference_current_status_source_observation_v1_",
+            )
+        )
+
+
+def test_observation_builder_preserves_validity_window_failure_code() -> None:
+    materials = _manifest_materials()
+    subject_closure = rights.build_generated_reference_current_status_subject_closure(
+        materials.manifest
+    )
+    source = cast(
+        dict[str, object],
+        cast(list[object], _status_source(materials.source_case)["observations"])[0],
+    )
+    with pytest.raises(rights.GeneratedReferenceRightsCurrentStatusError) as error:
+        rights.build_generated_reference_current_status_source_observation(
+            subject_closure=subject_closure,
+            category=cast(Any, source["category"]),
+            claim_value=cast(Any, source["claim_value"]),
+            source_kind=cast(Any, source["source_kind"]),
+            basis_code=cast(Any, source["basis_code"]),
+            basis_note=cast(str, source["basis_note"]),
+            source_identity_bytes=_canonical_document(source["source_reference"]),
+            source_object_ref=cast(str, source["source_object_ref"]),
+            source_object_bytes=_canonical_document(source["source_object"]),
+            source_object_media_type=cast(str, source["source_object_media_type"]),
+            source_event_at=cast(str, source["source_event_at"]),
+            observed_at=cast(str, source["observed_at"]),
+            valid_from="2026-08-29T01:29:59Z",
+            valid_until=cast(str, source["valid_until"]),
+            link_kind=cast(Any, source["link_kind"]),
+        )
+    assert error.value.code == "OBSERVATION_CONTRACT_INVALID"
+
+
+@pytest.mark.parametrize(
+    ("category", "claim_value", "expected_effect"),
+    (
+        ("HOLD_ACTIVE", "PRESENT", "ADVERSE_PRESENT"),
+        ("HOLD_ACTIVE", "ABSENT_WITH_EVIDENCE", "ADVERSE_ABSENT"),
+        ("RIGHTS_BASIS_CURRENT", "PRESENT", "POSITIVE_PRESENT"),
+        ("RIGHTS_BASIS_CURRENT", "ABSENT_WITH_EVIDENCE", "POSITIVE_ABSENT"),
+        ("HOLD_ACTIVE", "UNKNOWN", "INDETERMINATE"),
+        ("HOLD_ACTIVE", "NOT_ASSESSED", "INDETERMINATE"),
+        ("HOLD_ACTIVE", "CONFLICT", "INDETERMINATE"),
+    ),
+)
+def test_category_result_claim_effect_matrix_is_complete_and_fail_closed(
+    category: str,
+    claim_value: str,
+    expected_effect: str,
+) -> None:
+    result = next(
+        item
+        for item in _current_closure().instruction.category_results
+        if item.category == category
+    )
+    valid_values = cast(dict[str, object], result.model_dump(mode="python"))
+    valid_values["claim_value"] = claim_value
+    valid_values["deterministic_effect"] = expected_effect
+    admitted = rights.GeneratedReferenceCurrentStatusCategoryResultV1.model_validate(
+        valid_values
+    )
+    assert admitted.deterministic_effect == expected_effect
+
+    invalid_values = dict(valid_values)
+    invalid_values["deterministic_effect"] = (
+        "ADVERSE_PRESENT" if expected_effect != "ADVERSE_PRESENT" else "INDETERMINATE"
+    )
+    with pytest.raises(ValidationError, match="does not match category and claim_value"):
+        rights.GeneratedReferenceCurrentStatusCategoryResultV1.model_validate(invalid_values)
+
+
+def test_status_preparer_and_checker_aliases_fail_at_contract_and_builder_boundaries() -> None:
+    closure = _current_closure()
+
+    def alias_raw_role(values: dict[str, object]) -> None:
+        values["status_checker_identity_ref_sha256"] = values[
+            "status_preparer_identity_ref_sha256"
+        ]
+
+    def alias_raw_action(values: dict[str, object]) -> None:
+        values["status_checker_action_sha256"] = values["status_preparer_action_sha256"]
+
+    for alias in (alias_raw_role, alias_raw_action):
+        with pytest.raises(ValidationError, match="identities/actions must be distinct"):
+            rights.CreativeSampleGeneratedReferenceCurrentStatusInstructionV1.model_validate(
+                _rehash_contract_values(
+                    closure.instruction,
+                    alias,
+                    domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
+                    id_field="instruction_id",
+                    sha_field="instruction_sha256",
+                    stem="generated_reference_current_status_instruction_v1_",
+                )
+            )
+
+    builder_aliases = (
+        (
+            closure.status_preparer_identity_bytes,
+            closure.status_checker_action_bytes,
+        ),
+        (
+            closure.status_checker_identity_bytes,
+            closure.status_preparer_action_bytes,
+        ),
+    )
+    for checker_identity_bytes, checker_action_bytes in builder_aliases:
+        with pytest.raises(
+            rights.GeneratedReferenceRightsCurrentStatusError,
+            match="INSTRUCTION_CONTRACT_INVALID",
+        ):
+            rights.build_generated_reference_current_status_instruction(
+                request=closure.request,
+                chain_inputs=closure.chain_inputs,
+                status_preparer_identity_bytes=closure.status_preparer_identity_bytes,
+                status_preparer_action_bytes=closure.status_preparer_action_bytes,
+                status_checker_identity_bytes=checker_identity_bytes,
+                status_checker_action_bytes=checker_action_bytes,
+                evaluated_at=closure.instruction.evaluated_at,
+                checker_basis=closure.instruction.checker_basis,
+            )
 
 
 def test_all_five_claim_values_are_admitted_as_explicit_genesis_evidence() -> None:
@@ -1017,6 +1249,312 @@ def test_missing_cycle_shaped_nonancestor_and_omitted_target_structures_fail() -
     assert omitted_error.value.code == "REQUEST_OBSERVATION_NOT_COVERED"
 
 
+def test_coverage_input_shape_codes_are_reachable_in_frozen_priority_order() -> None:
+    closure = _current_closure()
+    first = closure.chain_inputs[0]
+    cases: tuple[tuple[Any, str], ...] = (
+        ([], "CHAIN_COLLECTION_CONTRACT_INVALID"),
+        ((), "CHAIN_COUNT_OUT_OF_RANGE"),
+        ((object(),), "CHAIN_INPUT_CONTRACT_INVALID"),
+        ((replace(first, target_observation_refs=()),), "TARGET_COUNT_OUT_OF_RANGE"),
+        ((replace(first, observation_inputs=()),), "OBSERVATION_COUNT_OUT_OF_RANGE"),
+    )
+    for chain_inputs, expected_code in cases:
+        with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+            rights.cover_generated_reference_current_status_chains(
+                closure.record, cast(Any, chain_inputs)
+            )
+        assert error.value.code == expected_code
+
+
+def test_coverage_request_target_error_precedence_is_stable() -> None:
+    closure = _current_closure()
+    first, second, *tail = closure.chain_inputs
+    first_target = first.target_observation_refs[0]
+    second_target = second.target_observation_refs[0]
+    anchored_wrong = second_target.model_copy(update={"observation_sha256": "0" * 64})
+    unknown = second_target.model_copy(
+        update={
+            "observation_id": (
+                "generated_reference_current_status_source_observation_v1_00000000000000000000"
+            )
+        }
+    )
+    cases = (
+        (
+            (
+                replace(first, target_observation_refs=(first_target, first_target)),
+                replace(second, target_observation_refs=(anchored_wrong,)),
+                *tail,
+            ),
+            "REQUEST_TARGET_COVERED_MULTIPLE_TIMES",
+        ),
+        (
+            (
+                first,
+                replace(second, target_observation_refs=(anchored_wrong, unknown)),
+                *tail,
+            ),
+            "REQUEST_TARGET_ANCHOR_MISMATCH",
+        ),
+        (
+            (
+                first,
+                replace(second, target_observation_refs=(unknown,)),
+                *tail,
+            ),
+            "REQUEST_TARGET_NOT_IN_RECORD",
+        ),
+    )
+    for chain_inputs, expected_code in cases:
+        with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+            rights.cover_generated_reference_current_status_chains(
+                closure.record, chain_inputs
+            )
+        assert error.value.code == expected_code
+
+
+def test_each_chain_target_set_must_preserve_exact_request_anchor_order() -> None:
+    closure = _build_status_closure(unresolved_fork_category="HOLD_ACTIVE")
+    fork_chain = next(
+        item for item in closure.chain_inputs if len(item.target_observation_refs) == 2
+    )
+    reversed_chain = replace(
+        fork_chain,
+        target_observation_refs=tuple(reversed(fork_chain.target_observation_refs)),
+    )
+    chain_inputs = tuple(
+        reversed_chain if item is fork_chain else item for item in closure.chain_inputs
+    )
+    with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+        rights.cover_generated_reference_current_status_chains(closure.record, chain_inputs)
+    assert error.value.code == "CHAIN_TARGET_SET_MISMATCH"
+
+
+def test_request_target_anchor_compares_the_complete_typed_reference() -> None:
+    closure = _current_closure()
+    selected = closure.chain_inputs[0]
+    target = selected.target_observation_refs[0]
+    ordinal_only_drift = target.model_copy(update={"ordinal": target.ordinal + 1})
+    changed = replace(selected, target_observation_refs=(ordinal_only_drift,))
+    chain_inputs = tuple(
+        changed if item is selected else item for item in closure.chain_inputs
+    )
+    with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+        rights.cover_generated_reference_current_status_chains(closure.record, chain_inputs)
+    assert error.value.code == "REQUEST_TARGET_ANCHOR_MISMATCH"
+
+
+def test_coverage_defensively_rejects_internal_replay_result_with_unresolved_target(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    closure = _current_closure()
+    selected = closure.chain_inputs[0]
+    original_replay = rights.replay_generated_reference_current_status_chain
+
+    def omit_resolved_target(
+        chain_input: rights.GeneratedReferenceCurrentStatusExplicitChainInput,
+    ) -> rights.GeneratedReferenceCurrentStatusChainReplayResult:
+        result = original_replay(chain_input)
+        if chain_input is selected:
+            return replace(result, observations=())
+        return result
+
+    monkeypatch.setattr(
+        rights,
+        "replay_generated_reference_current_status_chain",
+        omit_resolved_target,
+    )
+    with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+        rights.cover_generated_reference_current_status_chains(
+            closure.record, closure.chain_inputs
+        )
+    assert error.value.code == "REQUEST_TARGET_NOT_RESOLVED_IN_CHAIN"
+
+
+def test_coverage_defensively_rejects_internal_replay_result_with_unrelated_support(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    closure = _current_closure()
+    selected = next(
+        item
+        for item in closure.chain_inputs
+        if item.target_observation_refs[0].category == "HOLD_ACTIVE"
+    )
+    fork = _build_status_closure(unresolved_fork_category="HOLD_ACTIVE")
+    extra = next(
+        observation_input.observation
+        for chain in fork.chain_inputs
+        if len(chain.observation_inputs) == 3
+        for observation_input in chain.observation_inputs[1:2]
+    )
+    original_replay = rights.replay_generated_reference_current_status_chain
+
+    def inject_unrelated_support(
+        chain_input: rights.GeneratedReferenceCurrentStatusExplicitChainInput,
+    ) -> rights.GeneratedReferenceCurrentStatusChainReplayResult:
+        result = original_replay(chain_input)
+        if chain_input is selected:
+            return replace(result, observations=(*result.observations, extra))
+        return result
+
+    monkeypatch.setattr(
+        rights,
+        "replay_generated_reference_current_status_chain",
+        inject_unrelated_support,
+    )
+    with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+        rights.cover_generated_reference_current_status_chains(
+            closure.record, closure.chain_inputs
+        )
+    assert error.value.code == "UNRELATED_SUPPORT_OBSERVATION"
+
+
+def test_public_chain_failure_preserves_nested_replay_code() -> None:
+    closure = _current_closure()
+    selected = next(
+        item
+        for item in closure.chain_inputs
+        if item.target_observation_refs[0].category == "HOLD_ACTIVE"
+    )
+    fork = _build_status_closure(unresolved_fork_category="HOLD_ACTIVE")
+    unrelated_input = next(
+        observation_input
+        for chain in fork.chain_inputs
+        if len(chain.observation_inputs) == 3
+        for observation_input in chain.observation_inputs[1:2]
+    )
+    changed = replace(
+        selected,
+        observation_inputs=(*selected.observation_inputs, unrelated_input),
+    )
+    chain_inputs = tuple(
+        changed if item is selected else item for item in closure.chain_inputs
+    )
+    with pytest.raises(rights.GeneratedReferenceChainCoverageError) as error:
+        rights.cover_generated_reference_current_status_chains(closure.record, chain_inputs)
+    assert error.value.code == "CHAIN_REPLAY_FAILED"
+    assert error.value.replay_code == "DISCONNECTED_GRAPH"
+
+
+@pytest.mark.parametrize(
+    ("field_name", "replacement_value"),
+    (
+        ("status_preparer_identity_ref_sha256", "1" * 64),
+        ("status_preparer_action_sha256", "2" * 64),
+        ("requested_at", "2026-08-29T03:00:01Z"),
+        ("request_valid_until", "2026-08-30T01:59:59Z"),
+    ),
+)
+def test_record_repeats_the_exact_request_preparer_and_time_closure(
+    field_name: str,
+    replacement_value: str,
+) -> None:
+    closure = _current_closure()
+
+    def mutate_instruction(values: dict[str, object]) -> None:
+        values[field_name] = replacement_value
+
+    instruction = (
+        rights.CreativeSampleGeneratedReferenceCurrentStatusInstructionV1.model_validate(
+            _rehash_contract_values(
+                closure.instruction,
+                mutate_instruction,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
+                id_field="instruction_id",
+                sha_field="instruction_sha256",
+                stem="generated_reference_current_status_instruction_v1_",
+            )
+        )
+    )
+
+    def replace_instruction(values: dict[str, object]) -> None:
+        values["instruction"] = instruction.model_dump(mode="python")
+
+    with pytest.raises(
+        ValidationError,
+        match="does not repeat the exact Request Preparer/time closure",
+    ):
+        rights.CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1.model_validate(
+            _rehash_contract_values(
+                closure.record,
+                replace_instruction,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_EVIDENCE_RECORD_SHA256_DOMAIN,
+                id_field="record_id",
+                sha_field="record_sha256",
+                stem="generated_reference_current_status_evidence_record_v1_",
+            )
+        )
+
+
+def test_record_closes_instruction_evaluation_window_and_decision_evaluation_time() -> None:
+    closure = _current_closure()
+
+    def instruction_after_request(values: dict[str, object]) -> None:
+        values["evaluated_at"] = closure.request.request_valid_until
+
+    instruction = (
+        rights.CreativeSampleGeneratedReferenceCurrentStatusInstructionV1.model_validate(
+            _rehash_contract_values(
+                closure.instruction,
+                instruction_after_request,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
+                id_field="instruction_id",
+                sha_field="instruction_sha256",
+                stem="generated_reference_current_status_instruction_v1_",
+            )
+        )
+    )
+
+    def replace_instruction(values: dict[str, object]) -> None:
+        values["instruction"] = instruction.model_dump(mode="python")
+
+    with pytest.raises(ValidationError, match="outside the embedded Request window"):
+        rights.CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1.model_validate(
+            _rehash_contract_values(
+                closure.record,
+                replace_instruction,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_EVIDENCE_RECORD_SHA256_DOMAIN,
+                id_field="record_id",
+                sha_field="record_sha256",
+                stem="generated_reference_current_status_evidence_record_v1_",
+            )
+        )
+
+    def decision_time_drift(values: dict[str, object]) -> None:
+        values["evaluated_at"] = "2026-08-29T04:00:01Z"
+        values["decision_at"] = "2026-08-29T04:00:01Z"
+
+    decision = rights.CreativeSampleGeneratedReferenceCurrentStatusDecisionV1.model_validate(
+        _rehash_contract_values(
+            closure.decision,
+            decision_time_drift,
+            domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_DECISION_SHA256_DOMAIN,
+            id_field="decision_id",
+            sha_field="decision_sha256",
+            stem="generated_reference_current_status_decision_v1_",
+        )
+    )
+
+    def replace_decision(values: dict[str, object]) -> None:
+        values["decision"] = decision.model_dump(mode="python")
+
+    with pytest.raises(
+        ValidationError,
+        match="Decision evaluated_at does not equal embedded Instruction evaluated_at",
+    ):
+        rights.CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1.model_validate(
+            _rehash_contract_values(
+                closure.record,
+                replace_decision,
+                domain=rights.GENERATED_REFERENCE_CURRENT_STATUS_EVIDENCE_RECORD_SHA256_DOMAIN,
+                id_field="record_id",
+                sha_field="record_sha256",
+                stem="generated_reference_current_status_evidence_record_v1_",
+            )
+        )
+
+
 def test_receipt_parsing_is_not_replay_and_full_replay_is_mandatory_for_verification() -> None:
     closure = _current_closure()
     process = rights.process_generated_reference_current_status_record_as_of_assessment(
@@ -1031,14 +1569,21 @@ def test_receipt_parsing_is_not_replay_and_full_replay_is_mandatory_for_verifica
     )
     parsed = receipt_type.model_validate_json(raw)
     assert parsed == process.receipt
-    assert rights.verify_generated_reference_current_status_record_as_of_assessment_receipt(
-        parsed
-    ) == parsed
-    with pytest.raises(rights.GeneratedReferenceReceiptError) as partial_error:
-        rights.verify_generated_reference_current_status_record_as_of_assessment_receipt(
-            parsed, record=closure.record
-        )
-    assert partial_error.value.code == "RECEIPT_REPLAY_MISMATCH"
+    incomplete_replay_inputs: tuple[dict[str, object], ...] = (
+        {},
+        {"record": closure.record},
+        {"manifest": closure.manifest},
+        {"chain_inputs": closure.chain_inputs},
+        {"record": closure.record, "manifest": closure.manifest},
+        {"record": closure.record, "chain_inputs": closure.chain_inputs},
+        {"manifest": closure.manifest, "chain_inputs": closure.chain_inputs},
+    )
+    for replay_inputs in incomplete_replay_inputs:
+        with pytest.raises(rights.GeneratedReferenceReceiptError) as replay_input_error:
+            rights.verify_generated_reference_current_status_record_as_of_assessment_receipt(
+                parsed, **cast(Any, replay_inputs)
+            )
+        assert replay_input_error.value.code == "RECEIPT_REPLAY_MISMATCH"
     assert rights.verify_generated_reference_current_status_record_as_of_assessment_receipt(
         parsed,
         record=closure.record,
@@ -1047,6 +1592,52 @@ def test_receipt_parsing_is_not_replay_and_full_replay_is_mandatory_for_verifica
     ) == parsed
     assert parsed.historical_assessment_only is True
     assert parsed.present_currentness_asserted is False
+
+
+def test_receipt_requires_untampered_same_call_assessment_and_accepts_expiry_bounds() -> None:
+    closure = _current_closure()
+    process = rights.process_generated_reference_current_status_record_as_of_assessment(
+        closure.record,
+        closure.manifest,
+        closure.chain_inputs,
+        as_of="2026-08-29T05:00:00Z",
+    )
+    copied_and_tampered = replace(process.assessment, as_of_status="REVOKED")
+    with pytest.raises(rights.GeneratedReferenceReceiptError) as assessment_error:
+        rights.build_generated_reference_current_status_record_as_of_assessment_receipt(
+            cast(Any, copied_and_tampered)
+        )
+    assert assessment_error.value.code == "ASSESSMENT_RESULT_INCONSISTENT"
+
+    for identical_copy in (
+        replace(process.assessment),
+        copy.copy(process.assessment),
+        copy.deepcopy(process.assessment),
+    ):
+        with pytest.raises(rights.GeneratedReferenceReceiptError) as copy_error:
+            rights.build_generated_reference_current_status_record_as_of_assessment_receipt(
+                identical_copy
+            )
+        assert copy_error.value.code == "ASSESSMENT_RESULT_INCONSISTENT"
+
+    for exact_upper_bound in (
+        closure.decision.status_valid_until,
+        closure.manifest.manifest_valid_until,
+    ):
+        expired = rights.process_generated_reference_current_status_record_as_of_assessment(
+            closure.record,
+            closure.manifest,
+            closure.chain_inputs,
+            as_of=exact_upper_bound,
+        )
+        assert expired.receipt.as_of == exact_upper_bound
+        assert expired.receipt.as_of_status == "EXPIRED"
+        assert rights.verify_generated_reference_current_status_record_as_of_assessment_receipt(
+            expired.receipt,
+            record=closure.record,
+            manifest=closure.manifest,
+            chain_inputs=closure.chain_inputs,
+        ) == expired.receipt
 
 
 def test_every_formal_projection_hashes_independently_mutates_and_excludes_own_identity() -> None:
@@ -1145,6 +1736,51 @@ def test_all_portable_documents_retain_zero_authority_even_when_status_is_curren
     )
     for document in documents:
         _assert_zero_authority(document)
+
+
+def test_candidate_is_immutable_and_outputs_do_not_cross_formal_boundaries() -> None:
+    materials = _manifest_materials()
+    candidate = materials.upstream.candidate
+    candidate_before = candidate.model_dump(mode="python")
+    candidate_bytes_before = _canonical_document(candidate.model_dump(mode="json"))
+    closure = _current_closure()
+    receipt = rights.process_generated_reference_current_status_record_as_of_assessment(
+        closure.record,
+        closure.manifest,
+        closure.chain_inputs,
+        as_of="2026-08-29T05:00:00Z",
+    ).receipt
+
+    assert candidate.candidate_state == "CAPTURED_UNQUALIFIED"
+    with pytest.raises(ValidationError, match="frozen"):
+        cast(Any, candidate).candidate_state = "QUALIFIED"
+    assert candidate.model_dump(mode="python") == candidate_before
+    assert _canonical_document(candidate.model_dump(mode="json")) == candidate_bytes_before
+
+    prohibited_consumers: tuple[type[BaseModel], ...] = (
+        CharacterAssetVersion,
+        CharacterBible,
+        SceneAssetVersion,
+        SceneBible,
+        InputMaterial,
+        ProviderRequest,
+        GenerationJob,
+        JobGraph,
+    )
+    status_outputs: tuple[BaseModel, ...] = (
+        closure.manifest,
+        *(item.observation for item in closure.observation_inputs),
+        closure.request,
+        closure.instruction,
+        closure.decision,
+        closure.record,
+        receipt,
+    )
+    for value in (candidate, *status_outputs):
+        for consumer in prohibited_consumers:
+            assert not isinstance(value, consumer)
+            with pytest.raises(ValidationError):
+                consumer.model_validate(value.model_dump(mode="python"))
 
 
 def test_frozen_policy_sizes_hashes_orders_and_five_value_algebra() -> None:

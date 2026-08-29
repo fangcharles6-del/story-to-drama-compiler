@@ -3,6 +3,8 @@ from __future__ import annotations
 import ast
 import hashlib
 import os
+import subprocess
+import sys
 from pathlib import Path
 from typing import cast
 
@@ -242,6 +244,71 @@ def test_check_mode_has_no_reachable_write_path(monkeypatch: pytest.MonkeyPatch)
     monkeypatch.setattr(codegen, "_write_exact_derived", fail_write)
     assert codegen.main(["--check"]) == 0
     assert observed == [(ROOT, sentinel)]
+
+
+def test_supported_codegen_invocations_disable_bytecode_cache() -> None:
+    safe_program = "python -B -m sdc.generated_reference_rights_current_status_codegen"
+    unsafe_program = "python -m sdc.generated_reference_rights_current_status_codegen"
+    check_command = f"uv run {safe_program} --check"
+    update_command = f"uv run {safe_program} --update"
+    makefile_lines = (ROOT / "Makefile").read_text(encoding="utf-8").splitlines()
+    workflow_lines = (
+        (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8").splitlines()
+    )
+    parser = codegen._argument_parser()
+    help_text = parser.format_help()
+
+    assert f"\t{check_command}" in makefile_lines
+    assert f"\t{update_command}" in makefile_lines
+    assert f"        run: {check_command}" in workflow_lines
+    assert parser.prog == safe_program
+    assert safe_program in help_text
+    assert unsafe_program not in help_text
+    assert all(
+        not any(
+            forbidden in line
+            for forbidden in (
+                f"{unsafe_program} --check",
+                f"{unsafe_program} --update",
+            )
+        )
+        for line in (*makefile_lines, *workflow_lines)
+    )
+
+
+def test_supported_check_subprocess_is_byte_and_mtime_read_only(tmp_path: Path) -> None:
+    fixture_paths = (
+        *(ROOT / relative_path for relative_path in codegen._PROTECTED_FINGERPRINTS),
+        ROOT / codegen._DERIVED_FIXTURE_PATH,
+    )
+    before = {
+        path: (path.read_bytes(), path.stat().st_mtime_ns) for path in fixture_paths
+    }
+    cache_path = tmp_path / "cache"
+    environment = os.environ.copy()
+    environment.pop("PYTHONDONTWRITEBYTECODE", None)
+    environment["PYTHONPYCACHEPREFIX"] = str(cache_path)
+
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-m",
+            "sdc.generated_reference_rights_current_status_codegen",
+            "--check",
+        ],
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert not cache_path.exists()
+    assert {
+        path: (path.read_bytes(), path.stat().st_mtime_ns) for path in fixture_paths
+    } == before
 
 
 def test_cli_has_only_explicit_fixed_root_modes(monkeypatch: pytest.MonkeyPatch) -> None:

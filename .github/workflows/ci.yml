@@ -81,7 +81,7 @@ jobs:
         with: {version: "0.8.8", enable-cache: true}
       - run: uv sync --frozen
       - name: generated-reference-rights-current-status-check
-        run: uv run python -m sdc.generated_reference_rights_current_status_codegen --check
+        run: uv run python -B -m sdc.generated_reference_rights_current_status_codegen --check
       - run: >-
           uv run pytest -q
           tests/test_generated_reference_rights_current_status.py

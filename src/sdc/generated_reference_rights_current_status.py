@@ -1203,6 +1203,8 @@ class GeneratedReferenceCurrentStatusCategoryResultV1(_StrictFrozenModel):
         iterator = iter(category_keys)
         if not all(any(candidate == key for candidate in iterator) for key in relied_keys):
             _invalid("relied_on_observation_refs must be a stable subsequence")
+        if self.deterministic_effect != _derive_effect(self.category, self.claim_value):
+            _invalid("deterministic_effect does not match category and claim_value")
         return self
 
 
@@ -1565,6 +1567,12 @@ class CreativeSampleGeneratedReferenceCurrentStatusInstructionV1(_ZeroAuthorityM
             domain=GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
         )
         _validate_category_results(self.category_results)
+        if (
+            self.status_preparer_identity_ref_sha256
+            == self.status_checker_identity_ref_sha256
+            or self.status_preparer_action_sha256 == self.status_checker_action_sha256
+        ):
+            _invalid("status Preparer and Checker identities/actions must be distinct")
         return self
 
 
@@ -2285,9 +2293,15 @@ def _validate_request_refs(value: CreativeSampleGeneratedReferenceCurrentStatusR
     ):
         _invalid("Request observation_refs must use zero-based Request ordinals")
     requested_at = _parse_utc(value.requested_at, field="requested_at")
+    manifest_at = _parse_utc(value.subject_closure.manifest_at, field="manifest_at")
+    manifest_valid_until = _parse_utc(
+        value.subject_closure.manifest_valid_until, field="manifest_valid_until"
+    )
+    if not manifest_at <= requested_at < manifest_valid_until:
+        _invalid("requested_at lies outside the Rights Manifest window")
     expected_until = min(
         requested_at + timedelta(seconds=86_400),
-        _parse_utc(value.subject_closure.manifest_valid_until, field="manifest_valid_until"),
+        manifest_valid_until,
     )
     if value.request_valid_until != expected_until.strftime("%Y-%m-%dT%H:%M:%SZ"):
         _invalid("request_valid_until is not uniquely derived")
@@ -2332,6 +2346,8 @@ def _validate_observation_semantics(
     valid_until = _parse_utc(value.valid_until, field="valid_until")
     if source_event > observed or max(observed, valid_from) >= valid_until:
         _invalid("Observation temporal window is invalid")
+    if valid_until - valid_from > timedelta(seconds=86_400):
+        _invalid("Observation validity window exceeds 86400 seconds")
     if value.valid_until > value.subject_closure.manifest_valid_until:
         _invalid("Observation cannot outlive the Rights Manifest")
     if value.claim_value in {"PRESENT", "ABSENT_WITH_EVIDENCE"}:
@@ -2377,6 +2393,23 @@ def _validate_record_closure(
         request.request_sha256,
     ):
         _invalid("Instruction does not bind embedded Request")
+    if (
+        instruction.status_preparer_identity_ref_sha256,
+        instruction.status_preparer_action_sha256,
+        instruction.requested_at,
+        instruction.request_valid_until,
+    ) != (
+        request.status_preparer_identity_ref_sha256,
+        request.status_preparer_action_sha256,
+        request.requested_at,
+        request.request_valid_until,
+    ):
+        _invalid("Instruction does not repeat the exact Request Preparer/time closure")
+    evaluated_at = _parse_utc(instruction.evaluated_at, field="evaluated_at")
+    if not _parse_utc(request.requested_at, field="requested_at") <= evaluated_at < _parse_utc(
+        request.request_valid_until, field="request_valid_until"
+    ):
+        _invalid("Instruction evaluated_at lies outside the embedded Request window")
     if (decision.request_id, decision.request_sha256) != (
         request.request_id,
         request.request_sha256,
@@ -2387,6 +2420,8 @@ def _validate_record_closure(
         instruction.instruction_sha256,
     ):
         _invalid("Decision does not bind embedded Instruction")
+    if decision.evaluated_at != instruction.evaluated_at:
+        _invalid("Decision evaluated_at does not equal embedded Instruction evaluated_at")
     if instruction.category_results != decision.category_results:
         _invalid("Decision category_results do not equal Instruction results")
 
@@ -4194,7 +4229,25 @@ class GeneratedReferenceCurrentStatusJointReplayResult:
     _coverage: GeneratedReferenceCurrentStatusChainCoverageResult
 
 
-_ASSESSMENT_GUARD = object()
+class _AssessmentGuard:
+    __slots__ = ("_owner",)
+
+    def __init__(self) -> None:
+        self._owner: GeneratedReferenceCurrentStatusAsOfAssessmentResult | None = None
+
+    def bind(self, owner: GeneratedReferenceCurrentStatusAsOfAssessmentResult) -> None:
+        if self._owner is not None:
+            _invalid("assessment guard is already bound")
+        self._owner = owner
+
+    def verifies(self, candidate: GeneratedReferenceCurrentStatusAsOfAssessmentResult) -> bool:
+        return self._owner is candidate
+
+    def __copy__(self) -> Self:
+        return self
+
+    def __deepcopy__(self, _memo: object) -> Self:
+        return self
 
 
 @dataclass(frozen=True, slots=True)
@@ -4938,10 +4991,47 @@ def cover_generated_reference_current_status_chains(
     chain_inputs: tuple[GeneratedReferenceCurrentStatusExplicitChainInput, ...],
 ) -> GeneratedReferenceCurrentStatusChainCoverageResult:
     try:
-        if type(chain_inputs) is not tuple or not 1 <= len(chain_inputs) <= 32:
+        if type(chain_inputs) is not tuple:
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_COLLECTION_CONTRACT_INVALID",
+                "chain_inputs must be an exact tuple",
+            )
+        if not 1 <= len(chain_inputs) <= 32:
             raise GeneratedReferenceChainCoverageError(
                 "CHAIN_COUNT_OUT_OF_RANGE", "explicit chain count must be 1..32"
             )
+        for index, chain_input in enumerate(chain_inputs):
+            if (
+                type(chain_input) is not GeneratedReferenceCurrentStatusExplicitChainInput
+                or type(chain_input.target_observation_refs) is not tuple
+                or type(chain_input.observation_inputs) is not tuple
+            ):
+                raise GeneratedReferenceChainCoverageError(
+                    "CHAIN_INPUT_CONTRACT_INVALID",
+                    f"chain_inputs[{index}] has the wrong exact process shape",
+                )
+            if not 1 <= len(chain_input.target_observation_refs) <= 32:
+                raise GeneratedReferenceChainCoverageError(
+                    "TARGET_COUNT_OUT_OF_RANGE",
+                    f"chain_inputs[{index}] target count must be 1..32",
+                )
+            if not 1 <= len(chain_input.observation_inputs) <= 64:
+                raise GeneratedReferenceChainCoverageError(
+                    "OBSERVATION_COUNT_OUT_OF_RANGE",
+                    f"chain_inputs[{index}] Observation count must be 1..64",
+                )
+            if any(
+                type(target) is not GeneratedReferenceCurrentStatusObservationRefV1
+                for target in chain_input.target_observation_refs
+            ) or any(
+                type(item) is not GeneratedReferenceCurrentStatusObservationInput
+                or type(item.document_bytes) is not bytes
+                for item in chain_input.observation_inputs
+            ):
+                raise GeneratedReferenceChainCoverageError(
+                    "CHAIN_INPUT_CONTRACT_INVALID",
+                    f"chain_inputs[{index}] contains a wrong exact process member",
+                )
         if (
             sum(
                 len(item.document_bytes)
@@ -4967,6 +5057,37 @@ def cover_generated_reference_current_status_chains(
             raise GeneratedReferenceChainCoverageError(
                 "EVIDENCE_RECORD_INVALID", "Evidence Record is invalid"
             ) from exc
+        request_targets = validated_record.request.observation_refs
+        request_by_id = {item.observation_id: item for item in request_targets}
+        request_keys = tuple(_observation_ref_key(item) for item in request_targets)
+        supplied_targets = tuple(
+            target for chain_input in chain_inputs for target in chain_input.target_observation_refs
+        )
+        supplied_keys = tuple(_observation_ref_key(item) for item in supplied_targets)
+        if len(supplied_keys) != len(set(supplied_keys)):
+            raise GeneratedReferenceChainCoverageError(
+                "REQUEST_TARGET_COVERED_MULTIPLE_TIMES",
+                "Request target is covered more than once",
+            )
+        if any(
+            target.observation_id in request_by_id
+            and target != request_by_id[target.observation_id]
+            for target in supplied_targets
+        ):
+            raise GeneratedReferenceChainCoverageError(
+                "REQUEST_TARGET_ANCHOR_MISMATCH",
+                "chain target anchor differs from the exact Request target",
+            )
+        if any(target.observation_id not in request_by_id for target in supplied_targets):
+            raise GeneratedReferenceChainCoverageError(
+                "REQUEST_TARGET_NOT_IN_RECORD",
+                "chain target Observation ID is not in the exact Request",
+            )
+        if set(supplied_keys) != set(request_keys):
+            raise GeneratedReferenceChainCoverageError(
+                "REQUEST_OBSERVATION_NOT_COVERED",
+                "not every explicit Request target is covered",
+            )
         results: list[GeneratedReferenceCurrentStatusChainReplayResult] = []
         for chain_input in chain_inputs:
             try:
@@ -5011,8 +5132,41 @@ def cover_generated_reference_current_status_chains(
                 raise GeneratedReferenceChainCoverageError(
                     code, "cross-chain uniqueness constraint failed"
                 )
-        request_targets = validated_record.request.observation_refs
-        request_keys = tuple(_observation_ref_key(item) for item in request_targets)
+        for result in chain_results:
+            observations_by_id = {item.observation_id: item for item in result.observations}
+            if any(
+                target.observation_id not in observations_by_id
+                for target in result.target_observation_refs
+            ):
+                raise GeneratedReferenceChainCoverageError(
+                    "REQUEST_TARGET_NOT_RESOLVED_IN_CHAIN",
+                    "a Request target is not resolved by its declared logical chain",
+                )
+        for result in chain_results:
+            chain_target_key_set = {
+                _observation_ref_key(item) for item in result.target_observation_refs
+            }
+            expected_chain_targets = tuple(
+                item
+                for item in request_targets
+                if _observation_ref_key(item) in chain_target_key_set
+            )
+            if result.target_observation_refs != expected_chain_targets:
+                raise GeneratedReferenceChainCoverageError(
+                    "CHAIN_TARGET_SET_MISMATCH",
+                    "chain targets must be the exact stable Request-order subsequence",
+                )
+        for result in chain_results:
+            required_ids = {
+                target.observation_id for target in result.target_observation_refs
+            }
+            for target in result.target_observation_refs:
+                required_ids.update(result._ancestor_ids_by_observation_id[target.observation_id])
+            if required_ids != {item.observation_id for item in result.observations}:
+                raise GeneratedReferenceChainCoverageError(
+                    "UNRELATED_SUPPORT_OBSERVATION",
+                    "logical chain contains an Observation unrelated to its Request targets",
+                )
         target_owner: dict[
             tuple[str, str, str], GeneratedReferenceCurrentStatusChainReplayResult
         ] = {}
@@ -5316,7 +5470,8 @@ def assess_generated_reference_current_status_record_as_of(
             GENERATED_REFERENCE_CURRENT_STATUS_RECORD_AS_OF_ASSESSMENT_PROVENANCE_SHA256_DOMAIN,
             provenance_projection,
         )
-        return GeneratedReferenceCurrentStatusAsOfAssessmentResult(
+        guard = _AssessmentGuard()
+        result = GeneratedReferenceCurrentStatusAsOfAssessmentResult(
             record_id=validated_record.record_id,
             record_sha256=validated_record.record_sha256,
             request_id=validated_record.request.request_id,
@@ -5338,8 +5493,10 @@ def assess_generated_reference_current_status_record_as_of(
             recorded_indeterminate_categories=validated_record.decision.indeterminate_categories,
             limitation_codes=CURRENT_STATUS_LIMITATION_CODE_ORDER,
             _provenance_sha256=provenance_sha,
-            _guard=_ASSESSMENT_GUARD,
+            _guard=guard,
         )
+        guard.bind(result)
+        return result
     except GeneratedReferenceAsOfAssessmentError:
         raise
     except Exception as exc:
@@ -5354,11 +5511,21 @@ def build_generated_reference_current_status_record_as_of_assessment_receipt(
     try:
         if (
             type(assessment) is not GeneratedReferenceCurrentStatusAsOfAssessmentResult
-            or assessment._guard is not _ASSESSMENT_GUARD
+            or type(assessment._guard) is not _AssessmentGuard
+            or not assessment._guard.verifies(assessment)
         ):
             raise GeneratedReferenceReceiptError(
                 "ASSESSMENT_RESULT_INCONSISTENT",
                 "Receipt requires the exact same-call private assessment Result",
+            )
+        expected_assessment_sha = _semantic_sha256(
+            GENERATED_REFERENCE_CURRENT_STATUS_RECORD_AS_OF_ASSESSMENT_SHA256_DOMAIN,
+            generated_reference_current_status_record_as_of_assessment_projection(assessment),
+        )
+        if assessment.as_of_assessment_sha256 != expected_assessment_sha:
+            raise GeneratedReferenceReceiptError(
+                "ASSESSMENT_RESULT_INCONSISTENT",
+                "assessment fields differ from the same-call public assessment digest",
             )
         provenance_projection = {
             "as_of_assessment_sha256": assessment.as_of_assessment_sha256,
@@ -5451,38 +5618,35 @@ def verify_generated_reference_current_status_record_as_of_assessment_receipt(
                 "RECEIPT_CONTRACT_INVALID", "Receipt Contract is invalid"
             ) from exc
         supplied = (record is not None, manifest is not None, chain_inputs is not None)
-        if any(supplied) and not all(supplied):
+        if not all(supplied):
             raise GeneratedReferenceReceiptError(
                 "RECEIPT_REPLAY_MISMATCH",
-                "full replay requires Record, Manifest and explicit chain inputs together",
+                "Receipt verification requires Record, Manifest and explicit chain inputs",
             )
-        if all(supplied):
-            try:
-                assessment = assess_generated_reference_current_status_record_as_of(
-                    cast(CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1, record),
-                    cast(CreativeSampleGeneratedReferenceRightsManifestV1, manifest),
-                    cast(
-                        tuple[GeneratedReferenceCurrentStatusExplicitChainInput, ...], chain_inputs
-                    ),
-                    as_of=validated.as_of,
-                )
-                rebuilt = build_generated_reference_current_status_record_as_of_assessment_receipt(
-                    assessment
-                )
-            except GeneratedReferenceAsOfAssessmentError as exc:
-                raise GeneratedReferenceReceiptError(
-                    "AS_OF_ASSESSMENT_REPLAY_FAILED",
-                    "Receipt replay assessment failed",
-                    assessment_code=exc.code,
-                    joint_replay_code=exc.joint_replay_code,
-                    coverage_code=exc.coverage_code,
-                    replay_code=exc.replay_code,
-                ) from exc
-            if rebuilt != validated:
-                raise GeneratedReferenceReceiptError(
-                    "RECEIPT_REPLAY_MISMATCH",
-                    "fresh same-call Receipt differs from supplied Receipt",
-                )
+        try:
+            assessment = assess_generated_reference_current_status_record_as_of(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1, record),
+                cast(CreativeSampleGeneratedReferenceRightsManifestV1, manifest),
+                cast(tuple[GeneratedReferenceCurrentStatusExplicitChainInput, ...], chain_inputs),
+                as_of=validated.as_of,
+            )
+            rebuilt = build_generated_reference_current_status_record_as_of_assessment_receipt(
+                assessment
+            )
+        except GeneratedReferenceAsOfAssessmentError as exc:
+            raise GeneratedReferenceReceiptError(
+                "AS_OF_ASSESSMENT_REPLAY_FAILED",
+                "Receipt replay assessment failed",
+                assessment_code=exc.code,
+                joint_replay_code=exc.joint_replay_code,
+                coverage_code=exc.coverage_code,
+                replay_code=exc.replay_code,
+            ) from exc
+        if rebuilt != validated:
+            raise GeneratedReferenceReceiptError(
+                "RECEIPT_REPLAY_MISMATCH",
+                "fresh same-call Receipt differs from supplied Receipt",
+            )
         return validated
     except GeneratedReferenceReceiptError:
         raise

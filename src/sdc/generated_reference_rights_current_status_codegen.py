@@ -1901,7 +1901,7 @@ def _repository_root() -> Path:
 
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="python -m sdc.generated_reference_rights_current_status_codegen",
+        prog="python -B -m sdc.generated_reference_rights_current_status_codegen",
         description="Check or explicitly update the fixed ADR-044 known-answer fixture.",
     )
     modes = parser.add_mutually_exclusive_group(required=True)

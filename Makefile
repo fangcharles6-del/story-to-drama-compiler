@@ -16,9 +16,9 @@ generated-reference-candidate:
 generated-reference-candidate-check:
 	uv run python -m sdc.generated_reference_candidate_codegen --check
 generated-reference-rights-current-status:
-	uv run python -m sdc.generated_reference_rights_current_status_codegen --update
+	uv run python -B -m sdc.generated_reference_rights_current_status_codegen --update
 generated-reference-rights-current-status-check:
-	uv run python -m sdc.generated_reference_rights_current_status_codegen --check
+	uv run python -B -m sdc.generated_reference_rights_current_status_codegen --check
 lint:
 	uv run ruff check .
 typecheck:
