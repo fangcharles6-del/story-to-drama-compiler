@@ -1,0 +1,411 @@
+{
+  "$defs": {
+    "GeneratedReferenceQualificationGateResultV1": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Basis",
+          "type": "string"
+        },
+        "evidence_record_ids": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "title": "Evidence Record Ids",
+          "type": "array"
+        },
+        "gate": {
+          "enum": [
+            "PROVENANCE_CLOSURE",
+            "PROMPT_AND_RECEIPT_CLOSURE",
+            "OUTPUT_SET_COMPLETENESS",
+            "TECHNICAL_MEDIA_FIT",
+            "SUBJECT_AND_ASSET_PURPOSE_MATCH",
+            "IDENTITY_CONTINUITY",
+            "INPUT_TEXT_AND_MEDIA_RIGHTS_AT_SUBMISSION",
+            "PROVIDER_GENERATION_PROVENANCE",
+            "PROVIDER_OUTPUT_TERMS",
+            "COPYRIGHT_AND_COMMERCIAL_SCOPE",
+            "LIKENESS_PRIVACY_AND_SENSITIVE_DATA",
+            "BRAND_AND_PROTECTED_CONTENT",
+            "REMOTE_PROCESSING_AUTHORIZED_AT_SUBMISSION",
+            "RETENTION_POLICY_ALIGNMENT",
+            "TRAINING_USE_POLICY_ALIGNMENT"
+          ],
+          "title": "Gate",
+          "type": "string"
+        },
+        "result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INDETERMINATE"
+          ],
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate",
+        "result",
+        "evidence_record_ids",
+        "basis"
+      ],
+      "title": "GeneratedReferenceQualificationGateResultV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authority_scope": {
+      "const": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+      "title": "Authority Scope",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "candidate_id": {
+      "pattern": "^generated_reference_candidate_v1_[0-9a-f]{20}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Sha256",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "current_status_assessment_embedded": {
+      "const": false,
+      "title": "Current Status Assessment Embedded",
+      "type": "boolean"
+    },
+    "decision": {
+      "enum": [
+        "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW",
+        "NEEDS_HUMAN_REVIEW",
+        "REJECTED"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_at": {
+      "title": "Decision At",
+      "type": "string"
+    },
+    "decision_id": {
+      "pattern": "^generated_reference_candidate_qualification_decision_v1_[0-9a-f]{20}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-generated-reference-candidate-qualification-decision-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "eligible_for_separate_generated_rights_manifest_review": {
+      "title": "Eligible For Separate Generated Rights Manifest Review",
+      "type": "boolean"
+    },
+    "evidence_valid_until": {
+      "title": "Evidence Valid Until",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "gate_results": {
+      "items": {
+        "$ref": "#/$defs/GeneratedReferenceQualificationGateResultV1"
+      },
+      "maxItems": 15,
+      "minItems": 15,
+      "title": "Gate Results",
+      "type": "array"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "media_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Media Content Sha256",
+      "type": "string"
+    },
+    "policy_document_sha256": {
+      "const": "9991a23c2d12c842691585ef11fe4edc5697bccb8086ec661c23a240375d359f",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "sdc.generated-reference-candidate-qualification-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "1.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "provider_attempt_outcome_id": {
+      "pattern": "^generated_reference_attempt_outcome_v1_[0-9a-f]{20}$",
+      "title": "Provider Attempt Outcome Id",
+      "type": "string"
+    },
+    "provider_attempt_outcome_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Provider Attempt Outcome Sha256",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "qualification_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Qualification Basis",
+      "type": "string"
+    },
+    "qualification_issue_codes": {
+      "items": {
+        "enum": [
+          "PROVENANCE_CLOSURE_UNRESOLVED",
+          "PROMPT_AND_RECEIPT_CLOSURE_UNRESOLVED",
+          "OUTPUT_SET_COMPLETENESS_UNRESOLVED",
+          "TECHNICAL_MEDIA_FIT_UNRESOLVED",
+          "SUBJECT_AND_ASSET_PURPOSE_UNRESOLVED_OR_MISMATCH",
+          "IDENTITY_CONTINUITY_UNRESOLVED",
+          "INPUT_RIGHTS_UNRESOLVED",
+          "PROVIDER_GENERATION_PROVENANCE_UNRESOLVED",
+          "PROVIDER_OUTPUT_TERMS_UNRESOLVED",
+          "COPYRIGHT_OR_COMMERCIAL_SCOPE_UNRESOLVED",
+          "LIKENESS_PRIVACY_OR_SENSITIVE_DATA_UNRESOLVED",
+          "BRAND_OR_PROTECTED_CONTENT_UNRESOLVED",
+          "REMOTE_PROCESSING_AUTHORIZATION_UNRESOLVED_OR_ABSENT",
+          "RETENTION_STATUS_UNRESOLVED_OR_NONCOMPLIANT",
+          "TRAINING_USE_POLICY_UNRESOLVED_OR_NOT_PROHIBITED",
+          "QUALIFIER_REJECTED"
+        ],
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Qualification Issue Codes",
+      "type": "array"
+    },
+    "qualification_performed": {
+      "const": true,
+      "title": "Qualification Performed",
+      "type": "boolean"
+    },
+    "qualification_scope": {
+      "const": "GENERATED_REFERENCE_CANDIDATE_INTAKE_ONLY",
+      "title": "Qualification Scope",
+      "type": "string"
+    },
+    "qualification_valid_until": {
+      "title": "Qualification Valid Until",
+      "type": "string"
+    },
+    "qualifier_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualifier Record Sha256",
+      "type": "string"
+    },
+    "qualifier_ref_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualifier Ref Sha256",
+      "type": "string"
+    },
+    "reference_prompt_artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reference Prompt Artifact Sha256",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "request_id": {
+      "pattern": "^generated_reference_candidate_qualification_request_v1_[0-9a-f]{20}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "request_valid_until": {
+      "title": "Request Valid Until",
+      "type": "string"
+    },
+    "requested_at": {
+      "title": "Requested At",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "rights_manifest_embedded": {
+      "const": false,
+      "title": "Rights Manifest Embedded",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "QUALIFICATION_COMPLETE",
+      "title": "Status",
+      "type": "string"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "authority_scope",
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "document_type",
+    "decision_id",
+    "decision_sha256",
+    "qualification_scope",
+    "request_id",
+    "request_sha256",
+    "policy_id",
+    "policy_version",
+    "policy_document_sha256",
+    "candidate_id",
+    "candidate_sha256",
+    "provider_attempt_outcome_id",
+    "provider_attempt_outcome_sha256",
+    "reference_prompt_artifact_sha256",
+    "media_content_sha256",
+    "requested_at",
+    "request_valid_until",
+    "evidence_valid_until",
+    "qualifier_ref_sha256",
+    "qualifier_record_sha256",
+    "decision_at",
+    "qualification_valid_until",
+    "gate_results",
+    "qualification_issue_codes",
+    "qualification_basis",
+    "decision",
+    "eligible_for_separate_generated_rights_manifest_review",
+    "status",
+    "qualification_performed",
+    "rights_manifest_embedded",
+    "current_status_assessment_embedded"
+  ],
+  "title": "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
+  "type": "object"
+}

@@ -1,0 +1,644 @@
+{
+  "$defs": {
+    "GeneratedReferenceOutputDescriptorV1": {
+      "additionalProperties": false,
+      "properties": {
+        "admission_transform_performed": {
+          "const": false,
+          "title": "Admission Transform Performed",
+          "type": "boolean"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "ordinal": {
+          "const": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "regular_file_verified": {
+          "const": true,
+          "title": "Regular File Verified",
+          "type": "boolean"
+        },
+        "reparse_point_absent": {
+          "const": true,
+          "title": "Reparse Point Absent",
+          "type": "boolean"
+        },
+        "size_bytes": {
+          "maximum": 67108864,
+          "minimum": 1,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "symlink_absent": {
+          "const": true,
+          "title": "Symlink Absent",
+          "type": "boolean"
+        },
+        "technical_record": {
+          "$ref": "#/$defs/GeneratedReferencePngTechnicalRecordV1"
+        },
+        "technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Technical Record Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ordinal",
+        "media_type",
+        "content_sha256",
+        "size_bytes",
+        "technical_record",
+        "technical_record_sha256",
+        "regular_file_verified",
+        "symlink_absent",
+        "reparse_point_absent",
+        "admission_transform_performed"
+      ],
+      "title": "GeneratedReferenceOutputDescriptorV1",
+      "type": "object"
+    },
+    "GeneratedReferencePngTechnicalRecordV1": {
+      "additionalProperties": false,
+      "properties": {
+        "alpha_status": {
+          "enum": [
+            "ABSENT",
+            "OPAQUE",
+            "NON_OPAQUE"
+          ],
+          "title": "Alpha Status",
+          "type": "string"
+        },
+        "animation_frame_count": {
+          "const": 1,
+          "title": "Animation Frame Count",
+          "type": "integer"
+        },
+        "apng_chunks_absent": {
+          "const": true,
+          "title": "Apng Chunks Absent",
+          "type": "boolean"
+        },
+        "bit_depth": {
+          "const": 8,
+          "title": "Bit Depth",
+          "type": "integer"
+        },
+        "chunk_crc_valid": {
+          "const": true,
+          "title": "Chunk Crc Valid",
+          "type": "boolean"
+        },
+        "color_space": {
+          "enum": [
+            "RGB",
+            "RGBA"
+          ],
+          "title": "Color Space",
+          "type": "string"
+        },
+        "decompressed_pixel_bytes": {
+          "maximum": 67108864,
+          "minimum": 786432,
+          "title": "Decompressed Pixel Bytes",
+          "type": "integer"
+        },
+        "height": {
+          "maximum": 4096,
+          "minimum": 512,
+          "title": "Height",
+          "type": "integer"
+        },
+        "idat_present": {
+          "const": true,
+          "title": "Idat Present",
+          "type": "boolean"
+        },
+        "iend_count": {
+          "const": 1,
+          "title": "Iend Count",
+          "type": "integer"
+        },
+        "ihdr_count": {
+          "const": 1,
+          "title": "Ihdr Count",
+          "type": "integer"
+        },
+        "interlaced": {
+          "const": false,
+          "title": "Interlaced",
+          "type": "boolean"
+        },
+        "media_type": {
+          "const": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "metadata_chunk_types": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Metadata Chunk Types",
+          "type": "array"
+        },
+        "metadata_status": {
+          "enum": [
+            "ABSENT",
+            "PRESENT"
+          ],
+          "title": "Metadata Status",
+          "type": "string"
+        },
+        "png_signature_valid": {
+          "const": true,
+          "title": "Png Signature Valid",
+          "type": "boolean"
+        },
+        "trailing_bytes_count": {
+          "const": 0,
+          "title": "Trailing Bytes Count",
+          "type": "integer"
+        },
+        "unknown_critical_chunk_absent": {
+          "const": true,
+          "title": "Unknown Critical Chunk Absent",
+          "type": "boolean"
+        },
+        "width": {
+          "maximum": 4096,
+          "minimum": 512,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "media_type",
+        "width",
+        "height",
+        "bit_depth",
+        "color_space",
+        "alpha_status",
+        "interlaced",
+        "animation_frame_count",
+        "metadata_status",
+        "metadata_chunk_types",
+        "png_signature_valid",
+        "ihdr_count",
+        "idat_present",
+        "iend_count",
+        "chunk_crc_valid",
+        "unknown_critical_chunk_absent",
+        "apng_chunks_absent",
+        "trailing_bytes_count",
+        "decompressed_pixel_bytes"
+      ],
+      "title": "GeneratedReferencePngTechnicalRecordV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "asset_purpose": {
+      "enum": [
+        "CHARACTER_REFERENCE_ASSET",
+        "SCENE_REFERENCE_ASSET"
+      ],
+      "title": "Asset Purpose",
+      "type": "string"
+    },
+    "attempt_ordinal": {
+      "const": 1,
+      "title": "Attempt Ordinal",
+      "type": "integer"
+    },
+    "attempt_provenance_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Attempt Provenance Record Sha256",
+      "type": "string"
+    },
+    "authority_scope": {
+      "const": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+      "title": "Authority Scope",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "catalog_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Catalog Sha256",
+      "type": "string"
+    },
+    "catalog_version": {
+      "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+      "title": "Catalog Version",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-generated-reference-provider-attempt-outcome-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "expected_active_asset_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expected Active Asset Content Sha256",
+      "type": "string"
+    },
+    "expected_active_asset_version_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Expected Active Asset Version Id",
+      "type": "string"
+    },
+    "expected_output_count": {
+      "const": 1,
+      "title": "Expected Output Count",
+      "type": "integer"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "historical_execution_authorization_status": {
+      "enum": [
+        "CLAIMED_PRESENT",
+        "CLAIMED_ABSENT",
+        "UNKNOWN"
+      ],
+      "title": "Historical Execution Authorization Status",
+      "type": "string"
+    },
+    "model": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Model",
+      "type": "string"
+    },
+    "observed_provider_request_count": {
+      "const": 1,
+      "title": "Observed Provider Request Count",
+      "type": "integer"
+    },
+    "outcome_id": {
+      "pattern": "^generated_reference_attempt_outcome_v1_[0-9a-f]{20}$",
+      "title": "Outcome Id",
+      "type": "string"
+    },
+    "outcome_purpose": {
+      "const": "CALLER_ASSERTED_IMMUTABLE_PROVIDER_ATTEMPT_OUTCOME_EVIDENCE_ONLY",
+      "title": "Outcome Purpose",
+      "type": "string"
+    },
+    "outcome_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Sha256",
+      "type": "string"
+    },
+    "output_descriptors": {
+      "items": {
+        "$ref": "#/$defs/GeneratedReferenceOutputDescriptorV1"
+      },
+      "maxItems": 1,
+      "title": "Output Descriptors",
+      "type": "array"
+    },
+    "output_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Output Set Sha256",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "profile_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "profile_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Sha256",
+      "type": "string"
+    },
+    "profile_version": {
+      "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "prompt_render_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prompt Render Receipt Sha256",
+      "type": "string"
+    },
+    "provider": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Provider",
+      "type": "string"
+    },
+    "provider_region": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Provider Region",
+      "type": "string"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "provider_task_reference_status": {
+      "enum": [
+        "PRESENT_IN_RETAINED_RECORD",
+        "ABSENT"
+      ],
+      "title": "Provider Task Reference Status",
+      "type": "string"
+    },
+    "provider_terms_observed_at": {
+      "title": "Provider Terms Observed At",
+      "type": "string"
+    },
+    "provider_terms_snapshot_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Provider Terms Snapshot Id",
+      "type": "string"
+    },
+    "provider_terms_snapshot_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Provider Terms Snapshot Sha256",
+      "type": "string"
+    },
+    "provider_terms_valid_from": {
+      "title": "Provider Terms Valid From",
+      "type": "string"
+    },
+    "provider_terms_valid_until": {
+      "title": "Provider Terms Valid Until",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "reference_prompt_artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reference Prompt Artifact Sha256",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "render_input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Render Input Sha256",
+      "type": "string"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "reported_output_count_bounded": {
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Reported Output Count Bounded",
+      "type": "integer"
+    },
+    "reported_output_count_overflow": {
+      "title": "Reported Output Count Overflow",
+      "type": "boolean"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "subject_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "submitted_at": {
+      "title": "Submitted At",
+      "type": "string"
+    },
+    "submitted_input_material_count": {
+      "const": 0,
+      "title": "Submitted Input Material Count",
+      "type": "integer"
+    },
+    "submitted_prompt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Submitted Prompt Sha256",
+      "type": "string"
+    },
+    "submitted_prompt_size_bytes": {
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Submitted Prompt Size Bytes",
+      "type": "integer"
+    },
+    "terminal_disposition": {
+      "enum": [
+        "VERIFIED_SUCCESS",
+        "SUBMISSION_REJECTED",
+        "PROVIDER_TASK_FAILED",
+        "CANCELLED",
+        "EXPIRED",
+        "SUBMISSION_UNKNOWN",
+        "PARTIAL_OUTPUT",
+        "OUTPUT_INTEGRITY_FAILURE",
+        "UNSUPPORTED_OUTPUT_CARDINALITY"
+      ],
+      "title": "Terminal Disposition",
+      "type": "string"
+    },
+    "terminal_observation_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Terminal Observation Record Sha256",
+      "type": "string"
+    },
+    "terminal_observed_at": {
+      "title": "Terminal Observed At",
+      "type": "string"
+    },
+    "terminal_reason_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "SUBMISSION_REJECTED_BY_PROVIDER",
+            "PROVIDER_TASK_REPORTED_FAILURE",
+            "PROVIDER_TASK_CANCELLED",
+            "PROVIDER_TASK_EXPIRED_OR_TIMED_OUT",
+            "SUBMISSION_RESULT_UNKNOWN",
+            "EXPECTED_OUTPUT_NOT_FULLY_AVAILABLE",
+            "OUTPUT_BYTES_OR_TECHNICAL_RECORD_MISMATCH",
+            "PROVIDER_REPORTED_UNSUPPORTED_OUTPUT_COUNT"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Terminal Reason Code"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    },
+    "verified_output_count": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Verified Output Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "authority_scope",
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "document_type",
+    "outcome_purpose",
+    "outcome_id",
+    "outcome_sha256",
+    "reference_prompt_artifact_sha256",
+    "asset_purpose",
+    "subject_id",
+    "expected_active_asset_version_id",
+    "expected_active_asset_content_sha256",
+    "profile_id",
+    "profile_version",
+    "profile_sha256",
+    "catalog_version",
+    "catalog_sha256",
+    "render_input_sha256",
+    "submitted_prompt_sha256",
+    "submitted_prompt_size_bytes",
+    "prompt_render_receipt_sha256",
+    "provider",
+    "model",
+    "provider_region",
+    "provider_terms_snapshot_id",
+    "provider_terms_snapshot_sha256",
+    "provider_terms_observed_at",
+    "provider_terms_valid_from",
+    "provider_terms_valid_until",
+    "attempt_provenance_record_sha256",
+    "terminal_observation_record_sha256",
+    "historical_execution_authorization_status",
+    "attempt_ordinal",
+    "submitted_input_material_count",
+    "submitted_at",
+    "terminal_observed_at",
+    "terminal_disposition",
+    "terminal_reason_code",
+    "provider_task_reference_status",
+    "expected_output_count",
+    "reported_output_count_bounded",
+    "reported_output_count_overflow",
+    "verified_output_count",
+    "output_descriptors",
+    "output_set_sha256",
+    "observed_provider_request_count"
+  ],
+  "title": "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1",
+  "type": "object"
+}

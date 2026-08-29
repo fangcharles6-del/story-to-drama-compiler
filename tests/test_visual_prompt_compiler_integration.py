@@ -1590,7 +1590,7 @@ def test_integrity_verification_does_not_claim_historical_catalog_readmission(
 def test_schema_registry_appends_only_the_two_formal_top_level_contracts() -> None:
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 72
+    assert len(MODELS) == 76
     assert [model.__name__ for model in MODELS[68:70]] == [
         "CreativeSampleVisualPromptCompileRequestV1",
         "CreativeSampleVisualPromptSidecarV1",
