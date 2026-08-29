@@ -1,0 +1,807 @@
+{
+  "historical_qualification_expiry_cases": [
+    {
+      "case_id": "character-reference-pass",
+      "expected_failure_code": "TIME_WINDOW_INVALID_OR_EXPIRED",
+      "expected_manifest_created": false,
+      "historical_decision_at": "2026-08-01T11:00:00Z",
+      "historical_decision_id": "generated_reference_candidate_qualification_decision_v1_65a8ae790304d449826f",
+      "historical_decision_sha256": "65a8ae790304d449826ff0de2f41b13b7dc8aca4fe31edf9f4d4bf6c3de8c6bc",
+      "historical_qualification_valid_until": "2026-08-02T11:00:00Z",
+      "manifest_attempt_at": "2026-08-29T02:00:00Z",
+      "source_generated_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-candidate/generated-known-answer-v1.json"
+    },
+    {
+      "case_id": "scene-reference-pass",
+      "expected_failure_code": "TIME_WINDOW_INVALID_OR_EXPIRED",
+      "expected_manifest_created": false,
+      "historical_decision_at": "2026-08-03T11:00:00Z",
+      "historical_decision_id": "generated_reference_candidate_qualification_decision_v1_bda76ced3463071ba0f8",
+      "historical_decision_sha256": "bda76ced3463071ba0f860632cf952e2d3a8c1bce2fd4dc4b0f40989f5d22209",
+      "historical_qualification_valid_until": "2026-08-04T11:00:00Z",
+      "manifest_attempt_at": "2026-08-29T02:00:00Z",
+      "source_generated_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-candidate/generated-known-answer-v1.json"
+    }
+  ],
+  "known_answer_version": "1.0.0",
+  "positive_cases": [
+    {
+      "as_of": "2026-08-29T05:00:00Z",
+      "asset_purpose": "CHARACTER_REFERENCE_ASSET",
+      "case_id": "character-reference-current-v1",
+      "current_status": {
+        "expected_request_valid_until": "2026-08-30T02:00:00Z",
+        "expected_status_valid_until": "2026-08-30T01:30:00Z",
+        "limitation_codes": [
+          "SOURCE_AUTHENTICITY_NOT_PROVEN",
+          "SOURCE_COMPLETENESS_NOT_PROVEN",
+          "CHAIN_COMPLETENESS_NOT_PROVEN",
+          "REALITY_CURRENTNESS_NOT_PROVEN",
+          "SCOPE_LIMITED_TO_DECLARED_SUBJECT",
+          "TIME_WINDOW_LIMITED",
+          "LEGAL_EFFECT_NOT_DETERMINED"
+        ],
+        "observations": [
+          {
+            "basis_code": "HOLD_RELEASED",
+            "basis_note": "First-party synthetic evidence records no active hold for this exact test occurrence at the bounded evaluation time; it proves neither source authenticity nor real-world absence.",
+            "category": "HOLD_ACTIVE",
+            "claim_value": "ABSENT_WITH_EVIDENCE",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-hold-absent-v1",
+            "observed_at": "2026-08-29T02:20:00Z",
+            "source_event_at": "2026-08-29T02:10:00Z",
+            "source_kind": "INTERNAL_HOLD_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-hold-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The bounded synthetic test record contains no active hold for this exact occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-hold-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-hold-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "RIGHTS_REINSTATED",
+            "basis_note": "First-party synthetic evidence records no effective revocation for this exact test occurrence at the bounded evaluation time; it grants no legal right.",
+            "category": "REVOCATION_EFFECTIVE",
+            "claim_value": "ABSENT_WITH_EVIDENCE",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-revocation-absent-v1",
+            "observed_at": "2026-08-29T02:21:00Z",
+            "source_event_at": "2026-08-29T02:11:00Z",
+            "source_kind": "REVOCATION_NOTICE",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-revocation-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The bounded synthetic test record marks the simulated rights basis as reinstated for this occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-revocation-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-revocation-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "COMPLAINT_RESOLVED",
+            "basis_note": "First-party synthetic evidence records no open complaint for this exact test occurrence at the bounded evaluation time; unseen complaints remain unproved.",
+            "category": "COMPLAINT_OPEN",
+            "claim_value": "ABSENT_WITH_EVIDENCE",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-complaint-absent-v1",
+            "observed_at": "2026-08-29T02:22:00Z",
+            "source_event_at": "2026-08-29T02:12:00Z",
+            "source_kind": "COMPLAINT_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-complaint-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The bounded synthetic test complaint record is resolved for this occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-complaint-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-complaint-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "DISPUTE_RESOLVED",
+            "basis_note": "First-party synthetic evidence records no open dispute for this exact test occurrence at the bounded evaluation time; unseen disputes remain unproved.",
+            "category": "DISPUTE_OPEN",
+            "claim_value": "ABSENT_WITH_EVIDENCE",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-dispute-absent-v1",
+            "observed_at": "2026-08-29T02:23:00Z",
+            "source_event_at": "2026-08-29T02:13:00Z",
+            "source_kind": "DISPUTE_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-dispute-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The bounded synthetic test dispute record is resolved for this occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-dispute-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-dispute-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "RIGHTS_CONFIRMED",
+            "basis_note": "First-party synthetic evidence supports the simulated rights-basis predicate only for this deterministic test closure; it grants no actual right or commercial permission.",
+            "category": "RIGHTS_BASIS_CURRENT",
+            "claim_value": "PRESENT",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-rights-basis-present-v1",
+            "observed_at": "2026-08-29T02:24:00Z",
+            "source_event_at": "2026-08-29T02:14:00Z",
+            "source_kind": "RIGHTS_HOLDER_DECLARATION",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-rights-basis-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The project-authored synthetic declaration supports the simulated current rights-basis predicate for this occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-rights-basis-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-rights-basis-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "IDENTITY_CONFIRMED",
+            "basis_note": "First-party synthetic evidence preserves only the fixture subject and exact PNG occurrence binding; it does not authenticate a person or establish likeness consent.",
+            "category": "IDENTITY_BINDING_CURRENT",
+            "claim_value": "PRESENT",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-identity-binding-present-v1",
+            "observed_at": "2026-08-29T02:25:00Z",
+            "source_event_at": "2026-08-29T02:15:00Z",
+            "source_kind": "IDENTITY_BINDING_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-identity-binding-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The synthetic fixture subject remains bound to the same exact Candidate and PNG occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-identity-binding-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-identity-binding-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "TERMS_COMPATIBLE",
+            "basis_note": "First-party synthetic evidence supports only a bounded terms-compatibility predicate for historical test data; it does not authorize a Provider request.",
+            "category": "PROVIDER_TERMS_COMPATIBILITY_CURRENT",
+            "claim_value": "PRESENT",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-provider-terms-present-v1",
+            "observed_at": "2026-08-29T02:26:00Z",
+            "source_event_at": "2026-08-29T02:16:00Z",
+            "source_kind": "PROVIDER_TERMS_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-provider-terms-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The synthetic terms record remains compatible with this bounded offline test scenario."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-provider-terms-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-provider-terms-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "RETENTION_DELETION_COMPLIANT",
+            "basis_note": "First-party synthetic evidence supports only the bounded retention/deletion predicate; this fixture does not grant retention or authorize deletion automation.",
+            "category": "RETENTION_DELETION_COMPLIANCE_CURRENT",
+            "claim_value": "PRESENT",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-retention-present-v1",
+            "observed_at": "2026-08-29T02:27:00Z",
+            "source_event_at": "2026-08-29T02:17:00Z",
+            "source_kind": "RETENTION_DELETION_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-retention-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The synthetic scenario records no retained Provider media and no pending deletion obligation."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-retention-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-retention-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          },
+          {
+            "basis_code": "TRAINING_PROHIBITION_CONFIRMED",
+            "basis_note": "First-party synthetic evidence supports only the bounded no-training predicate; it does not establish actual Provider conduct or grant training authority.",
+            "category": "TRAINING_USE_PROHIBITION_CURRENT",
+            "claim_value": "PRESENT",
+            "link_kind": "GENESIS",
+            "observation_key": "character-current-training-present-v1",
+            "observed_at": "2026-08-29T02:28:00Z",
+            "source_event_at": "2026-08-29T02:18:00Z",
+            "source_kind": "TRAINING_USE_RECORD",
+            "source_object": {
+              "document_profile": "sdc.synthetic-generated-reference-current-status-source-object.v1",
+              "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+              "record_id": "sdc.synthetic-character-current-training-record.v1",
+              "subject_scope": "character-reference-current-v1",
+              "synthetic_finding": "The synthetic scenario records a no-training requirement for the bounded test occurrence."
+            },
+            "source_object_media_type": "application/json",
+            "source_object_ref": "sdc.synthetic-character-current-training-object.v1",
+            "source_reference": {
+              "document_profile": "sdc.privacy-minimized-source-reference.v1",
+              "source_identity_namespace": "sdc.synthetic-known-answer-source",
+              "source_identity_ref": "character-current-training-source-v1"
+            },
+            "valid_from": "2026-08-29T02:00:00Z",
+            "valid_until": "2026-08-30T01:30:00Z"
+          }
+        ],
+        "request_basis": "Assess the exact finite first-party synthetic observation closure at the fixed historical evaluation time; do not infer real-world currentness.",
+        "status_checker_basis": "The compiler-derived nine-category tuple is accepted only as an offline synthetic known answer and grants no rights or execution authority."
+      },
+      "evaluated_at": "2026-08-29T04:00:00Z",
+      "expected": {
+        "as_of_status": "CURRENT",
+        "manifest_created": true,
+        "qualification_decision": "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW",
+        "recorded_status": "CURRENT",
+        "zero_authority_surface": {
+          "authority_scope": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+          "authorized_attempts": 0,
+          "authorized_cost_cny": 0,
+          "automated_execution_allowed": false,
+          "current_gate": "HUMAN_GATE",
+          "eligible_for_asset_promotion": false,
+          "execution_authorized": false,
+          "generation_authorized": false,
+          "grants_execution_authority": false,
+          "grants_qualification": false,
+          "grants_rights": false,
+          "posts_allowed": 0,
+          "provider_requests": 0,
+          "provider_state": "NOT_AUTHORIZED",
+          "publication_allowed": false,
+          "publication_authorized": false,
+          "remote_processing_allowed": false,
+          "replaces_rights_manifest": false,
+          "retention_allowed": false,
+          "training_allowed": false,
+          "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION"
+        }
+      },
+      "manifest": {
+        "expected_manifest_valid_until": "2026-08-30T02:00:00Z",
+        "human_gate_reviews": [
+          {
+            "basis": "The synthetic submission-time authorization record is complete for the exact historical fixture attempt; later review grants no new submission authority.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-submission-authorization.v1",
+            "gate": "SUBMISSION_TIME_AUTHORIZATION",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact historical synthetic terms anchor is reviewed for this fixed attempt only and is not Provider capability or current execution authority.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-provider-terms-at-submission.v1",
+            "gate": "PROVIDER_TERMS_AT_SUBMISSION",
+            "result": "PASS"
+          },
+          {
+            "basis": "All Prompt and media in the bounded fixture are project-authored synthetic test content; this does not approve future inputs or assets.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-input-rights.v1",
+            "gate": "INPUT_TEXT_AND_MEDIA_RIGHTS",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic fixture output is reviewed only for deterministic test use; no real copyright ownership or commercial license is asserted.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-output-scope.v1",
+            "gate": "OUTPUT_COPYRIGHT_AND_COMMERCIAL_SCOPE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic character does not depict or identify a real person and contains no real sensitive data; future likeness questions remain unapproved.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-likeness-privacy.v1",
+            "gate": "LIKENESS_PRIVACY_AND_SENSITIVE_DATA",
+            "result": "PASS"
+          },
+          {
+            "basis": "The fixture contains no third-party brand, protected character or externally sourced protected-content reference.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-brand-protected-content.v1",
+            "gate": "BRAND_AND_PROTECTED_CONTENT",
+            "result": "PASS"
+          },
+          {
+            "basis": "The reviewed scope is limited to offline deterministic project testing and may not be broadened to production or commercial use.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-territory-allowed-use.v1",
+            "gate": "TERRITORY_DURATION_AND_ALLOWED_USE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic scenario records no Provider-media retention and no deletion automation; the evidence digest grants no retention authority.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-retention-deletion.v1",
+            "gate": "RETENTION_AND_DELETION_OBLIGATIONS",
+            "result": "PASS"
+          },
+          {
+            "basis": "The bounded synthetic scenario prohibits training use; this review neither proves Provider conduct nor grants training authority.",
+            "evidence_record_id": "sdc.synthetic-character-manifest-training-prohibition.v1",
+            "gate": "TRAINING_USE_PROHIBITION",
+            "result": "PASS"
+          }
+        ],
+        "manifest_at": "2026-08-29T02:00:00Z",
+        "proposed_rights_scope": {
+          "allowed_use_scope": [
+            "OFFLINE_DETERMINISTIC_TESTING_ONLY"
+          ],
+          "proposed_scope_valid_until": "2026-08-30T02:00:00Z",
+          "territory_scope": [
+            "SYNTHETIC_TEST_ENVIRONMENT_ONLY"
+          ]
+        },
+        "review_evidence_documents": [
+          {
+            "category": "SUBMISSION_TIME_AUTHORIZATION",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-submission-authorization.v1",
+            "effective_from": "2026-07-01T00:00:00Z",
+            "effective_until": "2026-09-30T00:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:10:00Z",
+            "record_id": "sdc.synthetic-character-manifest-submission-authorization.v1",
+            "synthetic_content": "Project-authored synthetic evidence records pre-authorization for the historical fixture submission only; it grants no present or future Provider authority."
+          },
+          {
+            "category": "PROVIDER_TERMS_AT_SUBMISSION",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-provider-terms-at-submission.v1",
+            "effective_from": "2026-07-01T00:00:00Z",
+            "effective_until": "2026-09-30T00:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:11:00Z",
+            "record_id": "sdc.synthetic-character-manifest-provider-terms-at-submission.v1",
+            "synthetic_content": "Project-authored synthetic evidence describes the historical fixture terms anchor only and is not a real Provider contract or capability statement."
+          },
+          {
+            "category": "INPUT_TEXT_AND_MEDIA_RIGHTS",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-input-rights.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:12:00Z",
+            "record_id": "sdc.synthetic-character-manifest-input-rights.v1",
+            "synthetic_content": "The exact Prompt and PNG fixture are independently authored first-party synthetic test content and do not approve future or external inputs."
+          },
+          {
+            "category": "OUTPUT_COPYRIGHT_AND_COMMERCIAL_SCOPE",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-output-scope.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:13:00Z",
+            "record_id": "sdc.synthetic-character-manifest-output-scope.v1",
+            "synthetic_content": "The synthetic output is admitted only for offline deterministic testing; no real copyright ownership or commercial permission is asserted."
+          },
+          {
+            "category": "LIKENESS_PRIVACY_AND_SENSITIVE_DATA",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-likeness-privacy.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:14:00Z",
+            "record_id": "sdc.synthetic-character-manifest-likeness-privacy.v1",
+            "synthetic_content": "The fictional synthetic character is not a real person and the fixture contains no real sensitive data or identity claim."
+          },
+          {
+            "category": "BRAND_AND_PROTECTED_CONTENT",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-brand-protected-content.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:15:00Z",
+            "record_id": "sdc.synthetic-character-manifest-brand-protected-content.v1",
+            "synthetic_content": "The fixture contains no third-party brand, protected character or externally sourced protected-content reference."
+          },
+          {
+            "category": "TERRITORY_DURATION_AND_ALLOWED_USE",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-territory-allowed-use.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:16:00Z",
+            "record_id": "sdc.synthetic-character-manifest-territory-allowed-use.v1",
+            "synthetic_content": "The bounded scope is synthetic test environment use for offline deterministic verification only."
+          },
+          {
+            "category": "RETENTION_AND_DELETION_OBLIGATIONS",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-retention-deletion.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:17:00Z",
+            "record_id": "sdc.synthetic-character-manifest-retention-deletion.v1",
+            "synthetic_content": "The synthetic scenario records no Provider-media retention and no pending deletion obligation; the digest grants no retention authority."
+          },
+          {
+            "category": "TRAINING_USE_PROHIBITION",
+            "document_profile": "sdc.synthetic-generated-reference-manifest-training-prohibition.v1",
+            "effective_from": "2026-08-29T00:00:00Z",
+            "effective_until": "2026-08-30T02:00:00Z",
+            "evidence_scope": "SYNTHETIC_KNOWN_ANSWER_SIMULATION_ONLY",
+            "evidence_valid_until": "2026-08-30T02:00:00Z",
+            "media_type": "application/json",
+            "observed_at": "2026-08-29T01:18:00Z",
+            "record_id": "sdc.synthetic-character-manifest-training-prohibition.v1",
+            "synthetic_content": "The synthetic test scenario prohibits training use and does not assert real Provider conduct or grant training authority."
+          }
+        ],
+        "reviewed_rights_scope": {
+          "allowed_use_scope": [
+            "OFFLINE_DETERMINISTIC_TESTING_ONLY"
+          ],
+          "brand_and_protected_content_basis": "The fixture contains no third-party brand, protected character or externally sourced protected-content reference.",
+          "likeness_privacy_and_sensitive_data_basis": "The synthetic character does not depict or identify a real person and contains no real sensitive data; future likeness questions remain unapproved.",
+          "output_copyright_and_commercial_scope_basis": "The synthetic fixture output is reviewed only for deterministic test use; no real copyright ownership or commercial license is asserted.",
+          "retention_and_deletion_basis": "The synthetic scenario records no Provider-media retention and no deletion automation; the evidence digest grants no retention authority.",
+          "review_basis": "The reviewed scope is limited to this first-party synthetic offline known-answer and grants no legal right, current eligibility or execution authority.",
+          "reviewed_scope_valid_until": "2026-08-30T02:00:00Z",
+          "territory_scope": [
+            "SYNTHETIC_TEST_ENVIRONMENT_ONLY"
+          ],
+          "training_use_prohibition_basis": "The bounded synthetic scenario prohibits training use; this review neither proves Provider conduct nor grants training authority."
+        }
+      },
+      "png": {
+        "path": "tests/fixtures/visual_prompt_profiles/generated-reference-candidate/character-reference-synthetic-v1.png",
+        "sha256": "3c20c94c18fbd72b68a58748bae9aba2daefc6baa38e9fc1c6ab30b40e6f39fc",
+        "size_bytes": 5841,
+        "synthetic_media_description": "First-party project-authored fictional character reference test image; no real person, brand or third-party character is represented."
+      },
+      "qualification": {
+        "decision_at": "2026-08-29T01:00:00Z",
+        "evidence_source_case_id": "character-reference-pass",
+        "evidence_source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-candidate/reviewed-known-answer-source-v1.json",
+        "expected_decision": "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW",
+        "expected_eligible_for_separate_generated_rights_manifest_review": true,
+        "expected_gate_results": [
+          {
+            "basis": "The exact Artifact, Outcome, Candidate, PNG and ten retained first-party synthetic evidence documents are freshly revalidated for this occurrence only.",
+            "gate": "PROVENANCE_CLOSURE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact offline Prompt, render input and Prompt Receipt anchors remain closed for the reused first-party synthetic Artifact.",
+            "gate": "PROMPT_AND_RECEIPT_CLOSURE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact single synthetic PNG occurrence remains the complete bounded output set for this historical fixture attempt.",
+            "gate": "OUTPUT_SET_COMPLETENESS",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact PNG remains within the frozen technical media limits; this is technical evidence only.",
+            "gate": "TECHNICAL_MEDIA_FIT",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact fictional character subject and CHARACTER_REFERENCE_ASSET purpose remain consistent across the reused closure.",
+            "gate": "SUBJECT_AND_ASSET_PURPOSE_MATCH",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic subject anchor remains continuous for this exact Candidate occurrence and does not authenticate a real identity.",
+            "gate": "IDENTITY_CONTINUITY",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact project-authored synthetic Prompt and media evidence remains bounded to this test occurrence and grants no reusable rights.",
+            "gate": "INPUT_TEXT_AND_MEDIA_RIGHTS_AT_SUBMISSION",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact retained synthetic attempt and terminal records close historical provenance only and grant no Provider authority.",
+            "gate": "PROVIDER_GENERATION_PROVENANCE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The exact retained synthetic terms record is consistent with the historical fixture Outcome and is not a real Provider contract.",
+            "gate": "PROVIDER_OUTPUT_TERMS",
+            "result": "PASS"
+          },
+          {
+            "basis": "The first-party synthetic output is approved only for offline deterministic testing, not for commercial use.",
+            "gate": "COPYRIGHT_AND_COMMERCIAL_SCOPE",
+            "result": "PASS"
+          },
+          {
+            "basis": "The fictional synthetic subject is not a real person and the fixture contains no real sensitive data.",
+            "gate": "LIKENESS_PRIVACY_AND_SENSITIVE_DATA",
+            "result": "PASS"
+          },
+          {
+            "basis": "The fixture contains no third-party brand, protected character or externally sourced protected content.",
+            "gate": "BRAND_AND_PROTECTED_CONTENT",
+            "result": "PASS"
+          },
+          {
+            "basis": "The historical fixture record documents synthetic pre-authorization only; later review grants no remote-processing authority.",
+            "gate": "REMOTE_PROCESSING_AUTHORIZED_AT_SUBMISSION",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic historical attempt records no retained Provider media and grants no retention or deletion authority.",
+            "gate": "RETENTION_POLICY_ALIGNMENT",
+            "result": "PASS"
+          },
+          {
+            "basis": "The synthetic historical attempt records a no-training requirement and grants no training authority.",
+            "gate": "TRAINING_USE_POLICY_ALIGNMENT",
+            "result": "PASS"
+          }
+        ],
+        "expected_qualification_valid_until": "2026-08-30T01:00:00Z",
+        "refreshed_evidence_reviews": [
+          {
+            "category": "PROVIDER_ATTEMPT_PROVENANCE",
+            "document_sha256": "55e3b8a81f6385f90002bf5d2e0ae5859a03afb5eedb3ea71226edef8252ee5c",
+            "document_size_bytes": 1001,
+            "record_id": "sdc.synthetic-character-provider-attempt-provenance.v1",
+            "review_basis": "Freshly re-admitted exact historical synthetic attempt record; no real Provider identity or authority is asserted.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "PROVIDER_TERMINAL_OBSERVATION",
+            "document_sha256": "40ec6ac9e3f26ae305ab21a57bd75858ef1436550bb1c70897b530d9f07249d1",
+            "document_size_bytes": 756,
+            "record_id": "sdc.synthetic-character-provider-terminal-observation.v1",
+            "review_basis": "Freshly re-admitted exact historical synthetic terminal record; it establishes only the bounded fixture event.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "INPUT_TEXT_AND_MEDIA_RIGHTS_AT_SUBMISSION",
+            "document_sha256": "d3458679c17d29a7055f423af316b54ff11593cddbaae361e2c1828e7c9560e0",
+            "document_size_bytes": 760,
+            "record_id": "sdc.synthetic-character-input-text-and-media-rights-at-submission.v1",
+            "review_basis": "Fresh review confirms the exact fixture Prompt and PNG are project-authored synthetic test content only.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "PROVIDER_TERMS_AT_SUBMISSION",
+            "document_sha256": "b468ac3ea9cdf2b47af445d1a92f41831088846c3962ed43cea0765f8867e9f7",
+            "document_size_bytes": 816,
+            "record_id": "sdc.synthetic-character-provider-terms.v1",
+            "review_basis": "Freshly re-admitted exact historical synthetic terms anchor; it is not a real Provider contract or capability statement.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "OUTPUT_COPYRIGHT_AND_COMMERCIAL_SCOPE",
+            "document_sha256": "337a9f42aead36cf70bae9fe746f294b8107b829a9794fd948e6f350196a13fc",
+            "document_size_bytes": 719,
+            "record_id": "sdc.synthetic-character-output-copyright-and-commercial-scope.v1",
+            "review_basis": "Fresh review limits the first-party synthetic output to offline deterministic testing and grants no commercial permission.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "LIKENESS_PRIVACY_AND_SENSITIVE_DATA",
+            "document_sha256": "0aebc5202512b50442d2d4bca4f5066a1b35a4e7551c4655eb6659d43edb3a55",
+            "document_size_bytes": 600,
+            "record_id": "sdc.synthetic-character-likeness-privacy-and-sensitive-data.v1",
+            "review_basis": "Fresh review confirms the synthetic character is not a real person and contains no real sensitive data.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "BRAND_AND_PROTECTED_CONTENT",
+            "document_sha256": "eaf0c09beb2de2d9ce4bd594d6a35d2386979e3bcd87a9d170c78131f69ecb7d",
+            "document_size_bytes": 563,
+            "record_id": "sdc.synthetic-character-brand-and-protected-content.v1",
+            "review_basis": "Fresh review finds no third-party brand, protected character or externally sourced protected-content reference.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "REMOTE_PROCESSING_AUTHORIZATION_AT_SUBMISSION",
+            "document_sha256": "991bdffc80f0c26f620851730b9cc88bb31674bedd087864f70b2f8e1ad82ae6",
+            "document_size_bytes": 644,
+            "record_id": "sdc.synthetic-character-remote-processing-authorization-at-submission.v1",
+            "review_basis": "Fresh review preserves only the historical synthetic pre-authorization fact and grants no present remote-processing authority.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "RETENTION_POLICY_AT_SUBMISSION",
+            "document_sha256": "a45453ffdf4737ea38331488699eba8c305927695b03be445143986bdf18448c",
+            "document_size_bytes": 576,
+            "record_id": "sdc.synthetic-character-retention-policy-at-submission.v1",
+            "review_basis": "Fresh review preserves the bounded synthetic no-retention scenario and grants no retention or deletion authority.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          },
+          {
+            "category": "TRAINING_USE_POLICY_AT_SUBMISSION",
+            "document_sha256": "f21cf2143988a47194b0a68713ab8bb334f13693547504efb6b9e77e99da4908",
+            "document_size_bytes": 627,
+            "record_id": "sdc.synthetic-character-training-use-policy-at-submission.v1",
+            "review_basis": "Fresh review preserves the bounded synthetic no-training scenario and grants no training authority.",
+            "reviewed_at": "2026-08-29T00:15:00Z",
+            "source_evidence_valid_until": "2026-09-01T00:00:00Z"
+          }
+        ],
+        "request_basis": "Freshly assess the exact existing first-party synthetic Candidate and ten exact retained evidence documents under the frozen ADR-043 policy; no authority is granted.",
+        "requested_at": "2026-08-29T00:30:00Z"
+      },
+      "requested_at": "2026-08-29T03:00:00Z",
+      "reused_upstream": {
+        "artifact_sha256": "595576f1a18dae01275efc88132497299a1572f454c6aea20d6d714a1676b152",
+        "candidate_id": "generated_reference_candidate_v1_8e2d5cd3e1470d024204",
+        "candidate_sha256": "8e2d5cd3e1470d0242049d9ef00d73d96ffd0442db0c08718620692d3089113a",
+        "provider_attempt_outcome_id": "generated_reference_attempt_outcome_v1_283fdb7b3bc90af95502",
+        "provider_attempt_outcome_sha256": "283fdb7b3bc90af95502f15b52775419f019664b881c932a792bfd39eac48548",
+        "source_case_id": "character-reference-pass",
+        "source_generated_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-candidate/generated-known-answer-v1.json",
+        "subject_id": "character_f32565ee4d63dcbb8dca"
+      },
+      "synthetic_role_records": [
+        {
+          "action_semantics": {
+            "action": "PREPARED_GENERATED_REFERENCE_QUALIFICATION_EVIDENCE",
+            "prepared_at": "2026-08-29T00:30:00Z",
+            "purpose": "Prepare the exact existing synthetic Candidate and ten retained evidence records for a new bounded Qualification Request."
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-qualification-preparer-v1"
+          },
+          "role": "QUALIFICATION_PREPARER"
+        },
+        {
+          "action_semantics": {
+            "action": "RECORDED_GENERATED_REFERENCE_QUALIFICATION_DECISION",
+            "decision_at": "2026-08-29T01:00:00Z",
+            "purpose": "Record the synthetic fifteen-gate Qualification decision for this new fixed timeline only."
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-qualification-qualifier-v1"
+          },
+          "role": "QUALIFICATION_QUALIFIER"
+        },
+        {
+          "action_semantics": {
+            "action": "PREPARED_GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW",
+            "prepared_at": "2026-08-29T01:30:00Z",
+            "purpose": "Prepare the exact synthetic Manifest payload, nine evidence records and proposed offline-test scope."
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-manifest-maker-v1"
+          },
+          "role": "MANIFEST_MAKER"
+        },
+        {
+          "action_semantics": {
+            "action": "RECORDED_GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW",
+            "purpose": "Record nine bounded synthetic human gate results and the non-broadened reviewed scope.",
+            "reviewed_at": "2026-08-29T02:00:00Z"
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-manifest-checker-v1"
+          },
+          "role": "MANIFEST_CHECKER"
+        },
+        {
+          "action_semantics": {
+            "action": "PREPARED_GENERATED_REFERENCE_CURRENT_STATUS_REQUEST",
+            "purpose": "Prepare the exact nine-category finite observation target set without source discovery.",
+            "requested_at": "2026-08-29T03:00:00Z"
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-status-preparer-v1"
+          },
+          "role": "STATUS_PREPARER"
+        },
+        {
+          "action_semantics": {
+            "action": "RECORDED_GENERATED_REFERENCE_CURRENT_STATUS_DECISION",
+            "evaluated_at": "2026-08-29T04:00:00Z",
+            "purpose": "Record the compiler-derived category tuple and CURRENT known answer without asserting real-world currentness."
+          },
+          "identity_record": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "sdc.synthetic-known-answer-reviewer",
+            "identity_ref": "character-current-status-checker-v1"
+          },
+          "role": "STATUS_CHECKER"
+        }
+      ]
+    }
+  ],
+  "source_packet_scope": {
+    "automated_execution_allowed": false,
+    "commercial_use_rights_proven": false,
+    "content_origin": "FIRST_PARTY_SYNTHETIC_TEST_CONTENT",
+    "generation_authorized": false,
+    "identity_authentication_claimed": false,
+    "network_allowed": false,
+    "provider_requests": 0,
+    "purpose": "Offline deterministic SDC-ADR-044 known-answer review only",
+    "real_world_currentness_asserted": false,
+    "retention_allowed": false,
+    "training_allowed": false
+  }
+}

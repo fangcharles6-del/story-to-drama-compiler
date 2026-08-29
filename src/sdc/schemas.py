@@ -13,6 +13,15 @@ from sdc.generated_reference_candidate import (
     CreativeSampleGeneratedReferenceCandidateV1,
     CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
 )
+from sdc.generated_reference_rights_current_status import (
+    CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+    CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1,
+    CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+    CreativeSampleGeneratedReferenceRightsManifestV1,
+)
 from sdc.real_asset_intake import (
     CreativeSampleFrozenRealAssetPackManifest,
     CreativeSampleRealAssetGapReport,
@@ -139,6 +148,13 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleGeneratedReferenceCandidateV1,
     CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
     CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
+    CreativeSampleGeneratedReferenceRightsManifestV1,
+    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+    CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+    CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+    CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1,
 ]
 
 

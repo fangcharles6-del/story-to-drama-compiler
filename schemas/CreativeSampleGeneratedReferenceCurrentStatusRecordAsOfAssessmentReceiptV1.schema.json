@@ -1,0 +1,551 @@
+{
+  "$defs": {
+    "GeneratedReferenceCurrentStatusSubjectClosureV1": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_purpose": {
+          "enum": [
+            "CHARACTER_REFERENCE_ASSET",
+            "SCENE_REFERENCE_ASSET"
+          ],
+          "title": "Asset Purpose",
+          "type": "string"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "candidate_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Candidate Sha256",
+          "type": "string"
+        },
+        "closure_id": {
+          "pattern": "^generated_reference_current_status_subject_closure_v1_[0-9a-f]{20}$",
+          "title": "Closure Id",
+          "type": "string"
+        },
+        "closure_profile": {
+          "const": "sdc.generated-reference-current-status-subject-closure.v1",
+          "title": "Closure Profile",
+          "type": "string"
+        },
+        "closure_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Closure Sha256",
+          "type": "string"
+        },
+        "manifest_at": {
+          "title": "Manifest At",
+          "type": "string"
+        },
+        "manifest_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Manifest Id",
+          "type": "string"
+        },
+        "manifest_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Sha256",
+          "type": "string"
+        },
+        "manifest_valid_until": {
+          "title": "Manifest Valid Until",
+          "type": "string"
+        },
+        "media_content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Content Sha256",
+          "type": "string"
+        },
+        "policy_document_sha256": {
+          "const": "cf596012ca0d3bf88d1e49d0aea11184428d047d0e919822032da51f792d61e0",
+          "title": "Policy Document Sha256",
+          "type": "string"
+        },
+        "policy_id": {
+          "const": "sdc.generated-reference-current-status-policy",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "const": "1.0.0",
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "provider_attempt_outcome_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Provider Attempt Outcome Id",
+          "type": "string"
+        },
+        "provider_attempt_outcome_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Attempt Outcome Sha256",
+          "type": "string"
+        },
+        "qualification_decision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Qualification Decision Id",
+          "type": "string"
+        },
+        "qualification_decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Qualification Decision Sha256",
+          "type": "string"
+        },
+        "qualification_request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Qualification Request Id",
+          "type": "string"
+        },
+        "qualification_request_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Qualification Request Sha256",
+          "type": "string"
+        },
+        "reference_prompt_artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Reference Prompt Artifact Sha256",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "closure_profile",
+        "closure_id",
+        "closure_sha256",
+        "policy_id",
+        "policy_version",
+        "policy_document_sha256",
+        "reference_prompt_artifact_sha256",
+        "provider_attempt_outcome_id",
+        "provider_attempt_outcome_sha256",
+        "candidate_id",
+        "candidate_sha256",
+        "qualification_request_id",
+        "qualification_request_sha256",
+        "qualification_decision_id",
+        "qualification_decision_sha256",
+        "manifest_id",
+        "manifest_sha256",
+        "subject_id",
+        "asset_purpose",
+        "media_content_sha256",
+        "manifest_at",
+        "manifest_valid_until"
+      ],
+      "title": "GeneratedReferenceCurrentStatusSubjectClosureV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "as_of": {
+      "title": "As Of",
+      "type": "string"
+    },
+    "as_of_assessment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "As Of Assessment Sha256",
+      "type": "string"
+    },
+    "as_of_status": {
+      "enum": [
+        "EXPIRED",
+        "REVOKED",
+        "HELD",
+        "INDETERMINATE",
+        "CURRENT"
+      ],
+      "title": "As Of Status",
+      "type": "string"
+    },
+    "authority_scope": {
+      "const": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+      "title": "Authority Scope",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "coverage_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Coverage Set Sha256",
+      "type": "string"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "decision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Sha256",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-generated-reference-current-status-record-as-of-assessment-receipt-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "evaluated_at": {
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "evidence_scope": {
+      "const": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "title": "Evidence Scope",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "explicit_chain_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Explicit Chain Set Sha256",
+      "type": "string"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "historical_assessment_only": {
+      "const": true,
+      "title": "Historical Assessment Only",
+      "type": "boolean"
+    },
+    "joint_replay_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Joint Replay Sha256",
+      "type": "string"
+    },
+    "limitation_codes": {
+      "items": {
+        "enum": [
+          "SOURCE_AUTHENTICITY_NOT_PROVEN",
+          "SOURCE_COMPLETENESS_NOT_PROVEN",
+          "CHAIN_COMPLETENESS_NOT_PROVEN",
+          "REALITY_CURRENTNESS_NOT_PROVEN",
+          "SCOPE_LIMITED_TO_DECLARED_SUBJECT",
+          "TIME_WINDOW_LIMITED",
+          "LEGAL_EFFECT_NOT_DETERMINED"
+        ],
+        "type": "string"
+      },
+      "maxItems": 7,
+      "minItems": 7,
+      "title": "Limitation Codes",
+      "type": "array"
+    },
+    "policy_document_sha256": {
+      "const": "cf596012ca0d3bf88d1e49d0aea11184428d047d0e919822032da51f792d61e0",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "sdc.generated-reference-current-status-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "1.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "present_currentness_asserted": {
+      "const": false,
+      "title": "Present Currentness Asserted",
+      "type": "boolean"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "receipt_id": {
+      "pattern": "^generated_reference_current_status_record_as_of_assessment_receipt_v1_[0-9a-f]{20}$",
+      "title": "Receipt Id",
+      "type": "string"
+    },
+    "receipt_scope": {
+      "const": "GENERATED_REFERENCE_CURRENT_STATUS_HISTORICAL_AS_OF_EVIDENCE_ONLY",
+      "title": "Receipt Scope",
+      "type": "string"
+    },
+    "receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Receipt Sha256",
+      "type": "string"
+    },
+    "record_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Record Id",
+      "type": "string"
+    },
+    "record_replay_consistent": {
+      "const": true,
+      "title": "Record Replay Consistent",
+      "type": "boolean"
+    },
+    "record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Record Sha256",
+      "type": "string"
+    },
+    "recorded_held_categories": {
+      "items": {
+        "enum": [
+          "HOLD_ACTIVE",
+          "REVOCATION_EFFECTIVE",
+          "COMPLAINT_OPEN",
+          "DISPUTE_OPEN",
+          "RIGHTS_BASIS_CURRENT",
+          "IDENTITY_BINDING_CURRENT",
+          "PROVIDER_TERMS_COMPATIBILITY_CURRENT",
+          "RETENTION_DELETION_COMPLIANCE_CURRENT",
+          "TRAINING_USE_PROHIBITION_CURRENT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Recorded Held Categories",
+      "type": "array"
+    },
+    "recorded_indeterminate_categories": {
+      "items": {
+        "enum": [
+          "HOLD_ACTIVE",
+          "REVOCATION_EFFECTIVE",
+          "COMPLAINT_OPEN",
+          "DISPUTE_OPEN",
+          "RIGHTS_BASIS_CURRENT",
+          "IDENTITY_BINDING_CURRENT",
+          "PROVIDER_TERMS_COMPATIBILITY_CURRENT",
+          "RETENTION_DELETION_COMPLIANCE_CURRENT",
+          "TRAINING_USE_PROHIBITION_CURRENT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 9,
+      "title": "Recorded Indeterminate Categories",
+      "type": "array"
+    },
+    "recorded_revoked_categories": {
+      "items": {
+        "enum": [
+          "HOLD_ACTIVE",
+          "REVOCATION_EFFECTIVE",
+          "COMPLAINT_OPEN",
+          "DISPUTE_OPEN",
+          "RIGHTS_BASIS_CURRENT",
+          "IDENTITY_BINDING_CURRENT",
+          "PROVIDER_TERMS_COMPATIBILITY_CURRENT",
+          "RETENTION_DELETION_COMPLIANCE_CURRENT",
+          "TRAINING_USE_PROHIBITION_CURRENT"
+        ],
+        "type": "string"
+      },
+      "maxItems": 1,
+      "title": "Recorded Revoked Categories",
+      "type": "array"
+    },
+    "recorded_status": {
+      "enum": [
+        "EXPIRED",
+        "REVOKED",
+        "HELD",
+        "INDETERMINATE",
+        "CURRENT"
+      ],
+      "title": "Recorded Status",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "same_call_assessment_verified": {
+      "const": true,
+      "title": "Same Call Assessment Verified",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "GENERATED_CURRENT_STATUS_AS_OF_RECEIPT_RECORDED",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_valid_until": {
+      "title": "Status Valid Until",
+      "type": "string"
+    },
+    "subject_closure": {
+      "$ref": "#/$defs/GeneratedReferenceCurrentStatusSubjectClosureV1"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    },
+    "window_semantics": {
+      "const": "EVALUATED_AT_INCLUSIVE_STATUS_VALID_UNTIL_EXCLUSIVE",
+      "title": "Window Semantics",
+      "type": "string"
+    }
+  },
+  "required": [
+    "authority_scope",
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "document_type",
+    "receipt_scope",
+    "receipt_id",
+    "receipt_sha256",
+    "policy_id",
+    "policy_version",
+    "policy_document_sha256",
+    "record_id",
+    "record_sha256",
+    "request_id",
+    "request_sha256",
+    "decision_id",
+    "decision_sha256",
+    "subject_closure",
+    "explicit_chain_set_sha256",
+    "coverage_set_sha256",
+    "joint_replay_sha256",
+    "as_of_assessment_sha256",
+    "as_of",
+    "evaluated_at",
+    "status_valid_until",
+    "window_semantics",
+    "recorded_status",
+    "as_of_status",
+    "recorded_revoked_categories",
+    "recorded_held_categories",
+    "recorded_indeterminate_categories",
+    "record_replay_consistent",
+    "same_call_assessment_verified",
+    "historical_assessment_only",
+    "present_currentness_asserted",
+    "limitation_codes",
+    "status",
+    "evidence_scope"
+  ],
+  "title": "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
+  "type": "object"
+}

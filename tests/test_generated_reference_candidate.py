@@ -1673,6 +1673,8 @@ def test_all_other_production_modules_have_no_generated_candidate_reverse_wiring
     allowed_modules = {
         "generated_reference_candidate.py",
         "generated_reference_candidate_codegen.py",
+        "generated_reference_rights_current_status.py",
+        "generated_reference_rights_current_status_codegen.py",
         "schemas.py",
     }
     production_modules = tuple(sorted((ROOT / "src" / "sdc").glob("*.py")))

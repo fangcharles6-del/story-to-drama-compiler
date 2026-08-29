@@ -1,4 +1,4 @@
-.PHONY: bootstrap schemas visual-prompt-profiles visual-prompt-profiles-check visual-reference-prompt-compiler visual-reference-prompt-compiler-check generated-reference-candidate generated-reference-candidate-check lint typecheck test integration demo verify-demo check
+.PHONY: bootstrap schemas visual-prompt-profiles visual-prompt-profiles-check visual-reference-prompt-compiler visual-reference-prompt-compiler-check generated-reference-candidate generated-reference-candidate-check generated-reference-rights-current-status generated-reference-rights-current-status-check lint typecheck test integration demo verify-demo check
 bootstrap:
 	uv sync --frozen
 schemas:
@@ -15,6 +15,10 @@ generated-reference-candidate:
 	uv run python -m sdc.generated_reference_candidate_codegen --update
 generated-reference-candidate-check:
 	uv run python -m sdc.generated_reference_candidate_codegen --check
+generated-reference-rights-current-status:
+	uv run python -m sdc.generated_reference_rights_current_status_codegen --update
+generated-reference-rights-current-status-check:
+	uv run python -m sdc.generated_reference_rights_current_status_codegen --check
 lint:
 	uv run ruff check .
 typecheck:
@@ -33,4 +37,4 @@ demo:
 	uv run python -m sdc.demo
 verify-demo:
 	uv run python -m sdc.verify .artifacts/demo
-check: visual-prompt-profiles-check visual-reference-prompt-compiler-check generated-reference-candidate-check lint typecheck test demo verify-demo
+check: visual-prompt-profiles-check visual-reference-prompt-compiler-check generated-reference-candidate-check generated-reference-rights-current-status-check lint typecheck test demo verify-demo
