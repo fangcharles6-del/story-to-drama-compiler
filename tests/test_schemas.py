@@ -330,6 +330,20 @@ PRE_REFERENCE_PROMPT_COMPILER_MODEL_NAMES = (
     "CreativeSampleVisualPromptCompileRequestV1",
     "CreativeSampleVisualPromptSidecarV1",
 )
+PRE_GENERATED_REFERENCE_CANDIDATE_SCHEMA_SHA256 = {
+    **PRE_REFERENCE_PROMPT_COMPILER_SCHEMA_SHA256,
+    "CreativeSampleReferenceVisualPromptCompileRequestV1.schema.json": (
+        "79ffb526cbfc238615d957c802cc92ed40d03a5d10ca57d93030981b3a3dc44d"
+    ),
+    "CreativeSampleReferenceVisualPromptArtifactV1.schema.json": (
+        "0c14d51539bd778fb6ab5c97f1075011701688f5b3035314e41d1b5c71aedad9"
+    ),
+}
+PRE_GENERATED_REFERENCE_CANDIDATE_MODEL_NAMES = (
+    *PRE_REFERENCE_PROMPT_COMPILER_MODEL_NAMES,
+    "CreativeSampleReferenceVisualPromptCompileRequestV1",
+    "CreativeSampleReferenceVisualPromptArtifactV1",
+)
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -400,13 +414,26 @@ def test_all_pre_reference_prompt_compiler_schema_bytes_remain_unchanged() -> No
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_generated_reference_candidate_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_GENERATED_REFERENCE_CANDIDATE_SCHEMA_SHA256) == 72
+    assert len(PRE_GENERATED_REFERENCE_CANDIDATE_MODEL_NAMES) == 72
+    assert tuple(model.__name__ for model in MODELS[:72]) == (
+        PRE_GENERATED_REFERENCE_CANDIDATE_MODEL_NAMES
+    )
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:72]}
+    assert set(PRE_GENERATED_REFERENCE_CANDIDATE_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_GENERATED_REFERENCE_CANDIDATE_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
         CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 72
+    assert len(model_names) == 76
     assert len(model_names) == len(set(model_names))
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert [model.__name__ for model in MODELS[68:70]] == [
@@ -417,6 +444,12 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
         "CreativeSampleReferenceVisualPromptCompileRequestV1",
         "CreativeSampleReferenceVisualPromptArtifactV1",
     ]
+    assert [model.__name__ for model in MODELS[72:76]] == [
+        "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1",
+        "CreativeSampleGeneratedReferenceCandidateV1",
+        "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1",
+        "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
+    ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
         == 1
@@ -425,6 +458,62 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     expected = {f"{name}.schema.json" for name in model_names}
     committed = {path.name for path in Path("schemas").glob("*.schema.json")}
     assert committed == expected
+
+
+def test_generated_reference_candidate_schemas_are_closed_and_all_fields_required() -> None:
+    schema_names = (
+        "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1",
+        "CreativeSampleGeneratedReferenceCandidateV1",
+        "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1",
+        "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
+    )
+    schemas = {
+        name: json.loads(Path(f"schemas/{name}.schema.json").read_text())
+        for name in schema_names
+    }
+    expected_top_level_fields = {
+        "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1": 65,
+        "CreativeSampleGeneratedReferenceCandidateV1": 68,
+        "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1": 46,
+        "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1": 53,
+    }
+    expected_inline_definitions = {
+        "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1": {
+            "GeneratedReferenceOutputDescriptorV1",
+            "GeneratedReferencePngTechnicalRecordV1",
+        },
+        "CreativeSampleGeneratedReferenceCandidateV1": set(),
+        "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1": {
+            "GeneratedReferenceQualificationEvidenceReferenceV1"
+        },
+        "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1": {
+            "GeneratedReferenceQualificationGateResultV1"
+        },
+    }
+
+    for name, expected_count in expected_top_level_fields.items():
+        schema = schemas[name]
+        assert schema["additionalProperties"] is False
+        assert len(schema["properties"]) == expected_count
+        assert len(schema["required"]) == expected_count
+        assert set(schema["required"]) == set(schema["properties"])
+        assert set(schema.get("$defs", {})) == expected_inline_definitions[name]
+        declared_objects = {"<root>": schema, **schema.get("$defs", {})}
+        for object_name, object_schema in declared_objects.items():
+            if object_schema.get("type") != "object" or "properties" not in object_schema:
+                continue
+            assert object_schema.get("additionalProperties") is False, (name, object_name)
+            assert set(object_schema.get("required", ())) == set(object_schema["properties"]), (
+                name,
+                object_name,
+            )
+
+    inline_definitions = set().union(*expected_inline_definitions.values())
+    registered_names = {model.__name__ for model in MODELS}
+    assert inline_definitions.isdisjoint(registered_names)
+    assert not any(
+        (Path("schemas") / f"{name}.schema.json").exists() for name in inline_definitions
+    )
 
 
 def test_reference_prompt_compiler_schemas_are_closed_and_all_fields_required() -> None:

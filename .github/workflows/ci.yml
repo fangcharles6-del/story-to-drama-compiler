@@ -11,6 +11,7 @@ jobs:
       - run: make bootstrap
       - run: make visual-prompt-profiles-check
       - run: make visual-reference-prompt-compiler-check
+      - run: make generated-reference-candidate-check
       - run: make lint
       - run: make typecheck
       - run: make test
@@ -58,3 +59,16 @@ jobs:
           uv run pytest -q
           tests/test_visual_reference_prompt_compiler.py
           tests/test_visual_reference_prompt_compiler_codegen.py
+  generated-reference-candidate-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {version: "0.8.8", enable-cache: true}
+      - run: uv sync --frozen
+      - name: generated-reference-candidate-check
+        run: uv run python -m sdc.generated_reference_candidate_codegen --check
+      - run: >-
+          uv run pytest -q
+          tests/test_generated_reference_candidate.py
+          tests/test_generated_reference_candidate_codegen.py
