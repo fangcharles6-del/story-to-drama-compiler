@@ -344,6 +344,28 @@ PRE_GENERATED_REFERENCE_CANDIDATE_MODEL_NAMES = (
     "CreativeSampleReferenceVisualPromptCompileRequestV1",
     "CreativeSampleReferenceVisualPromptArtifactV1",
 )
+PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_SCHEMA_SHA256 = {
+    **PRE_GENERATED_REFERENCE_CANDIDATE_SCHEMA_SHA256,
+    "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1.schema.json": (
+        "5c26b4755967f276038a60e725965497b53384d406989e1b186e27701cb4ce88"
+    ),
+    "CreativeSampleGeneratedReferenceCandidateV1.schema.json": (
+        "58a322669c7aeec8dcefafafdffea11757cfd3512a40acccf56722be5f5fd565"
+    ),
+    "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1.schema.json": (
+        "192e41657d55a4d48287938462a323071cb5678fcc521d01edab16ee88d652dd"
+    ),
+    "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1.schema.json": (
+        "fe38cc03c0544e49bb08ca00827df80fbba01e5541479bcf5b49599bc513c0e1"
+    ),
+}
+PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_MODEL_NAMES = (
+    *PRE_GENERATED_REFERENCE_CANDIDATE_MODEL_NAMES,
+    "CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1",
+    "CreativeSampleGeneratedReferenceCandidateV1",
+    "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1",
+    "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
+)
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -427,13 +449,26 @@ def test_all_pre_generated_reference_candidate_schema_bytes_remain_unchanged() -
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_generated_reference_rights_current_status_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_SCHEMA_SHA256) == 76
+    assert len(PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_MODEL_NAMES) == 76
+    assert tuple(model.__name__ for model in MODELS[:76]) == (
+        PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_MODEL_NAMES
+    )
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:76]}
+    assert set(PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
         CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 76
+    assert len(model_names) == 83
     assert len(model_names) == len(set(model_names))
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert [model.__name__ for model in MODELS[68:70]] == [
@@ -449,6 +484,15 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
         "CreativeSampleGeneratedReferenceCandidateV1",
         "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1",
         "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
+    ]
+    assert [model.__name__ for model in MODELS[76:83]] == [
+        "CreativeSampleGeneratedReferenceRightsManifestV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusRequestV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusInstructionV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
     ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
@@ -509,6 +553,98 @@ def test_generated_reference_candidate_schemas_are_closed_and_all_fields_require
             )
 
     inline_definitions = set().union(*expected_inline_definitions.values())
+    registered_names = {model.__name__ for model in MODELS}
+    assert inline_definitions.isdisjoint(registered_names)
+    assert not any(
+        (Path("schemas") / f"{name}.schema.json").exists() for name in inline_definitions
+    )
+
+
+def test_generated_reference_rights_status_schemas_are_closed_and_all_fields_required() -> None:
+    schema_names = (
+        "CreativeSampleGeneratedReferenceRightsManifestV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusRequestV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusInstructionV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1",
+        "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
+    )
+    schemas = {
+        name: json.loads(Path(f"schemas/{name}.schema.json").read_text())
+        for name in schema_names
+    }
+    expected_top_level_fields = {
+        "CreativeSampleGeneratedReferenceRightsManifestV1": 78,
+        "CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1": 49,
+        "CreativeSampleGeneratedReferenceCurrentStatusRequestV1": 38,
+        "CreativeSampleGeneratedReferenceCurrentStatusInstructionV1": 43,
+        "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1": 44,
+        "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1": 35,
+        "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1": 56,
+    }
+    inline_definitions = {
+        "GeneratedReferenceRightsManifestEvidenceReferenceV1",
+        "GeneratedReferenceRightsManifestGateResultV1",
+        "GeneratedReferenceRightsScopeProposalV1",
+        "GeneratedReferenceReviewedRightsScopeV1",
+        "GeneratedReferenceCurrentStatusSubjectClosureV1",
+        "GeneratedReferenceCurrentStatusObservationRefV1",
+        "GeneratedReferenceCurrentStatusChainHeadRefV1",
+        "GeneratedReferenceCurrentStatusChainLinkV1",
+        "GeneratedReferenceCurrentStatusCategoryResultV1",
+    }
+    zero_authority_literals: dict[str, object] = {
+        "authority_scope": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "generation_authorized": False,
+        "execution_authorized": False,
+        "publication_authorized": False,
+        "remote_processing_allowed": False,
+        "retention_allowed": False,
+        "training_allowed": False,
+        "publication_allowed": False,
+        "automated_execution_allowed": False,
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+        "grants_rights": False,
+        "grants_qualification": False,
+        "grants_execution_authority": False,
+        "eligible_for_asset_promotion": False,
+        "replaces_rights_manifest": False,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+    }
+
+    observed_definitions: set[str] = set()
+    for name, expected_count in expected_top_level_fields.items():
+        schema = schemas[name]
+        assert schema["additionalProperties"] is False
+        assert len(schema["properties"]) == expected_count
+        assert len(schema["required"]) == expected_count
+        assert set(schema["required"]) == set(schema["properties"])
+        assert schema["properties"]["evidence_scope"]["const"] == (
+            "EXPLICIT_FINITE_BOUND_SET_ONLY"
+        )
+        for field_name, literal in zero_authority_literals.items():
+            assert schema["properties"][field_name]["const"] == literal
+
+        definitions = schema.get("$defs", {})
+        observed_definitions.update(definitions)
+        assert set(definitions) <= inline_definitions | set(schema_names)
+        declared_objects = {"<root>": schema, **definitions}
+        for object_name, object_schema in declared_objects.items():
+            if object_schema.get("type") != "object" or "properties" not in object_schema:
+                continue
+            assert object_schema.get("additionalProperties") is False, (name, object_name)
+            assert set(object_schema.get("required", ())) == set(object_schema["properties"]), (
+                name,
+                object_name,
+            )
+
+    assert inline_definitions <= observed_definitions
     registered_names = {model.__name__ for model in MODELS}
     assert inline_definitions.isdisjoint(registered_names)
     assert not any(

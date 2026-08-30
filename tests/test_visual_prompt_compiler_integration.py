@@ -1587,10 +1587,10 @@ def test_integrity_verification_does_not_claim_historical_catalog_readmission(
         compile_creative_sample_visual_prompts(synthetic_spec, _request(synthetic_spec))
 
 
-def test_schema_registry_appends_only_the_two_formal_top_level_contracts() -> None:
+def test_schema_registry_preserves_compiler_integration_at_frozen_indexes() -> None:
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 76
+    assert len(MODELS) == 83
     assert [model.__name__ for model in MODELS[68:70]] == [
         "CreativeSampleVisualPromptCompileRequestV1",
         "CreativeSampleVisualPromptSidecarV1",
