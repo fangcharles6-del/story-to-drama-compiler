@@ -1149,7 +1149,8 @@ as a reusable or recursively promotable authority token.
 
 ## Compiler, Runtime, Provider and publication isolation
 
-Any conforming implementation must not import, call or modify:
+Subject only to the narrow read-only validation exception below, any conforming implementation must
+not import, call or modify:
 
 - current Compiler entry points, `CreativeSampleSpec`, Storyboard, NIR, PIR, Job or Compilation;
 - `CharacterAssetVersion`, `SceneAssetVersion`, Character/Scene Bible or active binding;
@@ -1160,6 +1161,14 @@ Any conforming implementation must not import, call or modify:
 - QC automation, publication, posting or release;
 - retention/deletion automation or training controls; or
 - migration, backfill or current/latest discovery code.
+
+The promotion module may make one-way, read-only imports of `CharacterAssetVersion`,
+`SceneAssetVersion`, `CharacterBible`, `SceneBible` and their released pure validators and codecs
+solely to exact-type revalidate explicitly caller-supplied snapshots, verify their active binding and
+derive or verify the frozen primary-binding projection. This exception does not permit mutation of
+those Contracts, Bibles or active bindings; current/latest discovery; primary-media I/O; persistence;
+reverse imports from existing Compiler, Bible, Runtime or Provider modules; invocation of current
+Compiler entry points; or Runtime, Provider or execution-path integration.
 
 Any conforming pure operation would return immutable values to its caller. It would not promise a
 database transaction, write a file, copy media or persist a Sidecar.
