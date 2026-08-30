@@ -7,6 +7,11 @@ from pydantic import BaseModel
 
 from sdc import contracts
 from sdc.creative_pilot import CreativeSamplePilotPack, CreativeSamplePilotSpecDocument
+from sdc.generated_reference_asset_promotion import (
+    CreativeSampleGeneratedReferenceAssetPromotionDecisionV1,
+    CreativeSampleGeneratedReferenceAssetPromotionRequestV1,
+    CreativeSampleGeneratedReferenceEligibleAssetSidecarV1,
+)
 from sdc.generated_reference_candidate import (
     CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
     CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
@@ -155,6 +160,9 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
     CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
     CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1,
+    CreativeSampleGeneratedReferenceAssetPromotionRequestV1,
+    CreativeSampleGeneratedReferenceAssetPromotionDecisionV1,
+    CreativeSampleGeneratedReferenceEligibleAssetSidecarV1,
 ]
 
 

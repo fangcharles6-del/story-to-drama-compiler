@@ -1,0 +1,648 @@
+{
+  "$defs": {
+    "GeneratedReferencePromotionPrimaryAssetBindingV1": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "asset_purpose": {
+          "enum": [
+            "CHARACTER_REFERENCE_ASSET",
+            "SCENE_REFERENCE_ASSET"
+          ],
+          "title": "Asset Purpose",
+          "type": "string"
+        },
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "bible_active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Bible Active Asset Version Id",
+          "type": "string"
+        },
+        "binding_profile": {
+          "const": "sdc.generated-reference-promotion-primary-asset-binding.v1",
+          "title": "Binding Profile",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "legacy_asset_version_projection_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Legacy Asset Version Projection Sha256",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "primary_asset_binding_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Primary Asset Binding Sha256",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "binding_profile",
+        "primary_asset_binding_sha256",
+        "asset_purpose",
+        "subject_id",
+        "asset_version_id",
+        "legacy_asset_version_projection_sha256",
+        "version",
+        "content_sha256",
+        "media_type",
+        "approval_ref",
+        "provenance",
+        "bible_active_asset_version_id"
+      ],
+      "title": "GeneratedReferencePromotionPrimaryAssetBindingV1",
+      "type": "object"
+    },
+    "GeneratedReferenceReviewedRightsScopeV1": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_use_scope": {
+          "items": {
+            "pattern": "^[A-Z][A-Z0-9_]{0,255}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Allowed Use Scope",
+          "type": "array"
+        },
+        "brand_and_protected_content_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Brand And Protected Content Basis",
+          "type": "string"
+        },
+        "likeness_privacy_and_sensitive_data_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Likeness Privacy And Sensitive Data Basis",
+          "type": "string"
+        },
+        "output_copyright_and_commercial_scope_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Output Copyright And Commercial Scope Basis",
+          "type": "string"
+        },
+        "retention_and_deletion_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Retention And Deletion Basis",
+          "type": "string"
+        },
+        "review_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Review Basis",
+          "type": "string"
+        },
+        "reviewed_scope_valid_until": {
+          "title": "Reviewed Scope Valid Until",
+          "type": "string"
+        },
+        "territory_scope": {
+          "items": {
+            "pattern": "^[A-Z][A-Z0-9_]{0,255}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Territory Scope",
+          "type": "array"
+        },
+        "training_use_prohibition_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Training Use Prohibition Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "territory_scope",
+        "allowed_use_scope",
+        "reviewed_scope_valid_until",
+        "output_copyright_and_commercial_scope_basis",
+        "likeness_privacy_and_sensitive_data_basis",
+        "brand_and_protected_content_basis",
+        "retention_and_deletion_basis",
+        "training_use_prohibition_basis",
+        "review_basis"
+      ],
+      "title": "GeneratedReferenceReviewedRightsScopeV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "authority_scope": {
+      "const": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+      "title": "Authority Scope",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "bible_mutation_requested": {
+      "const": false,
+      "title": "Bible Mutation Requested",
+      "type": "boolean"
+    },
+    "candidate_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Sha256",
+      "type": "string"
+    },
+    "composite_media_unsplit": {
+      "const": true,
+      "title": "Composite Media Unsplit",
+      "type": "boolean"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-generated-reference-asset-promotion-request-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "eligible_for_separate_role_binding_review": {
+      "const": false,
+      "title": "Eligible For Separate Role Binding Review",
+      "type": "boolean"
+    },
+    "evidence_scope": {
+      "const": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "title": "Evidence Scope",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "maker_action_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Maker Action Sha256",
+      "type": "string"
+    },
+    "maker_identity_ref_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Maker Identity Ref Sha256",
+      "type": "string"
+    },
+    "maker_prepared_at": {
+      "title": "Maker Prepared At",
+      "type": "string"
+    },
+    "manifest_at": {
+      "title": "Manifest At",
+      "type": "string"
+    },
+    "manifest_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "manifest_valid_until": {
+      "title": "Manifest Valid Until",
+      "type": "string"
+    },
+    "media_content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Media Content Sha256",
+      "type": "string"
+    },
+    "media_size_bytes": {
+      "maximum": 67108864,
+      "minimum": 1,
+      "title": "Media Size Bytes",
+      "type": "integer"
+    },
+    "media_technical_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Media Technical Record Sha256",
+      "type": "string"
+    },
+    "media_type": {
+      "const": "image/png",
+      "title": "Media Type",
+      "type": "string"
+    },
+    "output_ordinal": {
+      "const": 0,
+      "title": "Output Ordinal",
+      "type": "integer"
+    },
+    "policy_document_sha256": {
+      "const": "94375b15ceb47d216611adf8d32eb5bac5a5f7544268ff07eca3f59919a4f9f1",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "sdc.generated-reference-asset-promotion-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "1.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "promotion_performed": {
+      "const": false,
+      "title": "Promotion Performed",
+      "type": "boolean"
+    },
+    "promotion_review_payload_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Review Payload Sha256",
+      "type": "string"
+    },
+    "provider_attempt_outcome_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Provider Attempt Outcome Id",
+      "type": "string"
+    },
+    "provider_attempt_outcome_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Provider Attempt Outcome Sha256",
+      "type": "string"
+    },
+    "provider_input_requested": {
+      "const": false,
+      "title": "Provider Input Requested",
+      "type": "boolean"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "qualification_decision_at": {
+      "title": "Qualification Decision At",
+      "type": "string"
+    },
+    "qualification_decision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Qualification Decision Id",
+      "type": "string"
+    },
+    "qualification_decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualification Decision Sha256",
+      "type": "string"
+    },
+    "qualification_request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Qualification Request Id",
+      "type": "string"
+    },
+    "qualification_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualification Request Sha256",
+      "type": "string"
+    },
+    "qualification_valid_until": {
+      "title": "Qualification Valid Until",
+      "type": "string"
+    },
+    "reference_prompt_artifact_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reference Prompt Artifact Sha256",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "request_basis": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Request Basis",
+      "type": "string"
+    },
+    "request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_scope": {
+      "const": "GENERATED_REFERENCE_ELIGIBLE_ASSET_SIDECAR_ONLY",
+      "title": "Request Scope",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "request_valid_until": {
+      "title": "Request Valid Until",
+      "type": "string"
+    },
+    "requested_as_of": {
+      "title": "Requested As Of",
+      "type": "string"
+    },
+    "requested_as_of_assessment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested As Of Assessment Sha256",
+      "type": "string"
+    },
+    "requested_as_of_status": {
+      "const": "CURRENT",
+      "title": "Requested As Of Status",
+      "type": "string"
+    },
+    "requested_at": {
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requested_coverage_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested Coverage Set Sha256",
+      "type": "string"
+    },
+    "requested_explicit_chain_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested Explicit Chain Set Sha256",
+      "type": "string"
+    },
+    "requested_joint_replay_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested Joint Replay Sha256",
+      "type": "string"
+    },
+    "requested_primary_asset_binding": {
+      "$ref": "#/$defs/GeneratedReferencePromotionPrimaryAssetBindingV1"
+    },
+    "requested_representation": {
+      "const": "TYPED_ELIGIBLE_ASSET_SIDECAR",
+      "title": "Requested Representation",
+      "type": "string"
+    },
+    "requested_status_receipt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Requested Status Receipt Id",
+      "type": "string"
+    },
+    "requested_status_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested Status Receipt Sha256",
+      "type": "string"
+    },
+    "requested_status_record_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Requested Status Record Id",
+      "type": "string"
+    },
+    "requested_status_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Requested Status Record Sha256",
+      "type": "string"
+    },
+    "requested_status_valid_until": {
+      "title": "Requested Status Valid Until",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "reviewed_rights_scope": {
+      "$ref": "#/$defs/GeneratedReferenceReviewedRightsScopeV1"
+    },
+    "role_assignment_embedded": {
+      "const": false,
+      "title": "Role Assignment Embedded",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sidecar_materialized": {
+      "const": false,
+      "title": "Sidecar Materialized",
+      "type": "boolean"
+    },
+    "status": {
+      "const": "GENERATED_REFERENCE_ASSET_PROMOTION_REQUESTED",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_subject_closure_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Status Subject Closure Id",
+      "type": "string"
+    },
+    "status_subject_closure_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Status Subject Closure Sha256",
+      "type": "string"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    }
+  },
+  "required": [
+    "authority_scope",
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "document_type",
+    "request_scope",
+    "request_id",
+    "request_sha256",
+    "policy_id",
+    "policy_version",
+    "policy_document_sha256",
+    "promotion_review_payload_sha256",
+    "reference_prompt_artifact_sha256",
+    "provider_attempt_outcome_id",
+    "provider_attempt_outcome_sha256",
+    "candidate_id",
+    "candidate_sha256",
+    "output_ordinal",
+    "media_type",
+    "media_content_sha256",
+    "media_size_bytes",
+    "media_technical_record_sha256",
+    "qualification_request_id",
+    "qualification_request_sha256",
+    "qualification_decision_id",
+    "qualification_decision_sha256",
+    "qualification_decision_at",
+    "qualification_valid_until",
+    "manifest_id",
+    "manifest_sha256",
+    "manifest_at",
+    "manifest_valid_until",
+    "reviewed_rights_scope",
+    "status_subject_closure_id",
+    "status_subject_closure_sha256",
+    "requested_status_record_id",
+    "requested_status_record_sha256",
+    "requested_status_receipt_id",
+    "requested_status_receipt_sha256",
+    "requested_explicit_chain_set_sha256",
+    "requested_coverage_set_sha256",
+    "requested_joint_replay_sha256",
+    "requested_as_of_assessment_sha256",
+    "requested_as_of",
+    "requested_as_of_status",
+    "requested_status_valid_until",
+    "requested_primary_asset_binding",
+    "maker_identity_ref_sha256",
+    "maker_action_sha256",
+    "maker_prepared_at",
+    "requested_at",
+    "request_valid_until",
+    "request_basis",
+    "requested_representation",
+    "composite_media_unsplit",
+    "role_assignment_embedded",
+    "bible_mutation_requested",
+    "provider_input_requested",
+    "promotion_performed",
+    "sidecar_materialized",
+    "eligible_for_separate_role_binding_review",
+    "status",
+    "evidence_scope"
+  ],
+  "title": "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
+  "type": "object"
+}
