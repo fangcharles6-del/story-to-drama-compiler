@@ -7082,7 +7082,9 @@ def _target_category_result(
             for right in relied[index + 1 :]:
                 left_chain = chain_lookup[left.observation_id]
                 right_chain = chain_lookup[right.observation_id]
-                comparable = left_chain is right_chain and (
+                if left_chain is not right_chain:
+                    continue
+                comparable = (
                     left.observation_id
                     in right_chain._ancestor_ids_by_observation_id[right.observation_id]
                     or right.observation_id
@@ -7091,7 +7093,7 @@ def _target_category_result(
                 if comparable:
                     continue
                 reconciled = any(
-                    chain_lookup[candidate.observation_id] is left_chain is right_chain
+                    chain_lookup[candidate.observation_id] is left_chain
                     and left.observation_id
                     in left_chain._ancestor_ids_by_observation_id[candidate.observation_id]
                     and right.observation_id

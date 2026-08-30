@@ -401,6 +401,7 @@ def _build_status_closure(
     overrides: Mapping[str, _ObservationOverride] | None = None,
     *,
     unresolved_fork_category: str | None = None,
+    independent_same_claim_category: str | None = None,
 ) -> _StatusClosure:
     materials = _manifest_materials()
     manifest = materials.manifest
@@ -450,6 +451,19 @@ def _build_status_closure(
             )
             target_inputs.extend((left, right))
             chain_members[category] = (genesis, left, right)
+        elif category == independent_same_claim_category:
+            left = _build_observation_input(
+                subject_closure=subject_closure,
+                source=source,
+                suffix="left",
+            )
+            right = _build_observation_input(
+                subject_closure=subject_closure,
+                source=source,
+                suffix="right",
+            )
+            target_inputs.extend((left, right))
+            chain_members[category] = (left, right)
         else:
             target_inputs.append(genesis)
             chain_members[category] = (genesis,)
@@ -491,6 +505,17 @@ def _build_status_closure(
     unsorted_chains: list[rights.GeneratedReferenceCurrentStatusExplicitChainInput] = []
     for category in rights.CURRENT_STATUS_CATEGORY_ORDER:
         members = chain_members[category]
+        if category == independent_same_claim_category:
+            unsorted_chains.extend(
+                rights.GeneratedReferenceCurrentStatusExplicitChainInput(
+                    target_observation_refs=(
+                        ref_by_id[member.observation.observation_id],
+                    ),
+                    observation_inputs=(member,),
+                )
+                for member in members
+            )
+            continue
         target_members = members[1:] if category == unresolved_fork_category else members
         unsorted_chains.append(
             rights.GeneratedReferenceCurrentStatusExplicitChainInput(
@@ -1199,12 +1224,49 @@ def test_exactly_stale_evidence_is_not_assessed_and_does_not_become_structure_fa
 def test_complete_unreconciled_fork_is_conflict_not_structural_failure() -> None:
     closure = _build_status_closure(unresolved_fork_category="HOLD_ACTIVE")
     result = closure.instruction.category_results[0]
+    fork_chain = next(
+        item
+        for item in closure.chain_inputs
+        if item.target_observation_refs[0].category == "HOLD_ACTIVE"
+    )
+    replay = rights.replay_generated_reference_current_status_chain(fork_chain)
+    left_id, right_id = (
+        item.observation_id for item in fork_chain.target_observation_refs
+    )
     assert result.category == "HOLD_ACTIVE"
     assert result.claim_value == "CONFLICT"
     assert result.deterministic_effect == "INDETERMINATE"
     assert len(result.category_observation_refs) == 2
     assert len(result.relied_on_observation_refs) == 2
+    assert left_id not in replay._ancestor_ids_by_observation_id[right_id]
+    assert right_id not in replay._ancestor_ids_by_observation_id[left_id]
     assert closure.decision.recorded_status == "INDETERMINATE"
+
+
+def test_independent_chains_with_the_same_usable_claim_corroborate() -> None:
+    closure = _build_status_closure(independent_same_claim_category="HOLD_ACTIVE")
+    result = closure.instruction.category_results[0]
+    hold_chains = tuple(
+        item
+        for item in closure.chain_inputs
+        if item.target_observation_refs[0].category == "HOLD_ACTIVE"
+    )
+    logical_chain_keys = {
+        (replay.chain_scope_sha256, replay.genesis_observation_id)
+        for replay in (
+            rights.replay_generated_reference_current_status_chain(item)
+            for item in hold_chains
+        )
+    }
+
+    assert len(hold_chains) == 2
+    assert len(logical_chain_keys) == 2
+    assert result.category == "HOLD_ACTIVE"
+    assert result.claim_value == "ABSENT_WITH_EVIDENCE"
+    assert result.deterministic_effect == "ADVERSE_ABSENT"
+    assert len(result.category_observation_refs) == 2
+    assert len(result.relied_on_observation_refs) == 2
+    assert closure.decision.recorded_status == "CURRENT"
 
 
 def test_missing_cycle_shaped_nonancestor_and_omitted_target_structures_fail() -> None:
