@@ -2382,11 +2382,14 @@ def test_retained_json_admission_uses_global_priority_and_stable_depth_error() -
             )
         assert transport_error.value.code == "DOCUMENT_RESOURCE_LIMIT_EXCEEDED"
 
-    parser_depth = b'{"a":' * 1_500 + b"0" + b"}" * 1_500 + b"\n"
-    with pytest.raises(ValueError, match="structural resource limit"):
-        rights.CreativeSampleGeneratedReferenceRightsManifestV1.model_validate_json(
-            parser_depth
+    for nesting_depth in (64, 1_500):
+        parser_depth = (
+            b'{"a":' * nesting_depth + b"0" + b"}" * nesting_depth + b"\n"
         )
+        with pytest.raises(ValueError, match="structural resource limit"):
+            rights.CreativeSampleGeneratedReferenceRightsManifestV1.model_validate_json(
+                parser_depth
+            )
 
 
 def test_builder_exact_runtime_shape_precedes_resource_and_canonical_admission() -> None:

@@ -902,7 +902,7 @@ def _upper_bound(value: str, *, field: str) -> datetime:
 
 def _validate_json_tree(value: object, *, field: str = "value", depth: int = 1) -> None:
     if depth > _MAX_JSON_DEPTH:
-        _invalid(f"{field} exceeds maximum depth")
+        _invalid(f"{field} exceeds maximum depth (structural resource limit)")
     if value is None or type(value) in {bool, int, str}:
         if type(value) is str:
             _canonical_string(value, field=field)
