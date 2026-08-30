@@ -11,10 +11,11 @@ import hashlib
 import json
 import re
 import unicodedata
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Annotated, ClassVar, Literal, NoReturn, Self, cast
+from types import UnionType
+from typing import Annotated, ClassVar, Literal, NoReturn, Self, Union, cast, get_args, get_origin
 
 from pydantic import (
     BaseModel,
@@ -27,12 +28,18 @@ from pydantic import (
 )
 
 from sdc.generated_reference_candidate import (
+    EVIDENCE_CATEGORY_ORDER,
+    GENERATED_REFERENCE_CANDIDATE_QUALIFICATION_DECISION_SHA256_DOMAIN,
+    GENERATED_REFERENCE_CANDIDATE_QUALIFICATION_REQUEST_SHA256_DOMAIN,
+    GENERATED_REFERENCE_CANDIDATE_SHA256_DOMAIN,
+    GENERATED_REFERENCE_PROVIDER_ATTEMPT_OUTCOME_SHA256_DOMAIN,
     CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
     CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
     CreativeSampleGeneratedReferenceCandidateV1,
     CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
     GeneratedReferenceQualificationEvidenceInput,
     GeneratedReferenceQualificationEvidenceReferenceV1,
+    GeneratedReferenceQualificationGateResultV1,
     creative_sample_generated_reference_candidate_qualification_decision_projection,
     creative_sample_generated_reference_candidate_qualification_decision_sha256,
     creative_sample_generated_reference_candidate_qualification_request_projection,
@@ -41,7 +48,9 @@ from sdc.generated_reference_candidate import (
     creative_sample_generated_reference_provider_attempt_outcome_sha256,
 )
 from sdc.visual_reference_prompt_compiler import (
+    VISUAL_REFERENCE_PROMPT_COMPILER_ARTIFACT_SHA256_DOMAIN,
     CreativeSampleReferenceVisualPromptArtifactV1,
+    _FrozenStringMap,
     creative_sample_reference_visual_prompt_artifact_sha256,
 )
 
@@ -454,6 +463,148 @@ CurrentStatusLimitationCode = Literal[
     "LEGAL_EFFECT_NOT_DETERMINED",
 ]
 
+GeneratedReferenceFormalErrorCodeV1 = Literal[
+    "EXACT_INPUT_TYPE_REQUIRED",
+    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+    "CANONICAL_JSON_REQUIRED",
+    "CONTRACT_FIELD_INVALID",
+    "POLICY_IDENTITY_MISMATCH",
+    "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+    "UPSTREAM_CLOSURE_MISMATCH",
+    "TIME_WINDOW_INVALID_OR_EXPIRED",
+    "ROLE_SEPARATION_VIOLATION",
+    "MANIFEST_GATE_NOT_PASS",
+    "CHAIN_STRUCTURE_INVALID",
+    "EVIDENCE_SCOPE_INCOMPLETE",
+    "REPLAY_MISMATCH",
+    "AUTHORITY_SURFACE_NONZERO",
+    "PROHIBITED_BOUNDARY_CONNECTION",
+]
+GeneratedReferenceChainReplayErrorCodeV1 = Literal[
+    "COUNT_OUT_OF_RANGE",
+    "OBSERVATION_CONTRACT_INVALID",
+    "DUPLICATE_OBSERVATION_ID",
+    "DUPLICATE_OBSERVATION_DOCUMENT_SHA256",
+    "DUPLICATE_OBSERVATION_CHAIN_SHA256",
+    "CHAIN_SCOPE_MISMATCH",
+    "ORPHAN_REFERENCE",
+    "REFERENCE_ANCHOR_MISMATCH",
+    "IMMEDIATE_LINK_INVALID",
+    "CYCLE_DETECTED",
+    "GENESIS_COUNT_INVALID",
+    "DISCONNECTED_GRAPH",
+    "RECONCILIATION_HEAD_ANCESTRY_CONFLICT",
+    "INTERNAL_RESULT_INCONSISTENCY",
+]
+GeneratedReferenceChainCoverageErrorCodeV1 = Literal[
+    "CHAIN_COLLECTION_CONTRACT_INVALID",
+    "CHAIN_COUNT_OUT_OF_RANGE",
+    "CHAIN_INPUT_CONTRACT_INVALID",
+    "TARGET_COUNT_OUT_OF_RANGE",
+    "OBSERVATION_COUNT_OUT_OF_RANGE",
+    "AGGREGATE_CANONICAL_BYTES_OUT_OF_RANGE",
+    "EVIDENCE_RECORD_INVALID",
+    "REQUEST_TARGET_COVERED_MULTIPLE_TIMES",
+    "REQUEST_TARGET_ANCHOR_MISMATCH",
+    "REQUEST_TARGET_NOT_IN_RECORD",
+    "REQUEST_OBSERVATION_NOT_COVERED",
+    "CHAIN_REPLAY_FAILED",
+    "DUPLICATE_LOGICAL_CHAIN",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_ID",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_DOCUMENT_SHA256",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_CHAIN_SHA256",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_SET_SHA256",
+    "REQUEST_TARGET_NOT_RESOLVED_IN_CHAIN",
+    "CHAIN_TARGET_SET_MISMATCH",
+    "UNRELATED_SUPPORT_OBSERVATION",
+    "RECORD_REBUILD_MISMATCH",
+    "INTERNAL_RESULT_INCONSISTENCY",
+]
+GeneratedReferenceJointReplayErrorCodeV1 = Literal[
+    "RECORD_CHAIN_COVERAGE_REPLAY_FAILED",
+    "TARGET_OBSERVATION_DERIVATION_INCONSISTENT",
+    "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED",
+    "INTERNAL_RESULT_INCONSISTENCY",
+]
+GeneratedReferenceAsOfAssessmentErrorCodeV1 = Literal[
+    "AS_OF_CONTRACT_INVALID",
+    "RECORD_JOINT_REPLAY_FAILED",
+    "AS_OF_PRECEDES_RECORD_EVALUATION",
+    "INTERNAL_RESULT_INCONSISTENCY",
+]
+GeneratedReferenceReceiptErrorCodeV1 = Literal[
+    "RECEIPT_CONTRACT_INVALID",
+    "AS_OF_ASSESSMENT_REPLAY_FAILED",
+    "ASSESSMENT_RESULT_INCONSISTENT",
+    "INTERNAL_RECEIPT_INCONSISTENCY",
+    "RECEIPT_REPLAY_MISMATCH",
+]
+
+_GENERATED_REFERENCE_CHAIN_REPLAY_ERROR_PRIORITY: tuple[
+    GeneratedReferenceChainReplayErrorCodeV1, ...
+] = (
+    "COUNT_OUT_OF_RANGE",
+    "OBSERVATION_CONTRACT_INVALID",
+    "DUPLICATE_OBSERVATION_ID",
+    "DUPLICATE_OBSERVATION_DOCUMENT_SHA256",
+    "DUPLICATE_OBSERVATION_CHAIN_SHA256",
+    "CHAIN_SCOPE_MISMATCH",
+    "ORPHAN_REFERENCE",
+    "REFERENCE_ANCHOR_MISMATCH",
+    "IMMEDIATE_LINK_INVALID",
+    "CYCLE_DETECTED",
+    "GENESIS_COUNT_INVALID",
+    "DISCONNECTED_GRAPH",
+    "RECONCILIATION_HEAD_ANCESTRY_CONFLICT",
+    "INTERNAL_RESULT_INCONSISTENCY",
+)
+_GENERATED_REFERENCE_CHAIN_COVERAGE_ERROR_PRIORITY: tuple[
+    GeneratedReferenceChainCoverageErrorCodeV1, ...
+] = (
+    "CHAIN_COLLECTION_CONTRACT_INVALID",
+    "CHAIN_COUNT_OUT_OF_RANGE",
+    "CHAIN_INPUT_CONTRACT_INVALID",
+    "TARGET_COUNT_OUT_OF_RANGE",
+    "OBSERVATION_COUNT_OUT_OF_RANGE",
+    "AGGREGATE_CANONICAL_BYTES_OUT_OF_RANGE",
+    "EVIDENCE_RECORD_INVALID",
+    "REQUEST_TARGET_COVERED_MULTIPLE_TIMES",
+    "REQUEST_TARGET_ANCHOR_MISMATCH",
+    "REQUEST_TARGET_NOT_IN_RECORD",
+    "REQUEST_OBSERVATION_NOT_COVERED",
+    "CHAIN_REPLAY_FAILED",
+    "DUPLICATE_LOGICAL_CHAIN",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_ID",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_DOCUMENT_SHA256",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_CHAIN_SHA256",
+    "CROSS_CHAIN_DUPLICATE_OBSERVATION_SET_SHA256",
+    "REQUEST_TARGET_NOT_RESOLVED_IN_CHAIN",
+    "CHAIN_TARGET_SET_MISMATCH",
+    "UNRELATED_SUPPORT_OBSERVATION",
+    "RECORD_REBUILD_MISMATCH",
+    "INTERNAL_RESULT_INCONSISTENCY",
+)
+
+_GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY: tuple[
+    GeneratedReferenceFormalErrorCodeV1, ...
+] = (
+    "EXACT_INPUT_TYPE_REQUIRED",
+    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+    "CANONICAL_JSON_REQUIRED",
+    "CONTRACT_FIELD_INVALID",
+    "POLICY_IDENTITY_MISMATCH",
+    "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+    "UPSTREAM_CLOSURE_MISMATCH",
+    "TIME_WINDOW_INVALID_OR_EXPIRED",
+    "ROLE_SEPARATION_VIOLATION",
+    "MANIFEST_GATE_NOT_PASS",
+    "CHAIN_STRUCTURE_INVALID",
+    "EVIDENCE_SCOPE_INCOMPLETE",
+    "REPLAY_MISMATCH",
+    "AUTHORITY_SURFACE_NONZERO",
+    "PROHIBITED_BOUNDARY_CONNECTION",
+)
+
 MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER: tuple[ManifestEvidenceCategory, ...] = (
     "SUBMISSION_TIME_AUTHORIZATION",
     "PROVIDER_TERMS_AT_SUBMISSION",
@@ -537,53 +688,97 @@ _QUALIFICATION_GATE_EVIDENCE_CATEGORIES: tuple[tuple[str, ...], ...] = (
 )
 
 
-class GeneratedReferenceRightsCurrentStatusError(ValueError):
-    """The ADR-044 deterministic boundary failed closed."""
+class _GeneratedReferenceBoundaryError(ValueError):
+    """One generated-reference ADR-044 boundary failed closed."""
+
+    code: str
 
     def __init__(self, code: str, message: str) -> None:
         self.code = code
         super().__init__(f"{code}: {message}")
 
 
-class GeneratedReferenceChainReplayError(GeneratedReferenceRightsCurrentStatusError):
-    """One explicit logical chain failed structural replay."""
+class GeneratedReferenceRightsCurrentStatusError(_GeneratedReferenceBoundaryError):
+    """A formal ADR-044 builder or verifier failed closed."""
 
+    code: GeneratedReferenceFormalErrorCodeV1
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None
 
-class GeneratedReferenceChainCoverageError(GeneratedReferenceRightsCurrentStatusError):
-    """The explicit chain set failed Request coverage."""
-
-    def __init__(self, code: str, message: str, *, replay_code: str | None = None) -> None:
+    def __init__(
+        self,
+        code: GeneratedReferenceFormalErrorCodeV1,
+        message: str,
+        *,
+        replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
+    ) -> None:
         self.replay_code = replay_code
         super().__init__(code, message)
 
 
-class GeneratedReferenceJointReplayError(GeneratedReferenceRightsCurrentStatusError):
-    """Evidence Record reconstruction failed."""
+class GeneratedReferenceChainReplayError(_GeneratedReferenceBoundaryError):
+    """One explicit logical chain failed structural replay."""
+
+    code: GeneratedReferenceChainReplayErrorCodeV1
+
+    def __init__(
+        self, code: GeneratedReferenceChainReplayErrorCodeV1, message: str
+    ) -> None:
+        super().__init__(code, message)
+
+
+class GeneratedReferenceChainCoverageError(_GeneratedReferenceBoundaryError):
+    """The explicit chain set failed Request coverage."""
+
+    code: GeneratedReferenceChainCoverageErrorCodeV1
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None
 
     def __init__(
         self,
-        code: str,
+        code: GeneratedReferenceChainCoverageErrorCodeV1,
         message: str,
         *,
-        coverage_code: str | None = None,
-        replay_code: str | None = None,
+        replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
+    ) -> None:
+        self.replay_code = replay_code
+        super().__init__(code, message)
+
+
+class GeneratedReferenceJointReplayError(_GeneratedReferenceBoundaryError):
+    """Evidence Record reconstruction failed."""
+
+    code: GeneratedReferenceJointReplayErrorCodeV1
+    coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None
+
+    def __init__(
+        self,
+        code: GeneratedReferenceJointReplayErrorCodeV1,
+        message: str,
+        *,
+        coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None = None,
+        replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
     ) -> None:
         self.coverage_code = coverage_code
         self.replay_code = replay_code
         super().__init__(code, message)
 
 
-class GeneratedReferenceAsOfAssessmentError(GeneratedReferenceRightsCurrentStatusError):
+class GeneratedReferenceAsOfAssessmentError(_GeneratedReferenceBoundaryError):
     """Historical as-of assessment failed."""
+
+    code: GeneratedReferenceAsOfAssessmentErrorCodeV1
+    joint_replay_code: GeneratedReferenceJointReplayErrorCodeV1 | None
+    coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None
 
     def __init__(
         self,
-        code: str,
+        code: GeneratedReferenceAsOfAssessmentErrorCodeV1,
         message: str,
         *,
-        joint_replay_code: str | None = None,
-        coverage_code: str | None = None,
-        replay_code: str | None = None,
+        joint_replay_code: GeneratedReferenceJointReplayErrorCodeV1 | None = None,
+        coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None = None,
+        replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
     ) -> None:
         self.joint_replay_code = joint_replay_code
         self.coverage_code = coverage_code
@@ -591,24 +786,60 @@ class GeneratedReferenceAsOfAssessmentError(GeneratedReferenceRightsCurrentStatu
         super().__init__(code, message)
 
 
-class GeneratedReferenceReceiptError(GeneratedReferenceRightsCurrentStatusError):
+class GeneratedReferenceReceiptError(_GeneratedReferenceBoundaryError):
     """Receipt creation or same-call verification failed."""
+
+    code: GeneratedReferenceReceiptErrorCodeV1
+    assessment_code: GeneratedReferenceAsOfAssessmentErrorCodeV1 | None
+    joint_replay_code: GeneratedReferenceJointReplayErrorCodeV1 | None
+    coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None
 
     def __init__(
         self,
-        code: str,
+        code: GeneratedReferenceReceiptErrorCodeV1,
         message: str,
         *,
-        assessment_code: str | None = None,
-        joint_replay_code: str | None = None,
-        coverage_code: str | None = None,
-        replay_code: str | None = None,
+        assessment_code: GeneratedReferenceAsOfAssessmentErrorCodeV1 | None = None,
+        joint_replay_code: GeneratedReferenceJointReplayErrorCodeV1 | None = None,
+        coverage_code: GeneratedReferenceChainCoverageErrorCodeV1 | None = None,
+        replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
     ) -> None:
         self.assessment_code = assessment_code
         self.joint_replay_code = joint_replay_code
         self.coverage_code = coverage_code
         self.replay_code = replay_code
         super().__init__(code, message)
+
+
+def _formal_fail(
+    code: GeneratedReferenceFormalErrorCodeV1,
+    message: str,
+    *,
+    replay_code: GeneratedReferenceChainReplayErrorCodeV1 | None = None,
+) -> NoReturn:
+    raise GeneratedReferenceRightsCurrentStatusError(code, message, replay_code=replay_code)
+
+
+class _FormalValidationFailure(ValueError):
+    """Structured Pydantic validation failure for one formal umbrella category."""
+
+    code: GeneratedReferenceFormalErrorCodeV1
+
+    def __init__(self, code: GeneratedReferenceFormalErrorCodeV1, message: str) -> None:
+        self.code = code
+        super().__init__(message)
+
+
+def _validation_fail(code: GeneratedReferenceFormalErrorCodeV1, message: str) -> NoReturn:
+    raise _FormalValidationFailure(code, message)
+
+
+def _require_exact_type(value: object, expected: type[object], *, field: str) -> None:
+    if type(value) is not expected:
+        _formal_fail(
+            "EXACT_INPUT_TYPE_REQUIRED", f"{field} must have exact type {expected.__name__}"
+        )
 
 
 def _invalid(message: str) -> NoReturn:
@@ -790,7 +1021,9 @@ class _StrictFrozenModel(BaseModel):
     @classmethod
     def _reject_subclass_instance(cls, value: object) -> object:
         if isinstance(value, cls) and type(value) is not cls:
-            _invalid(f"{cls.__name__} subclasses are not admitted")
+            _validation_fail(
+                "EXACT_INPUT_TYPE_REQUIRED", f"{cls.__name__} subclasses are not admitted"
+            )
         return value
 
     @classmethod
@@ -805,8 +1038,6 @@ class _StrictFrozenModel(BaseModel):
             raw = bytes(cast(bytearray, json_data))
         if len(raw) > _MAX_FORMAL_DOCUMENT_BYTES:
             _invalid("formal document exceeds byte limit")
-        if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw or not raw.endswith(b"\n"):
-            _invalid("formal JSON must be UTF-8 without BOM/CR and end in one LF")
         try:
             decoded = raw.decode("utf-8")
             parsed = json.loads(
@@ -814,9 +1045,13 @@ class _StrictFrozenModel(BaseModel):
                 object_pairs_hook=_json_no_duplicates,
                 parse_constant=lambda value: _invalid(f"non-finite number: {value}"),
             )
+        except RecursionError as exc:
+            raise ValueError("formal document exceeds structural resource limit") from exc
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise ValueError("formal JSON is invalid") from exc
         _validate_json_tree(parsed)
+        if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw or not raw.endswith(b"\n"):
+            _invalid("formal JSON must be UTF-8 without BOM/CR and end in one LF")
         validated = cls.model_validate(_json_arrays_to_tuples(parsed))
         projected = _explicit_value(validated)
         if not _exact_json_equal(parsed, projected):
@@ -951,11 +1186,17 @@ class GeneratedReferenceRightsManifestEvidenceReferenceV1(_StrictFrozenModel):
             <= _parse_utc(self.observed_at, field="observed_at")
             < _upper_bound(self.effective_until, field="effective_until")
         ):
-            _invalid("Manifest evidence observation must lie in its effective window")
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "Manifest evidence observation must lie in its effective window",
+            )
         if _upper_bound(self.evidence_valid_until, field="evidence_valid_until") > _upper_bound(
             self.effective_until, field="effective_until"
         ):
-            _invalid("evidence_valid_until cannot follow effective_until")
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "evidence_valid_until cannot follow effective_until",
+            )
         return self
 
 
@@ -1089,7 +1330,10 @@ class GeneratedReferenceCurrentStatusSubjectClosureV1(_StrictFrozenModel):
         if _parse_utc(self.manifest_at, field="manifest_at") >= _parse_utc(
             self.manifest_valid_until, field="manifest_valid_until"
         ):
-            _invalid("Manifest validity window must be non-empty")
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "Manifest validity window must be non-empty",
+            )
         return self
 
 
@@ -1125,7 +1369,10 @@ class GeneratedReferenceCurrentStatusObservationRefV1(_StrictFrozenModel):
         if _parse_utc(self.valid_from, field="valid_from") >= _parse_utc(
             self.valid_until, field="valid_until"
         ):
-            _invalid("Observation reference validity window must be non-empty")
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "Observation reference validity window must be non-empty",
+            )
         return self
 
 
@@ -1142,24 +1389,33 @@ class GeneratedReferenceCurrentStatusChainLinkV1(_StrictFrozenModel):
     link_kind: CurrentStatusLinkKind
     chain_scope_sha256: LowerSha256
     predecessor_heads: Annotated[
-        tuple[GeneratedReferenceCurrentStatusChainHeadRefV1, ...], Field(max_length=8)
+        tuple[GeneratedReferenceCurrentStatusChainHeadRefV1, ...],
+        Field(json_schema_extra={"maxItems": 8}),
     ]
 
     @model_validator(mode="after")
     def _cardinality_and_order(self) -> Self:
         expected = {"GENESIS": 0, "SUCCESSOR": 1}
         if self.link_kind in expected and len(self.predecessor_heads) != expected[self.link_kind]:
-            _invalid(f"{self.link_kind} has invalid predecessor cardinality")
+            _validation_fail(
+                "CHAIN_STRUCTURE_INVALID",
+                f"{self.link_kind} has invalid predecessor cardinality",
+            )
         if self.link_kind == "RECONCILIATION" and not 2 <= len(self.predecessor_heads) <= 8:
-            _invalid("RECONCILIATION requires 2..8 predecessor heads")
+            _validation_fail(
+                "CHAIN_STRUCTURE_INVALID", "RECONCILIATION requires 2..8 predecessor heads"
+            )
         keys = tuple(
             (item.observation_id, item.observation_sha256, item.chain_sha256)
             for item in self.predecessor_heads
         )
         if len(keys) != len(set(keys)):
-            _invalid("predecessor heads must be unique")
+            _validation_fail("CHAIN_STRUCTURE_INVALID", "predecessor heads must be unique")
         if self.link_kind == "RECONCILIATION" and keys != tuple(sorted(keys)):
-            _invalid("reconciliation predecessor heads are not in canonical order")
+            _validation_fail(
+                "CHAIN_STRUCTURE_INVALID",
+                "reconciliation predecessor heads are not in canonical order",
+            )
         return self
 
 
@@ -1204,7 +1460,10 @@ class GeneratedReferenceCurrentStatusCategoryResultV1(_StrictFrozenModel):
         if not all(any(candidate == key for candidate in iterator) for key in relied_keys):
             _invalid("relied_on_observation_refs must be a stable subsequence")
         if self.deterministic_effect != _derive_effect(self.category, self.claim_value):
-            _invalid("deterministic_effect does not match category and claim_value")
+            _validation_fail(
+                "REPLAY_MISMATCH",
+                "deterministic_effect does not match category and claim_value",
+            )
         return self
 
 
@@ -1292,6 +1551,7 @@ class CreativeSampleGeneratedReferenceRightsManifestV1(_ZeroAuthorityModel):
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        _validate_manifest_contract(self)
         _validate_identity(
             self,
             id_field="manifest_id",
@@ -1299,109 +1559,16 @@ class CreativeSampleGeneratedReferenceRightsManifestV1(_ZeroAuthorityModel):
             stem="generated_reference_rights_manifest_v1_",
             domain=GENERATED_REFERENCE_RIGHTS_MANIFEST_SHA256_DOMAIN,
         )
-        if tuple(
-            item.category for item in self.review_evidence_refs
-        ) != MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER or tuple(
-            item.ordinal for item in self.review_evidence_refs
-        ) != tuple(range(9)):
-            _invalid("review_evidence_refs must use exact policy order and ordinals")
-        if tuple(item.gate for item in self.gate_results) != MANIFEST_REVIEW_GATE_ORDER or tuple(
-            item.ordinal for item in self.gate_results
-        ) != tuple(range(11)):
-            _invalid("gate_results must use exact policy order and ordinals")
-        if any(item.result != "PASS" for item in self.gate_results):
-            _invalid("a portable Rights Manifest requires all PASS results")
-        record_ids = tuple(item.record_id for item in self.review_evidence_refs)
-        expected_gate_ids = ((),) + tuple((item,) for item in record_ids) + ((),)
-        if tuple(item.evidence_record_ids for item in self.gate_results) != expected_gate_ids:
-            _invalid("gate evidence membership is not the frozen mapping")
-        if (
-            self.gate_results[0].basis != "COMPILER_REVALIDATED_EXACT_ADR042_ADR043_CLOSURE"
-            or self.gate_results[10].basis
-            != "COMPILER_REVALIDATED_DISTINCT_ROLE_AND_ACTION_CLOSURE"
-        ):
-            _invalid("compiler-derived gate basis drift")
-        reviewed = self.reviewed_rights_scope
-        proposed = self.proposed_rights_scope
-        if not set(reviewed.territory_scope).issubset(proposed.territory_scope) or not set(
-            reviewed.allowed_use_scope
-        ).issubset(proposed.allowed_use_scope):
-            _invalid("reviewed Rights scope must be a subset of proposed scope")
-        expected_bases = (
-            self.gate_results[4].basis,
-            self.gate_results[5].basis,
-            self.gate_results[6].basis,
-            self.gate_results[8].basis,
-            self.gate_results[9].basis,
-        )
-        actual_bases = (
-            reviewed.output_copyright_and_commercial_scope_basis,
-            reviewed.likeness_privacy_and_sensitive_data_basis,
-            reviewed.brand_and_protected_content_basis,
-            reviewed.retention_and_deletion_basis,
-            reviewed.training_use_prohibition_basis,
-        )
-        if actual_bases != expected_bases:
-            _invalid("reviewed-scope basis does not match gate basis")
-        decision_at = _parse_utc(self.qualification_decision_at, field="qualification_decision_at")
-        maker_at = _parse_utc(self.maker_prepared_at, field="maker_prepared_at")
-        manifest_at = _parse_utc(self.manifest_at, field="manifest_at")
-        if (
-            not decision_at <= maker_at <= manifest_at
-            or self.manifest_at != self.checker_reviewed_at
-        ):
-            _invalid("Manifest action-time rule failed")
-        if not manifest_at < _parse_utc(
-            self.qualification_valid_until, field="qualification_valid_until"
-        ):
-            _invalid("Manifest was not recorded within Qualification validity")
-        if not manifest_at < _parse_utc(self.manifest_valid_until, field="manifest_valid_until"):
-            _invalid("Manifest validity window must be non-empty")
-        if reviewed.reviewed_scope_valid_until > proposed.proposed_scope_valid_until:
-            _invalid("reviewed scope cannot outlive proposed scope")
-        if self.maker_identity_ref_sha256 == self.checker_identity_ref_sha256:
-            _invalid("Manifest Maker and Checker identities must be distinct")
-        if self.maker_action_sha256 == self.checker_action_sha256:
-            _invalid("Manifest Maker and Checker actions must be distinct")
-        if len({item.record_id for item in self.review_evidence_refs}) != 9:
-            _invalid("Manifest evidence record IDs must be unique")
-        submitted_at = _parse_utc(self.submitted_at, field="submitted_at")
-        for evidence in self.review_evidence_refs[:2]:
-            if not (
-                _parse_utc(evidence.effective_from, field="effective_from")
-                <= submitted_at
-                < _upper_bound(evidence.effective_until, field="effective_until")
-            ):
-                _invalid("historical Manifest evidence was not effective at submission")
-        finite_bounds = [manifest_at + timedelta(seconds=86_400)]
-        for evidence in self.review_evidence_refs[2:]:
-            if not (
-                _parse_utc(evidence.observed_at, field="observed_at") <= manifest_at
-                and _parse_utc(evidence.effective_from, field="effective_from")
-                <= manifest_at
-                < _upper_bound(evidence.effective_until, field="effective_until")
-                and manifest_at
-                < _upper_bound(evidence.evidence_valid_until, field="evidence_valid_until")
-            ):
-                _invalid("current-facing Manifest evidence is not usable at manifest_at")
-            for bound_name, bound in (
-                ("effective_until", evidence.effective_until),
-                ("evidence_valid_until", evidence.evidence_valid_until),
-            ):
-                if bound != "PERPETUAL":
-                    finite_bounds.append(_parse_utc(bound, field=bound_name))
-        finite_bounds.append(
-            _parse_utc(reviewed.reviewed_scope_valid_until, field="reviewed_scope_valid_until")
-        )
-        expected_manifest_until = min(finite_bounds).strftime("%Y-%m-%dT%H:%M:%SZ")
-        if self.manifest_valid_until != expected_manifest_until:
-            _invalid("manifest_valid_until is not uniquely derived")
         expected_payload_sha = _semantic_sha256(
             GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW_PAYLOAD_SHA256_DOMAIN,
             generated_reference_rights_manifest_review_payload_projection(self),
         )
         if self.manifest_review_payload_sha256 != expected_payload_sha:
-            _invalid("manifest_review_payload_sha256 does not bind the closed private projection")
+            _validation_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "manifest_review_payload_sha256 does not bind the closed private projection",
+            )
+        _validate_manifest_time_role_gate_evidence(self)
         return self
 
 
@@ -1456,6 +1623,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1(_ZeroAuth
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        _validate_observation_contract(self)
         _validate_identity(
             self,
             id_field="observation_id",
@@ -1463,7 +1631,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1(_ZeroAuth
             stem="generated_reference_current_status_source_observation_v1_",
             domain=GENERATED_REFERENCE_CURRENT_STATUS_SOURCE_OBSERVATION_SHA256_DOMAIN,
         )
-        _validate_observation_semantics(self)
+        _validate_observation_time_and_chain(self)
         return self
 
 
@@ -1505,6 +1673,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusRequestV1(_ZeroAuthorityModel
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        _validate_request_ref_contract(self)
         _validate_identity(
             self,
             id_field="request_id",
@@ -1512,7 +1681,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusRequestV1(_ZeroAuthorityModel
             stem="generated_reference_current_status_request_v1_",
             domain=GENERATED_REFERENCE_CURRENT_STATUS_REQUEST_SHA256_DOMAIN,
         )
-        _validate_request_refs(self)
+        _validate_request_time_and_scope(self)
         return self
 
 
@@ -1559,6 +1728,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusInstructionV1(_ZeroAuthorityM
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        _validate_category_results(self.category_results)
         _validate_identity(
             self,
             id_field="instruction_id",
@@ -1566,13 +1736,25 @@ class CreativeSampleGeneratedReferenceCurrentStatusInstructionV1(_ZeroAuthorityM
             stem="generated_reference_current_status_instruction_v1_",
             domain=GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
         )
-        _validate_category_results(self.category_results)
+        evaluated_at = _parse_utc(self.evaluated_at, field="evaluated_at")
+        if not (
+            _parse_utc(self.requested_at, field="requested_at")
+            <= evaluated_at
+            < _parse_utc(self.request_valid_until, field="request_valid_until")
+        ):
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "Instruction evaluated_at lies outside the Request window",
+            )
         if (
             self.status_preparer_identity_ref_sha256
             == self.status_checker_identity_ref_sha256
             or self.status_preparer_action_sha256 == self.status_checker_action_sha256
         ):
-            _invalid("status Preparer and Checker identities/actions must be distinct")
+            _validation_fail(
+                "ROLE_SEPARATION_VIOLATION",
+                "status Preparer and Checker identities/actions must be distinct",
+            )
         return self
 
 
@@ -1615,6 +1797,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusDecisionV1(_ZeroAuthorityMode
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        _validate_category_results(self.category_results)
         _validate_identity(
             self,
             id_field="decision_id",
@@ -1622,7 +1805,7 @@ class CreativeSampleGeneratedReferenceCurrentStatusDecisionV1(_ZeroAuthorityMode
             stem="generated_reference_current_status_decision_v1_",
             domain=GENERATED_REFERENCE_CURRENT_STATUS_DECISION_SHA256_DOMAIN,
         )
-        _validate_decision_semantics(self)
+        _validate_decision_result(self)
         return self
 
 
@@ -1720,6 +1903,8 @@ class CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1
 
     @model_validator(mode="after")
     def _closure(self) -> Self:
+        if self.limitation_codes != CURRENT_STATUS_LIMITATION_CODE_ORDER:
+            _invalid("Receipt limitation_codes must use exact frozen order")
         _validate_identity(
             self,
             id_field="receipt_id",
@@ -1727,8 +1912,6 @@ class CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1
             stem="generated_reference_current_status_record_as_of_assessment_receipt_v1_",
             domain=GENERATED_REFERENCE_CURRENT_STATUS_RECORD_AS_OF_ASSESSMENT_RECEIPT_SHA256_DOMAIN,
         )
-        if self.limitation_codes != CURRENT_STATUS_LIMITATION_CODE_ORDER:
-            _invalid("Receipt limitation_codes must use exact frozen order")
         return self
 
 
@@ -2135,9 +2318,15 @@ def _reject_retained_digest_aliases(
     retained_digests: tuple[str, ...], *, forbidden: set[str], field: str
 ) -> None:
     if len(retained_digests) != len(set(retained_digests)):
-        _invalid(f"{field} retained raw digests must be pairwise distinct")
+        _formal_fail(
+            "ROLE_SEPARATION_VIOLATION",
+            f"{field} retained raw digests must be pairwise distinct",
+        )
     if set(retained_digests) & forbidden:
-        _invalid(f"{field} retained raw digest aliases a formal/policy/Prompt/media digest")
+        _formal_fail(
+            "ROLE_SEPARATION_VIOLATION",
+            f"{field} retained raw digest aliases a formal/policy/Prompt/media digest",
+        )
 
 
 _SELF_FIELDS: dict[type[BaseModel], tuple[str, str]] = {
@@ -2160,6 +2349,56 @@ _SELF_FIELDS: dict[type[BaseModel], tuple[str, str]] = {
     ),
 }
 
+_IDENTITY_SPECS: dict[type[BaseModel], tuple[str, str, str, bytes]] = {
+    CreativeSampleGeneratedReferenceRightsManifestV1: (
+        "manifest_id",
+        "manifest_sha256",
+        "generated_reference_rights_manifest_v1_",
+        GENERATED_REFERENCE_RIGHTS_MANIFEST_SHA256_DOMAIN,
+    ),
+    GeneratedReferenceCurrentStatusSubjectClosureV1: (
+        "closure_id",
+        "closure_sha256",
+        "generated_reference_current_status_subject_closure_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_SUBJECT_CLOSURE_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1: (
+        "observation_id",
+        "observation_sha256",
+        "generated_reference_current_status_source_observation_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_SOURCE_OBSERVATION_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusRequestV1: (
+        "request_id",
+        "request_sha256",
+        "generated_reference_current_status_request_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_REQUEST_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1: (
+        "instruction_id",
+        "instruction_sha256",
+        "generated_reference_current_status_instruction_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusDecisionV1: (
+        "decision_id",
+        "decision_sha256",
+        "generated_reference_current_status_decision_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_DECISION_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1: (
+        "record_id",
+        "record_sha256",
+        "generated_reference_current_status_evidence_record_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_EVIDENCE_RECORD_SHA256_DOMAIN,
+    ),
+    CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1: (
+        "receipt_id",
+        "receipt_sha256",
+        "generated_reference_current_status_record_as_of_assessment_receipt_v1_",
+        GENERATED_REFERENCE_CURRENT_STATUS_RECORD_AS_OF_ASSESSMENT_RECEIPT_SHA256_DOMAIN,
+    ),
+}
 
 def _semantic_projection(model: BaseModel) -> dict[str, object]:
     if type(model) not in _SELF_FIELDS:
@@ -2179,9 +2418,169 @@ def _validate_identity(
 ) -> None:
     expected_sha = _semantic_sha256(domain, _semantic_projection(model))
     if getattr(model, sha_field) != expected_sha:
-        _invalid(f"{sha_field} does not bind the exact explicit projection")
+        _validation_fail(
+            "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+            f"{sha_field} does not bind the exact explicit projection",
+        )
     if getattr(model, id_field) != f"{stem}{expected_sha[:20]}":
-        _invalid(f"{id_field} does not agree with {sha_field}")
+        _validation_fail(
+            "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+            f"{id_field} does not agree with {sha_field}",
+        )
+
+
+def _manifest_contract_issue(
+    review_evidence_refs: tuple[GeneratedReferenceRightsManifestEvidenceReferenceV1, ...],
+    gate_results: tuple[GeneratedReferenceRightsManifestGateResultV1, ...],
+    reviewed: GeneratedReferenceReviewedRightsScopeV1,
+    proposed: GeneratedReferenceRightsScopeProposalV1,
+) -> str | None:
+    if tuple(
+        item.category for item in review_evidence_refs
+    ) != MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER or tuple(
+        item.ordinal for item in review_evidence_refs
+    ) != tuple(range(9)):
+        return "review_evidence_refs must use exact policy order and ordinals"
+    if tuple(item.gate for item in gate_results) != MANIFEST_REVIEW_GATE_ORDER or tuple(
+        item.ordinal for item in gate_results
+    ) != tuple(range(11)):
+        return "gate_results must use exact policy order and ordinals"
+    if (
+        gate_results[0].basis != "COMPILER_REVALIDATED_EXACT_ADR042_ADR043_CLOSURE"
+        or gate_results[10].basis
+        != "COMPILER_REVALIDATED_DISTINCT_ROLE_AND_ACTION_CLOSURE"
+    ):
+        return "compiler-derived gate basis drift"
+    if not set(reviewed.territory_scope).issubset(proposed.territory_scope) or not set(
+        reviewed.allowed_use_scope
+    ).issubset(proposed.allowed_use_scope):
+        return "reviewed Rights scope must be a subset of proposed scope"
+    expected_bases = (
+        gate_results[4].basis,
+        gate_results[5].basis,
+        gate_results[6].basis,
+        gate_results[8].basis,
+        gate_results[9].basis,
+    )
+    actual_bases = (
+        reviewed.output_copyright_and_commercial_scope_basis,
+        reviewed.likeness_privacy_and_sensitive_data_basis,
+        reviewed.brand_and_protected_content_basis,
+        reviewed.retention_and_deletion_basis,
+        reviewed.training_use_prohibition_basis,
+    )
+    if actual_bases != expected_bases:
+        return "reviewed-scope basis does not match gate basis"
+    if len({item.record_id for item in review_evidence_refs}) != 9:
+        return "Manifest evidence record IDs must be unique"
+    return None
+
+
+def _validate_manifest_contract(
+    value: CreativeSampleGeneratedReferenceRightsManifestV1,
+) -> None:
+    issue = _manifest_contract_issue(
+        value.review_evidence_refs,
+        value.gate_results,
+        value.reviewed_rights_scope,
+        value.proposed_rights_scope,
+    )
+    if issue is not None:
+        _invalid(issue)
+
+
+def _validate_manifest_time_role_gate_evidence(
+    value: CreativeSampleGeneratedReferenceRightsManifestV1,
+) -> None:
+    reviewed = value.reviewed_rights_scope
+    proposed = value.proposed_rights_scope
+    decision_at = _parse_utc(value.qualification_decision_at, field="qualification_decision_at")
+    maker_at = _parse_utc(value.maker_prepared_at, field="maker_prepared_at")
+    manifest_at = _parse_utc(value.manifest_at, field="manifest_at")
+    if (
+        not decision_at <= maker_at <= manifest_at
+        or value.manifest_at != value.checker_reviewed_at
+    ):
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED", "Manifest action-time rule failed"
+        )
+    if not manifest_at < _parse_utc(
+        value.qualification_valid_until, field="qualification_valid_until"
+    ):
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Manifest was not recorded within Qualification validity",
+        )
+    if not manifest_at < _parse_utc(value.manifest_valid_until, field="manifest_valid_until"):
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Manifest validity window must be non-empty",
+        )
+    if reviewed.reviewed_scope_valid_until > proposed.proposed_scope_valid_until:
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "reviewed scope cannot outlive proposed scope",
+        )
+    submitted_at = _parse_utc(value.submitted_at, field="submitted_at")
+    for evidence in value.review_evidence_refs[:2]:
+        if not (
+            _parse_utc(evidence.effective_from, field="effective_from")
+            <= submitted_at
+            < _upper_bound(evidence.effective_until, field="effective_until")
+        ):
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "historical Manifest evidence was not effective at submission",
+            )
+    finite_bounds = [manifest_at + timedelta(seconds=86_400)]
+    for evidence in value.review_evidence_refs[2:]:
+        if not (
+            _parse_utc(evidence.observed_at, field="observed_at") <= manifest_at
+            and _parse_utc(evidence.effective_from, field="effective_from")
+            <= manifest_at
+            < _upper_bound(evidence.effective_until, field="effective_until")
+            and manifest_at
+            < _upper_bound(evidence.evidence_valid_until, field="evidence_valid_until")
+        ):
+            _validation_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "current-facing Manifest evidence is not usable at manifest_at",
+            )
+        for bound_name, bound in (
+            ("effective_until", evidence.effective_until),
+            ("evidence_valid_until", evidence.evidence_valid_until),
+        ):
+            if bound != "PERPETUAL":
+                finite_bounds.append(_parse_utc(bound, field=bound_name))
+    finite_bounds.append(
+        _parse_utc(reviewed.reviewed_scope_valid_until, field="reviewed_scope_valid_until")
+    )
+    expected_manifest_until = min(finite_bounds).strftime("%Y-%m-%dT%H:%M:%SZ")
+    if value.manifest_valid_until != expected_manifest_until:
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "manifest_valid_until is not uniquely derived",
+        )
+    if (
+        value.maker_identity_ref_sha256 == value.checker_identity_ref_sha256
+        or value.maker_action_sha256 == value.checker_action_sha256
+    ):
+        _validation_fail(
+            "ROLE_SEPARATION_VIOLATION",
+            "Manifest Maker and Checker identities/actions must be distinct",
+        )
+    if any(item.result != "PASS" for item in value.gate_results):
+        _validation_fail(
+            "MANIFEST_GATE_NOT_PASS",
+            "a portable Rights Manifest requires all PASS results",
+        )
+    record_ids = tuple(item.record_id for item in value.review_evidence_refs)
+    expected_gate_ids = ((),) + tuple((item,) for item in record_ids) + ((),)
+    if tuple(item.evidence_record_ids for item in value.gate_results) != expected_gate_ids:
+        _validation_fail(
+            "EVIDENCE_SCOPE_INCOMPLETE",
+            "gate evidence membership is not the frozen mapping",
+        )
 
 
 def _observation_ref_key(
@@ -2250,15 +2649,19 @@ def _derive_status_and_diagnostics(
     return status, revoked, held, indeterminate
 
 
-def _validate_decision_semantics(
+def _validate_decision_result(
     value: CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
 ) -> None:
-    _validate_category_results(value.category_results)
     if value.evaluated_at != value.decision_at:
-        _invalid("evaluated_at must exactly equal decision_at")
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED", "evaluated_at must exactly equal decision_at"
+        )
     expected_until = min(item.result_valid_until for item in value.category_results)
     if value.status_valid_until != expected_until:
-        _invalid("status_valid_until must be the exact earliest category expiry")
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "status_valid_until must be the exact earliest category expiry",
+        )
     expected_status, revoked, held, indeterminate = _derive_status_and_diagnostics(
         value.category_results
     )
@@ -2268,10 +2671,15 @@ def _validate_decision_semantics(
         value.held_categories,
         value.indeterminate_categories,
     ) != (expected_status, revoked, held, indeterminate):
-        _invalid("Decision diagnostics or recorded_status drift from frozen resolver")
+        _validation_fail(
+            "REPLAY_MISMATCH",
+            "Decision diagnostics or recorded_status drift from frozen resolver",
+        )
 
 
-def _validate_request_refs(value: CreativeSampleGeneratedReferenceCurrentStatusRequestV1) -> None:
+def _validate_request_ref_contract(
+    value: CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+) -> None:
     keys = tuple(_observation_ref_key(item) for item in value.observation_refs)
     if len(keys) != len(set(keys)):
         _invalid("Request observation_refs must be unique")
@@ -2286,25 +2694,39 @@ def _validate_request_refs(value: CreativeSampleGeneratedReferenceCurrentStatusR
     )
     if value.observation_refs != expected:
         _invalid("Request observation_refs are not in canonical policy order")
-    if set(item.category for item in value.observation_refs) != set(CURRENT_STATUS_CATEGORY_ORDER):
-        _invalid("Request must contain at least one target for every category")
     if tuple(item.ordinal for item in value.observation_refs) != tuple(
         range(len(value.observation_refs))
     ):
         _invalid("Request observation_refs must use zero-based Request ordinals")
+
+
+def _validate_request_time_and_scope(
+    value: CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+) -> None:
     requested_at = _parse_utc(value.requested_at, field="requested_at")
     manifest_at = _parse_utc(value.subject_closure.manifest_at, field="manifest_at")
     manifest_valid_until = _parse_utc(
         value.subject_closure.manifest_valid_until, field="manifest_valid_until"
     )
     if not manifest_at <= requested_at < manifest_valid_until:
-        _invalid("requested_at lies outside the Rights Manifest window")
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "requested_at lies outside the Rights Manifest window",
+        )
     expected_until = min(
         requested_at + timedelta(seconds=86_400),
         manifest_valid_until,
     )
     if value.request_valid_until != expected_until.strftime("%Y-%m-%dT%H:%M:%SZ"):
-        _invalid("request_valid_until is not uniquely derived")
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "request_valid_until is not uniquely derived",
+        )
+    if set(item.category for item in value.observation_refs) != set(CURRENT_STATUS_CATEGORY_ORDER):
+        _validation_fail(
+            "EVIDENCE_SCOPE_INCOMPLETE",
+            "Request must contain at least one target for every category",
+        )
 
 
 _BASIS_MATRIX: dict[CurrentStatusCategory, dict[str, frozenset[str]]] = {
@@ -2335,21 +2757,11 @@ _CATEGORY_SOURCE_KINDS = {
 }
 
 
-def _validate_observation_semantics(
+def _validate_observation_contract(
     value: CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
 ) -> None:
     if value.limitation_codes != CURRENT_STATUS_LIMITATION_CODE_ORDER:
         _invalid("Observation limitation_codes must use exact frozen order")
-    source_event = _parse_utc(value.source_event_at, field="source_event_at")
-    observed = _parse_utc(value.observed_at, field="observed_at")
-    valid_from = _parse_utc(value.valid_from, field="valid_from")
-    valid_until = _parse_utc(value.valid_until, field="valid_until")
-    if source_event > observed or max(observed, valid_from) >= valid_until:
-        _invalid("Observation temporal window is invalid")
-    if valid_until - valid_from > timedelta(seconds=86_400):
-        _invalid("Observation validity window exceeds 86400 seconds")
-    if value.valid_until > value.subject_closure.manifest_valid_until:
-        _invalid("Observation cannot outlive the Rights Manifest")
     if value.claim_value in {"PRESENT", "ABSENT_WITH_EVIDENCE"}:
         if value.basis_code not in _BASIS_MATRIX[value.category][value.claim_value]:
             _invalid("basis_code is incompatible with category and claim_value")
@@ -2367,6 +2779,29 @@ def _validate_observation_semantics(
         _invalid("source_kind is incompatible with category and basis_code")
     if value.source_kind not in _CATEGORY_SOURCE_KINDS[value.category]:
         _invalid("source_kind is not applicable to this category")
+
+
+def _validate_observation_time_and_chain(
+    value: CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+) -> None:
+    source_event = _parse_utc(value.source_event_at, field="source_event_at")
+    observed = _parse_utc(value.observed_at, field="observed_at")
+    valid_from = _parse_utc(value.valid_from, field="valid_from")
+    valid_until = _parse_utc(value.valid_until, field="valid_until")
+    if source_event > observed or max(observed, valid_from) >= valid_until:
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED", "Observation temporal window is invalid"
+        )
+    if valid_until - valid_from > timedelta(seconds=86_400):
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Observation validity window exceeds 86400 seconds",
+        )
+    if value.valid_until > value.subject_closure.manifest_valid_until:
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Observation cannot outlive the Rights Manifest",
+        )
     expected_scope = generated_reference_current_status_chain_scope_sha256(
         value.subject_closure,
         category=value.category,
@@ -2375,7 +2810,10 @@ def _validate_observation_semantics(
         observation_profile=value.observation_profile,
     )
     if value.chain_link.chain_scope_sha256 != expected_scope:
-        _invalid("chain_link.chain_scope_sha256 does not bind the exact chain scope")
+        _validation_fail(
+            "CHAIN_STRUCTURE_INVALID",
+            "chain_link.chain_scope_sha256 does not bind the exact chain scope",
+        )
 
 
 def _validate_record_closure(
@@ -2387,12 +2825,17 @@ def _validate_record_closure(
         or instruction.subject_closure != value.subject_closure
         or decision.subject_closure != value.subject_closure
     ):
-        _invalid("Record subject closure is not identical across embedded documents")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH",
+            "Record subject closure is not identical across embedded documents",
+        )
     if (instruction.request_id, instruction.request_sha256) != (
         request.request_id,
         request.request_sha256,
     ):
-        _invalid("Instruction does not bind embedded Request")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH", "Instruction does not bind embedded Request"
+        )
     if (
         instruction.status_preparer_identity_ref_sha256,
         instruction.status_preparer_action_sha256,
@@ -2404,26 +2847,44 @@ def _validate_record_closure(
         request.requested_at,
         request.request_valid_until,
     ):
-        _invalid("Instruction does not repeat the exact Request Preparer/time closure")
-    evaluated_at = _parse_utc(instruction.evaluated_at, field="evaluated_at")
-    if not _parse_utc(request.requested_at, field="requested_at") <= evaluated_at < _parse_utc(
-        request.request_valid_until, field="request_valid_until"
-    ):
-        _invalid("Instruction evaluated_at lies outside the embedded Request window")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH",
+            "Instruction does not repeat the exact Request Preparer/time closure",
+        )
     if (decision.request_id, decision.request_sha256) != (
         request.request_id,
         request.request_sha256,
     ):
-        _invalid("Decision does not bind embedded Request")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH", "Decision does not bind embedded Request"
+        )
     if (decision.instruction_id, decision.instruction_sha256) != (
         instruction.instruction_id,
         instruction.instruction_sha256,
     ):
-        _invalid("Decision does not bind embedded Instruction")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH", "Decision does not bind embedded Instruction"
+        )
     if decision.evaluated_at != instruction.evaluated_at:
-        _invalid("Decision evaluated_at does not equal embedded Instruction evaluated_at")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH",
+            "Decision evaluated_at does not equal embedded Instruction evaluated_at",
+        )
     if instruction.category_results != decision.category_results:
-        _invalid("Decision category_results do not equal Instruction results")
+        _validation_fail(
+            "UPSTREAM_CLOSURE_MISMATCH",
+            "Decision category_results do not equal Instruction results",
+        )
+    evaluated_at = _parse_utc(instruction.evaluated_at, field="evaluated_at")
+    if (
+        not _parse_utc(request.requested_at, field="requested_at")
+        <= evaluated_at
+        < _parse_utc(request.request_valid_until, field="request_valid_until")
+    ):
+        _validation_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Instruction evaluated_at lies outside the embedded Request window",
+        )
 
 
 _MANIFEST_POLICY_PROJECTION = cast(
@@ -2461,10 +2922,359 @@ def generated_reference_current_status_policy_projection() -> dict[str, object]:
     return cast(dict[str, object], json.loads(_CURRENT_STATUS_POLICY_JSON))
 
 
+def _formal_validation_error_codes(
+    exc: ValidationError,
+) -> list[GeneratedReferenceFormalErrorCodeV1]:
+    codes: list[GeneratedReferenceFormalErrorCodeV1] = []
+    for raw_error in exc.errors(include_url=False):
+        error = cast(dict[str, object], raw_error)
+        context = error.get("ctx")
+        structured_error: object | None = None
+        if type(context) is dict:
+            structured_error = cast(dict[str, object], context).get("error")
+        if isinstance(structured_error, _FormalValidationFailure):
+            codes.append(structured_error.code)
+            continue
+        error_type = error.get("type")
+        location = error.get("loc")
+        location_fields = (
+            tuple(item for item in location if type(item) is str)
+            if isinstance(location, tuple)
+            else ()
+        )
+        supplied = error.get("input")
+        if error_type == "literal_error" and any(
+            item in {"policy_id", "policy_version", "policy_document_sha256"}
+            for item in location_fields
+        ):
+            codes.append(
+                "POLICY_IDENTITY_MISMATCH"
+                if type(supplied) is str
+                else "CONTRACT_FIELD_INVALID"
+            )
+            continue
+        authority_field = next(
+            (item for item in reversed(location_fields) if item in _ZERO_AUTHORITY_VALUES),
+            None,
+        )
+        if error_type == "literal_error" and authority_field is not None:
+            expected_value = _ZERO_AUTHORITY_VALUES[authority_field]
+            codes.append(
+                "AUTHORITY_SURFACE_NONZERO"
+                if type(supplied) is type(expected_value)
+                else "CONTRACT_FIELD_INVALID"
+            )
+            continue
+        codes.append("CONTRACT_FIELD_INVALID")
+    return codes
+
+
+def _formal_instance_preflight_codes(
+    model: BaseModel, expected: type[BaseModel]
+) -> list[GeneratedReferenceFormalErrorCodeV1]:
+    codes: list[GeneratedReferenceFormalErrorCodeV1] = []
+    for field_value in model.__dict__.values():
+        candidates = field_value if type(field_value) is tuple else (field_value,)
+        for candidate in candidates:
+            if isinstance(candidate, BaseModel) and type(candidate) in _IDENTITY_SPECS:
+                codes.extend(_formal_instance_preflight_codes(candidate, type(candidate)))
+    try:
+        if expected is CreativeSampleGeneratedReferenceRightsManifestV1:
+            _validate_manifest_contract(
+                cast(CreativeSampleGeneratedReferenceRightsManifestV1, model)
+            )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1:
+            _validate_observation_contract(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1, model)
+            )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusRequestV1:
+            _validate_request_ref_contract(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusRequestV1, model)
+            )
+        elif expected in {
+            CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+            CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+        }:
+            _validate_category_results(
+                cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1
+                    | CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+                    model,
+                ).category_results
+            )
+        elif (
+            expected
+            is CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1
+            and cast(
+                CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1,
+                model,
+            ).limitation_codes
+            != CURRENT_STATUS_LIMITATION_CODE_ORDER
+        ):
+            _invalid("Receipt limitation_codes must use exact frozen order")
+    except (TypeError, ValueError):
+        codes.append("CONTRACT_FIELD_INVALID")
+        return codes
+
+    identity_spec = _IDENTITY_SPECS.get(expected)
+    if identity_spec is not None:
+        id_field, sha_field, stem, domain = identity_spec
+        try:
+            _validate_identity(
+                model,
+                id_field=id_field,
+                sha_field=sha_field,
+                stem=stem,
+                domain=domain,
+            )
+        except _FormalValidationFailure as exc:
+            codes.append(exc.code)
+    if expected is CreativeSampleGeneratedReferenceRightsManifestV1:
+        manifest = cast(CreativeSampleGeneratedReferenceRightsManifestV1, model)
+        expected_payload_sha = _semantic_sha256(
+            GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW_PAYLOAD_SHA256_DOMAIN,
+            generated_reference_rights_manifest_review_payload_projection(manifest),
+        )
+        if manifest.manifest_review_payload_sha256 != expected_payload_sha:
+            codes.append("SEMANTIC_ID_OR_DIGEST_MISMATCH")
+    if "SEMANTIC_ID_OR_DIGEST_MISMATCH" in codes:
+        return codes
+    try:
+        if expected is CreativeSampleGeneratedReferenceRightsManifestV1:
+            _validate_manifest_time_role_gate_evidence(
+                cast(CreativeSampleGeneratedReferenceRightsManifestV1, model)
+            )
+        elif expected is GeneratedReferenceCurrentStatusSubjectClosureV1:
+            closure = cast(GeneratedReferenceCurrentStatusSubjectClosureV1, model)
+            if _parse_utc(closure.manifest_at, field="manifest_at") >= _parse_utc(
+                closure.manifest_valid_until, field="manifest_valid_until"
+            ):
+                _validation_fail(
+                    "TIME_WINDOW_INVALID_OR_EXPIRED",
+                    "Manifest validity window must be non-empty",
+                )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1:
+            _validate_observation_time_and_chain(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1, model)
+            )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusRequestV1:
+            _validate_request_time_and_scope(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusRequestV1, model)
+            )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusInstructionV1:
+            instruction = cast(
+                CreativeSampleGeneratedReferenceCurrentStatusInstructionV1, model
+            )
+            evaluated_at = _parse_utc(instruction.evaluated_at, field="evaluated_at")
+            if not (
+                _parse_utc(instruction.requested_at, field="requested_at")
+                <= evaluated_at
+                < _parse_utc(instruction.request_valid_until, field="request_valid_until")
+            ):
+                _validation_fail(
+                    "TIME_WINDOW_INVALID_OR_EXPIRED",
+                    "Instruction evaluated_at lies outside the Request window",
+                )
+            if (
+                instruction.status_preparer_identity_ref_sha256
+                == instruction.status_checker_identity_ref_sha256
+                or instruction.status_preparer_action_sha256
+                == instruction.status_checker_action_sha256
+            ):
+                _validation_fail(
+                    "ROLE_SEPARATION_VIOLATION",
+                    "status Preparer and Checker identities/actions must be distinct",
+                )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusDecisionV1:
+            _validate_decision_result(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusDecisionV1, model)
+            )
+        elif expected is CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1:
+            _validate_record_closure(
+                cast(CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1, model)
+            )
+    except _FormalValidationFailure as exc:
+        codes.append(exc.code)
+    return codes
+
+
+def _reject_nested_formal_subclasses(
+    value: object,
+    *,
+    field: str,
+) -> tuple[GeneratedReferenceRightsCurrentStatusError, ...]:
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    active: set[int] = set()
+    concrete_types = tuple(_EXPLICIT_FIELD_NAMES)
+
+    def add_error(code: GeneratedReferenceFormalErrorCodeV1, message: str) -> None:
+        errors.append(GeneratedReferenceRightsCurrentStatusError(code, message))
+
+    def inspect(item: object, *, item_field: str, depth: int) -> None:
+        if depth > _MAX_JSON_DEPTH:
+            add_error(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                f"{item_field} exceeds the maximum formal Contract depth",
+            )
+            return
+        if isinstance(item, BaseModel):
+            if type(item) not in _EXPLICIT_FIELD_NAMES and any(
+                isinstance(item, expected) for expected in concrete_types
+            ):
+                add_error(
+                    "EXACT_INPUT_TYPE_REQUIRED",
+                    f"{item_field} contains a formal Contract subclass",
+                )
+                return
+            if type(item) not in _EXPLICIT_FIELD_NAMES:
+                add_error(
+                    "CONTRACT_FIELD_INVALID",
+                    f"{item_field} contains a non-formal model instance",
+                )
+                return
+            expected_fields = _EXPLICIT_FIELD_NAMES[type(item)]
+            actual_fields = item.__dict__
+            if set(actual_fields) != set(expected_fields):
+                add_error(
+                    "CONTRACT_FIELD_INVALID",
+                    f"{item_field} does not contain the exact formal Contract fields",
+                )
+            identity = id(item)
+            if identity in active:
+                add_error(
+                    "CONTRACT_FIELD_INVALID", f"{item_field} contains a cyclic model graph"
+                )
+                return
+            active.add(identity)
+            try:
+                ordered_names = tuple(name for name in expected_fields if name in actual_fields)
+                extra_names = tuple(sorted(set(actual_fields) - set(expected_fields)))
+                for name in (*ordered_names, *extra_names):
+                    inspect(
+                        actual_fields[name],
+                        item_field=f"{item_field}.{name}",
+                        depth=depth + 1,
+                    )
+            finally:
+                active.remove(identity)
+            return
+        if type(item) is tuple:
+            items = cast(tuple[object, ...], item)
+            if len(items) > _MAX_CONTAINER_ITEMS:
+                add_error(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{item_field} exceeds the maximum formal Contract item count",
+                )
+            identity = id(item)
+            if identity in active:
+                add_error(
+                    "CONTRACT_FIELD_INVALID", f"{item_field} contains a cyclic tuple graph"
+                )
+                return
+            active.add(identity)
+            try:
+                for index, child in enumerate(items[:_MAX_CONTAINER_ITEMS]):
+                    inspect(child, item_field=f"{item_field}[{index}]", depth=depth + 1)
+            finally:
+                active.remove(identity)
+            return
+        if type(item) in {dict, list}:
+            add_error(
+                "CONTRACT_FIELD_INVALID",
+                f"{item_field} uses a mutable container instead of the exact formal Contract shape",
+            )
+            children = (
+                tuple(cast(dict[object, object], item).values())
+                if type(item) is dict
+                else tuple(cast(list[object], item))
+            )
+            if len(children) > _MAX_CONTAINER_ITEMS:
+                add_error(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{item_field} exceeds the maximum formal Contract item count",
+                )
+            identity = id(item)
+            if identity in active:
+                add_error(
+                    "CONTRACT_FIELD_INVALID",
+                    f"{item_field} contains a cyclic mutable container",
+                )
+                return
+            active.add(identity)
+            try:
+                for index, child in enumerate(children[:_MAX_CONTAINER_ITEMS]):
+                    inspect(child, item_field=f"{item_field}[{index}]", depth=depth + 1)
+            finally:
+                active.remove(identity)
+
+    inspect(value, item_field=field, depth=0)
+    return tuple(errors)
+
+
 def _exact_model(model: BaseModel, expected: type[BaseModel], *, field: str) -> BaseModel:
     if type(model) is not expected:
-        _invalid(f"{field} must be exact {expected.__name__}")
-    return expected.model_validate(model)
+        _formal_fail("EXACT_INPUT_TYPE_REQUIRED", f"{field} must be exact {expected.__name__}")
+    _raise_prioritized_formal_errors(
+        (
+            *_reject_nested_formal_subclasses(model, field=field),
+            *_inspect_imported_runtime_shape(model, expected, field=field),
+        )
+    )
+    try:
+        return expected.model_validate(model)
+    except ValidationError as exc:
+        codes = _formal_validation_error_codes(exc)
+        if not any(
+            code
+            in {
+                "EXACT_INPUT_TYPE_REQUIRED",
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "CANONICAL_JSON_REQUIRED",
+                "CONTRACT_FIELD_INVALID",
+                "POLICY_IDENTITY_MISMATCH",
+            }
+            for code in codes
+        ):
+            codes.extend(_formal_instance_preflight_codes(model, expected))
+        code = cast(
+            GeneratedReferenceFormalErrorCodeV1,
+            min(
+                codes or ["CONTRACT_FIELD_INVALID"],
+                key=_GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index,
+            ),
+        )
+        raise GeneratedReferenceRightsCurrentStatusError(
+            code, f"{field} does not satisfy its exact Contract"
+        ) from exc
+
+
+def _inspect_exact_models(
+    specifications: Sequence[tuple[BaseModel, type[BaseModel], str]],
+) -> tuple[tuple[BaseModel, ...], tuple[GeneratedReferenceRightsCurrentStatusError, ...]]:
+    validated: list[BaseModel] = []
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    for model, expected, field in specifications:
+        try:
+            validated.append(_exact_model(model, expected, field=field))
+        except GeneratedReferenceRightsCurrentStatusError as exc:
+            errors.append(exc)
+            validated.append(model)
+    return tuple(validated), tuple(errors)
+
+
+def _exact_models(
+    specifications: Sequence[tuple[BaseModel, type[BaseModel], str]],
+) -> tuple[BaseModel, ...]:
+    """Validate independent formal inputs and apply the global umbrella priority."""
+
+    validated, errors = _inspect_exact_models(specifications)
+    if errors:
+        selected = min(
+            errors,
+            key=lambda item: _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(item.code),
+        )
+        raise selected
+    return validated
 
 
 def _public_projection(model: BaseModel, expected: type[BaseModel]) -> dict[str, object]:
@@ -2660,7 +3470,9 @@ def creative_sample_generated_reference_current_status_record_as_of_assessment_r
 
 def generated_reference_contract_document_bytes(value: BaseModel) -> bytes:
     if type(value) not in _SELF_FIELDS:
-        _invalid("only one exact ADR-044 formal Contract is admitted")
+        _formal_fail(
+            "EXACT_INPUT_TYPE_REQUIRED", "only one exact ADR-044 formal Contract is admitted"
+        )
     validated = _exact_model(value, type(value), field="Contract")
     return _formal_json(_explicit_value(validated))
 
@@ -2675,21 +3487,26 @@ def _build_identity_contract(
     domain: bytes,
 ) -> BaseModel:
     payload = dict(values)
-    if id_field in payload or sha_field in payload:
-        _invalid(f"{id_field} and {sha_field} are compiler-derived")
     explicit_fields = _EXPLICIT_FIELD_NAMES[model_type]
+    input_fields = set(explicit_fields) - {id_field, sha_field}
+    extra = set(payload) - input_fields - {id_field, sha_field}
+    missing = input_fields - set(payload)
+    if extra or missing:
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID",
+            "Contract inputs differ from the closed projection; "
+            f"missing={sorted(missing)}, extra={sorted(extra)}",
+        )
+    if id_field in payload or sha_field in payload:
+        _formal_fail(
+            "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+            f"{id_field} and {sha_field} are compiler-derived",
+        )
     projection = {
         key: _explicit_value(payload[key])
         for key in explicit_fields
         if key not in {id_field, sha_field}
     }
-    extra = set(payload) - (set(explicit_fields) - {id_field, sha_field})
-    missing = (set(explicit_fields) - {id_field, sha_field}) - set(payload)
-    if extra or missing:
-        _invalid(
-            "Contract inputs differ from the closed projection; "
-            f"missing={sorted(missing)}, extra={sorted(extra)}"
-        )
     digest = _semantic_sha256(domain, projection)
     payload[id_field] = f"{stem}{digest[:20]}"
     payload[sha_field] = digest
@@ -2750,9 +3567,11 @@ def build_generated_reference_current_status_subject_closure(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_SUBJECT_CLOSURE_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "SUBJECT_CLOSURE_CONTRACT_INVALID", "subject closure construction failed"
+            "CONTRACT_FIELD_INVALID", "subject closure construction failed"
         ) from exc
 
 
@@ -2889,19 +3708,203 @@ def build_generated_reference_current_status_source_observation(
     predecessor_heads: tuple[GeneratedReferenceCurrentStatusChainHeadRefV1, ...] = (),
 ) -> CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1:
     try:
-        closure = cast(
+        _require_exact_type(
+            subject_closure,
             GeneratedReferenceCurrentStatusSubjectClosureV1,
-            _exact_model(
-                subject_closure,
-                GeneratedReferenceCurrentStatusSubjectClosureV1,
-                field="subject_closure",
-            ),
+            field="subject_closure",
         )
-        if type(source_object_bytes) is not bytes or not 1 <= len(source_object_bytes) <= 262_144:
-            _invalid("source_object_bytes must contain 1..262144 exact bytes")
+        _require_exact_type(source_identity_bytes, bytes, field="source_identity_bytes")
+        _require_exact_type(source_object_bytes, bytes, field="source_object_bytes")
+        _require_exact_type(predecessor_heads, tuple, field="predecessor_heads")
+        for value, field in (
+            (category, "category"),
+            (claim_value, "claim_value"),
+            (source_kind, "source_kind"),
+            (basis_code, "basis_code"),
+            (basis_note, "basis_note"),
+            (source_object_ref, "source_object_ref"),
+            (source_object_media_type, "source_object_media_type"),
+            (source_event_at, "source_event_at"),
+            (observed_at, "observed_at"),
+            (valid_from, "valid_from"),
+            (valid_until, "valid_until"),
+            (link_kind, "link_kind"),
+        ):
+            _require_exact_type(value, str, field=field)
+        for index, head in enumerate(predecessor_heads):
+            _require_exact_type(
+                head,
+                GeneratedReferenceCurrentStatusChainHeadRefV1,
+                field=f"predecessor_heads[{index}]",
+            )
+        runtime_shape_errors = tuple(
+            error
+            for value, expected, field in (
+                (
+                    subject_closure,
+                    GeneratedReferenceCurrentStatusSubjectClosureV1,
+                    "subject_closure",
+                ),
+                *(
+                    (
+                        head,
+                        GeneratedReferenceCurrentStatusChainHeadRefV1,
+                        f"predecessor_heads[{index}]",
+                    )
+                    for index, head in enumerate(predecessor_heads)
+                ),
+            )
+            for error in _inspect_imported_runtime_shape(
+                value, cast(type[BaseModel], expected), field=field
+            )
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "EXACT_INPUT_TYPE_REQUIRED"
+            )
+        )
+        if len(predecessor_heads) > _MAX_CONTAINER_ITEMS:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "predecessor_heads exceeds the maximum formal Contract item count",
+            )
+        if not 1 <= len(source_identity_bytes) <= 16_384:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "source_identity_bytes must contain 1..16384 exact bytes",
+            )
+        if not 1 <= len(source_object_bytes) <= 262_144:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "source_object_bytes must contain 1..262144 exact bytes",
+            )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "DOCUMENT_RESOURCE_LIMIT_EXCEEDED"
+            )
+        )
+        _admit_retained_json(
+            source_identity_bytes,
+            maximum=16_384,
+            field="Source Observation identity reference",
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "CONTRACT_FIELD_INVALID"
+            )
+        )
+        if type(category) is not str or category not in CURRENT_STATUS_CATEGORY_ORDER:
+            _formal_fail("CONTRACT_FIELD_INVALID", "category is not a frozen Contract value")
+        if type(claim_value) is not str or claim_value not in {
+            "PRESENT",
+            "ABSENT_WITH_EVIDENCE",
+            "UNKNOWN",
+            "NOT_ASSESSED",
+            "CONFLICT",
+        }:
+            _formal_fail("CONTRACT_FIELD_INVALID", "claim_value is not a frozen Contract value")
+        if type(source_kind) is not str or source_kind not in _CATEGORY_SOURCE_KINDS[category]:
+            _formal_fail("CONTRACT_FIELD_INVALID", "source_kind is not valid for category")
+        if type(basis_code) is not str:
+            _formal_fail("CONTRACT_FIELD_INVALID", "basis_code must be an exact string")
+        if claim_value in {"PRESENT", "ABSENT_WITH_EVIDENCE"}:
+            if basis_code not in _BASIS_MATRIX[category][claim_value]:
+                _formal_fail(
+                    "CONTRACT_FIELD_INVALID",
+                    "basis_code is incompatible with category and claim_value",
+                )
+        elif basis_code not in {
+            "INITIAL_STATUS_UNKNOWN",
+            "INITIAL_STATUS_NOT_ASSESSED",
+            "STATUS_RECONFIRMED",
+            "STATUS_BECAME_UNKNOWN",
+            "CONFLICT_IDENTIFIED",
+            "CONFLICT_RECONCILED",
+        }:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID", "non-terminal claim requires a generic basis code"
+            )
+        applicable_source_kinds = _SOURCE_APPLICABILITY.get((category, basis_code))
+        if applicable_source_kinds is not None and source_kind not in applicable_source_kinds:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "source_kind is incompatible with category and basis_code",
+            )
+        _human_text(basis_note, field="basis_note")
+        if type(source_object_ref) is not str or re.fullmatch(
+            _PORTABLE_ID_PATTERN, source_object_ref
+        ) is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", "source_object_ref is not a portable ID")
+        if type(source_object_media_type) is not str or re.fullmatch(
+            _MEDIA_TYPE_PATTERN, source_object_media_type
+        ) is None:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID", "source_object_media_type is not canonical"
+            )
         _source_identity, source_identity_ref_sha256 = _source_reference(
             source_identity_bytes, field="Source Observation identity reference"
         )
+        if type(link_kind) is not str or link_kind not in {
+            "GENESIS",
+            "SUCCESSOR",
+            "RECONCILIATION",
+        }:
+            _formal_fail("CONTRACT_FIELD_INVALID", "link_kind is not a frozen Contract value")
+        source_event = _parse_utc(source_event_at, field="source_event_at")
+        observed = _parse_utc(observed_at, field="observed_at")
+        validity_start = _parse_utc(valid_from, field="valid_from")
+        validity_end = _parse_utc(valid_until, field="valid_until")
+        formal_inputs = _exact_models(
+            (
+                (
+                    subject_closure,
+                    GeneratedReferenceCurrentStatusSubjectClosureV1,
+                    "subject_closure",
+                ),
+                *(
+                    (
+                        head,
+                        GeneratedReferenceCurrentStatusChainHeadRefV1,
+                        f"predecessor_heads[{index}]",
+                    )
+                    for index, head in enumerate(predecessor_heads)
+                ),
+            )
+        )
+        closure = cast(GeneratedReferenceCurrentStatusSubjectClosureV1, formal_inputs[0])
+        predecessor_keys = tuple(
+            (head.observation_id, head.observation_sha256, head.chain_sha256)
+            for head in predecessor_heads
+        )
+        if (
+            source_event > observed
+            or max(observed, validity_start) >= validity_end
+            or validity_end - validity_start > timedelta(seconds=86_400)
+            or validity_end > _parse_utc(closure.manifest_valid_until, field="manifest_valid_until")
+        ):
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED", "Source Observation time window is invalid"
+            )
+        if (
+            (link_kind == "GENESIS" and predecessor_keys)
+            or (link_kind == "SUCCESSOR" and len(predecessor_keys) != 1)
+            or (link_kind == "RECONCILIATION" and not 2 <= len(predecessor_keys) <= 8)
+            or len(predecessor_keys) != len(set(predecessor_keys))
+            or (
+                link_kind == "RECONCILIATION"
+                and predecessor_keys != tuple(sorted(predecessor_keys))
+            )
+        ):
+            _formal_fail(
+                "CHAIN_STRUCTURE_INVALID",
+                "Source Observation link/reconciliation structure is invalid",
+            )
         scope_sha = generated_reference_current_status_chain_scope_sha256(
             closure,
             category=category,
@@ -2949,9 +3952,11 @@ def build_generated_reference_current_status_source_observation(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_SOURCE_OBSERVATION_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "OBSERVATION_CONTRACT_INVALID", "Source Observation construction failed"
+            "CONTRACT_FIELD_INVALID", "Source Observation construction failed"
         ) from exc
 
 
@@ -2961,7 +3966,16 @@ def _merge_forced(
     result = dict(supplied)
     for key, value in forced.items():
         if key in result and result[key] != value:
-            _invalid(f"{key} is frozen and cannot be caller-selected")
+            if key in _ZERO_AUTHORITY_VALUES:
+                _formal_fail(
+                    "AUTHORITY_SURFACE_NONZERO",
+                    f"{key} differs from the frozen zero-authority value",
+                )
+            if key in {"policy_id", "policy_version", "policy_document_sha256"}:
+                _formal_fail(
+                    "POLICY_IDENTITY_MISMATCH", f"{key} differs from the frozen policy identity"
+                )
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{key} is frozen and cannot be caller-selected")
         result[key] = value
     return result
 
@@ -3041,7 +4055,10 @@ def _build_generated_reference_rights_manifest_from_values(
         )
         derived_until = min(bounds).strftime("%Y-%m-%dT%H:%M:%SZ")
         if "manifest_valid_until" in payload and payload["manifest_valid_until"] != derived_until:
-            _invalid("caller-supplied manifest_valid_until differs from frozen derivation")
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "caller-supplied manifest_valid_until differs from frozen derivation",
+            )
         payload["manifest_valid_until"] = derived_until
         provisional_values = {
             name: value
@@ -3062,7 +4079,10 @@ def _build_generated_reference_rights_manifest_from_values(
             "manifest_review_payload_sha256" in payload
             and payload["manifest_review_payload_sha256"] != derived_payload_sha
         ):
-            _invalid("caller-supplied Manifest review payload digest differs from derivation")
+            _formal_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "caller-supplied Manifest review payload digest differs from derivation",
+            )
         payload["manifest_review_payload_sha256"] = derived_payload_sha
         return cast(
             CreativeSampleGeneratedReferenceRightsManifestV1,
@@ -3075,9 +4095,11 @@ def _build_generated_reference_rights_manifest_from_values(
                 domain=GENERATED_REFERENCE_RIGHTS_MANIFEST_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "MANIFEST_CONTRACT_INVALID", "positive Rights Manifest construction failed"
+            "CONTRACT_FIELD_INVALID", "positive Rights Manifest construction failed"
         ) from exc
 
 
@@ -3177,31 +4199,83 @@ def _verify_generated_reference_rights_manifest_anchors(
             ):
                 _invalid("Manifest media bytes do not match raw anchors")
         return validated
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "MANIFEST_CLOSURE_REVALIDATION_FAILED", "Manifest verification failed closed"
+            "UPSTREAM_CLOSURE_MISMATCH", "Manifest verification failed closed"
         ) from exc
 
 
 def _admit_retained_json(raw: bytes, *, maximum: int, field: str) -> dict[str, object]:
-    if type(raw) is not bytes or not 1 <= len(raw) <= maximum:
-        _invalid(f"{field} must contain 1..{maximum} exact bytes")
-    if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw or not raw.endswith(b"\n"):
-        _invalid(f"{field} is not canonical UTF-8 document bytes")
+    if type(raw) is not bytes:
+        _formal_fail("EXACT_INPUT_TYPE_REQUIRED", f"{field} must contain exact bytes")
+    if not 1 <= len(raw) <= maximum:
+        _formal_fail(
+            "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+            f"{field} must contain 1..{maximum} exact bytes",
+        )
     try:
         value = json.loads(
             raw.decode("utf-8"),
             object_pairs_hook=_json_no_duplicates,
             parse_constant=lambda item: _invalid(f"non-finite number: {item}"),
         )
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ValueError(f"{field} is not valid JSON") from exc
+    except RecursionError as exc:
+        raise GeneratedReferenceRightsCurrentStatusError(
+            "DOCUMENT_RESOURCE_LIMIT_EXCEEDED", f"{field} exceeds maximum JSON depth"
+        ) from exc
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        raise GeneratedReferenceRightsCurrentStatusError(
+            "CANONICAL_JSON_REQUIRED", f"{field} is not valid canonical JSON"
+        ) from exc
+    _validate_retained_json_resource_limits(value, field=field)
+    if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw or not raw.endswith(b"\n"):
+        _formal_fail("CANONICAL_JSON_REQUIRED", f"{field} is not canonical UTF-8 document bytes")
     if type(value) is not dict:
-        _invalid(f"{field} must contain one JSON object")
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} must contain one JSON object")
     result = cast(dict[str, object], value)
-    if _formal_json(result) != raw:
-        _invalid(f"{field} is not in exact canonical-document form")
+    try:
+        canonical = _formal_json(result)
+    except ValueError as exc:
+        raise GeneratedReferenceRightsCurrentStatusError(
+            "CANONICAL_JSON_REQUIRED", f"{field} is outside the canonical JSON value set"
+        ) from exc
+    if canonical != raw:
+        _formal_fail("CANONICAL_JSON_REQUIRED", f"{field} is not in exact canonical-document form")
     return result
+
+
+def _admit_retained_json_documents(
+    documents: Sequence[tuple[bytes, int, str]],
+) -> None:
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    for raw, maximum, field in documents:
+        try:
+            _admit_retained_json(raw, maximum=maximum, field=field)
+        except GeneratedReferenceRightsCurrentStatusError as exc:
+            errors.append(exc)
+    _raise_prioritized_formal_errors(errors)
+
+
+def _validate_retained_json_resource_limits(value: object, *, field: str, depth: int = 1) -> None:
+    if depth > _MAX_JSON_DEPTH:
+        _formal_fail("DOCUMENT_RESOURCE_LIMIT_EXCEEDED", f"{field} exceeds maximum JSON depth")
+    if type(value) is list:
+        items = cast(list[object], value)
+        if len(items) > _MAX_CONTAINER_ITEMS:
+            _formal_fail("DOCUMENT_RESOURCE_LIMIT_EXCEEDED", f"{field} has too many array items")
+        for index, item in enumerate(items):
+            _validate_retained_json_resource_limits(
+                item, field=f"{field}[{index}]", depth=depth + 1
+            )
+    elif type(value) is dict:
+        mapping = cast(dict[str, object], value)
+        maximum = _MAX_FORMAL_ROOT_ITEMS if depth == 1 else _MAX_CONTAINER_ITEMS
+        if len(mapping) > maximum:
+            _formal_fail("DOCUMENT_RESOURCE_LIMIT_EXCEEDED", f"{field} has too many object members")
+        for key, item in mapping.items():
+            _validate_retained_json_resource_limits(item, field=f"{field}.{key}", depth=depth + 1)
 
 
 def _strict_model_from_json_value(
@@ -3210,34 +4284,46 @@ def _strict_model_from_json_value(
     """Normalize only frozen JSON-array fields before strict inline-model validation."""
 
     if type(value) is not dict:
-        _invalid(f"{field} must be one JSON object")
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} must be one JSON object")
     normalized = dict(cast(dict[str, object], value))
     try:
         if expected is GeneratedReferenceRightsManifestGateResultV1:
             evidence_ids = normalized.get("evidence_record_ids")
             if type(evidence_ids) is not list:
-                _invalid(f"{field}.evidence_record_ids must be a JSON array")
+                _formal_fail(
+                    "CONTRACT_FIELD_INVALID",
+                    f"{field}.evidence_record_ids must be a JSON array",
+                )
             normalized["evidence_record_ids"] = tuple(evidence_ids)
         elif expected is GeneratedReferenceReviewedRightsScopeV1:
             for name in ("territory_scope", "allowed_use_scope"):
                 items = normalized.get(name)
                 if type(items) is not list:
-                    _invalid(f"{field}.{name} must be a JSON array")
+                    _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{name} must be a JSON array")
                 normalized[name] = tuple(items)
         elif expected is GeneratedReferenceCurrentStatusCategoryResultV1:
             for name in ("category_observation_refs", "relied_on_observation_refs"):
                 items = normalized.get(name)
                 if type(items) is not list:
-                    _invalid(f"{field}.{name} must be a JSON array")
+                    _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{name} must be a JSON array")
                 normalized[name] = tuple(
                     GeneratedReferenceCurrentStatusObservationRefV1.model_validate(item)
                     for item in items
                 )
         else:
-            _invalid(f"{field} has no frozen retained-JSON adapter")
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field} has no frozen retained-JSON adapter")
         return expected.model_validate(normalized)
     except ValidationError as exc:
-        raise ValueError(f"{field} does not match {expected.__name__}") from exc
+        code = cast(
+            GeneratedReferenceFormalErrorCodeV1,
+            min(
+                _formal_validation_error_codes(exc) or ["CONTRACT_FIELD_INVALID"],
+                key=_GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index,
+            ),
+        )
+        raise GeneratedReferenceRightsCurrentStatusError(
+            code, f"{field} does not match {expected.__name__}"
+        ) from exc
 
 
 def _human_reference(raw: bytes, *, field: str) -> tuple[dict[str, object], str]:
@@ -3246,11 +4332,13 @@ def _human_reference(raw: bytes, *, field: str) -> tuple[dict[str, object], str]
         set(value) != {"document_profile", "identity_namespace", "identity_ref"}
         or value.get("document_profile") != "sdc.privacy-minimized-human-reference.v1"
     ):
-        _invalid(f"{field} does not use the frozen human-reference profile")
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID", f"{field} does not use the frozen human-reference profile"
+        )
     for key in ("identity_namespace", "identity_ref"):
         item = value.get(key)
         if type(item) is not str or re.fullmatch(_PORTABLE_ID_PATTERN, item) is None:
-            _invalid(f"{field}.{key} is not a PortableId")
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{key} is not a PortableId")
     return value, _raw_sha256(raw)
 
 
@@ -3265,52 +4353,76 @@ def _source_reference(raw: bytes, *, field: str) -> tuple[dict[str, object], str
         }
         or value.get("document_profile") != "sdc.privacy-minimized-source-reference.v1"
     ):
-        _invalid(f"{field} does not use the frozen source-reference profile")
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID",
+            f"{field} does not use the frozen source-reference profile",
+        )
     for key in ("source_identity_namespace", "source_identity_ref"):
         item = value.get(key)
         if type(item) is not str or re.fullmatch(_PORTABLE_ID_PATTERN, item) is None:
-            _invalid(f"{field}.{key} is not a PortableId")
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{key} is not a PortableId")
     return value, _raw_sha256(raw)
 
 
-def _admit_qualification_evidence(
+def _admit_qualification_evidence_contract(
     values: tuple[GeneratedReferenceQualificationEvidenceInput, ...],
 ) -> tuple[tuple[GeneratedReferenceQualificationEvidenceReferenceV1, ...], tuple[str, ...]]:
     if type(values) is not tuple or len(values) != 10:
         _invalid("qualification_evidence_documents must be an exact ten-item tuple")
     refs: list[GeneratedReferenceQualificationEvidenceReferenceV1] = []
     digests: list[str] = []
-    metadata = (
-        "record_id",
-        "document_profile",
-        "observed_at",
-        "effective_from",
-        "effective_until",
-        "evidence_valid_until",
-    )
     for index, item in enumerate(values):
         if type(item) is not GeneratedReferenceQualificationEvidenceInput:
             _invalid(f"qualification evidence {index} has the wrong exact input type")
         if type(item.reference) is not GeneratedReferenceQualificationEvidenceReferenceV1:
             _invalid(f"qualification evidence reference {index} has the wrong exact type")
-        reference = GeneratedReferenceQualificationEvidenceReferenceV1.model_validate(
-            item.reference
-        )
-        document = _admit_retained_json(
-            item.document_bytes, maximum=262_144, field=f"qualification evidence {index}"
-        )
-        digest = _raw_sha256(item.document_bytes)
-        if reference.document_sha256 != digest or reference.document_size_bytes != len(
-            item.document_bytes
+        reference = item.reference
+        if set(reference.__dict__) != set(
+            GeneratedReferenceQualificationEvidenceReferenceV1.model_fields
         ):
-            _invalid(f"qualification evidence {index} raw anchor mismatch")
-        if document.get("category") != reference.category:
-            _invalid(f"qualification evidence {index} category mismatch")
-        for name in metadata:
-            if document.get(name) != getattr(reference, name):
-                _invalid(f"qualification evidence {index} {name} mismatch")
-        if "media_type" in document and document["media_type"] != reference.media_type:
-            _invalid(f"qualification evidence {index} media_type mismatch")
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"qualification evidence reference {index} fields differ from its exact Contract",
+            )
+        if (
+            type(reference.category) is not str
+            or reference.category not in EVIDENCE_CATEGORY_ORDER
+            or type(reference.record_id) is not str
+            or re.fullmatch(_PORTABLE_ID_PATTERN, reference.record_id) is None
+            or type(reference.document_profile) is not str
+            or re.fullmatch(_PORTABLE_ID_PATTERN, reference.document_profile) is None
+            or reference.media_type != "application/json"
+            or type(reference.document_size_bytes) is not int
+            or not 1 <= reference.document_size_bytes <= 262_144
+            or type(reference.document_sha256) is not str
+            or re.fullmatch(_LOWER_SHA256_PATTERN, reference.document_sha256) is None
+            or any(
+                type(value) is not str
+                for value in (
+                    reference.observed_at,
+                    reference.effective_from,
+                    reference.effective_until,
+                    reference.evidence_valid_until,
+                )
+            )
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"qualification evidence reference {index} contains an invalid scalar field",
+            )
+        try:
+            _utc_seconds(reference.observed_at, field="observed_at")
+            _utc_seconds(reference.effective_from, field="effective_from")
+            _finite_or_perpetual(reference.effective_until, field="effective_until")
+            _finite_or_perpetual(
+                reference.evidence_valid_until, field="evidence_valid_until"
+            )
+        except ValueError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID",
+                f"qualification evidence reference {index} contains invalid time syntax",
+            ) from exc
+        digest = _raw_sha256(item.document_bytes)
         refs.append(reference)
         digests.append(digest)
     if len(set(digests)) != 10 or len({item.record_id for item in refs}) != 10:
@@ -3318,13 +4430,11 @@ def _admit_qualification_evidence(
     return tuple(refs), tuple(digests)
 
 
-def _admit_manifest_evidence(
-    values: tuple[GeneratedReferenceRightsManifestEvidenceInput, ...],
-) -> tuple[tuple[GeneratedReferenceRightsManifestEvidenceReferenceV1, ...], tuple[str, ...]]:
-    if type(values) is not tuple or len(values) != 9:
-        _invalid("review_evidence_documents must be an exact nine-item tuple")
-    refs: list[GeneratedReferenceRightsManifestEvidenceReferenceV1] = []
-    digests: list[str] = []
+def _close_qualification_evidence(
+    values: tuple[GeneratedReferenceQualificationEvidenceInput, ...],
+    references: tuple[GeneratedReferenceQualificationEvidenceReferenceV1, ...],
+    digests: tuple[str, ...],
+) -> None:
     metadata = (
         "record_id",
         "document_profile",
@@ -3333,14 +4443,212 @@ def _admit_manifest_evidence(
         "effective_until",
         "evidence_valid_until",
     )
+    for index, (item, reference, digest) in enumerate(
+        zip(values, references, digests, strict=True)
+    ):
+        document = _admit_retained_json(
+            item.document_bytes, maximum=262_144, field=f"qualification evidence {index}"
+        )
+        if reference.document_sha256 != digest or reference.document_size_bytes != len(
+            item.document_bytes
+        ):
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"qualification evidence {index} raw anchor mismatch",
+            )
+        if document.get("category") != reference.category:
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"qualification evidence {index} category mismatch",
+            )
+        for name in metadata:
+            if document.get(name) != getattr(reference, name):
+                _formal_fail(
+                    "UPSTREAM_CLOSURE_MISMATCH",
+                    f"qualification evidence {index} {name} mismatch",
+                )
+        if "media_type" in document and document["media_type"] != reference.media_type:
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"qualification evidence {index} media_type mismatch",
+            )
+
+
+def _validate_qualification_evidence_time(
+    references: tuple[GeneratedReferenceQualificationEvidenceReferenceV1, ...],
+) -> None:
+    for index, reference in enumerate(references):
+        try:
+            GeneratedReferenceQualificationEvidenceReferenceV1.model_validate(reference)
+        except ValidationError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                f"qualification evidence reference {index} has an invalid interval",
+            ) from exc
+
+
+def _validate_manifest_builder_time(
+    *,
+    outcome: CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
+    decision: CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
+    qualification_refs: tuple[GeneratedReferenceQualificationEvidenceReferenceV1, ...],
+    review_refs: tuple[GeneratedReferenceRightsManifestEvidenceReferenceV1, ...],
+    proposal: GeneratedReferenceRightsScopeProposalV1,
+    reviewed_scope: GeneratedReferenceReviewedRightsScopeV1,
+    maker_prepared_at: str,
+    manifest_at: str,
+) -> str:
+    _validate_qualification_evidence_time(qualification_refs)
+    manifest_time = _parse_utc(manifest_at, field="manifest_at")
+    if not (
+        _parse_utc(decision.decision_at, field="decision_at")
+        <= _parse_utc(maker_prepared_at, field="maker_prepared_at")
+        <= manifest_time
+        < _parse_utc(decision.qualification_valid_until, field="qualification_valid_until")
+    ):
+        _formal_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Manifest action time lies outside the Qualification window",
+        )
+    if reviewed_scope.reviewed_scope_valid_until > proposal.proposed_scope_valid_until:
+        _formal_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "reviewed scope cannot outlive proposed scope",
+        )
+    submitted_at = _parse_utc(outcome.submitted_at, field="submitted_at")
+    for evidence in review_refs[:2]:
+        if not (
+            _parse_utc(evidence.effective_from, field="effective_from")
+            <= submitted_at
+            < _upper_bound(evidence.effective_until, field="effective_until")
+        ):
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "historical Manifest evidence was not effective at submission",
+            )
+    finite_bounds = [manifest_time + timedelta(seconds=86_400)]
+    for evidence in review_refs[2:]:
+        if not (
+            _parse_utc(evidence.observed_at, field="observed_at") <= manifest_time
+            and _parse_utc(evidence.effective_from, field="effective_from")
+            <= manifest_time
+            < _upper_bound(evidence.effective_until, field="effective_until")
+            and manifest_time
+            < _upper_bound(evidence.evidence_valid_until, field="evidence_valid_until")
+        ):
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "current-facing Manifest evidence is not usable at manifest_at",
+            )
+        for bound_name, bound in (
+            ("effective_until", evidence.effective_until),
+            ("evidence_valid_until", evidence.evidence_valid_until),
+        ):
+            if bound != "PERPETUAL":
+                finite_bounds.append(_parse_utc(bound, field=bound_name))
+    finite_bounds.append(
+        _parse_utc(
+            reviewed_scope.reviewed_scope_valid_until,
+            field="reviewed_scope_valid_until",
+        )
+    )
+    expected_until = min(finite_bounds)
+    if not manifest_time < expected_until:
+        _formal_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            "Manifest validity window must be non-empty",
+        )
+    return expected_until.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _admit_manifest_evidence_contract(
+    values: tuple[GeneratedReferenceRightsManifestEvidenceInput, ...],
+) -> tuple[GeneratedReferenceRightsManifestEvidenceReferenceV1, ...]:
+    if type(values) is not tuple or len(values) != 9:
+        _invalid("review_evidence_documents must be an exact nine-item tuple")
+    refs: list[GeneratedReferenceRightsManifestEvidenceReferenceV1] = []
     for index, item in enumerate(values):
         if type(item) is not GeneratedReferenceRightsManifestEvidenceInput:
             _invalid(f"Manifest evidence {index} has the wrong exact input type")
         if type(item.reference) is not GeneratedReferenceRightsManifestEvidenceReferenceV1:
             _invalid(f"Manifest evidence reference {index} has the wrong exact type")
-        reference = GeneratedReferenceRightsManifestEvidenceReferenceV1.model_validate(
-            _explicit_value(item.reference)
+        reference = item.reference
+        if set(reference.__dict__) != set(
+            _EXPLICIT_FIELD_NAMES[GeneratedReferenceRightsManifestEvidenceReferenceV1]
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"Manifest evidence reference {index} fields differ from the exact Contract",
+            )
+        if (
+            type(reference.ordinal) is not int
+            or not 0 <= reference.ordinal <= 8
+            or type(reference.document_size_bytes) is not int
+            or not 1 <= reference.document_size_bytes <= 262_144
+            or type(reference.category) is not str
+            or reference.category not in MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER
+            or type(reference.record_id) is not str
+            or re.fullmatch(_PORTABLE_ID_PATTERN, reference.record_id) is None
+            or type(reference.document_profile) is not str
+            or re.fullmatch(_PORTABLE_ID_PATTERN, reference.document_profile) is None
+            or type(reference.document_sha256) is not str
+            or re.fullmatch(_LOWER_SHA256_PATTERN, reference.document_sha256) is None
+            or type(reference.media_type) is not str
+            or re.fullmatch(_MEDIA_TYPE_PATTERN, reference.media_type) is None
+            or any(
+                type(item) is not str
+                for item in (
+                    reference.observed_at,
+                    reference.effective_from,
+                    reference.effective_until,
+                    reference.evidence_valid_until,
+                )
+            )
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"Manifest evidence reference {index} contains an invalid scalar field",
+            )
+        try:
+            _utc_seconds(reference.observed_at, field="observed_at")
+            _utc_seconds(reference.effective_from, field="effective_from")
+            _finite_or_perpetual(reference.effective_until, field="effective_until")
+            _finite_or_perpetual(reference.evidence_valid_until, field="evidence_valid_until")
+        except ValueError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID",
+                f"Manifest evidence reference {index} contains invalid time syntax",
+            ) from exc
+        refs.append(reference)
+    result = tuple(refs)
+    if tuple(item.category for item in result) != MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER:
+        _formal_fail("CONTRACT_FIELD_INVALID", "Manifest evidence is not in frozen category order")
+    if tuple(item.ordinal for item in result) != tuple(range(9)):
+        _formal_fail("CONTRACT_FIELD_INVALID", "Manifest evidence ordinals are not exact")
+    if len({item.document_sha256 for item in result}) != 9 or len(
+        {item.record_id for item in result}
+    ) != 9:
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID",
+            "Manifest evidence document anchors and record IDs must be unique",
         )
+    return result
+
+
+def _close_manifest_evidence(
+    values: tuple[GeneratedReferenceRightsManifestEvidenceInput, ...],
+    references: tuple[GeneratedReferenceRightsManifestEvidenceReferenceV1, ...],
+) -> tuple[str, ...]:
+    metadata = (
+        "record_id",
+        "document_profile",
+        "observed_at",
+        "effective_from",
+        "effective_until",
+        "evidence_valid_until",
+    )
+    digests: list[str] = []
+    for index, (item, reference) in enumerate(zip(values, references, strict=True)):
         document = _admit_retained_json(
             item.document_bytes, maximum=262_144, field=f"Manifest evidence {index}"
         )
@@ -3348,38 +4656,786 @@ def _admit_manifest_evidence(
         if reference.document_sha256 != digest or reference.document_size_bytes != len(
             item.document_bytes
         ):
-            _invalid(f"Manifest evidence {index} raw anchor mismatch")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"Manifest evidence {index} raw anchor mismatch",
+            )
         if document.get("category") != reference.category:
-            _invalid(f"Manifest evidence {index} category mismatch")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"Manifest evidence {index} category mismatch",
+            )
         for name in metadata:
             if document.get(name) != getattr(reference, name):
-                _invalid(f"Manifest evidence {index} {name} mismatch")
+                _formal_fail(
+                    "UPSTREAM_CLOSURE_MISMATCH",
+                    f"Manifest evidence {index} {name} mismatch",
+                )
         if "media_type" in document and document["media_type"] != reference.media_type:
-            _invalid(f"Manifest evidence {index} media_type mismatch")
-        refs.append(reference)
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                f"Manifest evidence {index} media_type mismatch",
+            )
         digests.append(digest)
-    result = tuple(refs)
-    if tuple(item.category for item in result) != MANIFEST_REVIEW_EVIDENCE_CATEGORY_ORDER:
-        _invalid("Manifest evidence is not in frozen category order")
-    if tuple(item.ordinal for item in result) != tuple(range(9)):
-        _invalid("Manifest evidence ordinals are not exact")
-    if len(set(digests)) != 9 or len({item.record_id for item in result}) != 9:
-        _invalid("Manifest evidence documents and record IDs must be unique")
-    return result, tuple(digests)
+    return tuple(digests)
 
 
-def _exact_retained_action(raw: bytes, *, expected: Mapping[str, object], field: str) -> str:
+def _admit_observation_ref_json_contract(value: object, *, field: str) -> dict[str, object]:
+    if type(value) is not dict:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} must be one JSON object")
+    mapping = cast(dict[str, object], value)
+    expected_fields = set(_EXPLICIT_FIELD_NAMES[GeneratedReferenceCurrentStatusObservationRefV1])
+    if set(mapping) != expected_fields:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} fields differ from ObservationRef")
+    expected_types: dict[str, type[object]] = {
+        "ordinal": int,
+        "observation_id": str,
+        "observation_sha256": str,
+        "category": str,
+        "source_identity_ref_sha256": str,
+        "chain_scope_sha256": str,
+        "chain_sha256": str,
+        "valid_from": str,
+        "valid_until": str,
+    }
+    if any(type(mapping[name]) is not expected for name, expected in expected_types.items()):
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} contains a substituted scalar type")
+    ordinal = cast(int, mapping["ordinal"])
+    if not 0 <= ordinal <= 31:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.ordinal is outside 0..31")
+    observation_id = cast(str, mapping["observation_id"])
+    if re.fullmatch(
+        r"generated_reference_current_status_source_observation_v1_[0-9a-f]{20}",
+        observation_id,
+    ) is None:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.observation_id is invalid")
+    if cast(str, mapping["category"]) not in CURRENT_STATUS_CATEGORY_ORDER:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.category is invalid")
+    for name in (
+        "observation_sha256",
+        "source_identity_ref_sha256",
+        "chain_scope_sha256",
+        "chain_sha256",
+    ):
+        if re.fullmatch(_LOWER_SHA256_PATTERN, cast(str, mapping[name])) is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{name} is not a LowerSha256")
+    for name in ("valid_from", "valid_until"):
+        try:
+            _utc_seconds(cast(str, mapping[name]), field=f"{field}.{name}")
+        except ValueError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID", f"{field}.{name} is not canonical UTC seconds"
+            ) from exc
+    return mapping
+
+
+def _admit_category_result_json_contract(value: object, *, field: str) -> dict[str, object]:
+    if type(value) is not dict:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} must be one JSON object")
+    mapping = cast(dict[str, object], value)
+    expected_fields = set(_EXPLICIT_FIELD_NAMES[GeneratedReferenceCurrentStatusCategoryResultV1])
+    if set(mapping) != expected_fields:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} fields differ from CategoryResult")
+    expected_types: dict[str, type[object]] = {
+        "ordinal": int,
+        "category": str,
+        "claim_value": str,
+        "deterministic_effect": str,
+        "category_observation_refs": list,
+        "relied_on_observation_refs": list,
+        "result_valid_until": str,
+    }
+    if any(type(mapping[name]) is not expected for name, expected in expected_types.items()):
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} contains a substituted scalar type")
+    ordinal = cast(int, mapping["ordinal"])
+    category = cast(str, mapping["category"])
+    if not 0 <= ordinal <= 8 or category not in CURRENT_STATUS_CATEGORY_ORDER:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} ordinal/category is invalid")
+    if cast(str, mapping["claim_value"]) not in {
+        "PRESENT",
+        "ABSENT_WITH_EVIDENCE",
+        "UNKNOWN",
+        "NOT_ASSESSED",
+        "CONFLICT",
+    } or cast(str, mapping["deterministic_effect"]) not in {
+        "ADVERSE_PRESENT",
+        "ADVERSE_ABSENT",
+        "POSITIVE_PRESENT",
+        "POSITIVE_ABSENT",
+        "INDETERMINATE",
+    }:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} contains an invalid enum")
+    try:
+        _utc_seconds(cast(str, mapping["result_valid_until"]), field=f"{field}.result_valid_until")
+    except ValueError as exc:
+        raise GeneratedReferenceRightsCurrentStatusError(
+            "CONTRACT_FIELD_INVALID", f"{field}.result_valid_until is not canonical UTC seconds"
+        ) from exc
+    category_refs = cast(list[object], mapping["category_observation_refs"])
+    relied_refs = cast(list[object], mapping["relied_on_observation_refs"])
+    if not 1 <= len(category_refs) <= 32 or len(relied_refs) > 32:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} reference cardinality is invalid")
+    admitted_category_refs = tuple(
+        _admit_observation_ref_json_contract(item, field=f"{field}.category_observation_refs[{i}]")
+        for i, item in enumerate(category_refs)
+    )
+    admitted_relied_refs = tuple(
+        _admit_observation_ref_json_contract(item, field=f"{field}.relied_on_observation_refs[{i}]")
+        for i, item in enumerate(relied_refs)
+    )
+    if any(cast(str, item["category"]) != category for item in admitted_category_refs):
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} contains another category")
+    category_keys = tuple(
+        (
+            cast(str, item["observation_id"]),
+            cast(str, item["observation_sha256"]),
+            cast(str, item["chain_sha256"]),
+        )
+        for item in admitted_category_refs
+    )
+    relied_keys = tuple(
+        (
+            cast(str, item["observation_id"]),
+            cast(str, item["observation_sha256"]),
+            cast(str, item["chain_sha256"]),
+        )
+        for item in admitted_relied_refs
+    )
+    iterator = iter(category_keys)
+    if (
+        len(category_keys) != len(set(category_keys))
+        or len(relied_keys) != len(set(relied_keys))
+        or not all(any(candidate == key for candidate in iterator) for key in relied_keys)
+    ):
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} reference membership/order is invalid")
+    return mapping
+
+
+def _validate_retained_observation_ref_time(value: Mapping[str, object], *, field: str) -> None:
+    if _parse_utc(cast(str, value["valid_from"]), field="valid_from") >= _parse_utc(
+        cast(str, value["valid_until"]), field="valid_until"
+    ):
+        _formal_fail(
+            "TIME_WINDOW_INVALID_OR_EXPIRED",
+            f"{field} validity window is empty",
+        )
+
+
+def _admit_retained_action_contract(
+    raw: bytes,
+    *,
+    field: str,
+    field_types: Mapping[str, type[object]],
+    literals: Mapping[str, object],
+    array_specs: Mapping[str, tuple[int, int, type[object]]] | None = None,
+) -> dict[str, object]:
     actual = _admit_retained_json(raw, maximum=262_144, field=field)
-    if not _exact_json_equal(actual, dict(expected)):
-        _invalid(f"{field} differs from its exact closed projection")
+    if set(actual) != set(field_types):
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID",
+            f"{field} fields differ from the frozen action Contract",
+        )
+    for name, expected_type in field_types.items():
+        if type(actual[name]) is not expected_type:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"{field}.{name} uses a substituted scalar or container type",
+            )
+    for name, expected_value in literals.items():
+        if not _exact_json_equal(actual[name], expected_value):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"{field}.{name} is not the frozen literal",
+            )
+    for name, (minimum, maximum, item_type) in (array_specs or {}).items():
+        items = cast(list[object], actual[name])
+        if not minimum <= len(items) <= maximum or any(
+            type(item) is not item_type for item in items
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"{field}.{name} violates its exact cardinality or item type",
+            )
+        if name.endswith("sha256s") and any(
+            re.fullmatch(_LOWER_SHA256_PATTERN, cast(str, item)) is None for item in items
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"{field}.{name} contains a value outside LowerSha256",
+            )
+        if name == "observation_target_refs":
+            for index, item in enumerate(items):
+                _admit_observation_ref_json_contract(
+                    item, field=f"{field}.{name}[{index}]"
+                )
+        if name == "category_results":
+            admitted_results = tuple(
+                _admit_category_result_json_contract(
+                    item, field=f"{field}.{name}[{index}]"
+                )
+                for index, item in enumerate(items)
+            )
+            if tuple(cast(str, item["category"]) for item in admitted_results) != (
+                CURRENT_STATUS_CATEGORY_ORDER
+            ) or tuple(cast(int, item["ordinal"]) for item in admitted_results) != tuple(
+                range(9)
+            ):
+                _formal_fail(
+                    "CONTRACT_FIELD_INVALID",
+                    f"{field}.{name} is outside frozen category order/ordinals",
+                )
+    for name, item in actual.items():
+        if type(item) is not str:
+            continue
+        text = item
+        if name.endswith("sha256") and re.fullmatch(_LOWER_SHA256_PATTERN, text) is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{name} is not a LowerSha256")
+        if name in {
+            "requested_at",
+            "request_valid_until",
+            "decision_at",
+            "prepared_at",
+            "reviewed_at",
+            "evaluated_at",
+            "status_valid_until",
+        }:
+            _utc_seconds(text, field=f"{field}.{name}")
+        if name in {"qualification_basis", "request_basis", "checker_basis"}:
+            _human_text(text, field=f"{field}.{name}")
+    return actual
+
+
+def _same_retained_json_shape(actual: object, expected: object) -> bool:
+    if type(actual) is not type(expected):
+        return False
+    if type(actual) is dict:
+        actual_mapping = cast(dict[str, object], actual)
+        expected_mapping = cast(dict[str, object], expected)
+        return set(actual_mapping) == set(expected_mapping) and all(
+            _same_retained_json_shape(actual_mapping[name], expected_value)
+            for name, expected_value in expected_mapping.items()
+        )
+    if type(actual) is list:
+        actual_items = cast(list[object], actual)
+        expected_items = cast(list[object], expected)
+        return len(actual_items) == len(expected_items) and all(
+            _same_retained_json_shape(actual_item, expected_item)
+            for actual_item, expected_item in zip(actual_items, expected_items, strict=True)
+        )
+    return True
+
+
+def _exact_retained_action(
+    raw: bytes,
+    *,
+    expected: Mapping[str, object],
+    field: str,
+    replay_fields: frozenset[str] = frozenset(),
+) -> str:
+    actual = _admit_retained_json(raw, maximum=262_144, field=field)
+    expected_mapping = dict(expected)
+    if not _same_retained_json_shape(actual, expected_mapping):
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID",
+            f"{field} has missing, extra, substituted, or wrong-cardinality fields",
+        )
+    for literal_field in ("document_profile", "action", "disposition"):
+        if literal_field in expected_mapping and not _exact_json_equal(
+            actual[literal_field], expected_mapping[literal_field]
+        ):
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                f"{field}.{literal_field} is not the frozen literal",
+            )
+    mismatched = tuple(
+        name
+        for name, expected_value in expected_mapping.items()
+        if not _exact_json_equal(actual[name], expected_value)
+    )
+    if any(name not in replay_fields for name in mismatched):
+        _formal_fail(
+            "UPSTREAM_CLOSURE_MISMATCH", f"{field} differs from its exact closed projection"
+        )
+    if mismatched:
+        _formal_fail("REPLAY_MISMATCH", f"{field} differs from freshly derived replay values")
     return _raw_sha256(raw)
+
+
+def _inspect_imported_runtime_shape(
+    value: object, expected: type[BaseModel], *, field: str
+) -> tuple[GeneratedReferenceRightsCurrentStatusError, ...]:
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    active: set[int] = set()
+
+    def add_contract(item_field: str, message: str) -> None:
+        errors.append(
+            GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID", f"{item_field} {message}"
+            )
+        )
+
+    def unwrap(annotation: object) -> object:
+        while get_origin(annotation) is Annotated:
+            annotation = get_args(annotation)[0]
+        return annotation
+
+    def top_level_match(item: object, annotation: object) -> int:
+        """Return 2 for exact, 1 for subclass, and 0 for incompatible runtime shape."""
+
+        annotation = unwrap(annotation)
+        origin = get_origin(annotation)
+        if origin in {Union, UnionType}:
+            return max(
+                (top_level_match(item, option) for option in get_args(annotation)), default=0
+            )
+        if origin is Literal:
+            if any(type(item) is type(option) for option in get_args(annotation)):
+                return 2
+            if any(isinstance(item, type(option)) for option in get_args(annotation)):
+                return 1
+            return 0
+        if origin is tuple:
+            return 2 if type(item) is tuple else 1 if isinstance(item, tuple) else 0
+        if origin is list:
+            return 2 if type(item) is list else 1 if isinstance(item, list) else 0
+        if origin is dict:
+            return 2 if type(item) is dict else 1 if isinstance(item, dict) else 0
+        if origin is Mapping:
+            return 2 if isinstance(item, Mapping) else 0
+        if annotation is None or annotation is type(None):
+            return 2 if item is None else 0
+        if isinstance(annotation, type):
+            if type(item) is annotation:
+                return 2
+            if isinstance(item, annotation):
+                return 1
+        return 0
+
+    def inspect(
+        item: object,
+        annotation: object,
+        *,
+        item_field: str,
+        depth: int,
+    ) -> None:
+        annotation = unwrap(annotation)
+        if depth > _MAX_JSON_DEPTH:
+            errors.append(
+                GeneratedReferenceRightsCurrentStatusError(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{item_field} exceeds imported Contract depth",
+                )
+            )
+            return
+        origin = get_origin(annotation)
+        if origin in {Union, UnionType}:
+            options = get_args(annotation)
+            exact = tuple(option for option in options if top_level_match(item, option) == 2)
+            matching = exact or tuple(
+                option for option in options if top_level_match(item, option) == 1
+            )
+            if not matching:
+                add_contract(item_field, "uses a substituted union member type")
+                return
+            if not exact:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "EXACT_INPUT_TYPE_REQUIRED",
+                        f"{item_field} uses a subclassed union member type",
+                    )
+                )
+            inspect(
+                item,
+                matching[0],
+                item_field=item_field,
+                depth=depth,
+            )
+            return
+        if origin is Literal:
+            match = top_level_match(item, annotation)
+            if match == 1:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "EXACT_INPUT_TYPE_REQUIRED",
+                        f"{item_field} uses a subclassed Literal scalar type",
+                    )
+                )
+            elif match == 0:
+                add_contract(item_field, "uses a substituted Literal scalar type")
+            return
+        if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+            if type(item) is not annotation:
+                code: GeneratedReferenceFormalErrorCodeV1 = (
+                    "EXACT_INPUT_TYPE_REQUIRED"
+                    if isinstance(item, annotation)
+                    else "CONTRACT_FIELD_INVALID"
+                )
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        code, f"{item_field} does not use the exact imported model type"
+                    )
+                )
+                return
+            model = item
+            expected_fields = annotation.model_fields
+            if set(model.__dict__) != set(expected_fields):
+                add_contract(item_field, "does not contain exact imported Contract fields")
+            identity = id(model)
+            if identity in active:
+                add_contract(item_field, "contains a cyclic imported model graph")
+                return
+            active.add(identity)
+            try:
+                for name, model_field in expected_fields.items():
+                    if name in model.__dict__:
+                        inspect(
+                            model.__dict__[name],
+                            model_field.annotation,
+                            item_field=f"{item_field}.{name}",
+                            depth=depth + 1,
+                        )
+            finally:
+                active.remove(identity)
+            return
+        if origin is Mapping:
+            if not isinstance(item, Mapping):
+                add_contract(item_field, "must use the exact immutable mapping storage")
+                return
+            if type(item) is not _FrozenStringMap:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "EXACT_INPUT_TYPE_REQUIRED",
+                        f"{item_field} substitutes the canonical immutable mapping type",
+                    )
+                )
+            mapping_items = tuple(cast(Mapping[object, object], item).items())
+            if len(mapping_items) > _MAX_CONTAINER_ITEMS:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                        f"{item_field} exceeds imported Contract item count",
+                    )
+                )
+            key_annotation, value_annotation = get_args(annotation)
+            for index, (key, child) in enumerate(mapping_items[:_MAX_CONTAINER_ITEMS]):
+                inspect(
+                    key,
+                    key_annotation,
+                    item_field=f"{item_field}.key[{index}]",
+                    depth=depth + 1,
+                )
+                inspect(
+                    child,
+                    value_annotation,
+                    item_field=f"{item_field}[{index}]",
+                    depth=depth + 1,
+                )
+            return
+        if origin is tuple:
+            if type(item) is not tuple:
+                if isinstance(item, tuple):
+                    errors.append(
+                        GeneratedReferenceRightsCurrentStatusError(
+                            "EXACT_INPUT_TYPE_REQUIRED",
+                            f"{item_field} must use an exact tuple",
+                        )
+                    )
+                else:
+                    add_contract(item_field, "must use an exact tuple")
+                    return
+            tuple_items = cast(tuple[object, ...], item)
+            if len(tuple_items) > _MAX_CONTAINER_ITEMS:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                        f"{item_field} exceeds imported Contract item count",
+                    )
+                )
+            arguments = get_args(annotation)
+            if len(arguments) == 2 and arguments[1] is Ellipsis:
+                for index, child in enumerate(tuple_items[:_MAX_CONTAINER_ITEMS]):
+                    inspect(
+                        child,
+                        arguments[0],
+                        item_field=f"{item_field}[{index}]",
+                        depth=depth + 1,
+                    )
+            elif len(tuple_items) == len(arguments):
+                for index, (child, child_annotation) in enumerate(
+                    zip(tuple_items, arguments, strict=True)
+                ):
+                    inspect(
+                        child,
+                        child_annotation,
+                        item_field=f"{item_field}[{index}]",
+                        depth=depth + 1,
+                    )
+            else:
+                add_contract(item_field, "has the wrong fixed-tuple cardinality")
+            return
+        if origin is list:
+            if type(item) is not list:
+                if isinstance(item, list):
+                    errors.append(
+                        GeneratedReferenceRightsCurrentStatusError(
+                            "EXACT_INPUT_TYPE_REQUIRED",
+                            f"{item_field} must use an exact list",
+                        )
+                    )
+                else:
+                    add_contract(item_field, "must use an exact list")
+                    return
+            list_items = cast(list[object], item)
+            if len(list_items) > _MAX_CONTAINER_ITEMS:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                        f"{item_field} exceeds imported Contract item count",
+                    )
+                )
+            child_annotation = get_args(annotation)[0]
+            for index, child in enumerate(list_items[:_MAX_CONTAINER_ITEMS]):
+                inspect(
+                    child,
+                    child_annotation,
+                    item_field=f"{item_field}[{index}]",
+                    depth=depth + 1,
+                )
+            return
+        if origin is dict:
+            if type(item) is not dict:
+                if isinstance(item, dict):
+                    errors.append(
+                        GeneratedReferenceRightsCurrentStatusError(
+                            "EXACT_INPUT_TYPE_REQUIRED",
+                            f"{item_field} must use an exact dict",
+                        )
+                    )
+                else:
+                    add_contract(item_field, "must use an exact dict")
+                    return
+            dict_items = cast(dict[object, object], item)
+            if len(dict_items) > _MAX_CONTAINER_ITEMS:
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                        f"{item_field} exceeds imported Contract item count",
+                    )
+                )
+            key_annotation, value_annotation = get_args(annotation)
+            for index, (key, child) in enumerate(
+                tuple(dict_items.items())[:_MAX_CONTAINER_ITEMS]
+            ):
+                inspect(
+                    key,
+                    key_annotation,
+                    item_field=f"{item_field}.key[{index}]",
+                    depth=depth + 1,
+                )
+                inspect(
+                    child,
+                    value_annotation,
+                    item_field=f"{item_field}[{index}]",
+                    depth=depth + 1,
+                )
+            return
+        if annotation is None or annotation is type(None):
+            if item is not None:
+                add_contract(item_field, "must be None")
+            return
+        if isinstance(annotation, type) and type(item) is not annotation:
+            if isinstance(item, annotation):
+                errors.append(
+                    GeneratedReferenceRightsCurrentStatusError(
+                        "EXACT_INPUT_TYPE_REQUIRED",
+                        f"{item_field} uses a subclassed scalar type",
+                    )
+                )
+            else:
+                add_contract(item_field, "uses a substituted scalar type")
+
+    inspect(value, expected, item_field=field, depth=0)
+    return tuple(errors)
+
+
+def _require_imported_runtime_shape(
+    value: object, expected: type[BaseModel], *, field: str
+) -> None:
+    _raise_prioritized_formal_errors(
+        _inspect_imported_runtime_shape(value, expected, field=field)
+    )
 
 
 def _external_revalidate(value: BaseModel, expected: type[BaseModel], *, field: str) -> BaseModel:
     if type(value) is not expected:
-        _invalid(f"{field} must have exact type {expected.__name__}")
+        _formal_fail(
+            "EXACT_INPUT_TYPE_REQUIRED", f"{field} must have exact type {expected.__name__}"
+        )
     canonical = _formal_json(value.model_dump(mode="json"))
-    return expected.model_validate_json(canonical)
+    try:
+        return expected.model_validate_json(canonical)
+    except ValidationError as exc:
+        code = cast(
+            GeneratedReferenceFormalErrorCodeV1,
+            min(
+                _formal_validation_error_codes(exc) or ["CONTRACT_FIELD_INVALID"],
+                key=_GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index,
+            ),
+        )
+        raise GeneratedReferenceRightsCurrentStatusError(
+            code, f"{field} does not satisfy its exact Contract"
+        ) from exc
+
+
+def _external_self_identity_revalidate(
+    value: BaseModel,
+    expected: type[BaseModel],
+    *,
+    field: str,
+    sha_field: str,
+    domain: bytes,
+    id_field: str | None = None,
+    id_stem: str | None = None,
+) -> BaseModel:
+    """Revalidate an imported Contract without misclassifying its self identity."""
+
+    if type(value) is not expected:
+        _formal_fail(
+            "EXACT_INPUT_TYPE_REQUIRED", f"{field} must have exact type {expected.__name__}"
+        )
+    if set(value.__dict__) != set(expected.model_fields):
+        _formal_fail(
+            "CONTRACT_FIELD_INVALID", f"{field} fields differ from its exact imported Contract"
+        )
+    _require_imported_runtime_shape(value, expected, field=field)
+    supplied_sha = value.__dict__[sha_field]
+    if type(supplied_sha) is not str or re.fullmatch(_LOWER_SHA256_PATTERN, supplied_sha) is None:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{sha_field} is not a lower SHA-256")
+    supplied_id: object | None = None
+    if id_field is not None:
+        supplied_id = value.__dict__[id_field]
+        if type(supplied_id) is not str or re.fullmatch(_PORTABLE_ID_PATTERN, supplied_id) is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field}.{id_field} is not a PortableId")
+    excluded = {sha_field}
+    if id_field is not None:
+        excluded.add(id_field)
+    try:
+        projection = cast(
+            dict[str, object], value.model_dump(mode="json", exclude=excluded)
+        )
+        expected_sha = _semantic_sha256(domain, projection)
+    except (AttributeError, KeyError, TypeError, ValueError) as exc:
+        raise GeneratedReferenceRightsCurrentStatusError(
+            "CONTRACT_FIELD_INVALID", f"{field} cannot project its exact imported Contract"
+        ) from exc
+    updates: dict[str, object] = {sha_field: expected_sha}
+    expected_id: str | None = None
+    if id_field is not None:
+        if id_stem is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", f"{field} identity adapter is incomplete")
+        expected_id = f"{id_stem}{expected_sha[:20]}"
+        updates[id_field] = expected_id
+    semantic_drift = supplied_sha != expected_sha or (
+        id_field is not None and supplied_id != expected_id
+    )
+    repaired = value.model_copy(update=updates)
+    try:
+        validated = _external_revalidate(repaired, expected, field=field)
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        if semantic_drift and (
+            _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH"
+            )
+            < _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(exc.code)
+        ):
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                f"{field} self identity differs from its explicit semantic projection",
+            ) from exc
+        raise
+    if semantic_drift:
+        _formal_fail(
+            "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+            f"{field} self identity differs from its explicit semantic projection",
+        )
+    return validated
+
+
+def _inspect_formal_model_results(
+    operations: Sequence[Callable[[], BaseModel]],
+    fallbacks: Sequence[BaseModel],
+) -> tuple[tuple[BaseModel, ...], tuple[GeneratedReferenceRightsCurrentStatusError, ...]]:
+    """Inspect independent admissions while retaining exact supplied models for later phases."""
+
+    results: list[BaseModel] = []
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    for operation, fallback in zip(operations, fallbacks, strict=True):
+        try:
+            results.append(operation())
+        except GeneratedReferenceRightsCurrentStatusError as exc:
+            results.append(fallback)
+            errors.append(exc)
+    return tuple(results), tuple(errors)
+
+
+def _raise_prioritized_formal_errors(
+    errors: Sequence[GeneratedReferenceRightsCurrentStatusError],
+) -> None:
+    if errors:
+        selected = min(
+            errors,
+            key=lambda item: _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(item.code),
+        )
+        raise selected
+
+
+def _defer_post_policy_errors(
+    errors: Sequence[GeneratedReferenceRightsCurrentStatusError],
+) -> tuple[GeneratedReferenceRightsCurrentStatusError, ...]:
+    policy_index = _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(
+        "POLICY_IDENTITY_MISMATCH"
+    )
+    early = tuple(
+        error
+        for error in errors
+        if _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(error.code) <= policy_index
+    )
+    _raise_prioritized_formal_errors(early)
+    return tuple(errors)
+
+
+def _verify_formal_rebuild(
+    value: BaseModel,
+    expected: type[BaseModel],
+    *,
+    field: str,
+    rebuild: Callable[[BaseModel], BaseModel],
+    mismatch_message: str,
+) -> BaseModel:
+    errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+    validated: BaseModel | None = None
+    rebuilt: BaseModel | None = None
+    try:
+        validated = _exact_model(value, expected, field=field)
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        errors.append(exc)
+    try:
+        rebuilt = rebuild(validated if validated is not None else value)
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        errors.append(exc)
+    except (AttributeError, TypeError, ValueError, ValidationError) as exc:
+        errors.append(
+            GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID", f"{field} rebuild inputs are incomplete"
+            )
+        )
+        errors[-1].__cause__ = exc
+    _raise_prioritized_formal_errors(errors)
+    if validated is None or rebuilt is None:
+        _formal_fail("CONTRACT_FIELD_INVALID", f"{field} verification inputs are incomplete")
+    if rebuilt != validated:
+        _formal_fail("REPLAY_MISMATCH", mismatch_message)
+    return validated
 
 
 def _manifest_payload_projection_from_values(values: Mapping[str, object]) -> dict[str, object]:
@@ -3454,90 +5510,482 @@ def build_generated_reference_rights_manifest(
     """Rebuild the exact ADR-042/043 closure and record one positive scoped Manifest."""
 
     try:
-        art = cast(
-            CreativeSampleReferenceVisualPromptArtifactV1,
-            _external_revalidate(
-                artifact, CreativeSampleReferenceVisualPromptArtifactV1, field="Artifact"
-            ),
-        )
-        out = cast(
-            CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
-            _external_revalidate(
-                outcome,
-                CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
-                field="Outcome",
-            ),
-        )
-        cand = cast(
-            CreativeSampleGeneratedReferenceCandidateV1,
-            _external_revalidate(
-                candidate, CreativeSampleGeneratedReferenceCandidateV1, field="Candidate"
-            ),
-        )
-        request = cast(
-            CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
-            _external_revalidate(
+        for value, expected, field in (
+            (artifact, CreativeSampleReferenceVisualPromptArtifactV1, "Artifact"),
+            (outcome, CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1, "Outcome"),
+            (candidate, CreativeSampleGeneratedReferenceCandidateV1, "Candidate"),
+            (
                 qualification_request,
                 CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
-                field="Qualification Request",
+                "Qualification Request",
             ),
+            (
+                qualification_decision,
+                CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
+                "Qualification Decision",
+            ),
+            (proposed_rights_scope, GeneratedReferenceRightsScopeProposalV1, "Rights proposal"),
+        ):
+            _require_exact_type(value, expected, field=field)
+        _require_exact_type(
+            qualification_evidence_documents, tuple, field="qualification_evidence_documents"
+        )
+        _require_exact_type(review_evidence_documents, tuple, field="review_evidence_documents")
+        for index, qualification_item in enumerate(qualification_evidence_documents):
+            _require_exact_type(
+                qualification_item,
+                GeneratedReferenceQualificationEvidenceInput,
+                field=f"qualification_evidence_documents[{index}]",
+            )
+            _require_exact_type(
+                qualification_item.reference,
+                GeneratedReferenceQualificationEvidenceReferenceV1,
+                field=f"qualification_evidence_documents[{index}].reference",
+            )
+        for index, review_item in enumerate(review_evidence_documents):
+            _require_exact_type(
+                review_item,
+                GeneratedReferenceRightsManifestEvidenceInput,
+                field=f"review_evidence_documents[{index}]",
+            )
+            _require_exact_type(
+                review_item.reference,
+                GeneratedReferenceRightsManifestEvidenceReferenceV1,
+                field=f"review_evidence_documents[{index}].reference",
+            )
+        _require_exact_type(png_bytes, bytes, field="png_bytes")
+        _require_exact_type(manifest_at, str, field="manifest_at")
+        retained_documents = (
+            (qualification_preparer_identity_bytes, 16_384, "Qualification Preparer identity"),
+            (qualification_preparer_action_bytes, 262_144, "Qualification Preparer action"),
+            (qualifier_identity_bytes, 16_384, "Qualification qualifier identity"),
+            (qualifier_action_bytes, 262_144, "Qualification qualifier action"),
+            (maker_identity_bytes, 16_384, "Manifest Maker identity"),
+            (maker_action_bytes, 262_144, "Manifest Maker action"),
+            (checker_identity_bytes, 16_384, "Manifest Checker identity"),
+            (checker_action_bytes, 262_144, "Manifest Checker action"),
+            *(
+                (
+                    qualification_item.document_bytes,
+                    262_144,
+                    f"qualification evidence {index}",
+                )
+                for index, qualification_item in enumerate(qualification_evidence_documents)
+            ),
+            *(
+                (review_item.document_bytes, 262_144, f"Manifest evidence {index}")
+                for index, review_item in enumerate(review_evidence_documents)
+            ),
+        )
+        for raw, _maximum, field in retained_documents:
+            _require_exact_type(raw, bytes, field=field)
+        runtime_shape_errors = tuple(
+            error
+            for value, expected, field in (
+                (artifact, CreativeSampleReferenceVisualPromptArtifactV1, "Artifact"),
+                (outcome, CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1, "Outcome"),
+                (candidate, CreativeSampleGeneratedReferenceCandidateV1, "Candidate"),
+                (
+                    qualification_request,
+                    CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
+                    "Qualification Request",
+                ),
+                (
+                    qualification_decision,
+                    CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
+                    "Qualification Decision",
+                ),
+                (
+                    proposed_rights_scope,
+                    GeneratedReferenceRightsScopeProposalV1,
+                    "Rights proposal",
+                ),
+                *(
+                    (
+                        item.reference,
+                        GeneratedReferenceQualificationEvidenceReferenceV1,
+                        f"qualification_evidence_documents[{index}].reference",
+                    )
+                    for index, item in enumerate(qualification_evidence_documents)
+                ),
+                *(
+                    (
+                        item.reference,
+                        GeneratedReferenceRightsManifestEvidenceReferenceV1,
+                        f"review_evidence_documents[{index}].reference",
+                    )
+                    for index, item in enumerate(review_evidence_documents)
+                ),
+            )
+            for error in _inspect_imported_runtime_shape(
+                value, cast(type[BaseModel], expected), field=field
+            )
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "EXACT_INPUT_TYPE_REQUIRED"
+            )
+        )
+        if (
+            len(qualification_evidence_documents) > _MAX_CONTAINER_ITEMS
+            or len(review_evidence_documents) > _MAX_CONTAINER_ITEMS
+        ):
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "Manifest evidence input collection exceeds the maximum item count",
+            )
+        if not 1 <= len(png_bytes) <= 67_108_864:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "png_bytes must contain 1..67108864 exact bytes",
+            )
+        for raw, maximum, field in retained_documents:
+            if not 1 <= len(raw) <= maximum:
+                _formal_fail(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{field} must contain 1..{maximum} exact bytes",
+                )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "DOCUMENT_RESOURCE_LIMIT_EXCEEDED"
+            )
+        )
+        _admit_retained_json_documents(retained_documents)
+        _admit_retained_action_contract(
+            qualification_preparer_action_bytes,
+            field="Qualification Preparer action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_ref_sha256": str,
+                "candidate_sha256": str,
+                "provider_attempt_outcome_sha256": str,
+                "policy_document_sha256": str,
+                "requested_at": str,
+                "evidence_document_sha256s": list,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-qualification-request-preparation-action.v1"
+                ),
+                "action": "PREPARED_GENERATED_REFERENCE_QUALIFICATION_EVIDENCE",
+            },
+            array_specs={"evidence_document_sha256s": (10, 10, str)},
+        )
+        qualifier_action_contract = _admit_retained_action_contract(
+            qualifier_action_bytes,
+            field="Qualification qualifier action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_ref_sha256": str,
+                "request_sha256": str,
+                "decision_at": str,
+                "gate_results": list,
+                "qualification_issue_codes": list,
+                "qualification_basis": str,
+                "decision": str,
+                "eligible_for_separate_generated_rights_manifest_review": bool,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-qualification-decision-action.v1"
+                ),
+                "action": "RECORDED_GENERATED_REFERENCE_QUALIFICATION_DECISION",
+                "decision": "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW",
+                "eligible_for_separate_generated_rights_manifest_review": True,
+            },
+            array_specs={
+                "gate_results": (15, 15, dict),
+                "qualification_issue_codes": (0, 64, str),
+            },
+        )
+        try:
+            for item in cast(list[object], qualifier_action_contract["gate_results"]):
+                GeneratedReferenceQualificationGateResultV1.model_validate(
+                    _json_arrays_to_tuples(item)
+                )
+        except ValidationError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CONTRACT_FIELD_INVALID",
+                "Qualification qualifier action gate_results violate their exact Contract",
+            ) from exc
+        maker_action = _admit_retained_action_contract(
+            maker_action_bytes,
+            field="Manifest Maker action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_identity_ref_sha256": str,
+                "manifest_review_payload_sha256": str,
+                "prepared_at": str,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-rights-manifest-review-preparation-action.v1"
+                ),
+                "action": "PREPARED_GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW",
+            },
+        )
+        checker_action = _admit_retained_action_contract(
+            checker_action_bytes,
+            field="Manifest Checker action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_identity_ref_sha256": str,
+                "manifest_review_payload_sha256": str,
+                "maker_action_sha256": str,
+                "reviewed_at": str,
+                "gate_results": list,
+                "reviewed_rights_scope": dict,
+                "disposition": str,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-rights-manifest-review-checker-action.v1"
+                ),
+                "action": "RECORDED_GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW",
+                "disposition": "PASS_FOR_SEPARATE_GENERATED_CURRENT_STATUS_ASSESSMENT",
+            },
+            array_specs={"gate_results": (11, 11, dict)},
+        )
+        if len(qualification_evidence_documents) != 10:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "qualification_evidence_documents must contain the exact ten-item scope",
+            )
+        if len(review_evidence_documents) != 9:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "review_evidence_documents must contain the exact nine-item scope",
+            )
+        qualification_refs, qualification_digests = _admit_qualification_evidence_contract(
+            qualification_evidence_documents
+        )
+        review_refs = _admit_manifest_evidence_contract(review_evidence_documents)
+        proposal = cast(
+            GeneratedReferenceRightsScopeProposalV1,
+            _exact_model(
+                proposed_rights_scope,
+                GeneratedReferenceRightsScopeProposalV1,
+                field="proposed_rights_scope",
+            ),
+        )
+        preparer_identity, preparer_identity_sha = _human_reference(
+            qualification_preparer_identity_bytes, field="Qualification Preparer identity"
+        )
+        qualifier_identity, qualifier_identity_sha = _human_reference(
+            qualifier_identity_bytes, field="Qualification qualifier identity"
+        )
+        maker_identity, maker_identity_sha = _human_reference(
+            maker_identity_bytes, field="Manifest Maker identity"
+        )
+        checker_identity, checker_identity_sha = _human_reference(
+            checker_identity_bytes, field="Manifest Checker identity"
+        )
+        maker_prepared_at = maker_action.get("prepared_at")
+        if type(maker_prepared_at) is not str:
+            _formal_fail("CONTRACT_FIELD_INVALID", "Manifest Maker action lacks prepared_at")
+        raw_gate_results = checker_action["gate_results"]
+        if type(raw_gate_results) is not list:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "Manifest Checker action gate_results must be a JSON array",
+            )
+        gate_results = tuple(
+            cast(
+                GeneratedReferenceRightsManifestGateResultV1,
+                _strict_model_from_json_value(
+                    item,
+                    GeneratedReferenceRightsManifestGateResultV1,
+                    field=f"Manifest Checker action gate_results[{index}]",
+                ),
+            )
+            for index, item in enumerate(raw_gate_results)
+        )
+        reviewed_scope = cast(
+            GeneratedReferenceReviewedRightsScopeV1,
+            _strict_model_from_json_value(
+                checker_action["reviewed_rights_scope"],
+                GeneratedReferenceReviewedRightsScopeV1,
+                field="Manifest Checker action reviewed_rights_scope",
+            ),
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "CONTRACT_FIELD_INVALID"
+            )
+        )
+        manifest_at = _utc_seconds(manifest_at, field="manifest_at")
+        contract_issue = _manifest_contract_issue(
+            review_refs, gate_results, reviewed_scope, proposal
+        )
+        if contract_issue is not None:
+            _formal_fail("CONTRACT_FIELD_INVALID", contract_issue)
+        external_inputs, external_errors = _inspect_formal_model_results(
+            (
+                lambda: _external_self_identity_revalidate(
+                    artifact,
+                    CreativeSampleReferenceVisualPromptArtifactV1,
+                    field="Artifact",
+                    sha_field="artifact_sha256",
+                    domain=VISUAL_REFERENCE_PROMPT_COMPILER_ARTIFACT_SHA256_DOMAIN,
+                ),
+                lambda: _external_self_identity_revalidate(
+                    outcome,
+                    CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1,
+                    field="Outcome",
+                    sha_field="outcome_sha256",
+                    domain=GENERATED_REFERENCE_PROVIDER_ATTEMPT_OUTCOME_SHA256_DOMAIN,
+                    id_field="outcome_id",
+                    id_stem="generated_reference_attempt_outcome_v1_",
+                ),
+                lambda: _external_self_identity_revalidate(
+                    candidate,
+                    CreativeSampleGeneratedReferenceCandidateV1,
+                    field="Candidate",
+                    sha_field="candidate_sha256",
+                    domain=GENERATED_REFERENCE_CANDIDATE_SHA256_DOMAIN,
+                    id_field="candidate_id",
+                    id_stem="generated_reference_candidate_v1_",
+                ),
+                lambda: _external_self_identity_revalidate(
+                    qualification_request,
+                    CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
+                    field="Qualification Request",
+                    sha_field="request_sha256",
+                    domain=GENERATED_REFERENCE_CANDIDATE_QUALIFICATION_REQUEST_SHA256_DOMAIN,
+                    id_field="request_id",
+                    id_stem="generated_reference_candidate_qualification_request_v1_",
+                ),
+                lambda: _external_self_identity_revalidate(
+                    qualification_decision,
+                    CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
+                    field="Qualification Decision",
+                    sha_field="decision_sha256",
+                    domain=GENERATED_REFERENCE_CANDIDATE_QUALIFICATION_DECISION_SHA256_DOMAIN,
+                    id_field="decision_id",
+                    id_stem="generated_reference_candidate_qualification_decision_v1_",
+                ),
+            ),
+            (artifact, outcome, candidate, qualification_request, qualification_decision),
+        )
+        deferred_external_errors = _defer_post_policy_errors(external_errors)
+        semantic_priority = _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(
+            "SEMANTIC_ID_OR_DIGEST_MISMATCH"
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in deferred_external_errors
+                if _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(error.code)
+                <= semantic_priority
+            )
+        )
+        deferred_external_errors = tuple(
+            error
+            for error in deferred_external_errors
+            if _GENERATED_REFERENCE_FORMAL_ERROR_PRIORITY.index(error.code) > semantic_priority
+        )
+        art = cast(CreativeSampleReferenceVisualPromptArtifactV1, external_inputs[0])
+        out = cast(CreativeSampleGeneratedReferenceProviderAttemptOutcomeV1, external_inputs[1])
+        cand = cast(CreativeSampleGeneratedReferenceCandidateV1, external_inputs[2])
+        request = cast(
+            CreativeSampleGeneratedReferenceCandidateQualificationRequestV1,
+            external_inputs[3],
         )
         decision = cast(
             CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
-            _external_revalidate(
-                qualification_decision,
-                CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1,
-                field="Qualification Decision",
-            ),
+            external_inputs[4],
         )
-        if type(png_bytes) is not bytes or not 1 <= len(png_bytes) <= 67_108_864:
-            _invalid("png_bytes must contain 1..67108864 exact bytes")
         png_sha = _raw_sha256(png_bytes)
-        artifact_sha = creative_sample_reference_visual_prompt_artifact_sha256(art)
-        outcome_sha = creative_sample_generated_reference_provider_attempt_outcome_sha256(out)
-        candidate_sha = creative_sample_generated_reference_candidate_sha256(cand)
-        request_sha = creative_sample_generated_reference_candidate_qualification_request_sha256(
-            request
-        )
-        decision_sha = creative_sample_generated_reference_candidate_qualification_decision_sha256(
-            decision
-        )
+        if deferred_external_errors:
+            artifact_sha = art.artifact_sha256
+            outcome_sha = out.outcome_sha256
+            candidate_sha = cand.candidate_sha256
+            request_sha = request.request_sha256
+            decision_sha = decision.decision_sha256
+        else:
+            artifact_sha = creative_sample_reference_visual_prompt_artifact_sha256(art)
+            outcome_sha = creative_sample_generated_reference_provider_attempt_outcome_sha256(out)
+            candidate_sha = creative_sample_generated_reference_candidate_sha256(cand)
+            request_sha = (
+                creative_sample_generated_reference_candidate_qualification_request_sha256(
+                    request
+                )
+            )
+            decision_sha = (
+                creative_sample_generated_reference_candidate_qualification_decision_sha256(
+                    decision
+                )
+            )
         if art.artifact_sha256 != artifact_sha:
-            _invalid("Artifact semantic digest drift")
+            _formal_fail("SEMANTIC_ID_OR_DIGEST_MISMATCH", "Artifact semantic digest drift")
         if out.outcome_sha256 != outcome_sha or out.outcome_id != (
             f"generated_reference_attempt_outcome_v1_{outcome_sha[:20]}"
         ):
-            _invalid("Outcome self identity differs from its explicit semantic digest")
+            _formal_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "Outcome self identity differs from its explicit semantic digest",
+            )
         if cand.candidate_sha256 != candidate_sha or cand.candidate_id != (
             f"generated_reference_candidate_v1_{candidate_sha[:20]}"
         ):
-            _invalid("Candidate self identity differs from its explicit semantic digest")
+            _formal_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "Candidate self identity differs from its explicit semantic digest",
+            )
         if request.request_sha256 != request_sha or request.request_id != (
             f"generated_reference_candidate_qualification_request_v1_{request_sha[:20]}"
         ):
-            _invalid("Qualification Request self identity drift")
+            _formal_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "Qualification Request self identity drift",
+            )
         if decision.decision_sha256 != decision_sha or decision.decision_id != (
             f"generated_reference_candidate_qualification_decision_v1_{decision_sha[:20]}"
         ):
-            _invalid("Qualification Decision self identity drift")
+            _formal_fail(
+                "SEMANTIC_ID_OR_DIGEST_MISMATCH",
+                "Qualification Decision self identity drift",
+            )
+        _close_qualification_evidence(
+            qualification_evidence_documents,
+            qualification_refs,
+            qualification_digests,
+        )
+        review_digests = _close_manifest_evidence(review_evidence_documents, review_refs)
         if (out.reference_prompt_artifact_sha256, cand.reference_prompt_artifact_sha256) != (
             artifact_sha,
             artifact_sha,
         ):
-            _invalid("Outcome/Candidate Artifact closure mismatch")
+            _formal_fail("UPSTREAM_CLOSURE_MISMATCH", "Outcome/Candidate Artifact closure mismatch")
         if (cand.provider_attempt_outcome_id, cand.provider_attempt_outcome_sha256) != (
             out.outcome_id,
             outcome_sha,
         ):
-            _invalid("Candidate Outcome closure mismatch")
+            _formal_fail("UPSTREAM_CLOSURE_MISMATCH", "Candidate Outcome closure mismatch")
         if (cand.media_content_sha256, cand.media_size_bytes) != (png_sha, len(png_bytes)):
-            _invalid("Candidate does not bind the exact supplied PNG bytes")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Candidate does not bind the exact supplied PNG bytes",
+            )
         if len(out.output_descriptors) != 1 or (
             out.output_descriptors[0].content_sha256,
             out.output_descriptors[0].size_bytes,
             out.output_descriptors[0].technical_record_sha256,
         ) != (png_sha, len(png_bytes), cand.media_technical_record_sha256):
-            _invalid("Outcome output descriptor does not close the exact PNG")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Outcome output descriptor does not close the exact PNG",
+            )
         if (request.candidate_id, request.candidate_sha256) != (
             cand.candidate_id,
             candidate_sha,
@@ -3545,7 +5993,10 @@ def build_generated_reference_rights_manifest(
             out.outcome_id,
             outcome_sha,
         ):
-            _invalid("Qualification Request does not bind Candidate/Outcome")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Qualification Request does not bind Candidate/Outcome",
+            )
         if (decision.request_id, decision.request_sha256) != (
             request.request_id,
             request.request_sha256,
@@ -3553,46 +6004,15 @@ def build_generated_reference_rights_manifest(
             cand.candidate_id,
             candidate_sha,
         ):
-            _invalid("Qualification Decision does not bind Request/Candidate")
-        if (
-            decision.decision != "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW"
-            or decision.eligible_for_separate_generated_rights_manifest_review is not True
-            or decision.qualification_performed is not True
-            or decision.rights_manifest_embedded is not False
-            or decision.current_status_assessment_embedded is not False
-            or decision.eligible_for_asset_promotion is not False
-        ):
-            _invalid("Qualification Decision is not the exact positive zero-authority outcome")
-        manifest_at = _utc_seconds(manifest_at, field="manifest_at")
-        if (
-            not _parse_utc(decision.decision_at, field="decision_at")
-            <= _parse_utc(manifest_at, field="manifest_at")
-            < _parse_utc(decision.qualification_valid_until, field="qualification_valid_until")
-        ):
-            _invalid("Qualification Decision is expired or later than manifest_at")
-        qualification_refs, qualification_digests = _admit_qualification_evidence(
-            qualification_evidence_documents
-        )
-        if qualification_refs != request.evidence_refs:
-            _invalid("Qualification evidence does not exactly rebuild the Request")
-        record_by_category: dict[str, str] = {
-            item.category: item.record_id for item in qualification_refs
-        }
-        for ordinal, gate_result in enumerate(decision.gate_results):
-            expected_evidence_ids = tuple(
-                record_by_category[category]
-                for category in _QUALIFICATION_GATE_EVIDENCE_CATEGORIES[ordinal]
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Qualification Decision does not bind Request/Candidate",
             )
-            if gate_result.evidence_record_ids != expected_evidence_ids:
-                _invalid("Qualification Decision gate evidence mapping drift")
-        preparer_identity, preparer_identity_sha = _human_reference(
-            qualification_preparer_identity_bytes, field="Qualification Preparer identity"
-        )
-        qualifier_identity, qualifier_identity_sha = _human_reference(
-            qualifier_identity_bytes, field="Qualification qualifier identity"
-        )
         if preparer_identity_sha != request.evidence_preparer_ref_sha256:
-            _invalid("Qualification Preparer identity anchor mismatch")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Qualification Preparer identity anchor mismatch",
+            )
         preparer_expected = {
             "document_profile": (
                 "sdc.generated-reference-qualification-request-preparation-action.v1"
@@ -3611,7 +6031,9 @@ def build_generated_reference_rights_manifest(
             field="Qualification Preparer action",
         )
         if preparer_action_sha != request.evidence_preparer_record_sha256:
-            _invalid("Qualification Preparer action anchor mismatch")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH", "Qualification Preparer action anchor mismatch"
+            )
         qualifier_expected = {
             "document_profile": "sdc.generated-reference-qualification-decision-action.v1",
             "action": "RECORDED_GENERATED_REFERENCE_QUALIFICATION_DECISION",
@@ -3633,29 +6055,10 @@ def build_generated_reference_rights_manifest(
             qualifier_identity_sha != decision.qualifier_ref_sha256
             or qualifier_action_sha != decision.qualifier_record_sha256
         ):
-            _invalid("Qualification qualifier retained anchors mismatch")
-        review_refs, review_digests = _admit_manifest_evidence(review_evidence_documents)
-        proposal = cast(
-            GeneratedReferenceRightsScopeProposalV1,
-            _exact_model(
-                proposed_rights_scope,
-                GeneratedReferenceRightsScopeProposalV1,
-                field="proposed_rights_scope",
-            ),
-        )
-        maker_identity, maker_identity_sha = _human_reference(
-            maker_identity_bytes, field="Manifest Maker identity"
-        )
-        checker_identity, checker_identity_sha = _human_reference(
-            checker_identity_bytes, field="Manifest Checker identity"
-        )
-        identity_tuples = (
-            (maker_identity["identity_namespace"], maker_identity["identity_ref"]),
-            (checker_identity["identity_namespace"], checker_identity["identity_ref"]),
-            (qualifier_identity["identity_namespace"], qualifier_identity["identity_ref"]),
-        )
-        if identity_tuples[0] == identity_tuples[1] or identity_tuples[1] == identity_tuples[2]:
-            _invalid("Manifest Maker/Checker/Qualifier role separation failed")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Qualification qualifier retained anchors mismatch",
+            )
         snapshot = art.profile_snapshot
         values: dict[str, object] = {
             "reference_prompt_artifact_sha256": artifact_sha,
@@ -3697,12 +6100,6 @@ def build_generated_reference_rights_manifest(
             GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW_PAYLOAD_SHA256_DOMAIN,
             _manifest_payload_projection_from_values(values),
         )
-        maker_action = _admit_retained_json(
-            maker_action_bytes, maximum=262_144, field="Manifest Maker action"
-        )
-        maker_prepared_at = maker_action.get("prepared_at")
-        if type(maker_prepared_at) is not str:
-            _invalid("Manifest Maker action lacks prepared_at")
         maker_expected = {
             "document_profile": (
                 "sdc.generated-reference-rights-manifest-review-preparation-action.v1"
@@ -3714,43 +6111,6 @@ def build_generated_reference_rights_manifest(
         }
         maker_action_sha = _exact_retained_action(
             maker_action_bytes, expected=maker_expected, field="Manifest Maker action"
-        )
-        checker_action = _admit_retained_json(
-            checker_action_bytes, maximum=262_144, field="Manifest Checker action"
-        )
-        if set(checker_action) != {
-            "document_profile",
-            "action",
-            "actor_identity_ref_sha256",
-            "manifest_review_payload_sha256",
-            "maker_action_sha256",
-            "reviewed_at",
-            "gate_results",
-            "reviewed_rights_scope",
-            "disposition",
-        }:
-            _invalid("Manifest Checker action fields differ from frozen projection")
-        raw_gate_results = checker_action["gate_results"]
-        if type(raw_gate_results) is not list:
-            _invalid("Manifest Checker action gate_results must be a JSON array")
-        gate_results = tuple(
-            cast(
-                GeneratedReferenceRightsManifestGateResultV1,
-                _strict_model_from_json_value(
-                    item,
-                    GeneratedReferenceRightsManifestGateResultV1,
-                    field=f"Manifest Checker action gate_results[{index}]",
-                ),
-            )
-            for index, item in enumerate(raw_gate_results)
-        )
-        reviewed_scope = cast(
-            GeneratedReferenceReviewedRightsScopeV1,
-            _strict_model_from_json_value(
-                checker_action["reviewed_rights_scope"],
-                GeneratedReferenceReviewedRightsScopeV1,
-                field="Manifest Checker action reviewed_rights_scope",
-            ),
         )
         checker_expected = {
             "document_profile": "sdc.generated-reference-rights-manifest-review-checker-action.v1",
@@ -3766,6 +6126,32 @@ def build_generated_reference_rights_manifest(
         checker_action_sha = _exact_retained_action(
             checker_action_bytes, expected=checker_expected, field="Manifest Checker action"
         )
+        for index, reference in enumerate(review_refs):
+            _exact_model(
+                reference,
+                GeneratedReferenceRightsManifestEvidenceReferenceV1,
+                field=f"Manifest evidence reference {index}",
+            )
+        expected_manifest_until = _validate_manifest_builder_time(
+            outcome=out,
+            decision=decision,
+            qualification_refs=qualification_refs,
+            review_refs=review_refs,
+            proposal=proposal,
+            reviewed_scope=reviewed_scope,
+            maker_prepared_at=maker_prepared_at,
+            manifest_at=manifest_at,
+        )
+        identity_tuples = (
+            (maker_identity["identity_namespace"], maker_identity["identity_ref"]),
+            (checker_identity["identity_namespace"], checker_identity["identity_ref"]),
+            (qualifier_identity["identity_namespace"], qualifier_identity["identity_ref"]),
+        )
+        if identity_tuples[0] == identity_tuples[1] or identity_tuples[1] == identity_tuples[2]:
+            _formal_fail(
+                "ROLE_SEPARATION_VIOLATION",
+                "Manifest Maker/Checker/Qualifier role separation failed",
+            )
         retained_digests = (
             preparer_identity_sha,
             preparer_action_sha,
@@ -3792,8 +6178,48 @@ def build_generated_reference_rights_manifest(
             forbidden=formal_forbidden,
             field="Manifest closure",
         )
+        if (
+            decision.decision != "PASS_FOR_SEPARATE_GENERATED_RIGHTS_MANIFEST_REVIEW"
+            or decision.eligible_for_separate_generated_rights_manifest_review is not True
+            or decision.qualification_performed is not True
+            or decision.rights_manifest_embedded is not False
+            or decision.current_status_assessment_embedded is not False
+            or decision.eligible_for_asset_promotion is not False
+            or any(item.result != "PASS" for item in decision.gate_results)
+            or any(item.result != "PASS" for item in gate_results)
+        ):
+            _formal_fail(
+                "MANIFEST_GATE_NOT_PASS",
+                "Qualification Decision is not the exact positive zero-authority outcome",
+            )
+        if qualification_refs != request.evidence_refs:
+            _formal_fail(
+                "EVIDENCE_SCOPE_INCOMPLETE",
+                "Qualification evidence does not exactly rebuild the Request",
+            )
+        record_by_category: dict[str, str] = {
+            item.category: item.record_id for item in qualification_refs
+        }
+        for ordinal, gate_result in enumerate(decision.gate_results):
+            expected_evidence_ids = tuple(
+                record_by_category[category]
+                for category in _QUALIFICATION_GATE_EVIDENCE_CATEGORIES[ordinal]
+            )
+            if gate_result.evidence_record_ids != expected_evidence_ids:
+                _formal_fail(
+                    "EVIDENCE_SCOPE_INCOMPLETE",
+                    "Qualification Decision gate evidence mapping drift",
+                )
+        manifest_gate_ids = ((),) + tuple((item.record_id,) for item in review_refs) + ((),)
+        if tuple(item.evidence_record_ids for item in gate_results) != manifest_gate_ids:
+            _formal_fail(
+                "EVIDENCE_SCOPE_INCOMPLETE",
+                "Manifest gate evidence membership is not the frozen mapping",
+            )
+        _raise_prioritized_formal_errors(deferred_external_errors)
         values.update(
             {
+                "manifest_valid_until": expected_manifest_until,
                 "manifest_review_payload_sha256": payload_sha,
                 "gate_results": gate_results,
                 "reviewed_rights_scope": reviewed_scope,
@@ -3806,9 +6232,11 @@ def build_generated_reference_rights_manifest(
             }
         )
         return _build_generated_reference_rights_manifest_from_values(values)
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "MANIFEST_CLOSURE_REVALIDATION_FAILED",
+            "CONTRACT_FIELD_INVALID",
             "typed upstream and retained-byte Manifest construction failed closed",
         ) from exc
 
@@ -3838,40 +6266,56 @@ def verify_generated_reference_rights_manifest(
     """Rebuild a Manifest from the complete typed/raw closure and require exact equality."""
 
     try:
-        validated = cast(
-            CreativeSampleGeneratedReferenceRightsManifestV1,
-            _exact_model(
-                manifest,
+        errors: list[GeneratedReferenceRightsCurrentStatusError] = []
+        validated: CreativeSampleGeneratedReferenceRightsManifestV1 | None = None
+        rebuilt: CreativeSampleGeneratedReferenceRightsManifestV1 | None = None
+        try:
+            validated = cast(
                 CreativeSampleGeneratedReferenceRightsManifestV1,
-                field="manifest",
-            ),
-        )
-        rebuilt = build_generated_reference_rights_manifest(
-            artifact,
-            outcome,
-            candidate,
-            qualification_request,
-            qualification_decision,
-            png_bytes=png_bytes,
-            qualification_evidence_documents=qualification_evidence_documents,
-            qualification_preparer_identity_bytes=qualification_preparer_identity_bytes,
-            qualification_preparer_action_bytes=qualification_preparer_action_bytes,
-            qualifier_identity_bytes=qualifier_identity_bytes,
-            qualifier_action_bytes=qualifier_action_bytes,
-            review_evidence_documents=review_evidence_documents,
-            proposed_rights_scope=proposed_rights_scope,
-            maker_identity_bytes=maker_identity_bytes,
-            maker_action_bytes=maker_action_bytes,
-            checker_identity_bytes=checker_identity_bytes,
-            checker_action_bytes=checker_action_bytes,
-            manifest_at=manifest_at,
-        )
+                _exact_model(
+                    manifest,
+                    CreativeSampleGeneratedReferenceRightsManifestV1,
+                    field="manifest",
+                ),
+            )
+        except GeneratedReferenceRightsCurrentStatusError as exc:
+            errors.append(exc)
+        try:
+            rebuilt = build_generated_reference_rights_manifest(
+                artifact,
+                outcome,
+                candidate,
+                qualification_request,
+                qualification_decision,
+                png_bytes=png_bytes,
+                qualification_evidence_documents=qualification_evidence_documents,
+                qualification_preparer_identity_bytes=qualification_preparer_identity_bytes,
+                qualification_preparer_action_bytes=qualification_preparer_action_bytes,
+                qualifier_identity_bytes=qualifier_identity_bytes,
+                qualifier_action_bytes=qualifier_action_bytes,
+                review_evidence_documents=review_evidence_documents,
+                proposed_rights_scope=proposed_rights_scope,
+                maker_identity_bytes=maker_identity_bytes,
+                maker_action_bytes=maker_action_bytes,
+                checker_identity_bytes=checker_identity_bytes,
+                checker_action_bytes=checker_action_bytes,
+                manifest_at=manifest_at,
+            )
+        except GeneratedReferenceRightsCurrentStatusError as exc:
+            errors.append(exc)
+        _raise_prioritized_formal_errors(errors)
+        if validated is None or rebuilt is None:
+            _formal_fail("CONTRACT_FIELD_INVALID", "Manifest verification inputs are incomplete")
         if rebuilt != validated:
-            _invalid("Manifest differs from the complete freshly rebuilt closure")
+            _formal_fail(
+                "REPLAY_MISMATCH", "Manifest differs from the complete freshly rebuilt closure"
+            )
         return validated
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "MANIFEST_CLOSURE_REVALIDATION_FAILED", "Manifest verification failed closed"
+            "CONTRACT_FIELD_INVALID", "Manifest verification failed closed"
         ) from exc
 
 
@@ -3893,20 +6337,39 @@ def _build_generated_reference_current_status_request_contract(
                 field="subject_closure",
             ),
         )
-        if (
-            type(status_preparer_identity_bytes) is not bytes
-            or not 1 <= len(status_preparer_identity_bytes) <= 16_384
-        ):
-            _invalid("status_preparer_identity_bytes must contain 1..16384 exact bytes")
-        if (
-            type(status_preparer_action_bytes) is not bytes
-            or not 1 <= len(status_preparer_action_bytes) <= 262_144
-        ):
-            _invalid("status_preparer_action_bytes must contain 1..262144 exact bytes")
+        if type(status_preparer_identity_bytes) is not bytes:
+            _formal_fail(
+                "EXACT_INPUT_TYPE_REQUIRED",
+                "status_preparer_identity_bytes must contain exact bytes",
+            )
+        if not 1 <= len(status_preparer_identity_bytes) <= 16_384:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "status_preparer_identity_bytes must contain 1..16384 exact bytes",
+            )
+        if type(status_preparer_action_bytes) is not bytes:
+            _formal_fail(
+                "EXACT_INPUT_TYPE_REQUIRED",
+                "status_preparer_action_bytes must contain exact bytes",
+            )
+        if not 1 <= len(status_preparer_action_bytes) <= 262_144:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "status_preparer_action_bytes must contain 1..262144 exact bytes",
+            )
         requested = _parse_utc(requested_at, field="requested_at")
+        manifest_at = _parse_utc(closure.manifest_at, field="manifest_at")
+        manifest_valid_until = _parse_utc(
+            closure.manifest_valid_until, field="manifest_valid_until"
+        )
+        if not manifest_at <= requested < manifest_valid_until:
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "requested_at lies outside the Rights Manifest window",
+            )
         valid_until = min(
             requested + timedelta(seconds=86_400),
-            _parse_utc(closure.manifest_valid_until, field="manifest_valid_until"),
+            manifest_valid_until,
         ).strftime("%Y-%m-%dT%H:%M:%SZ")
         category_index = {
             category: index for index, category in enumerate(CURRENT_STATUS_CATEGORY_ORDER)
@@ -3961,9 +6424,11 @@ def _build_generated_reference_current_status_request_contract(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_REQUEST_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "REQUEST_CONTRACT_INVALID", "Request construction failed"
+            "CONTRACT_FIELD_INVALID", "Request construction failed"
         ) from exc
 
 
@@ -3983,31 +6448,46 @@ def _build_generated_reference_current_status_instruction_contract(
                 request, CreativeSampleGeneratedReferenceCurrentStatusRequestV1, field="request"
             ),
         )
-        if (
-            type(status_checker_identity_bytes) is not bytes
-            or not 1 <= len(status_checker_identity_bytes) <= 16_384
-        ):
-            _invalid("status_checker_identity_bytes must contain 1..16384 exact bytes")
-        if (
-            type(status_checker_action_bytes) is not bytes
-            or not 1 <= len(status_checker_action_bytes) <= 262_144
-        ):
-            _invalid("status_checker_action_bytes must contain 1..262144 exact bytes")
+        if type(status_checker_identity_bytes) is not bytes:
+            _formal_fail(
+                "EXACT_INPUT_TYPE_REQUIRED",
+                "status_checker_identity_bytes must contain exact bytes",
+            )
+        if not 1 <= len(status_checker_identity_bytes) <= 16_384:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "status_checker_identity_bytes must contain 1..16384 exact bytes",
+            )
+        if type(status_checker_action_bytes) is not bytes:
+            _formal_fail(
+                "EXACT_INPUT_TYPE_REQUIRED",
+                "status_checker_action_bytes must contain exact bytes",
+            )
+        if not 1 <= len(status_checker_action_bytes) <= 262_144:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "status_checker_action_bytes must contain 1..262144 exact bytes",
+        )
         checker_identity_sha = _raw_sha256(status_checker_identity_bytes)
         checker_action_sha = _raw_sha256(status_checker_action_bytes)
-        if (
-            checker_identity_sha == validated.status_preparer_identity_ref_sha256
-            or checker_action_sha == validated.status_preparer_action_sha256
-        ):
-            _invalid("status Preparer and Checker identities/actions must be distinct")
+        _validate_category_results(category_results)
         evaluated = _parse_utc(evaluated_at, field="evaluated_at")
         if (
             not _parse_utc(validated.requested_at, field="requested_at")
             <= evaluated
             < _parse_utc(validated.request_valid_until, field="request_valid_until")
         ):
-            _invalid("evaluated_at lies outside Request window")
-        _validate_category_results(category_results)
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED", "evaluated_at lies outside Request window"
+            )
+        if (
+            checker_identity_sha == validated.status_preparer_identity_ref_sha256
+            or checker_action_sha == validated.status_preparer_action_sha256
+        ):
+            _formal_fail(
+                "ROLE_SEPARATION_VIOLATION",
+                "status Preparer and Checker identities/actions must be distinct",
+            )
         values = {
             **_base_current_values(),
             "document_type": (
@@ -4039,9 +6519,11 @@ def _build_generated_reference_current_status_instruction_contract(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_INSTRUCTION_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "INSTRUCTION_CONTRACT_INVALID", "Instruction construction failed"
+            "CONTRACT_FIELD_INVALID", "Instruction construction failed"
         ) from exc
 
 
@@ -4070,7 +6552,9 @@ def _build_generated_reference_current_status_decision_contract(
             req.request_sha256,
             req.subject_closure,
         ):
-            _invalid("Instruction does not close the exact Request")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH", "Instruction does not close the exact Request"
+            )
         recorded_status, revoked, held, indeterminate = _derive_status_and_diagnostics(
             inst.category_results
         )
@@ -4105,9 +6589,11 @@ def _build_generated_reference_current_status_decision_contract(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_DECISION_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "DECISION_CONTRACT_INVALID", "Decision construction failed"
+            "CONTRACT_FIELD_INVALID", "Decision construction failed"
         ) from exc
 
 
@@ -4161,9 +6647,11 @@ def _build_generated_reference_current_status_evidence_record_contract(
                 domain=GENERATED_REFERENCE_CURRENT_STATUS_EVIDENCE_RECORD_SHA256_DOMAIN,
             ),
         )
+    except GeneratedReferenceRightsCurrentStatusError:
+        raise
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "EVIDENCE_RECORD_INVALID", "Evidence Record construction failed"
+            "CONTRACT_FIELD_INVALID", "Evidence Record construction failed"
         ) from exc
 
 
@@ -4407,26 +6895,51 @@ def replay_generated_reference_current_status_chain(
         by_id = dict(zip(ids, observations, strict=True))
         chain_by_id = dict(zip(ids, chain_shas, strict=True))
         predecessor_ids: dict[str, tuple[str, ...]] = {}
+        resolved_predecessors: dict[
+            str, tuple[CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1, ...]
+        ] = {}
+        orphan_reference = False
+        reference_anchor_mismatch = False
         for observation in observations:
             resolved: list[CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1] = []
             for head in observation.chain_link.predecessor_heads:
                 predecessor = by_id.get(head.observation_id)
                 if predecessor is None:
-                    raise GeneratedReferenceChainReplayError(
-                        "ORPHAN_REFERENCE", "predecessor is absent from explicit chain"
-                    )
+                    orphan_reference = True
+                    continue
                 if (head.observation_sha256, head.chain_sha256) != (
                     predecessor.observation_sha256,
                     chain_by_id[predecessor.observation_id],
                 ):
-                    raise GeneratedReferenceChainReplayError(
-                        "REFERENCE_ANCHOR_MISMATCH", "predecessor head anchor mismatch"
-                    )
+                    reference_anchor_mismatch = True
                 resolved.append(predecessor)
             predecessor_ids[observation.observation_id] = tuple(
                 item.observation_id for item in resolved
             )
-            if not _transition_valid(observation, tuple(resolved)):
+            resolved_predecessors[observation.observation_id] = tuple(resolved)
+        if orphan_reference:
+            raise GeneratedReferenceChainReplayError(
+                "ORPHAN_REFERENCE", "predecessor is absent from explicit chain"
+            )
+        target_ids = tuple(item.observation_id for item in targets)
+        if len(target_ids) != len(set(target_ids)):
+            reference_anchor_mismatch = True
+        for target in targets:
+            target_observation = by_id.get(target.observation_id)
+            if target_observation is None or _observation_ref_key(target) != (
+                target_observation.observation_id,
+                target_observation.observation_sha256,
+                chain_by_id[target_observation.observation_id],
+            ):
+                reference_anchor_mismatch = True
+        if reference_anchor_mismatch:
+            raise GeneratedReferenceChainReplayError(
+                "REFERENCE_ANCHOR_MISMATCH", "predecessor or target anchor mismatch"
+            )
+        for observation in observations:
+            if not _transition_valid(
+                observation, resolved_predecessors[observation.observation_id]
+            ):
                 raise GeneratedReferenceChainReplayError(
                     "IMMEDIATE_LINK_INVALID", "claim transition is outside frozen transition matrix"
                 )
@@ -4465,6 +6978,13 @@ def replay_generated_reference_current_status_chain(
             raise GeneratedReferenceChainReplayError(
                 "DISCONNECTED_GRAPH", "an Observation is disconnected from genesis"
             )
+        relevant: set[str] = set(target_ids)
+        for target_id in target_ids:
+            relevant.update(ancestors[target_id])
+        if relevant != set(ids):
+            raise GeneratedReferenceChainReplayError(
+                "DISCONNECTED_GRAPH", "explicit chain contains unrelated support Observations"
+            )
         for observation in observations:
             if observation.chain_link.link_kind == "RECONCILIATION":
                 heads = predecessor_ids[observation.observation_id]
@@ -4477,28 +6997,6 @@ def replay_generated_reference_current_status_chain(
                         "RECONCILIATION_HEAD_ANCESTRY_CONFLICT",
                         "reconciliation heads must be incomparable",
                     )
-        target_ids = tuple(item.observation_id for item in targets)
-        if len(target_ids) != len(set(target_ids)):
-            raise GeneratedReferenceChainReplayError(
-                "REFERENCE_ANCHOR_MISMATCH", "target references must be unique"
-            )
-        for target in targets:
-            target_observation = by_id.get(target.observation_id)
-            if target_observation is None or _observation_ref_key(target) != (
-                target_observation.observation_id,
-                target_observation.observation_sha256,
-                chain_by_id[target_observation.observation_id],
-            ):
-                raise GeneratedReferenceChainReplayError(
-                    "REFERENCE_ANCHOR_MISMATCH", "target reference does not resolve exactly"
-                )
-        relevant: set[str] = set(target_ids)
-        for target_id in target_ids:
-            relevant.update(ancestors[target_id])
-        if relevant != set(ids):
-            raise GeneratedReferenceChainReplayError(
-                "DISCONNECTED_GRAPH", "explicit chain contains unrelated support Observations"
-            )
         occurrences = tuple(
             {
                 "observation_id": item.observation_id,
@@ -4532,6 +7030,24 @@ def replay_generated_reference_current_status_chain(
         raise GeneratedReferenceChainReplayError(
             "INTERNAL_RESULT_INCONSISTENCY", "unexpected chain replay failure"
         ) from exc
+
+
+def _replay_generated_reference_current_status_chains_by_priority(
+    chain_inputs: tuple[GeneratedReferenceCurrentStatusExplicitChainInput, ...],
+) -> tuple[GeneratedReferenceCurrentStatusChainReplayResult, ...]:
+    results: list[GeneratedReferenceCurrentStatusChainReplayResult] = []
+    errors: list[GeneratedReferenceChainReplayError] = []
+    for chain_input in chain_inputs:
+        try:
+            results.append(replay_generated_reference_current_status_chain(chain_input))
+        except GeneratedReferenceChainReplayError as exc:
+            errors.append(exc)
+    if errors:
+        raise min(
+            errors,
+            key=lambda item: _GENERATED_REFERENCE_CHAIN_REPLAY_ERROR_PRIORITY.index(item.code),
+        )
+    return tuple(results)
 
 
 def _target_category_result(
@@ -4643,7 +7159,7 @@ def _derive_request_category_results(
         > 16_777_216
     ):
         _invalid("aggregate Observation occurrence bytes exceed 16777216")
-    results = tuple(replay_generated_reference_current_status_chain(item) for item in chain_inputs)
+    results = _replay_generated_reference_current_status_chains_by_priority(chain_inputs)
     keys = tuple((item.chain_scope_sha256, item.genesis_observation_id) for item in results)
     if keys != tuple(sorted(keys)) or len(keys) != len(set(keys)):
         _invalid("chain_inputs must use unique canonical logical-chain order")
@@ -4702,28 +7218,169 @@ def build_generated_reference_current_status_request(
 ) -> CreativeSampleGeneratedReferenceCurrentStatusRequestV1:
     """Compile canonical Request targets from exact typed Observations and retained action bytes."""
 
+    deferred_formal_errors: tuple[GeneratedReferenceRightsCurrentStatusError, ...] = ()
     try:
-        closure = cast(
+        _require_exact_type(
+            subject_closure,
             GeneratedReferenceCurrentStatusSubjectClosureV1,
-            _exact_model(
+            field="subject_closure",
+        )
+        _require_exact_type(status_preparer_identity_bytes, bytes, field="Status Preparer identity")
+        _require_exact_type(status_preparer_action_bytes, bytes, field="Status Preparer action")
+        _require_exact_type(target_observations, tuple, field="target_observations")
+        _require_exact_type(requested_at, str, field="requested_at")
+        _require_exact_type(request_basis, str, field="request_basis")
+        for index, item in enumerate(target_observations):
+            _require_exact_type(
+                item,
+                GeneratedReferenceCurrentStatusObservationInput,
+                field=f"target_observations[{index}]",
+            )
+            _require_exact_type(
+                item.observation,
+                CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                field=f"target_observations[{index}].observation",
+            )
+            _require_exact_type(
+                item.document_bytes, bytes, field=f"target_observations[{index}].document_bytes"
+            )
+        formal_specs: tuple[tuple[BaseModel, type[BaseModel], str], ...] = (
+            (
                 subject_closure,
                 GeneratedReferenceCurrentStatusSubjectClosureV1,
-                field="subject_closure",
+                "subject_closure",
+            ),
+            *(
+                (
+                    item.observation,
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    f"target_observations[{index}].observation",
+                )
+                for index, item in enumerate(target_observations)
             ),
         )
-        if type(target_observations) is not tuple or not 9 <= len(target_observations) <= 32:
-            _invalid("target_observations must be an exact 9..32 item tuple")
+        runtime_shape_errors = tuple(
+            error
+            for value, expected, field in formal_specs
+            for error in _inspect_imported_runtime_shape(value, expected, field=field)
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "EXACT_INPUT_TYPE_REQUIRED"
+            )
+        )
+        if len(target_observations) > _MAX_CONTAINER_ITEMS:
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "target_observations exceeds the maximum formal Contract item count",
+            )
+        request_documents = (
+            (status_preparer_identity_bytes, 16_384, "Status Preparer identity"),
+            (status_preparer_action_bytes, 262_144, "Status Preparer action"),
+            *(
+                (item.document_bytes, 262_144, f"target_observations[{index}].document_bytes")
+                for index, item in enumerate(target_observations)
+            ),
+        )
+        for raw, maximum, field in request_documents:
+            if not 1 <= len(raw) <= maximum:
+                _formal_fail(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{field} must contain 1..{maximum} exact bytes",
+                )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "DOCUMENT_RESOURCE_LIMIT_EXCEEDED"
+            )
+        )
+        _admit_retained_json_documents(request_documents)
+        _admit_retained_action_contract(
+            status_preparer_action_bytes,
+            field="Status Preparer action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_identity_ref_sha256": str,
+                "subject_closure_sha256": str,
+                "policy_document_sha256": str,
+                "requested_at": str,
+                "request_valid_until": str,
+                "observation_target_refs": list,
+                "request_basis": str,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-current-status-request-preparation-action.v1"
+                ),
+                "action": "PREPARED_GENERATED_REFERENCE_CURRENT_STATUS_REQUEST",
+            },
+            array_specs={"observation_target_refs": (9, 32, dict)},
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "CONTRACT_FIELD_INVALID"
+            )
+        )
+        _preparer_identity, preparer_sha = _human_reference(
+            status_preparer_identity_bytes, field="Status Preparer identity"
+        )
+        if not 9 <= len(target_observations) <= 32:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "target_observations must contain every required category in 9..32 items",
+            )
+        _human_text(request_basis, field="request_basis")
         requested_at = _utc_seconds(requested_at, field="requested_at")
-        requested = _parse_utc(requested_at, field="requested_at")
-        observations = tuple(_admit_observation_input(item) for item in target_observations)
-        if any(item.subject_closure != closure for item in observations):
-            _invalid("every Request target must bind the exact subject closure")
-        if any(
-            _parse_utc(item.observed_at, field="observed_at") > requested for item in observations
+        formal_inputs, formal_errors = _inspect_exact_models(formal_specs)
+        deferred_formal_errors = _defer_post_policy_errors(formal_errors)
+        closure = cast(GeneratedReferenceCurrentStatusSubjectClosureV1, formal_inputs[0])
+        observations = tuple(
+            cast(CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1, item)
+            for item in formal_inputs[1:]
+        )
+        for observation_input, observation in zip(
+            target_observations, observations, strict=True
         ):
-            _invalid("a Request target was observed after requested_at")
+            if observation_input.document_bytes != _formal_json(_explicit_value(observation)):
+                _formal_fail(
+                    "CONTRACT_FIELD_INVALID",
+                    "Observation canonical document bytes do not match the exact typed Contract",
+                )
+        requested = _parse_utc(requested_at, field="requested_at")
+        if any(item.subject_closure != closure for item in observations):
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "every Request target must bind the exact subject closure",
+            )
         refs = tuple(
-            generated_reference_current_status_observation_ref(item, ordinal=0)
+            GeneratedReferenceCurrentStatusObservationRefV1.model_construct(
+                ordinal=0,
+                observation_id=item.observation_id,
+                observation_sha256=item.observation_sha256,
+                category=item.category,
+                source_identity_ref_sha256=item.source_identity_ref_sha256,
+                chain_scope_sha256=item.chain_link.chain_scope_sha256,
+                chain_sha256=_semantic_sha256(
+                    GENERATED_REFERENCE_CURRENT_STATUS_CHAIN_SHA256_DOMAIN,
+                    {
+                        "chain_scope_sha256": item.chain_link.chain_scope_sha256,
+                        "observation_id": item.observation_id,
+                        "observation_sha256": item.observation_sha256,
+                        "link_kind": item.chain_link.link_kind,
+                        "predecessor_heads": _explicit_value(
+                            item.chain_link.predecessor_heads
+                        ),
+                    },
+                ),
+                valid_from=item.valid_from,
+                valid_until=item.valid_until,
+            )
             for item in observations
         )
         category_index = {
@@ -4740,18 +7397,39 @@ def build_generated_reference_current_status_request(
             )
         )
         canonical_refs = tuple(
-            GeneratedReferenceCurrentStatusObservationRefV1.model_validate(
-                {**cast(dict[str, object], _explicit_value(item)), "ordinal": index}
-            )
+            item.model_copy(update={"ordinal": index})
             for index, item in enumerate(ordered)
         )
         valid_until = min(
             requested + timedelta(seconds=86_400),
             _parse_utc(closure.manifest_valid_until, field="manifest_valid_until"),
         ).strftime("%Y-%m-%dT%H:%M:%SZ")
-        _preparer_identity, preparer_sha = _human_reference(
-            status_preparer_identity_bytes, field="Status Preparer identity"
+        action_sha = _exact_retained_action(
+            status_preparer_action_bytes,
+            expected={
+                "document_profile": (
+                    "sdc.generated-reference-current-status-request-preparation-action.v1"
+                ),
+                "action": "PREPARED_GENERATED_REFERENCE_CURRENT_STATUS_REQUEST",
+                "actor_identity_ref_sha256": preparer_sha,
+                "subject_closure_sha256": closure.closure_sha256,
+                "policy_document_sha256": (
+                    GENERATED_REFERENCE_CURRENT_STATUS_POLICY_DOCUMENT_SHA256
+                ),
+                "requested_at": requested_at,
+                "request_valid_until": valid_until,
+                "observation_target_refs": _explicit_value(canonical_refs),
+                "request_basis": request_basis,
+            },
+            field="Status Preparer action",
         )
+        if any(
+            _parse_utc(item.observed_at, field="observed_at") > requested for item in observations
+        ):
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED",
+                "a Request target was observed after requested_at",
+            )
         provisional = _build_generated_reference_current_status_request_contract(
             subject_closure=closure,
             status_preparer_identity_bytes=status_preparer_identity_bytes,
@@ -4762,13 +7440,6 @@ def build_generated_reference_current_status_request(
         )
         if provisional.request_valid_until != valid_until:
             _invalid("Request validity derivation drift")
-        action_sha = _exact_retained_action(
-            status_preparer_action_bytes,
-            expected=_status_preparer_action_projection(
-                actor_identity_ref_sha256=preparer_sha, request=provisional
-            ),
-            field="Status Preparer action",
-        )
         if (
             provisional.status_preparer_identity_ref_sha256 != preparer_sha
             or provisional.status_preparer_action_sha256 != action_sha
@@ -4788,10 +7459,14 @@ def build_generated_reference_current_status_request(
             forbidden=request_forbidden,
             field="Status Request",
         )
+        _raise_prioritized_formal_errors(deferred_formal_errors)
         return provisional
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        _raise_prioritized_formal_errors((*deferred_formal_errors, exc))
+        raise AssertionError("unreachable") from exc
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "REQUEST_CONTRACT_INVALID", "typed Observation Request construction failed"
+            "CONTRACT_FIELD_INVALID", "typed Observation Request construction failed"
         ) from exc
 
 
@@ -4808,20 +7483,220 @@ def build_generated_reference_current_status_instruction(
 ) -> CreativeSampleGeneratedReferenceCurrentStatusInstructionV1:
     """Replay exact chains, derive all nine category results, and bind the Checker action."""
 
+    deferred_formal_errors: tuple[GeneratedReferenceRightsCurrentStatusError, ...] = ()
     try:
-        req = cast(
-            CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
-            _exact_model(
+        _require_exact_type(
+            request, CreativeSampleGeneratedReferenceCurrentStatusRequestV1, field="request"
+        )
+        _require_exact_type(chain_inputs, tuple, field="chain_inputs")
+        _require_exact_type(evaluated_at, str, field="evaluated_at")
+        _require_exact_type(checker_basis, str, field="checker_basis")
+        for chain_index, chain_input in enumerate(chain_inputs):
+            _require_exact_type(
+                chain_input,
+                GeneratedReferenceCurrentStatusExplicitChainInput,
+                field=f"chain_inputs[{chain_index}]",
+            )
+            _require_exact_type(
+                chain_input.target_observation_refs,
+                tuple,
+                field=f"chain_inputs[{chain_index}].target_observation_refs",
+            )
+            _require_exact_type(
+                chain_input.observation_inputs,
+                tuple,
+                field=f"chain_inputs[{chain_index}].observation_inputs",
+            )
+            for target_index, target in enumerate(chain_input.target_observation_refs):
+                _require_exact_type(
+                    target,
+                    GeneratedReferenceCurrentStatusObservationRefV1,
+                    field=(
+                        f"chain_inputs[{chain_index}].target_observation_refs[{target_index}]"
+                    ),
+                )
+            for observation_index, observation_input in enumerate(
+                chain_input.observation_inputs
+            ):
+                _require_exact_type(
+                    observation_input,
+                    GeneratedReferenceCurrentStatusObservationInput,
+                    field=f"chain_inputs[{chain_index}].observation_inputs[{observation_index}]",
+                )
+                _require_exact_type(
+                    observation_input.observation,
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    field=(
+                        f"chain_inputs[{chain_index}].observation_inputs"
+                        f"[{observation_index}].observation"
+                    ),
+                )
+                _require_exact_type(
+                    observation_input.document_bytes,
+                    bytes,
+                    field=(
+                        f"chain_inputs[{chain_index}].observation_inputs"
+                        f"[{observation_index}].document_bytes"
+                    ),
+                )
+        formal_specs: list[tuple[BaseModel, type[BaseModel], str]] = [
+            (
                 request,
                 CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
-                field="request",
-            ),
+                "request",
+            )
+        ]
+        for chain_index, chain_input in enumerate(chain_inputs):
+            formal_specs.extend(
+                (
+                    target,
+                    GeneratedReferenceCurrentStatusObservationRefV1,
+                    f"chain_inputs[{chain_index}].target_observation_refs[{target_index}]",
+                )
+                for target_index, target in enumerate(chain_input.target_observation_refs)
+            )
+            formal_specs.extend(
+                (
+                    observation_input.observation,
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    (
+                        f"chain_inputs[{chain_index}].observation_inputs"
+                        f"[{observation_index}].observation"
+                    ),
+                )
+                for observation_index, observation_input in enumerate(
+                    chain_input.observation_inputs
+                )
+            )
+        runtime_shape_errors = tuple(
+            error
+            for value, expected, field in formal_specs
+            for error in _inspect_imported_runtime_shape(value, expected, field=field)
+        )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "EXACT_INPUT_TYPE_REQUIRED"
+            )
+        )
+        if len(chain_inputs) > _MAX_CONTAINER_ITEMS or any(
+            len(chain_input.target_observation_refs) > _MAX_CONTAINER_ITEMS
+            or len(chain_input.observation_inputs) > _MAX_CONTAINER_ITEMS
+            for chain_input in chain_inputs
+        ):
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "Instruction chain process collection exceeds the maximum item count",
+            )
+        if any(
+            not 1 <= len(observation_input.document_bytes) <= 262_144
+            for chain_input in chain_inputs
+            for observation_input in chain_input.observation_inputs
+        ):
+            _formal_fail(
+                "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                "Instruction Observation document must contain 1..262144 exact bytes",
+            )
+        instruction_documents = (
+            (status_preparer_identity_bytes, 16_384, "Status Preparer identity"),
+            (status_preparer_action_bytes, 262_144, "Status Preparer action"),
+            (status_checker_identity_bytes, 16_384, "Status Checker identity"),
+            (status_checker_action_bytes, 262_144, "Status Checker action"),
+        )
+        for raw, _maximum, field in instruction_documents:
+            _require_exact_type(raw, bytes, field=field)
+        for raw, maximum, field in instruction_documents:
+            if not 1 <= len(raw) <= maximum:
+                _formal_fail(
+                    "DOCUMENT_RESOURCE_LIMIT_EXCEEDED",
+                    f"{field} must contain 1..{maximum} exact bytes",
+                )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "DOCUMENT_RESOURCE_LIMIT_EXCEEDED"
+            )
+        )
+        _admit_retained_json_documents(instruction_documents)
+        _admit_retained_action_contract(
+            status_preparer_action_bytes,
+            field="Status Preparer action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_identity_ref_sha256": str,
+                "subject_closure_sha256": str,
+                "policy_document_sha256": str,
+                "requested_at": str,
+                "request_valid_until": str,
+                "observation_target_refs": list,
+                "request_basis": str,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-current-status-request-preparation-action.v1"
+                ),
+                "action": "PREPARED_GENERATED_REFERENCE_CURRENT_STATUS_REQUEST",
+            },
+            array_specs={"observation_target_refs": (9, 32, dict)},
+        )
+        checker_action_document = _admit_retained_action_contract(
+            status_checker_action_bytes,
+            field="Status Checker action",
+            field_types={
+                "document_profile": str,
+                "action": str,
+                "actor_identity_ref_sha256": str,
+                "request_sha256": str,
+                "evaluated_at": str,
+                "category_results": list,
+                "checker_basis": str,
+                "status_valid_until": str,
+                "recorded_status": str,
+            },
+            literals={
+                "document_profile": (
+                    "sdc.generated-reference-current-status-decision-checker-action.v1"
+                ),
+                "action": "RECORDED_GENERATED_REFERENCE_CURRENT_STATUS_DECISION",
+            },
+            array_specs={"category_results": (9, 9, dict)},
+        )
+        if checker_action_document["recorded_status"] not in {
+            "CURRENT",
+            "HELD",
+            "REVOKED",
+            "INDETERMINATE",
+        }:
+            _formal_fail(
+                "CONTRACT_FIELD_INVALID",
+                "Status Checker action recorded_status is not a frozen status value",
+            )
+        _raise_prioritized_formal_errors(
+            tuple(
+                error
+                for error in runtime_shape_errors
+                if error.code == "CONTRACT_FIELD_INVALID"
+            )
         )
         preparer_identity, preparer_sha = _human_reference(
             status_preparer_identity_bytes, field="Status Preparer identity"
         )
+        checker_identity, checker_sha = _human_reference(
+            status_checker_identity_bytes, field="Status Checker identity"
+        )
+        raw_category_results = cast(list[object], checker_action_document["category_results"])
+        _human_text(checker_basis, field="checker_basis")
+        evaluated_at = _utc_seconds(evaluated_at, field="evaluated_at")
+        formal_inputs, formal_errors = _inspect_exact_models(formal_specs)
+        deferred_formal_errors = _defer_post_policy_errors(formal_errors)
+        req = cast(CreativeSampleGeneratedReferenceCurrentStatusRequestV1, formal_inputs[0])
         if preparer_sha != req.status_preparer_identity_ref_sha256:
-            _invalid("Status Preparer identity does not match Request")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH", "Status Preparer identity does not match Request"
+            )
         preparer_action_sha = _exact_retained_action(
             status_preparer_action_bytes,
             expected=_status_preparer_action_projection(
@@ -4830,10 +7705,27 @@ def build_generated_reference_current_status_instruction(
             field="Status Preparer action",
         )
         if preparer_action_sha != req.status_preparer_action_sha256:
-            _invalid("Status Preparer action does not match Request")
-        checker_identity, checker_sha = _human_reference(
-            status_checker_identity_bytes, field="Status Checker identity"
-        )
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH", "Status Preparer action does not match Request"
+            )
+        checker_upstream_expected = {
+            "document_profile": (
+                "sdc.generated-reference-current-status-decision-checker-action.v1"
+            ),
+            "action": "RECORDED_GENERATED_REFERENCE_CURRENT_STATUS_DECISION",
+            "actor_identity_ref_sha256": checker_sha,
+            "request_sha256": req.request_sha256,
+            "evaluated_at": evaluated_at,
+            "checker_basis": checker_basis,
+        }
+        if any(
+            not _exact_json_equal(checker_action_document.get(name), expected)
+            for name, expected in checker_upstream_expected.items()
+        ):
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH",
+                "Status Checker action does not bind its exact independent closure",
+            )
         preparer_key = (
             preparer_identity["identity_namespace"],
             preparer_identity["identity_ref"],
@@ -4842,24 +7734,64 @@ def build_generated_reference_current_status_instruction(
             checker_identity["identity_namespace"],
             checker_identity["identity_ref"],
         )
-        if checker_key == preparer_key:
-            _invalid("Status Preparer and Checker semantic identities must differ")
-        evaluated_at = _utc_seconds(evaluated_at, field="evaluated_at")
-        category_results = _derive_request_category_results(
-            req, chain_inputs, evaluated_at=evaluated_at
+        evaluated = _parse_utc(evaluated_at, field="evaluated_at")
+        if (
+            not _parse_utc(req.requested_at, field="requested_at")
+            <= evaluated
+            < _parse_utc(req.request_valid_until, field="request_valid_until")
+        ):
+            _formal_fail(
+                "TIME_WINDOW_INVALID_OR_EXPIRED", "evaluated_at lies outside Request window"
+            )
+        for result_index, raw_result in enumerate(raw_category_results):
+            result = cast(dict[str, object], raw_result)
+            for member_name in (
+                "category_observation_refs",
+                "relied_on_observation_refs",
+            ):
+                for ref_index, raw_ref in enumerate(cast(list[object], result[member_name])):
+                    _validate_retained_observation_ref_time(
+                        cast(dict[str, object], raw_ref),
+                        field=(
+                            f"Status Checker action category_results[{result_index}]"
+                            f".{member_name}[{ref_index}]"
+                        ),
+                    )
+        checker_action_sha = _raw_sha256(status_checker_action_bytes)
+        if checker_key == preparer_key or checker_action_sha == req.status_preparer_action_sha256:
+            _formal_fail(
+                "ROLE_SEPARATION_VIOLATION",
+                "Status Preparer and Checker identities/actions must be distinct",
+            )
+        _reject_retained_digest_aliases(
+            (preparer_sha, preparer_action_sha, checker_sha, checker_action_sha),
+            forbidden={
+                GENERATED_REFERENCE_CURRENT_STATUS_POLICY_DOCUMENT_SHA256,
+                *_collect_sha256_strings(req),
+                *_collect_sha256_strings(raw_category_results),
+            },
+            field="Status Instruction",
         )
+        try:
+            category_results = _derive_request_category_results(
+                req, chain_inputs, evaluated_at=evaluated_at
+            )
+        except GeneratedReferenceChainReplayError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CHAIN_STRUCTURE_INVALID",
+                "Instruction chain replay failed",
+                replay_code=exc.code,
+            ) from exc
+        except GeneratedReferenceRightsCurrentStatusError:
+            raise
+        except ValueError as exc:
+            raise GeneratedReferenceRightsCurrentStatusError(
+                "CHAIN_STRUCTURE_INVALID", "Instruction chain structure is invalid"
+            ) from exc
         recorded_status, _revoked, _held, _indeterminate = _derive_status_and_diagnostics(
             category_results
         )
         status_valid_until = min(item.result_valid_until for item in category_results)
-        checker_action_document = _admit_retained_json(
-            status_checker_action_bytes,
-            maximum=262_144,
-            field="Status Checker action",
-        )
-        raw_category_results = checker_action_document.get("category_results")
-        if type(raw_category_results) is not list:
-            _invalid("Status Checker action category_results must be a JSON array")
         action_category_results = tuple(
             cast(
                 GeneratedReferenceCurrentStatusCategoryResultV1,
@@ -4872,7 +7804,10 @@ def build_generated_reference_current_status_instruction(
             for index, item in enumerate(raw_category_results)
         )
         if action_category_results != category_results:
-            _invalid("Status Checker action category_results differ from fresh replay")
+            _formal_fail(
+                "REPLAY_MISMATCH",
+                "Status Checker action category_results differ from fresh replay",
+            )
         checker_expected = {
             "document_profile": (
                 "sdc.generated-reference-current-status-decision-checker-action.v1"
@@ -4886,24 +7821,18 @@ def build_generated_reference_current_status_instruction(
             "status_valid_until": status_valid_until,
             "recorded_status": recorded_status,
         }
-        checker_action_sha = _exact_retained_action(
+        exact_checker_action_sha = _exact_retained_action(
             status_checker_action_bytes,
             expected=checker_expected,
             field="Status Checker action",
+            replay_fields=frozenset(
+                {"category_results", "status_valid_until", "recorded_status"}
+            ),
         )
-        _reject_retained_digest_aliases(
-            (preparer_sha, preparer_action_sha, checker_sha, checker_action_sha),
-            forbidden={
-                GENERATED_REFERENCE_CURRENT_STATUS_POLICY_DOCUMENT_SHA256,
-                *_collect_sha256_strings(req),
-                *(
-                    digest
-                    for result in category_results
-                    for digest in _collect_sha256_strings(result)
-                ),
-            },
-            field="Status Instruction",
-        )
+        if exact_checker_action_sha != checker_action_sha:
+            _formal_fail(
+                "REPLAY_MISMATCH", "Status Checker action raw digest changed during replay"
+            )
         instruction = _build_generated_reference_current_status_instruction_contract(
             request=req,
             status_checker_identity_bytes=status_checker_identity_bytes,
@@ -4916,15 +7845,26 @@ def build_generated_reference_current_status_instruction(
             instruction.status_checker_identity_ref_sha256 != checker_sha
             or instruction.status_checker_action_sha256 != checker_action_sha
         ):
-            _invalid("Instruction retained Checker anchors mismatch")
+            _formal_fail(
+                "UPSTREAM_CLOSURE_MISMATCH", "Instruction retained Checker anchors mismatch"
+            )
+        _raise_prioritized_formal_errors(deferred_formal_errors)
         return instruction
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        _raise_prioritized_formal_errors((*deferred_formal_errors, exc))
+        raise AssertionError("unreachable") from exc
     except GeneratedReferenceChainReplayError as exc:
-        raise GeneratedReferenceRightsCurrentStatusError(
-            "INSTRUCTION_CHAIN_REPLAY_FAILED", "Instruction chain replay failed"
-        ) from exc
+        chain_error = GeneratedReferenceRightsCurrentStatusError(
+            "CHAIN_STRUCTURE_INVALID",
+            "Instruction chain replay failed",
+            replay_code=exc.code,
+        )
+        chain_error.__cause__ = exc
+        _raise_prioritized_formal_errors((*deferred_formal_errors, chain_error))
+        raise AssertionError("unreachable") from exc
     except (TypeError, ValueError, ValidationError) as exc:
         raise GeneratedReferenceRightsCurrentStatusError(
-            "INSTRUCTION_CONTRACT_INVALID", "Instruction construction failed"
+            "CONTRACT_FIELD_INVALID", "Instruction construction failed"
         ) from exc
 
 
@@ -4938,22 +7878,60 @@ def build_generated_reference_current_status_decision(
     status_checker_identity_bytes: bytes,
     status_checker_action_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusDecisionV1:
-    rebuilt_instruction = build_generated_reference_current_status_instruction(
-        request=request,
-        chain_inputs=chain_inputs,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        status_checker_identity_bytes=status_checker_identity_bytes,
-        status_checker_action_bytes=status_checker_action_bytes,
-        evaluated_at=instruction.evaluated_at,
-        checker_basis=instruction.checker_basis,
-    )
-    if rebuilt_instruction != instruction:
-        raise GeneratedReferenceRightsCurrentStatusError(
-            "DECISION_CONTRACT_INVALID", "Instruction does not equal fresh chain/action rebuild"
+    formal_inputs, formal_errors = _inspect_exact_models(
+        (
+            (
+                request,
+                CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+                "request",
+            ),
+            (
+                instruction,
+                CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+                "instruction",
+            ),
         )
+    )
+    validated_request = cast(
+        CreativeSampleGeneratedReferenceCurrentStatusRequestV1, formal_inputs[0]
+    )
+    validated_instruction = cast(
+        CreativeSampleGeneratedReferenceCurrentStatusInstructionV1, formal_inputs[1]
+    )
+    errors = list(formal_errors)
+    rebuilt_instruction: CreativeSampleGeneratedReferenceCurrentStatusInstructionV1 | None = None
+    try:
+        rebuilt_instruction = build_generated_reference_current_status_instruction(
+            request=validated_request,
+            chain_inputs=chain_inputs,
+            status_preparer_identity_bytes=status_preparer_identity_bytes,
+            status_preparer_action_bytes=status_preparer_action_bytes,
+            status_checker_identity_bytes=status_checker_identity_bytes,
+            status_checker_action_bytes=status_checker_action_bytes,
+            evaluated_at=getattr(
+                validated_instruction, "evaluated_at", "1970-01-01T00:00:00Z"
+            ),
+            checker_basis=getattr(validated_instruction, "checker_basis", "missing"),
+        )
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        errors.append(exc)
+    except (AttributeError, TypeError, ValueError, ValidationError) as exc:
+        contract_error = GeneratedReferenceRightsCurrentStatusError(
+            "CONTRACT_FIELD_INVALID", "Instruction rebuild inputs are incomplete"
+        )
+        contract_error.__cause__ = exc
+        errors.append(contract_error)
+    if rebuilt_instruction is not None and rebuilt_instruction != validated_instruction:
+        errors.append(
+            GeneratedReferenceRightsCurrentStatusError(
+                "REPLAY_MISMATCH", "Instruction does not equal fresh chain/action rebuild"
+            )
+        )
+    _raise_prioritized_formal_errors(errors)
+    if rebuilt_instruction is None:
+        _formal_fail("CONTRACT_FIELD_INVALID", "Instruction rebuild did not produce a result")
     return _build_generated_reference_current_status_decision_contract(
-        request=request, instruction=instruction
+        request=validated_request, instruction=validated_instruction
     )
 
 
@@ -4968,21 +7946,67 @@ def build_generated_reference_current_status_evidence_record(
     status_checker_identity_bytes: bytes,
     status_checker_action_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1:
-    rebuilt_decision = build_generated_reference_current_status_decision(
-        request=request,
-        instruction=instruction,
-        chain_inputs=chain_inputs,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        status_checker_identity_bytes=status_checker_identity_bytes,
-        status_checker_action_bytes=status_checker_action_bytes,
-    )
-    if rebuilt_decision != decision:
-        raise GeneratedReferenceRightsCurrentStatusError(
-            "EVIDENCE_RECORD_INVALID", "Decision does not equal fresh chain/action rebuild"
+    formal_inputs, formal_errors = _inspect_exact_models(
+        (
+            (
+                request,
+                CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+                "request",
+            ),
+            (
+                instruction,
+                CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+                "instruction",
+            ),
+            (
+                decision,
+                CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+                "decision",
+            ),
         )
+    )
+    validated_request = cast(
+        CreativeSampleGeneratedReferenceCurrentStatusRequestV1, formal_inputs[0]
+    )
+    validated_instruction = cast(
+        CreativeSampleGeneratedReferenceCurrentStatusInstructionV1, formal_inputs[1]
+    )
+    validated_decision = cast(
+        CreativeSampleGeneratedReferenceCurrentStatusDecisionV1, formal_inputs[2]
+    )
+    errors = list(formal_errors)
+    rebuilt_decision: CreativeSampleGeneratedReferenceCurrentStatusDecisionV1 | None = None
+    try:
+        rebuilt_decision = build_generated_reference_current_status_decision(
+            request=validated_request,
+            instruction=validated_instruction,
+            chain_inputs=chain_inputs,
+            status_preparer_identity_bytes=status_preparer_identity_bytes,
+            status_preparer_action_bytes=status_preparer_action_bytes,
+            status_checker_identity_bytes=status_checker_identity_bytes,
+            status_checker_action_bytes=status_checker_action_bytes,
+        )
+    except GeneratedReferenceRightsCurrentStatusError as exc:
+        errors.append(exc)
+    except (AttributeError, TypeError, ValueError, ValidationError) as exc:
+        contract_error = GeneratedReferenceRightsCurrentStatusError(
+            "CONTRACT_FIELD_INVALID", "Decision rebuild inputs are incomplete"
+        )
+        contract_error.__cause__ = exc
+        errors.append(contract_error)
+    if rebuilt_decision is not None and rebuilt_decision != validated_decision:
+        errors.append(
+            GeneratedReferenceRightsCurrentStatusError(
+                "REPLAY_MISMATCH", "Decision does not equal fresh chain/action rebuild"
+            )
+        )
+    _raise_prioritized_formal_errors(errors)
+    if rebuilt_decision is None:
+        _formal_fail("CONTRACT_FIELD_INVALID", "Decision rebuild did not produce a result")
     return _build_generated_reference_current_status_evidence_record_contract(
-        request=request, instruction=instruction, decision=decision
+        request=validated_request,
+        instruction=validated_instruction,
+        decision=validated_decision,
     )
 
 
@@ -5000,38 +8024,121 @@ def cover_generated_reference_current_status_chains(
             raise GeneratedReferenceChainCoverageError(
                 "CHAIN_COUNT_OUT_OF_RANGE", "explicit chain count must be 1..32"
             )
-        for index, chain_input in enumerate(chain_inputs):
-            if (
-                type(chain_input) is not GeneratedReferenceCurrentStatusExplicitChainInput
-                or type(chain_input.target_observation_refs) is not tuple
+        invalid_chain_type_index = next(
+            (
+                index
+                for index, chain_input in enumerate(chain_inputs)
+                if type(chain_input) is not GeneratedReferenceCurrentStatusExplicitChainInput
+            ),
+            None,
+        )
+        if invalid_chain_type_index is not None:
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_INPUT_CONTRACT_INVALID",
+                f"chain_inputs[{invalid_chain_type_index}] has the wrong exact process type",
+            )
+        invalid_shape_index = next(
+            (
+                index
+                for index, chain_input in enumerate(chain_inputs)
+                if type(chain_input.target_observation_refs) is not tuple
                 or type(chain_input.observation_inputs) is not tuple
-            ):
-                raise GeneratedReferenceChainCoverageError(
-                    "CHAIN_INPUT_CONTRACT_INVALID",
-                    f"chain_inputs[{index}] has the wrong exact process shape",
+            ),
+            None,
+        )
+        invalid_member_index = next(
+            (
+                index
+                for index, chain_input in enumerate(chain_inputs)
+                if type(chain_input.target_observation_refs) is tuple
+                and type(chain_input.observation_inputs) is tuple
+                and (
+                    any(
+                        type(target) is not GeneratedReferenceCurrentStatusObservationRefV1
+                        for target in chain_input.target_observation_refs
+                    )
+                    or any(
+                        type(item) is not GeneratedReferenceCurrentStatusObservationInput
+                        or type(item.observation)
+                        is not CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1
+                        or type(item.document_bytes) is not bytes
+                        for item in chain_input.observation_inputs
+                    )
                 )
-            if not 1 <= len(chain_input.target_observation_refs) <= 32:
-                raise GeneratedReferenceChainCoverageError(
-                    "TARGET_COUNT_OUT_OF_RANGE",
-                    f"chain_inputs[{index}] target count must be 1..32",
-                )
-            if not 1 <= len(chain_input.observation_inputs) <= 64:
-                raise GeneratedReferenceChainCoverageError(
-                    "OBSERVATION_COUNT_OUT_OF_RANGE",
-                    f"chain_inputs[{index}] Observation count must be 1..64",
-                )
-            if any(
-                type(target) is not GeneratedReferenceCurrentStatusObservationRefV1
-                for target in chain_input.target_observation_refs
-            ) or any(
-                type(item) is not GeneratedReferenceCurrentStatusObservationInput
-                or type(item.document_bytes) is not bytes
+            ),
+            None,
+        )
+        declared_logical_keys: list[tuple[str, str]] = []
+        canonical_keys_available = all(
+            type(chain_input.observation_inputs) in (tuple, list)
+            and all(
+                type(item) is GeneratedReferenceCurrentStatusObservationInput
+                and type(item.observation)
+                is CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1
                 for item in chain_input.observation_inputs
-            ):
-                raise GeneratedReferenceChainCoverageError(
-                    "CHAIN_INPUT_CONTRACT_INVALID",
-                    f"chain_inputs[{index}] contains a wrong exact process member",
+            )
+            for chain_input in chain_inputs
+        )
+        if canonical_keys_available:
+            for chain_input in chain_inputs:
+                genesis_observations = tuple(
+                    item.observation
+                    for item in chain_input.observation_inputs
+                    if item.observation.chain_link.link_kind == "GENESIS"
                 )
+                if len(genesis_observations) != 1:
+                    declared_logical_keys = []
+                    break
+                genesis = genesis_observations[0]
+                declared_logical_keys.append(
+                    (genesis.chain_link.chain_scope_sha256, genesis.observation_id)
+                )
+        if declared_logical_keys and tuple(declared_logical_keys) != tuple(
+            sorted(declared_logical_keys)
+        ):
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_COLLECTION_CONTRACT_INVALID",
+                "logical chain inputs are not in canonical key order",
+            )
+        if invalid_shape_index is not None:
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_INPUT_CONTRACT_INVALID",
+                f"chain_inputs[{invalid_shape_index}] has the wrong exact process shape",
+            )
+        if invalid_member_index is not None:
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_INPUT_CONTRACT_INVALID",
+                f"chain_inputs[{invalid_member_index}] contains a wrong exact process member",
+            )
+        invalid_target_count_index = next(
+            (
+                index
+                for index, chain_input in enumerate(chain_inputs)
+                if not 1 <= len(chain_input.target_observation_refs) <= 32
+            ),
+            None,
+        )
+        if invalid_target_count_index is not None:
+            raise GeneratedReferenceChainCoverageError(
+                "TARGET_COUNT_OUT_OF_RANGE",
+                f"chain_inputs[{invalid_target_count_index}] target count must be 1..32",
+            )
+        invalid_observation_count_index = next(
+            (
+                index
+                for index, chain_input in enumerate(chain_inputs)
+                if not 1 <= len(chain_input.observation_inputs) <= 64
+            ),
+            None,
+        )
+        if invalid_observation_count_index is not None:
+            raise GeneratedReferenceChainCoverageError(
+                "OBSERVATION_COUNT_OUT_OF_RANGE",
+                (
+                    f"chain_inputs[{invalid_observation_count_index}] "
+                    "Observation count must be 1..64"
+                ),
+            )
         if (
             sum(
                 len(item.document_bytes)
@@ -5088,17 +8195,16 @@ def cover_generated_reference_current_status_chains(
                 "REQUEST_OBSERVATION_NOT_COVERED",
                 "not every explicit Request target is covered",
             )
-        results: list[GeneratedReferenceCurrentStatusChainReplayResult] = []
-        for chain_input in chain_inputs:
-            try:
-                results.append(replay_generated_reference_current_status_chain(chain_input))
-            except GeneratedReferenceChainReplayError as exc:
-                raise GeneratedReferenceChainCoverageError(
-                    "CHAIN_REPLAY_FAILED",
-                    "one explicit logical chain failed replay",
-                    replay_code=exc.code,
-                ) from exc
-        chain_results = tuple(results)
+        try:
+            chain_results = _replay_generated_reference_current_status_chains_by_priority(
+                chain_inputs
+            )
+        except GeneratedReferenceChainReplayError as selected_replay_error:
+            raise GeneratedReferenceChainCoverageError(
+                "CHAIN_REPLAY_FAILED",
+                "one explicit logical chain failed replay",
+                replay_code=selected_replay_error.code,
+            ) from selected_replay_error
         logical_keys = tuple(
             (item.chain_scope_sha256, item.genesis_observation_id) for item in chain_results
         )
@@ -5119,7 +8225,9 @@ def cover_generated_reference_current_status_chains(
         all_chain_shas = tuple(
             generated_reference_current_status_chain_sha256(item) for item in all_observations
         )
-        for values, code in (
+        uniqueness_checks: tuple[
+            tuple[tuple[str, ...], GeneratedReferenceChainCoverageErrorCodeV1], ...
+        ] = (
             (all_ids, "CROSS_CHAIN_DUPLICATE_OBSERVATION_ID"),
             (all_document_shas, "CROSS_CHAIN_DUPLICATE_OBSERVATION_DOCUMENT_SHA256"),
             (all_chain_shas, "CROSS_CHAIN_DUPLICATE_OBSERVATION_CHAIN_SHA256"),
@@ -5127,7 +8235,8 @@ def cover_generated_reference_current_status_chains(
                 tuple(item.observation_set_sha256 for item in chain_results),
                 "CROSS_CHAIN_DUPLICATE_OBSERVATION_SET_SHA256",
             ),
-        ):
+        )
+        for values, code in uniqueness_checks:
             if len(values) != len(set(values)):
                 raise GeneratedReferenceChainCoverageError(
                     code, "cross-chain uniqueness constraint failed"
@@ -5280,43 +8389,7 @@ def jointly_replay_generated_reference_current_status_record(
 ) -> GeneratedReferenceCurrentStatusJointReplayResult:
     try:
         try:
-            validated_record = cast(
-                CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
-                _exact_model(
-                    record,
-                    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
-                    field="record",
-                ),
-            )
-            validated_manifest = cast(
-                CreativeSampleGeneratedReferenceRightsManifestV1,
-                _exact_model(
-                    manifest,
-                    CreativeSampleGeneratedReferenceRightsManifestV1,
-                    field="manifest",
-                ),
-            )
-        except (
-            GeneratedReferenceRightsCurrentStatusError,
-            TypeError,
-            ValueError,
-            ValidationError,
-        ) as exc:
-            raise GeneratedReferenceJointReplayError(
-                "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED", "Record or Manifest contract failed"
-            ) from exc
-        expected_closure = build_generated_reference_current_status_subject_closure(
-            validated_manifest
-        )
-        if validated_record.subject_closure != expected_closure:
-            raise GeneratedReferenceJointReplayError(
-                "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED",
-                "Record does not bind exact Manifest subject closure",
-            )
-        try:
-            coverage = cover_generated_reference_current_status_chains(
-                validated_record, chain_inputs
-            )
+            coverage = cover_generated_reference_current_status_chains(record, chain_inputs)
         except GeneratedReferenceChainCoverageError as exc:
             raise GeneratedReferenceJointReplayError(
                 "RECORD_CHAIN_COVERAGE_REPLAY_FAILED",
@@ -5324,6 +8397,7 @@ def jointly_replay_generated_reference_current_status_record(
                 coverage_code=exc.code,
                 replay_code=exc.replay_code,
             ) from exc
+        validated_record = record
         recorded_status, revoked, held, indeterminate = _derive_status_and_diagnostics(
             coverage.category_results
         )
@@ -5338,6 +8412,34 @@ def jointly_replay_generated_reference_current_status_record(
                 "TARGET_OBSERVATION_DERIVATION_INCONSISTENT",
                 "fresh resolver output differs from Decision",
             )
+        try:
+            validated_manifest = cast(
+                CreativeSampleGeneratedReferenceRightsManifestV1,
+                _exact_model(
+                    manifest,
+                    CreativeSampleGeneratedReferenceRightsManifestV1,
+                    field="manifest",
+                ),
+            )
+            expected_closure = build_generated_reference_current_status_subject_closure(
+                validated_manifest
+            )
+            if validated_record.subject_closure != expected_closure:
+                raise GeneratedReferenceJointReplayError(
+                    "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED",
+                    "Record does not bind exact Manifest subject closure",
+                )
+        except GeneratedReferenceJointReplayError:
+            raise
+        except (
+            GeneratedReferenceRightsCurrentStatusError,
+            TypeError,
+            ValueError,
+            ValidationError,
+        ) as exc:
+            raise GeneratedReferenceJointReplayError(
+                "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED", "Manifest closure replay failed"
+            ) from exc
         projection = {
             "record_id": validated_record.record_id,
             "record_sha256": validated_record.record_sha256,
@@ -5420,16 +8522,8 @@ def assess_generated_reference_current_status_record_as_of(
                 "AS_OF_CONTRACT_INVALID", "as_of must be canonical UTC seconds"
             ) from exc
         try:
-            validated_record = cast(
-                CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
-                _exact_model(
-                    record,
-                    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
-                    field="record",
-                ),
-            )
             joint = jointly_replay_generated_reference_current_status_record(
-                validated_record, manifest, chain_inputs
+                record, manifest, chain_inputs
             )
         except GeneratedReferenceJointReplayError as exc:
             raise GeneratedReferenceAsOfAssessmentError(
@@ -5439,6 +8533,7 @@ def assess_generated_reference_current_status_record_as_of(
                 coverage_code=exc.coverage_code,
                 replay_code=exc.replay_code,
             ) from exc
+        validated_record = record
         evaluated = _parse_utc(validated_record.decision.evaluated_at, field="evaluated_at")
         if as_of_dt < evaluated:
             raise GeneratedReferenceAsOfAssessmentError(
@@ -5590,10 +8685,96 @@ def build_generated_reference_current_status_record_as_of_assessment_receipt(
         )
     except GeneratedReferenceReceiptError:
         raise
-    except (TypeError, ValueError, ValidationError) as exc:
+    except Exception as exc:
         raise GeneratedReferenceReceiptError(
             "INTERNAL_RECEIPT_INCONSISTENCY", "Receipt construction failed"
         ) from exc
+
+
+def _validate_partial_receipt_chain_collection(
+    chain_inputs: tuple[GeneratedReferenceCurrentStatusExplicitChainInput, ...],
+) -> None:
+    """Validate supplied chain facts that do not require the missing Evidence Record."""
+
+    supplied_targets = tuple(
+        target for chain_input in chain_inputs for target in chain_input.target_observation_refs
+    )
+    supplied_keys = tuple(_observation_ref_key(item) for item in supplied_targets)
+    if len(supplied_keys) != len(set(supplied_keys)):
+        raise GeneratedReferenceChainCoverageError(
+            "REQUEST_TARGET_COVERED_MULTIPLE_TIMES",
+            "Request target is covered more than once",
+        )
+    try:
+        chain_results = _replay_generated_reference_current_status_chains_by_priority(chain_inputs)
+    except GeneratedReferenceChainReplayError as selected_replay_error:
+        raise GeneratedReferenceChainCoverageError(
+            "CHAIN_REPLAY_FAILED",
+            "one explicit logical chain failed replay",
+            replay_code=selected_replay_error.code,
+        ) from selected_replay_error
+    logical_keys = tuple(
+        (item.chain_scope_sha256, item.genesis_observation_id) for item in chain_results
+    )
+    if logical_keys != tuple(sorted(logical_keys)):
+        raise GeneratedReferenceChainCoverageError(
+            "CHAIN_COLLECTION_CONTRACT_INVALID",
+            "logical chain inputs are not in canonical key order",
+        )
+    if len(logical_keys) != len(set(logical_keys)):
+        raise GeneratedReferenceChainCoverageError(
+            "DUPLICATE_LOGICAL_CHAIN", "duplicate logical-chain key"
+        )
+    all_observations = tuple(
+        observation for result in chain_results for observation in result.observations
+    )
+    uniqueness_checks: tuple[
+        tuple[tuple[str, ...], GeneratedReferenceChainCoverageErrorCodeV1], ...
+    ] = (
+        (
+            tuple(item.observation_id for item in all_observations),
+            "CROSS_CHAIN_DUPLICATE_OBSERVATION_ID",
+        ),
+        (
+            tuple(item.observation_sha256 for item in all_observations),
+            "CROSS_CHAIN_DUPLICATE_OBSERVATION_DOCUMENT_SHA256",
+        ),
+        (
+            tuple(
+                generated_reference_current_status_chain_sha256(item)
+                for item in all_observations
+            ),
+            "CROSS_CHAIN_DUPLICATE_OBSERVATION_CHAIN_SHA256",
+        ),
+        (
+            tuple(item.observation_set_sha256 for item in chain_results),
+            "CROSS_CHAIN_DUPLICATE_OBSERVATION_SET_SHA256",
+        ),
+    )
+    for values, code in uniqueness_checks:
+        if len(values) != len(set(values)):
+            raise GeneratedReferenceChainCoverageError(
+                code, "cross-chain uniqueness constraint failed"
+            )
+    for result in chain_results:
+        observations_by_id = {item.observation_id: item for item in result.observations}
+        if any(
+            target.observation_id not in observations_by_id
+            for target in result.target_observation_refs
+        ):
+            raise GeneratedReferenceChainCoverageError(
+                "REQUEST_TARGET_NOT_RESOLVED_IN_CHAIN",
+                "a Request target is not resolved by its declared logical chain",
+            )
+    for result in chain_results:
+        required_ids = {target.observation_id for target in result.target_observation_refs}
+        for target in result.target_observation_refs:
+            required_ids.update(result._ancestor_ids_by_observation_id[target.observation_id])
+        if required_ids != {item.observation_id for item in result.observations}:
+            raise GeneratedReferenceChainCoverageError(
+                "UNRELATED_SUPPORT_OBSERVATION",
+                "logical chain contains an Observation unrelated to its Request targets",
+            )
 
 
 def verify_generated_reference_current_status_record_as_of_assessment_receipt(
@@ -5619,6 +8800,109 @@ def verify_generated_reference_current_status_record_as_of_assessment_receipt(
             ) from exc
         supplied = (record is not None, manifest is not None, chain_inputs is not None)
         if not all(supplied):
+            coverage_errors: list[GeneratedReferenceChainCoverageError] = []
+            validated_partial_record: (
+                CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1 | None
+            ) = None
+            if record is not None:
+                try:
+                    validated_partial_record = cast(
+                        CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                        _exact_model(
+                            record,
+                            CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                            field="record",
+                        ),
+                    )
+                except (
+                    GeneratedReferenceRightsCurrentStatusError,
+                    TypeError,
+                    ValueError,
+                    ValidationError,
+                ) as exc:
+                    record_error = GeneratedReferenceChainCoverageError(
+                        "EVIDENCE_RECORD_INVALID", "Evidence Record is invalid"
+                    )
+                    record_error.__cause__ = exc
+                    coverage_errors.append(record_error)
+            if chain_inputs is not None:
+                try:
+                    cover_generated_reference_current_status_chains(
+                        cast(
+                            CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                            (
+                                validated_partial_record
+                                if validated_partial_record is not None
+                                else object()
+                            ),
+                        ),
+                        chain_inputs,
+                    )
+                except GeneratedReferenceChainCoverageError as exc:
+                    if (
+                        validated_partial_record is None
+                        and exc.code == "EVIDENCE_RECORD_INVALID"
+                    ):
+                        try:
+                            _validate_partial_receipt_chain_collection(chain_inputs)
+                        except GeneratedReferenceChainCoverageError as partial_exc:
+                            coverage_errors.append(partial_exc)
+                    else:
+                        coverage_errors.append(exc)
+            if coverage_errors:
+                selected_coverage_error = min(
+                    coverage_errors,
+                    key=lambda item: _GENERATED_REFERENCE_CHAIN_COVERAGE_ERROR_PRIORITY.index(
+                        item.code
+                    ),
+                )
+                raise GeneratedReferenceReceiptError(
+                    "AS_OF_ASSESSMENT_REPLAY_FAILED",
+                    "Receipt replay assessment failed",
+                    assessment_code="RECORD_JOINT_REPLAY_FAILED",
+                    joint_replay_code="RECORD_CHAIN_COVERAGE_REPLAY_FAILED",
+                    coverage_code=selected_coverage_error.code,
+                    replay_code=selected_coverage_error.replay_code,
+                ) from selected_coverage_error
+            if manifest is not None:
+                try:
+                    validated_partial_manifest = cast(
+                        CreativeSampleGeneratedReferenceRightsManifestV1,
+                        _exact_model(
+                            manifest,
+                            CreativeSampleGeneratedReferenceRightsManifestV1,
+                            field="manifest",
+                        ),
+                    )
+                    partial_subject_closure = (
+                        build_generated_reference_current_status_subject_closure(
+                            validated_partial_manifest
+                        )
+                    )
+                    if (
+                        partial_subject_closure != validated.subject_closure
+                        or (
+                            validated_partial_record is not None
+                            and validated_partial_record.subject_closure != partial_subject_closure
+                        )
+                    ):
+                        raise GeneratedReferenceJointReplayError(
+                            "PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED",
+                            "Record does not bind exact Manifest subject closure",
+                        )
+                except (
+                    GeneratedReferenceJointReplayError,
+                    GeneratedReferenceRightsCurrentStatusError,
+                    TypeError,
+                    ValueError,
+                    ValidationError,
+                ) as exc:
+                    raise GeneratedReferenceReceiptError(
+                        "AS_OF_ASSESSMENT_REPLAY_FAILED",
+                        "Receipt replay assessment failed",
+                        assessment_code="RECORD_JOINT_REPLAY_FAILED",
+                        joint_replay_code="PROVIDED_OBJECT_CLOSURE_REPLAY_FAILED",
+                    ) from exc
             raise GeneratedReferenceReceiptError(
                 "RECEIPT_REPLAY_MISMATCH",
                 "Receipt verification requires Record, Manifest and explicit chain inputs",
@@ -5894,35 +9178,75 @@ def verify_generated_reference_current_status_source_observation(
     source_identity_bytes: bytes,
     source_object_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1:
-    validated = cast(
+    return cast(
         CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
-        _exact_model(
+        _verify_formal_rebuild(
             value,
             CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
             field="observation",
+            rebuild=lambda candidate: build_generated_reference_current_status_source_observation(
+                subject_closure=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).subject_closure,
+                category=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).category,
+                claim_value=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).claim_value,
+                source_kind=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).source_kind,
+                basis_code=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).basis_code,
+                basis_note=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).basis_note,
+                source_identity_bytes=source_identity_bytes,
+                source_object_ref=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).source_object_ref,
+                source_object_bytes=source_object_bytes,
+                source_object_media_type=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).source_object_media_type,
+                source_event_at=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).source_event_at,
+                observed_at=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).observed_at,
+                valid_from=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).valid_from,
+                valid_until=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).valid_until,
+                link_kind=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).chain_link.link_kind,
+                predecessor_heads=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
+                    candidate,
+                ).chain_link.predecessor_heads,
+            ),
+            mismatch_message="Source Observation differs from exact retained-byte rebuild",
         ),
     )
-    rebuilt = build_generated_reference_current_status_source_observation(
-        subject_closure=validated.subject_closure,
-        category=validated.category,
-        claim_value=validated.claim_value,
-        source_kind=validated.source_kind,
-        basis_code=validated.basis_code,
-        basis_note=validated.basis_note,
-        source_identity_bytes=source_identity_bytes,
-        source_object_ref=validated.source_object_ref,
-        source_object_bytes=source_object_bytes,
-        source_object_media_type=validated.source_object_media_type,
-        source_event_at=validated.source_event_at,
-        observed_at=validated.observed_at,
-        valid_from=validated.valid_from,
-        valid_until=validated.valid_until,
-        link_kind=validated.chain_link.link_kind,
-        predecessor_heads=validated.chain_link.predecessor_heads,
-    )
-    if rebuilt != validated:
-        _invalid("Source Observation differs from exact retained-byte rebuild")
-    return validated
 
 
 def verify_generated_reference_current_status_request(
@@ -5932,23 +9256,31 @@ def verify_generated_reference_current_status_request(
     status_preparer_action_bytes: bytes,
     target_observations: tuple[GeneratedReferenceCurrentStatusObservationInput, ...],
 ) -> CreativeSampleGeneratedReferenceCurrentStatusRequestV1:
-    validated = cast(
+    return cast(
         CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
-        _exact_model(
-            value, CreativeSampleGeneratedReferenceCurrentStatusRequestV1, field="request"
+        _verify_formal_rebuild(
+            value,
+            CreativeSampleGeneratedReferenceCurrentStatusRequestV1,
+            field="request",
+            rebuild=lambda candidate: build_generated_reference_current_status_request(
+                subject_closure=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusRequestV1, candidate
+                ).subject_closure,
+                status_preparer_identity_bytes=status_preparer_identity_bytes,
+                status_preparer_action_bytes=status_preparer_action_bytes,
+                requested_at=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusRequestV1, candidate
+                ).requested_at,
+                target_observations=target_observations,
+                request_basis=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusRequestV1, candidate
+                ).request_basis,
+            ),
+            mismatch_message=(
+                "Request differs from exact retained-byte/Observation rebuild"
+            ),
         ),
     )
-    rebuilt = build_generated_reference_current_status_request(
-        subject_closure=validated.subject_closure,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        requested_at=validated.requested_at,
-        target_observations=target_observations,
-        request_basis=validated.request_basis,
-    )
-    if rebuilt != validated:
-        _invalid("Request differs from exact retained-byte/Observation rebuild")
-    return validated
 
 
 def verify_generated_reference_current_status_instruction(
@@ -5961,25 +9293,31 @@ def verify_generated_reference_current_status_instruction(
     status_checker_identity_bytes: bytes,
     status_checker_action_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusInstructionV1:
-    validated = cast(
+    return cast(
         CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
-        _exact_model(
-            value, CreativeSampleGeneratedReferenceCurrentStatusInstructionV1, field="instruction"
+        _verify_formal_rebuild(
+            value,
+            CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+            field="instruction",
+            rebuild=lambda candidate: build_generated_reference_current_status_instruction(
+                request=request,
+                chain_inputs=chain_inputs,
+                status_preparer_identity_bytes=status_preparer_identity_bytes,
+                status_preparer_action_bytes=status_preparer_action_bytes,
+                status_checker_identity_bytes=status_checker_identity_bytes,
+                status_checker_action_bytes=status_checker_action_bytes,
+                evaluated_at=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+                    candidate,
+                ).evaluated_at,
+                checker_basis=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusInstructionV1,
+                    candidate,
+                ).checker_basis,
+            ),
+            mismatch_message="Instruction differs from fresh replay/action rebuild",
         ),
     )
-    rebuilt = build_generated_reference_current_status_instruction(
-        request=request,
-        chain_inputs=chain_inputs,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        status_checker_identity_bytes=status_checker_identity_bytes,
-        status_checker_action_bytes=status_checker_action_bytes,
-        evaluated_at=validated.evaluated_at,
-        checker_basis=validated.checker_basis,
-    )
-    if rebuilt != validated:
-        _invalid("Instruction differs from fresh replay/action rebuild")
-    return validated
 
 
 def verify_generated_reference_current_status_decision(
@@ -5993,24 +9331,24 @@ def verify_generated_reference_current_status_decision(
     status_checker_identity_bytes: bytes,
     status_checker_action_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusDecisionV1:
-    validated = cast(
+    return cast(
         CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
-        _exact_model(
-            value, CreativeSampleGeneratedReferenceCurrentStatusDecisionV1, field="decision"
+        _verify_formal_rebuild(
+            value,
+            CreativeSampleGeneratedReferenceCurrentStatusDecisionV1,
+            field="decision",
+            rebuild=lambda _candidate: build_generated_reference_current_status_decision(
+                request=request,
+                instruction=instruction,
+                chain_inputs=chain_inputs,
+                status_preparer_identity_bytes=status_preparer_identity_bytes,
+                status_preparer_action_bytes=status_preparer_action_bytes,
+                status_checker_identity_bytes=status_checker_identity_bytes,
+                status_checker_action_bytes=status_checker_action_bytes,
+            ),
+            mismatch_message="Decision differs from fresh replay/action rebuild",
         ),
     )
-    rebuilt = build_generated_reference_current_status_decision(
-        request=request,
-        instruction=instruction,
-        chain_inputs=chain_inputs,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        status_checker_identity_bytes=status_checker_identity_bytes,
-        status_checker_action_bytes=status_checker_action_bytes,
-    )
-    if rebuilt != validated:
-        _invalid("Decision differs from fresh replay/action rebuild")
-    return validated
 
 
 def verify_generated_reference_current_status_evidence_record(
@@ -6022,25 +9360,34 @@ def verify_generated_reference_current_status_evidence_record(
     status_checker_identity_bytes: bytes,
     status_checker_action_bytes: bytes,
 ) -> CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1:
-    validated = cast(
+    return cast(
         CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
-        _exact_model(
-            value, CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1, field="record"
+        _verify_formal_rebuild(
+            value,
+            CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+            field="record",
+            rebuild=lambda candidate: build_generated_reference_current_status_evidence_record(
+                request=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                    candidate,
+                ).request,
+                instruction=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                    candidate,
+                ).instruction,
+                decision=cast(
+                    CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1,
+                    candidate,
+                ).decision,
+                chain_inputs=chain_inputs,
+                status_preparer_identity_bytes=status_preparer_identity_bytes,
+                status_preparer_action_bytes=status_preparer_action_bytes,
+                status_checker_identity_bytes=status_checker_identity_bytes,
+                status_checker_action_bytes=status_checker_action_bytes,
+            ),
+            mismatch_message="Evidence Record differs from fresh replay/action rebuild",
         ),
     )
-    rebuilt = build_generated_reference_current_status_evidence_record(
-        request=validated.request,
-        instruction=validated.instruction,
-        decision=validated.decision,
-        chain_inputs=chain_inputs,
-        status_preparer_identity_bytes=status_preparer_identity_bytes,
-        status_preparer_action_bytes=status_preparer_action_bytes,
-        status_checker_identity_bytes=status_checker_identity_bytes,
-        status_checker_action_bytes=status_checker_action_bytes,
-    )
-    if rebuilt != validated:
-        _invalid("Evidence Record differs from fresh replay/action rebuild")
-    return validated
 
 
 __all__ = [
@@ -6077,8 +9424,11 @@ __all__ = [
     "GENERATED_REFERENCE_RIGHTS_MANIFEST_REVIEW_PAYLOAD_SHA256_DOMAIN",
     "GENERATED_REFERENCE_RIGHTS_MANIFEST_SHA256_DOMAIN",
     "GeneratedReferenceAsOfAssessmentError",
+    "GeneratedReferenceAsOfAssessmentErrorCodeV1",
     "GeneratedReferenceChainCoverageError",
+    "GeneratedReferenceChainCoverageErrorCodeV1",
     "GeneratedReferenceChainReplayError",
+    "GeneratedReferenceChainReplayErrorCodeV1",
     "GeneratedReferenceCurrentStatusAsOfAssessmentResult",
     "GeneratedReferenceCurrentStatusCategoryResultV1",
     "GeneratedReferenceCurrentStatusChainCoverageResult",
@@ -6092,9 +9442,12 @@ __all__ = [
     "GeneratedReferenceCurrentStatusReceiptProcessResult",
     "GeneratedReferenceCurrentStatusSubjectClosureV1",
     "GeneratedReferenceJointReplayError",
+    "GeneratedReferenceJointReplayErrorCodeV1",
     "GeneratedReferenceReceiptError",
+    "GeneratedReferenceReceiptErrorCodeV1",
     "GeneratedReferenceReviewedRightsScopeV1",
     "GeneratedReferenceRightsCurrentStatusError",
+    "GeneratedReferenceFormalErrorCodeV1",
     "GeneratedReferenceRightsManifestEvidenceReferenceV1",
     "GeneratedReferenceRightsManifestEvidenceInput",
     "GeneratedReferenceRightsManifestGateResultV1",
