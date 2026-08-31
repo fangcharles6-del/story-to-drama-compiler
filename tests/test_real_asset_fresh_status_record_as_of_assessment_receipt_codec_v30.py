@@ -1515,11 +1515,11 @@ def test_error_messages_do_not_echo_raw_document_bytes() -> None:
 
 
 def test_codec_adds_no_schema_and_all_eighty_six_registered_schemas_stay_exact() -> None:
-    assert len(MODELS) == 86
-    assert len({model.__name__ for model in MODELS}) == 86
+    assert len(MODELS) == 89
+    assert len({model.__name__ for model in MODELS}) == 89
     expected_names = {f"{model.__name__}.schema.json" for model in MODELS}
     schema_paths = tuple(Path("schemas").glob("*.schema.json"))
-    assert len(schema_paths) == 86
+    assert len(schema_paths) == 89
     assert {path.name for path in schema_paths} == expected_names
     assert not any("Codec" in path.name for path in schema_paths)
     for model in MODELS:

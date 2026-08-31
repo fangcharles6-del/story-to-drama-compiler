@@ -1584,7 +1584,7 @@ def test_coverage_models_are_not_registered_as_persistent_schemas() -> None:
     )
     from sdc.schemas import MODELS
 
-    assert len(MODELS) == 86
+    assert len(MODELS) == 89
     assert sum("FreshStatus" in model.__name__ for model in MODELS) == 6
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert FreshStatusExplicitFiniteChainReplayResultV1 not in MODELS
@@ -1608,7 +1608,7 @@ def test_all_sixty_seven_existing_schema_bytes_are_locked() -> None:
     assert len(expected) == 67
     registered_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:68]}
     registered = {f"{model.__name__}.schema.json" for model in MODELS}
-    assert len(MODELS) == 86
+    assert len(MODELS) == 89
     assert registered_prefix == {*expected, receipt_schema}
     assert {path.name for path in Path("schemas").glob("*.schema.json")} == registered
     for name, expected_sha256 in expected.items():

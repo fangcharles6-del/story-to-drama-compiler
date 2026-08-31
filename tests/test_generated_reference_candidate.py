@@ -1677,6 +1677,8 @@ def test_all_other_production_modules_have_no_generated_candidate_reverse_wiring
         "generated_reference_asset_promotion_codegen.py",
         "generated_reference_rights_current_status.py",
         "generated_reference_rights_current_status_codegen.py",
+        "generated_reference_role_binding.py",
+        "generated_reference_role_binding_codegen.py",
         "schemas.py",
     }
     production_modules = tuple(sorted((ROOT / "src" / "sdc").glob("*.py")))

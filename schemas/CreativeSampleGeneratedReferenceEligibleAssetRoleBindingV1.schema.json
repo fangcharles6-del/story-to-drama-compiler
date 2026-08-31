@@ -1,0 +1,937 @@
+{
+  "$defs": {
+    "GeneratedReferenceEligibleAssetRoleBindingTargetV1": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_purpose": {
+          "enum": [
+            "CHARACTER_REFERENCE_ASSET",
+            "SCENE_REFERENCE_ASSET"
+          ],
+          "title": "Asset Purpose",
+          "type": "string"
+        },
+        "binding_exclusivity_asserted": {
+          "const": false,
+          "title": "Binding Exclusivity Asserted",
+          "type": "boolean"
+        },
+        "candidate_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "candidate_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Candidate Sha256",
+          "type": "string"
+        },
+        "catalog_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Catalog Sha256",
+          "type": "string"
+        },
+        "catalog_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Catalog Version",
+          "type": "string"
+        },
+        "complete_role_set_asserted": {
+          "const": false,
+          "title": "Complete Role Set Asserted",
+          "type": "boolean"
+        },
+        "crop_applied": {
+          "const": false,
+          "title": "Crop Applied",
+          "type": "boolean"
+        },
+        "derived_media_created": {
+          "const": false,
+          "title": "Derived Media Created",
+          "type": "boolean"
+        },
+        "eligible_asset_sidecar_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Eligible Asset Sidecar Id",
+          "type": "string"
+        },
+        "eligible_asset_sidecar_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Eligible Asset Sidecar Sha256",
+          "type": "string"
+        },
+        "global_role_uniqueness_asserted": {
+          "const": false,
+          "title": "Global Role Uniqueness Asserted",
+          "type": "boolean"
+        },
+        "media_binding_scope": {
+          "const": "WHOLE_UNSPLIT_UNTRANSFORMED_COMPOSITE_PNG_OCCURRENCE",
+          "title": "Media Binding Scope",
+          "type": "string"
+        },
+        "media_content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Content Sha256",
+          "type": "string"
+        },
+        "media_size_bytes": {
+          "maximum": 67108864,
+          "minimum": 1,
+          "title": "Media Size Bytes",
+          "type": "integer"
+        },
+        "media_technical_record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Media Technical Record Sha256",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "output_ordinal": {
+          "const": 0,
+          "title": "Output Ordinal",
+          "type": "integer"
+        },
+        "profile_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "profile_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Profile Sha256",
+          "type": "string"
+        },
+        "profile_version": {
+          "pattern": "^(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})\\.(0|[1-9][0-9]{0,9})$",
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "promotion_decision_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Promotion Decision Id",
+          "type": "string"
+        },
+        "promotion_decision_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Promotion Decision Sha256",
+          "type": "string"
+        },
+        "provider_attempt_outcome_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Provider Attempt Outcome Id",
+          "type": "string"
+        },
+        "provider_attempt_outcome_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Attempt Outcome Sha256",
+          "type": "string"
+        },
+        "provider_slot_embedded": {
+          "const": false,
+          "title": "Provider Slot Embedded",
+          "type": "boolean"
+        },
+        "reference_asset_types": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "const": "CHARACTER_IDENTITY_SHEET",
+                  "type": "string"
+                },
+                {
+                  "const": "CHARACTER_POSE_REFERENCE",
+                  "type": "string"
+                },
+                {
+                  "const": "CHARACTER_EXPRESSION_REFERENCE",
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "const": "SCENE_ESTABLISHING_REFERENCE",
+                  "type": "string"
+                },
+                {
+                  "const": "SCENE_LIGHTING_REFERENCE",
+                  "type": "string"
+                },
+                {
+                  "const": "SCENE_MATERIAL_REFERENCE",
+                  "type": "string"
+                },
+                {
+                  "const": "SCENE_PROP_PLACEMENT_REFERENCE",
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "title": "Reference Asset Types"
+        },
+        "reference_prompt_artifact_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Reference Prompt Artifact Sha256",
+          "type": "string"
+        },
+        "selected_reference_role": {
+          "enum": [
+            "CHARACTER_IDENTITY_SHEET",
+            "CHARACTER_POSE_REFERENCE",
+            "CHARACTER_EXPRESSION_REFERENCE",
+            "SCENE_ESTABLISHING_REFERENCE",
+            "SCENE_LIGHTING_REFERENCE",
+            "SCENE_MATERIAL_REFERENCE",
+            "SCENE_PROP_PLACEMENT_REFERENCE"
+          ],
+          "title": "Selected Reference Role",
+          "type": "string"
+        },
+        "split_applied": {
+          "const": false,
+          "title": "Split Applied",
+          "type": "boolean"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "target_profile": {
+          "const": "sdc.generated-reference-eligible-asset-role-binding-target.v1",
+          "title": "Target Profile",
+          "type": "string"
+        },
+        "target_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Target Sha256",
+          "type": "string"
+        },
+        "transform_applied": {
+          "const": false,
+          "title": "Transform Applied",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "target_profile",
+        "target_sha256",
+        "eligible_asset_sidecar_id",
+        "eligible_asset_sidecar_sha256",
+        "promotion_decision_id",
+        "promotion_decision_sha256",
+        "reference_prompt_artifact_sha256",
+        "provider_attempt_outcome_id",
+        "provider_attempt_outcome_sha256",
+        "candidate_id",
+        "candidate_sha256",
+        "output_ordinal",
+        "media_type",
+        "media_content_sha256",
+        "media_size_bytes",
+        "media_technical_record_sha256",
+        "asset_purpose",
+        "subject_id",
+        "profile_id",
+        "profile_version",
+        "profile_sha256",
+        "catalog_version",
+        "catalog_sha256",
+        "reference_asset_types",
+        "selected_reference_role",
+        "media_binding_scope",
+        "binding_exclusivity_asserted",
+        "complete_role_set_asserted",
+        "global_role_uniqueness_asserted",
+        "crop_applied",
+        "split_applied",
+        "transform_applied",
+        "derived_media_created",
+        "provider_slot_embedded"
+      ],
+      "title": "GeneratedReferenceEligibleAssetRoleBindingTargetV1",
+      "type": "object"
+    },
+    "GeneratedReferencePromotionPrimaryAssetBindingV1": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_ref": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Approval Ref",
+          "type": "string"
+        },
+        "asset_purpose": {
+          "enum": [
+            "CHARACTER_REFERENCE_ASSET",
+            "SCENE_REFERENCE_ASSET"
+          ],
+          "title": "Asset Purpose",
+          "type": "string"
+        },
+        "asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Asset Version Id",
+          "type": "string"
+        },
+        "bible_active_asset_version_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Bible Active Asset Version Id",
+          "type": "string"
+        },
+        "binding_profile": {
+          "const": "sdc.generated-reference-promotion-primary-asset-binding.v1",
+          "title": "Binding Profile",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "legacy_asset_version_projection_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Legacy Asset Version Projection Sha256",
+          "type": "string"
+        },
+        "media_type": {
+          "const": "image/png",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "primary_asset_binding_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Primary Asset Binding Sha256",
+          "type": "string"
+        },
+        "provenance": {
+          "const": "IMPORTED_APPROVED_MEDIA",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "subject_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "binding_profile",
+        "primary_asset_binding_sha256",
+        "asset_purpose",
+        "subject_id",
+        "asset_version_id",
+        "legacy_asset_version_projection_sha256",
+        "version",
+        "content_sha256",
+        "media_type",
+        "approval_ref",
+        "provenance",
+        "bible_active_asset_version_id"
+      ],
+      "title": "GeneratedReferencePromotionPrimaryAssetBindingV1",
+      "type": "object"
+    },
+    "GeneratedReferenceReviewedRightsScopeV1": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_use_scope": {
+          "items": {
+            "pattern": "^[A-Z][A-Z0-9_]{0,255}$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Allowed Use Scope",
+          "type": "array"
+        },
+        "brand_and_protected_content_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Brand And Protected Content Basis",
+          "type": "string"
+        },
+        "likeness_privacy_and_sensitive_data_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Likeness Privacy And Sensitive Data Basis",
+          "type": "string"
+        },
+        "output_copyright_and_commercial_scope_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Output Copyright And Commercial Scope Basis",
+          "type": "string"
+        },
+        "retention_and_deletion_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Retention And Deletion Basis",
+          "type": "string"
+        },
+        "review_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Review Basis",
+          "type": "string"
+        },
+        "reviewed_scope_valid_until": {
+          "title": "Reviewed Scope Valid Until",
+          "type": "string"
+        },
+        "territory_scope": {
+          "items": {
+            "pattern": "^[A-Z][A-Z0-9_]{0,255}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Territory Scope",
+          "type": "array"
+        },
+        "training_use_prohibition_basis": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Training Use Prohibition Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "territory_scope",
+        "allowed_use_scope",
+        "reviewed_scope_valid_until",
+        "output_copyright_and_commercial_scope_basis",
+        "likeness_privacy_and_sensitive_data_basis",
+        "brand_and_protected_content_basis",
+        "retention_and_deletion_basis",
+        "training_use_prohibition_basis",
+        "review_basis"
+      ],
+      "title": "GeneratedReferenceReviewedRightsScopeV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "asset_version_v1_created": {
+      "const": false,
+      "title": "Asset Version V1 Created",
+      "type": "boolean"
+    },
+    "authority_scope": {
+      "const": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+      "title": "Authority Scope",
+      "type": "string"
+    },
+    "authorized_attempts": {
+      "const": 0,
+      "title": "Authorized Attempts",
+      "type": "integer"
+    },
+    "authorized_cost_cny": {
+      "const": 0,
+      "title": "Authorized Cost Cny",
+      "type": "integer"
+    },
+    "automated_execution_allowed": {
+      "const": false,
+      "title": "Automated Execution Allowed",
+      "type": "boolean"
+    },
+    "bible_active_binding_changed": {
+      "const": false,
+      "title": "Bible Active Binding Changed",
+      "type": "boolean"
+    },
+    "binding_as_of_assessment_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding As Of Assessment Sha256",
+      "type": "string"
+    },
+    "binding_as_of_status": {
+      "const": "CURRENT",
+      "title": "Binding As Of Status",
+      "type": "string"
+    },
+    "binding_at": {
+      "title": "Binding At",
+      "type": "string"
+    },
+    "binding_coverage_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Coverage Set Sha256",
+      "type": "string"
+    },
+    "binding_evidence_valid_until": {
+      "title": "Binding Evidence Valid Until",
+      "type": "string"
+    },
+    "binding_explicit_chain_set_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Explicit Chain Set Sha256",
+      "type": "string"
+    },
+    "binding_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "binding_joint_replay_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Joint Replay Sha256",
+      "type": "string"
+    },
+    "binding_scope": {
+      "const": "POST_PROMOTION_SINGLE_ROLE_BINDING_HISTORICAL_EVIDENCE_ONLY",
+      "title": "Binding Scope",
+      "type": "string"
+    },
+    "binding_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Sha256",
+      "type": "string"
+    },
+    "binding_state": {
+      "const": "GENERATED_REFERENCE_ELIGIBLE_ASSET_ROLE_BINDING_RECORDED",
+      "title": "Binding State",
+      "type": "string"
+    },
+    "binding_status_receipt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Binding Status Receipt Id",
+      "type": "string"
+    },
+    "binding_status_receipt_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Status Receipt Sha256",
+      "type": "string"
+    },
+    "binding_status_record_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Binding Status Record Id",
+      "type": "string"
+    },
+    "binding_status_record_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Binding Status Record Sha256",
+      "type": "string"
+    },
+    "binding_status_valid_until": {
+      "title": "Binding Status Valid Until",
+      "type": "string"
+    },
+    "complete_role_set_asserted": {
+      "const": false,
+      "title": "Complete Role Set Asserted",
+      "type": "boolean"
+    },
+    "crop_applied": {
+      "const": false,
+      "title": "Crop Applied",
+      "type": "boolean"
+    },
+    "current_gate": {
+      "const": "HUMAN_GATE",
+      "title": "Current Gate",
+      "type": "string"
+    },
+    "current_role_binding_asserted": {
+      "const": false,
+      "title": "Current Role Binding Asserted",
+      "type": "boolean"
+    },
+    "decision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Sha256",
+      "type": "string"
+    },
+    "derived_media_created": {
+      "const": false,
+      "title": "Derived Media Created",
+      "type": "boolean"
+    },
+    "document_type": {
+      "const": "sdc.creative-sample-generated-reference-eligible-asset-role-binding-v1",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "eligible_asset_sidecar_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Eligible Asset Sidecar Id",
+      "type": "string"
+    },
+    "eligible_asset_sidecar_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Eligible Asset Sidecar Sha256",
+      "type": "string"
+    },
+    "eligible_for_asset_promotion": {
+      "const": false,
+      "title": "Eligible For Asset Promotion",
+      "type": "boolean"
+    },
+    "evidence_scope": {
+      "const": "EXPLICIT_FINITE_BOUND_SET_ONLY",
+      "title": "Evidence Scope",
+      "type": "string"
+    },
+    "execution_authorized": {
+      "const": false,
+      "title": "Execution Authorized",
+      "type": "boolean"
+    },
+    "generation_authorized": {
+      "const": false,
+      "title": "Generation Authorized",
+      "type": "boolean"
+    },
+    "global_role_uniqueness_asserted": {
+      "const": false,
+      "title": "Global Role Uniqueness Asserted",
+      "type": "boolean"
+    },
+    "grants_execution_authority": {
+      "const": false,
+      "title": "Grants Execution Authority",
+      "type": "boolean"
+    },
+    "grants_qualification": {
+      "const": false,
+      "title": "Grants Qualification",
+      "type": "boolean"
+    },
+    "grants_rights": {
+      "const": false,
+      "title": "Grants Rights",
+      "type": "boolean"
+    },
+    "manifest_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Sha256",
+      "type": "string"
+    },
+    "manifest_valid_until": {
+      "title": "Manifest Valid Until",
+      "type": "string"
+    },
+    "perpetual_role_suitability_asserted": {
+      "const": false,
+      "title": "Perpetual Role Suitability Asserted",
+      "type": "boolean"
+    },
+    "policy_document_sha256": {
+      "const": "fd57663ac40e7c6b9a6c64dc24dff0d28acdfb3529a7d267bbd82e047bb64233",
+      "title": "Policy Document Sha256",
+      "type": "string"
+    },
+    "policy_id": {
+      "const": "sdc.generated-reference-eligible-asset-role-binding-policy",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_version": {
+      "const": "1.0.0",
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "posts_allowed": {
+      "const": 0,
+      "title": "Posts Allowed",
+      "type": "integer"
+    },
+    "present_currentness_asserted": {
+      "const": false,
+      "title": "Present Currentness Asserted",
+      "type": "boolean"
+    },
+    "primary_asset_binding": {
+      "$ref": "#/$defs/GeneratedReferencePromotionPrimaryAssetBindingV1"
+    },
+    "primary_asset_binding_replaced": {
+      "const": false,
+      "title": "Primary Asset Binding Replaced",
+      "type": "boolean"
+    },
+    "promotion_at": {
+      "title": "Promotion At",
+      "type": "string"
+    },
+    "promotion_decision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Promotion Decision Id",
+      "type": "string"
+    },
+    "promotion_decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Decision Sha256",
+      "type": "string"
+    },
+    "promotion_evidence_valid_until": {
+      "title": "Promotion Evidence Valid Until",
+      "type": "string"
+    },
+    "promotion_request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Promotion Request Id",
+      "type": "string"
+    },
+    "promotion_request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Request Sha256",
+      "type": "string"
+    },
+    "provider_input_eligible": {
+      "const": false,
+      "title": "Provider Input Eligible",
+      "type": "boolean"
+    },
+    "provider_requests": {
+      "const": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_slot_embedded": {
+      "const": false,
+      "title": "Provider Slot Embedded",
+      "type": "boolean"
+    },
+    "provider_state": {
+      "const": "NOT_AUTHORIZED",
+      "title": "Provider State",
+      "type": "string"
+    },
+    "publication_allowed": {
+      "const": false,
+      "title": "Publication Allowed",
+      "type": "boolean"
+    },
+    "publication_authorized": {
+      "const": false,
+      "title": "Publication Authorized",
+      "type": "boolean"
+    },
+    "qualification_decision_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Qualification Decision Id",
+      "type": "string"
+    },
+    "qualification_decision_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Qualification Decision Sha256",
+      "type": "string"
+    },
+    "qualification_valid_until": {
+      "title": "Qualification Valid Until",
+      "type": "string"
+    },
+    "remote_processing_allowed": {
+      "const": false,
+      "title": "Remote Processing Allowed",
+      "type": "boolean"
+    },
+    "replaces_rights_manifest": {
+      "const": false,
+      "title": "Replaces Rights Manifest",
+      "type": "boolean"
+    },
+    "request_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "retention_allowed": {
+      "const": false,
+      "title": "Retention Allowed",
+      "type": "boolean"
+    },
+    "reviewed_rights_scope": {
+      "$ref": "#/$defs/GeneratedReferenceReviewedRightsScopeV1"
+    },
+    "role_binding_exclusivity_asserted": {
+      "const": false,
+      "title": "Role Binding Exclusivity Asserted",
+      "type": "boolean"
+    },
+    "role_binding_performed": {
+      "const": true,
+      "title": "Role Binding Performed",
+      "type": "boolean"
+    },
+    "role_binding_target": {
+      "$ref": "#/$defs/GeneratedReferenceEligibleAssetRoleBindingTargetV1"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "split_applied": {
+      "const": false,
+      "title": "Split Applied",
+      "type": "boolean"
+    },
+    "status": {
+      "const": "GENERATED_REFERENCE_ELIGIBLE_ASSET_ROLE_BINDING_RECORDED",
+      "title": "Status",
+      "type": "string"
+    },
+    "status_subject_closure_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "title": "Status Subject Closure Id",
+      "type": "string"
+    },
+    "status_subject_closure_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Status Subject Closure Sha256",
+      "type": "string"
+    },
+    "supersedes_role_binding": {
+      "const": false,
+      "title": "Supersedes Role Binding",
+      "type": "boolean"
+    },
+    "training_allowed": {
+      "const": false,
+      "title": "Training Allowed",
+      "type": "boolean"
+    },
+    "transform_applied": {
+      "const": false,
+      "title": "Transform Applied",
+      "type": "boolean"
+    },
+    "usage_restriction": {
+      "const": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+      "title": "Usage Restriction",
+      "type": "string"
+    },
+    "whole_composite_media_bound": {
+      "const": true,
+      "title": "Whole Composite Media Bound",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "authority_scope",
+    "current_gate",
+    "provider_state",
+    "generation_authorized",
+    "execution_authorized",
+    "publication_authorized",
+    "remote_processing_allowed",
+    "retention_allowed",
+    "training_allowed",
+    "publication_allowed",
+    "automated_execution_allowed",
+    "authorized_attempts",
+    "authorized_cost_cny",
+    "posts_allowed",
+    "provider_requests",
+    "grants_rights",
+    "grants_qualification",
+    "grants_execution_authority",
+    "eligible_for_asset_promotion",
+    "replaces_rights_manifest",
+    "usage_restriction",
+    "schema_version",
+    "document_type",
+    "binding_scope",
+    "binding_id",
+    "binding_sha256",
+    "policy_id",
+    "policy_version",
+    "policy_document_sha256",
+    "request_id",
+    "request_sha256",
+    "decision_id",
+    "decision_sha256",
+    "role_binding_target",
+    "promotion_request_id",
+    "promotion_request_sha256",
+    "promotion_decision_id",
+    "promotion_decision_sha256",
+    "eligible_asset_sidecar_id",
+    "eligible_asset_sidecar_sha256",
+    "promotion_at",
+    "promotion_evidence_valid_until",
+    "qualification_decision_id",
+    "qualification_decision_sha256",
+    "qualification_valid_until",
+    "manifest_id",
+    "manifest_sha256",
+    "manifest_valid_until",
+    "reviewed_rights_scope",
+    "primary_asset_binding",
+    "status_subject_closure_id",
+    "status_subject_closure_sha256",
+    "binding_status_record_id",
+    "binding_status_record_sha256",
+    "binding_status_receipt_id",
+    "binding_status_receipt_sha256",
+    "binding_explicit_chain_set_sha256",
+    "binding_coverage_set_sha256",
+    "binding_joint_replay_sha256",
+    "binding_as_of_assessment_sha256",
+    "binding_as_of_status",
+    "binding_at",
+    "binding_status_valid_until",
+    "binding_evidence_valid_until",
+    "binding_state",
+    "role_binding_performed",
+    "provider_input_eligible",
+    "present_currentness_asserted",
+    "perpetual_role_suitability_asserted",
+    "role_binding_exclusivity_asserted",
+    "complete_role_set_asserted",
+    "global_role_uniqueness_asserted",
+    "current_role_binding_asserted",
+    "supersedes_role_binding",
+    "primary_asset_binding_replaced",
+    "bible_active_binding_changed",
+    "asset_version_v1_created",
+    "whole_composite_media_bound",
+    "crop_applied",
+    "split_applied",
+    "transform_applied",
+    "derived_media_created",
+    "provider_slot_embedded",
+    "status",
+    "evidence_scope"
+  ],
+  "title": "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingV1",
+  "type": "object"
+}

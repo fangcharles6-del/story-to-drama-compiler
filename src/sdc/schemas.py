@@ -27,6 +27,11 @@ from sdc.generated_reference_rights_current_status import (
     CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1,
     CreativeSampleGeneratedReferenceRightsManifestV1,
 )
+from sdc.generated_reference_role_binding import (
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingDecisionV1,
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingRequestV1,
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingV1,
+)
 from sdc.real_asset_intake import (
     CreativeSampleFrozenRealAssetPackManifest,
     CreativeSampleRealAssetGapReport,
@@ -163,6 +168,9 @@ MODELS: list[type[BaseModel]] = [
     CreativeSampleGeneratedReferenceAssetPromotionRequestV1,
     CreativeSampleGeneratedReferenceAssetPromotionDecisionV1,
     CreativeSampleGeneratedReferenceEligibleAssetSidecarV1,
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingRequestV1,
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingDecisionV1,
+    CreativeSampleGeneratedReferenceEligibleAssetRoleBindingV1,
 ]
 
 

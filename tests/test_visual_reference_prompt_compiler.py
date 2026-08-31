@@ -1897,6 +1897,8 @@ def test_compiler_source_has_no_io_dynamic_execution_or_reverse_imports() -> Non
         ROOT / "src/sdc/generated_reference_asset_promotion_codegen.py",
         ROOT / "src/sdc/generated_reference_rights_current_status.py",
         ROOT / "src/sdc/generated_reference_rights_current_status_codegen.py",
+        ROOT / "src/sdc/generated_reference_role_binding.py",
+        ROOT / "src/sdc/generated_reference_role_binding_codegen.py",
         ROOT / "src/sdc/schemas.py",
         ROOT / "src/sdc/visual_reference_prompt_compiler.py",
         ROOT / "src/sdc/visual_reference_prompt_compiler_codegen.py",

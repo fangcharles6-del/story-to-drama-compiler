@@ -14,6 +14,7 @@ jobs:
       - run: make generated-reference-candidate-check
       - run: make generated-reference-rights-current-status-check
       - run: make generated-reference-asset-promotion-check
+      - run: make generated-reference-role-binding-check
       - run: make lint
       - run: make typecheck
       - run: make test
@@ -100,3 +101,16 @@ jobs:
           uv run pytest -q
           tests/test_generated_reference_asset_promotion.py
           tests/test_generated_reference_asset_promotion_codegen.py
+  generated-reference-role-binding-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {version: "0.8.8", enable-cache: true}
+      - run: uv sync --frozen
+      - name: generated-reference-role-binding-check
+        run: uv run python -B -m sdc.generated_reference_role_binding_codegen --check
+      - run: >-
+          uv run pytest -q
+          tests/test_generated_reference_role_binding.py
+          tests/test_generated_reference_role_binding_codegen.py
