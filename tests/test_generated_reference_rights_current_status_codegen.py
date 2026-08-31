@@ -391,7 +391,9 @@ def test_old_fourteen_fixtures_and_seventy_six_schemas_are_outside_update_allowl
     old_fixture_paths = set(
         path.relative_to(ROOT).as_posix()
         for path in (ROOT / "tests/fixtures/visual_prompt_profiles").rglob("*")
-        if path.is_file() and "generated-reference-rights-current-status" not in path.as_posix()
+        if path.is_file()
+        and "generated-reference-rights-current-status" not in path.as_posix()
+        and "generated-reference-asset-promotion" not in path.as_posix()
     )
     assert len(old_fixture_paths) == 14
     assert set(codegen._PROTECTED_FINGERPRINTS) <= old_fixture_paths | {
@@ -403,8 +405,8 @@ def test_old_fourteen_fixtures_and_seventy_six_schemas_are_outside_update_allowl
         for path in (ROOT / "schemas").glob("*.schema.json")
     }
     old_schema_paths = {f"schemas/{model.__name__}.schema.json" for model in MODELS[:76]}
-    assert len(MODELS) == 83
-    assert len(schema_paths) == 83
+    assert len(MODELS) == 86
+    assert len(schema_paths) == 86
     assert len(old_schema_paths) == 76
     assert old_schema_paths <= schema_paths
     assert codegen._DERIVED_FIXTURE_PATH not in old_schema_paths

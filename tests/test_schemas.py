@@ -366,6 +366,40 @@ PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_MODEL_NAMES = (
     "CreativeSampleGeneratedReferenceCandidateQualificationRequestV1",
     "CreativeSampleGeneratedReferenceCandidateQualificationDecisionV1",
 )
+PRE_GENERATED_REFERENCE_ASSET_PROMOTION_SCHEMA_SHA256 = {
+    **PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_SCHEMA_SHA256,
+    "CreativeSampleGeneratedReferenceRightsManifestV1.schema.json": (
+        "803b68a355ffcd3e1e568e9500775228f50f1752bbf2d3bc884c8142295ba390"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1.schema.json": (
+        "2c32b196c8f1c10236421a84f013d529bb8c7b143f692da3127b1c26e8df3d3c"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusRequestV1.schema.json": (
+        "ad44e9c9eb278996268e8da1443c623ca2ee385b74eae65b1338c6546b0b2dbf"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusInstructionV1.schema.json": (
+        "d0a507565f00865e6a3b3816a23e897d1fb3e890ecb53025fb19c88b609928f7"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1.schema.json": (
+        "2e9a34b966c6e19eb4cb44f8f592ab59e3a79539e1ca688827051fbc56b2c11e"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1.schema.json": (
+        "aeb01a253c85c32ef19d072e5514bd7d7b9d9377f6f54a737ff298546f2101c5"
+    ),
+    "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1.schema.json": (
+        "241fa5451c153998abd3d918f7e2221eb5bb504cfaf0286b165de2221d74173b"
+    ),
+}
+PRE_GENERATED_REFERENCE_ASSET_PROMOTION_MODEL_NAMES = (
+    *PRE_GENERATED_REFERENCE_RIGHTS_CURRENT_STATUS_MODEL_NAMES,
+    "CreativeSampleGeneratedReferenceRightsManifestV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusSourceObservationV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusRequestV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusInstructionV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1",
+    "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
+)
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -462,13 +496,26 @@ def test_all_pre_generated_reference_rights_current_status_schema_bytes_remain_u
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_generated_reference_asset_promotion_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_GENERATED_REFERENCE_ASSET_PROMOTION_SCHEMA_SHA256) == 83
+    assert len(PRE_GENERATED_REFERENCE_ASSET_PROMOTION_MODEL_NAMES) == 83
+    assert tuple(model.__name__ for model in MODELS[:83]) == (
+        PRE_GENERATED_REFERENCE_ASSET_PROMOTION_MODEL_NAMES
+    )
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:83]}
+    assert set(PRE_GENERATED_REFERENCE_ASSET_PROMOTION_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_GENERATED_REFERENCE_ASSET_PROMOTION_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
         CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 83
+    assert len(model_names) == 86
     assert len(model_names) == len(set(model_names))
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert [model.__name__ for model in MODELS[68:70]] == [
@@ -493,6 +540,11 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
         "CreativeSampleGeneratedReferenceCurrentStatusDecisionV1",
         "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1",
         "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
+    ]
+    assert [model.__name__ for model in MODELS[83:86]] == [
+        "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
+        "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1",
+        "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1",
     ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)
@@ -645,6 +697,311 @@ def test_generated_reference_rights_status_schemas_are_closed_and_all_fields_req
             )
 
     assert inline_definitions <= observed_definitions
+    registered_names = {model.__name__ for model in MODELS}
+    assert inline_definitions.isdisjoint(registered_names)
+    assert not any(
+        (Path("schemas") / f"{name}.schema.json").exists() for name in inline_definitions
+    )
+
+
+def test_generated_reference_promotion_schemas_are_closed_and_zero_authority() -> None:
+    schema_names = (
+        "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
+        "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1",
+        "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1",
+    )
+    schemas = {
+        name: json.loads(Path(f"schemas/{name}.schema.json").read_text())
+        for name in schema_names
+    }
+    expected_non_authority_fields = {
+        "CreativeSampleGeneratedReferenceAssetPromotionRequestV1": {
+            "schema_version",
+            "document_type",
+            "request_scope",
+            "request_id",
+            "request_sha256",
+            "policy_id",
+            "policy_version",
+            "policy_document_sha256",
+            "promotion_review_payload_sha256",
+            "reference_prompt_artifact_sha256",
+            "provider_attempt_outcome_id",
+            "provider_attempt_outcome_sha256",
+            "candidate_id",
+            "candidate_sha256",
+            "output_ordinal",
+            "media_type",
+            "media_content_sha256",
+            "media_size_bytes",
+            "media_technical_record_sha256",
+            "qualification_request_id",
+            "qualification_request_sha256",
+            "qualification_decision_id",
+            "qualification_decision_sha256",
+            "qualification_decision_at",
+            "qualification_valid_until",
+            "manifest_id",
+            "manifest_sha256",
+            "manifest_at",
+            "manifest_valid_until",
+            "reviewed_rights_scope",
+            "status_subject_closure_id",
+            "status_subject_closure_sha256",
+            "requested_status_record_id",
+            "requested_status_record_sha256",
+            "requested_status_receipt_id",
+            "requested_status_receipt_sha256",
+            "requested_explicit_chain_set_sha256",
+            "requested_coverage_set_sha256",
+            "requested_joint_replay_sha256",
+            "requested_as_of_assessment_sha256",
+            "requested_as_of",
+            "requested_as_of_status",
+            "requested_status_valid_until",
+            "requested_primary_asset_binding",
+            "maker_identity_ref_sha256",
+            "maker_action_sha256",
+            "maker_prepared_at",
+            "requested_at",
+            "request_valid_until",
+            "request_basis",
+            "requested_representation",
+            "composite_media_unsplit",
+            "role_assignment_embedded",
+            "bible_mutation_requested",
+            "provider_input_requested",
+            "promotion_performed",
+            "sidecar_materialized",
+            "eligible_for_separate_role_binding_review",
+            "status",
+            "evidence_scope",
+        },
+        "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1": {
+            "schema_version",
+            "document_type",
+            "decision_scope",
+            "decision_id",
+            "decision_sha256",
+            "policy_id",
+            "policy_version",
+            "policy_document_sha256",
+            "promotion_review_payload_sha256",
+            "request_id",
+            "request_sha256",
+            "reference_prompt_artifact_sha256",
+            "provider_attempt_outcome_id",
+            "provider_attempt_outcome_sha256",
+            "candidate_id",
+            "candidate_sha256",
+            "media_content_sha256",
+            "qualification_request_id",
+            "qualification_request_sha256",
+            "qualification_decision_id",
+            "qualification_decision_sha256",
+            "qualification_valid_until",
+            "manifest_id",
+            "manifest_sha256",
+            "manifest_valid_until",
+            "reviewed_rights_scope",
+            "requested_primary_asset_binding",
+            "promotion_primary_asset_binding",
+            "status_subject_closure_id",
+            "status_subject_closure_sha256",
+            "promotion_status_record_id",
+            "promotion_status_record_sha256",
+            "promotion_status_receipt_id",
+            "promotion_status_receipt_sha256",
+            "promotion_explicit_chain_set_sha256",
+            "promotion_coverage_set_sha256",
+            "promotion_joint_replay_sha256",
+            "promotion_as_of_assessment_sha256",
+            "promotion_as_of_status",
+            "promotion_status_valid_until",
+            "checker_identity_ref_sha256",
+            "checker_action_sha256",
+            "checker_reviewed_at",
+            "decision_at",
+            "promotion_at",
+            "gate_results",
+            "promotion_issue_codes",
+            "promotion_basis",
+            "decision",
+            "sidecar_materialization_allowed",
+            "promotion_review_performed",
+            "sidecar_id_embedded",
+            "role_assignment_embedded",
+            "provider_input_eligible",
+            "status",
+            "evidence_scope",
+        },
+        "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1": {
+            "schema_version",
+            "document_type",
+            "sidecar_scope",
+            "sidecar_id",
+            "sidecar_sha256",
+            "policy_id",
+            "policy_version",
+            "policy_document_sha256",
+            "request_id",
+            "request_sha256",
+            "decision_id",
+            "decision_sha256",
+            "reference_prompt_artifact_sha256",
+            "provider_attempt_outcome_id",
+            "provider_attempt_outcome_sha256",
+            "candidate_id",
+            "candidate_sha256",
+            "output_ordinal",
+            "media_type",
+            "media_content_sha256",
+            "media_size_bytes",
+            "media_technical_record_sha256",
+            "qualification_request_id",
+            "qualification_request_sha256",
+            "qualification_decision_id",
+            "qualification_decision_sha256",
+            "qualification_valid_until",
+            "manifest_id",
+            "manifest_sha256",
+            "manifest_valid_until",
+            "reviewed_rights_scope",
+            "primary_asset_binding",
+            "status_subject_closure_id",
+            "status_subject_closure_sha256",
+            "promotion_status_record_id",
+            "promotion_status_record_sha256",
+            "promotion_status_receipt_id",
+            "promotion_status_receipt_sha256",
+            "promotion_explicit_chain_set_sha256",
+            "promotion_coverage_set_sha256",
+            "promotion_joint_replay_sha256",
+            "promotion_as_of_assessment_sha256",
+            "promotion_as_of_status",
+            "promotion_at",
+            "promotion_status_valid_until",
+            "promotion_evidence_valid_until",
+            "origin_claim",
+            "origin_assurance",
+            "sidecar_state",
+            "promotion_performed",
+            "eligible_for_separate_role_binding_review",
+            "primary_asset_binding_replaced",
+            "bible_active_binding_changed",
+            "asset_version_v1_created",
+            "composite_media_unsplit",
+            "role_assignment_embedded",
+            "provider_input_eligible",
+            "present_currentness_asserted",
+            "perpetual_eligibility_asserted",
+            "supersedes_sidecar",
+            "status",
+            "evidence_scope",
+        },
+    }
+    primary_binding_name = "GeneratedReferencePromotionPrimaryAssetBindingV1"
+    gate_result_name = "GeneratedReferencePromotionGateResultV1"
+    reviewed_rights_scope_name = "GeneratedReferenceReviewedRightsScopeV1"
+    expected_inline_definitions = {
+        "CreativeSampleGeneratedReferenceAssetPromotionRequestV1": {
+            primary_binding_name,
+            reviewed_rights_scope_name,
+        },
+        "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1": {
+            primary_binding_name,
+            gate_result_name,
+            reviewed_rights_scope_name,
+        },
+        "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1": {
+            primary_binding_name,
+            reviewed_rights_scope_name,
+        },
+    }
+    expected_primary_binding_fields = {
+        "binding_profile",
+        "primary_asset_binding_sha256",
+        "asset_purpose",
+        "subject_id",
+        "asset_version_id",
+        "legacy_asset_version_projection_sha256",
+        "version",
+        "content_sha256",
+        "media_type",
+        "approval_ref",
+        "provenance",
+        "bible_active_asset_version_id",
+    }
+    expected_gate_result_fields = {"ordinal", "gate", "result", "basis"}
+    zero_authority_literals: dict[str, object] = {
+        "authority_scope": "THIS_DOCUMENT_GRANTS_NO_PROVIDER_RUNTIME_OR_ASSET_USE_AUTHORITY",
+        "current_gate": "HUMAN_GATE",
+        "provider_state": "NOT_AUTHORIZED",
+        "generation_authorized": False,
+        "execution_authorized": False,
+        "publication_authorized": False,
+        "remote_processing_allowed": False,
+        "retention_allowed": False,
+        "training_allowed": False,
+        "publication_allowed": False,
+        "automated_execution_allowed": False,
+        "authorized_attempts": 0,
+        "authorized_cost_cny": 0,
+        "posts_allowed": 0,
+        "provider_requests": 0,
+        "grants_rights": False,
+        "grants_qualification": False,
+        "grants_execution_authority": False,
+        "eligible_for_asset_promotion": False,
+        "replaces_rights_manifest": False,
+        "usage_restriction": "MANUAL_REVIEW_ONLY_NOT_FOR_AUTOMATED_EXECUTION",
+    }
+
+    expected_non_authority_counts = {
+        "CreativeSampleGeneratedReferenceAssetPromotionRequestV1": 60,
+        "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1": 56,
+        "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1": 62,
+    }
+    assert {
+        name: len(fields) for name, fields in expected_non_authority_fields.items()
+    } == expected_non_authority_counts
+
+    for name, expected_non_authority in expected_non_authority_fields.items():
+        schema = schemas[name]
+        expected_properties = expected_non_authority | set(zero_authority_literals)
+        assert schema["additionalProperties"] is False
+        assert set(schema["properties"]) == expected_properties
+        assert set(schema["required"]) == expected_properties
+        assert schema["properties"]["evidence_scope"]["const"] == (
+            "EXPLICIT_FINITE_BOUND_SET_ONLY"
+        )
+        assert set(zero_authority_literals) <= set(schema["required"])
+        for field_name, literal in zero_authority_literals.items():
+            assert schema["properties"][field_name]["const"] == literal
+
+        definitions = schema.get("$defs", {})
+        assert set(definitions) == expected_inline_definitions[name]
+        primary_binding = definitions[primary_binding_name]
+        assert set(primary_binding["properties"]) == expected_primary_binding_fields
+        if gate_result_name in expected_inline_definitions[name]:
+            gate_result = definitions[gate_result_name]
+            assert set(gate_result["properties"]) == expected_gate_result_fields
+
+        declared_objects = {"<root>": schema, **definitions}
+        for object_name, object_schema in declared_objects.items():
+            if object_schema.get("type") != "object" or "properties" not in object_schema:
+                continue
+            assert object_schema.get("additionalProperties") is False, (name, object_name)
+            assert set(object_schema.get("required", ())) == set(object_schema["properties"]), (
+                name,
+                object_name,
+            )
+
+    inline_definitions = {
+        primary_binding_name,
+        gate_result_name,
+        reviewed_rights_scope_name,
+    }
     registered_names = {model.__name__ for model in MODELS}
     assert inline_definitions.isdisjoint(registered_names)
     assert not any(
