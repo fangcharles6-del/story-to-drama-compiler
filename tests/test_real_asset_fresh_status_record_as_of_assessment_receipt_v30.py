@@ -1523,8 +1523,8 @@ def test_public_surface_is_exact_and_has_no_parser_extractor_or_execution_entry(
 
 
 def test_receipt_remains_the_frozen_index_67_registered_schema_contract() -> None:
-    assert len(MODELS) == 86
-    assert len({model.__name__ for model in MODELS}) == 86
+    assert len(MODELS) == 89
+    assert len({model.__name__ for model in MODELS}) == 89
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert FreshStatusEvidenceRecordAsOfAssessmentResultV1 not in MODELS
 

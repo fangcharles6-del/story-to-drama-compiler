@@ -400,6 +400,24 @@ PRE_GENERATED_REFERENCE_ASSET_PROMOTION_MODEL_NAMES = (
     "CreativeSampleGeneratedReferenceCurrentStatusEvidenceRecordV1",
     "CreativeSampleGeneratedReferenceCurrentStatusRecordAsOfAssessmentReceiptV1",
 )
+PRE_GENERATED_REFERENCE_ROLE_BINDING_SCHEMA_SHA256 = {
+    **PRE_GENERATED_REFERENCE_ASSET_PROMOTION_SCHEMA_SHA256,
+    "CreativeSampleGeneratedReferenceAssetPromotionRequestV1.schema.json": (
+        "281b08e00d230649cc455890b3251b5396ee46806d486057f0de7a040200b466"
+    ),
+    "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1.schema.json": (
+        "c489b1fcebdbf4319c151617a65b229c78c80ddd5cbf3d55becc1947cda1c8bd"
+    ),
+    "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1.schema.json": (
+        "3193a45c297f6614954661229aa5116076e6431f92eca3fe495dbecd9f243472"
+    ),
+}
+PRE_GENERATED_REFERENCE_ROLE_BINDING_MODEL_NAMES = (
+    *PRE_GENERATED_REFERENCE_ASSET_PROMOTION_MODEL_NAMES,
+    "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
+    "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1",
+    "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1",
+)
 
 
 def test_pre_v2_schema_bytes_remain_unchanged() -> None:
@@ -509,13 +527,26 @@ def test_all_pre_generated_reference_asset_promotion_schema_bytes_remain_unchang
         assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
 
 
+def test_all_pre_generated_reference_role_binding_schema_bytes_remain_unchanged() -> None:
+    assert len(PRE_GENERATED_REFERENCE_ROLE_BINDING_SCHEMA_SHA256) == 86
+    assert len(PRE_GENERATED_REFERENCE_ROLE_BINDING_MODEL_NAMES) == 86
+    assert tuple(model.__name__ for model in MODELS[:86]) == (
+        PRE_GENERATED_REFERENCE_ROLE_BINDING_MODEL_NAMES
+    )
+    expected_prefix = {f"{model.__name__}.schema.json" for model in MODELS[:86]}
+    assert set(PRE_GENERATED_REFERENCE_ROLE_BINDING_SCHEMA_SHA256) == expected_prefix
+    for name, digest in PRE_GENERATED_REFERENCE_ROLE_BINDING_SCHEMA_SHA256.items():
+        canonical_lf = (Path("schemas") / name).read_bytes().replace(b"\r\n", b"\n")
+        assert hashlib.sha256(canonical_lf).hexdigest() == digest, name
+
+
 def test_schema_model_names_are_unique_and_match_committed_files() -> None:
     from sdc.real_asset_fresh_status_record_as_of_assessment_receipt_v30 import (
         CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1,
     )
 
     model_names = [model.__name__ for model in MODELS]
-    assert len(model_names) == 86
+    assert len(model_names) == 89
     assert len(model_names) == len(set(model_names))
     assert MODELS[67] is CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1
     assert [model.__name__ for model in MODELS[68:70]] == [
@@ -545,6 +576,11 @@ def test_schema_model_names_are_unique_and_match_committed_files() -> None:
         "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
         "CreativeSampleGeneratedReferenceAssetPromotionDecisionV1",
         "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1",
+    ]
+    assert [model.__name__ for model in MODELS[86:89]] == [
+        "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingRequestV1",
+        "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingDecisionV1",
+        "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingV1",
     ]
     assert (
         model_names.count(CreativeSampleRealAssetFreshStatusRecordAsOfAssessmentReceiptV1.__name__)

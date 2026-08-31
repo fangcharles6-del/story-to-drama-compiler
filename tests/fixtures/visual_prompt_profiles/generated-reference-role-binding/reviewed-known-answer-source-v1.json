@@ -1,0 +1,258 @@
+{
+  "boundary_checks": {
+    "equal_bytes_distinct_candidate_occurrence": {
+      "expected_closure_identity_equal": false,
+      "expected_media_bytes_equal": true,
+      "expected_rule": "CANDIDATE_OCCURRENCE_IDENTITY_REMAINS_DISTINCT_WHEN_RAW_PNG_BYTES_ARE_EQUAL"
+    },
+    "fresh_replay": {
+      "binding_final_status_source": "EXACT_PROMOTION_FINAL_STATUS_CLOSURE_REPLAYED_AT_BINDING_AT",
+      "expected_transition_count": 2,
+      "request_status_source": "EXACT_PROMOTION_FINAL_STATUS_CLOSURE_REPLAYED_AT_REQUESTED_AT"
+    },
+    "primary_binding_attack": {
+      "expected_issue_code": "PRIMARY_BINDING_NO_LONGER_ACTIVE",
+      "mutation": "VALID_SAME_SUBJECT_PURPOSE_DIFFERENT_ACTIVE_ASSET_VERSION"
+    },
+    "prohibited_field_attacks": {
+      "expected_error_code": "PROHIBITED_BOUNDARY_CONNECTION",
+      "field_names": [
+        "executable_route",
+        "input_material",
+        "provider_request",
+        "provider_slot"
+      ]
+    },
+    "rights_scope_attacks": {
+      "expected_error_code": "RIGHTS_SCOPE_MISMATCH",
+      "mutations": [
+        "EXPANSION",
+        "NARROWING",
+        "REORDER",
+        "RENEWAL_OR_EXTENSION"
+      ]
+    },
+    "whole_media_boundary_attacks": {
+      "expected_error_code": "CONTRACT_FIELD_INVALID",
+      "mutations": [
+        "CROP",
+        "SPLIT",
+        "PROVIDER_INPUT"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "asset_purpose": "CHARACTER_REFERENCE_ASSET",
+      "binding_at_source": "USE_PROMOTION_AT",
+      "case_id": "character-role-binding-v1",
+      "checker_identity_record": {
+        "document_profile": "sdc.privacy-minimized-human-reference.v1",
+        "identity_namespace": "synthetic-role-binding-review-v1",
+        "identity_ref": "synthetic-character-role-binding-checker-v1"
+      },
+      "first_party_synthetic_subject": true,
+      "maker_identity_record": {
+        "document_profile": "sdc.privacy-minimized-human-reference.v1",
+        "identity_namespace": "synthetic-role-binding-review-v1",
+        "identity_ref": "synthetic-character-role-binding-maker-v1"
+      },
+      "promotion_case_id": "character-same-status-record-v1",
+      "requested_at_source": "USE_PROMOTION_AT",
+      "role_reviews": [
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is approved only for the selected fictional character identity-sheet role under the reviewed non-exclusive boundary.",
+          "expected_decision": "APPROVE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected identity-sheet role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected identity-sheet role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive character identity-sheet role review without Provider or Runtime authority.",
+          "review_id": "character-identity-sheet-positive-v1",
+          "selected_reference_role": "CHARACTER_IDENTITY_SHEET"
+        },
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is not approved for the selected fictional character pose-reference role.",
+          "expected_decision": "REJECT_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected pose-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG was reviewed and rejected for the selected pose-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "FAIL"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive character pose-reference review without Provider or Runtime authority.",
+          "review_id": "character-pose-rejected-v1",
+          "selected_reference_role": "CHARACTER_POSE_REFERENCE"
+        },
+        {
+          "decision_basis": "The exact synthetic whole composite PNG review remains indeterminate for the selected fictional character expression-reference role.",
+          "expected_decision": "INDETERMINATE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected expression-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected expression-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The retained review does not determine the non-exclusive no-transform boundary for this expression-reference role.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "INDETERMINATE"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive character expression-reference review without Provider or Runtime authority.",
+          "review_id": "character-expression-indeterminate-v1",
+          "selected_reference_role": "CHARACTER_EXPRESSION_REFERENCE"
+        }
+      ],
+      "status_plan": "PROMOTION_FINAL_EQUALS_REQUEST_STATUS_EQUALS_BINDING_FINAL_STATUS_WITH_TWO_EXACT_REPLAYS"
+    },
+    {
+      "asset_purpose": "SCENE_REFERENCE_ASSET",
+      "binding_at_source": "USE_PROMOTION_AT",
+      "case_id": "scene-role-binding-v1",
+      "checker_identity_record": {
+        "document_profile": "sdc.privacy-minimized-human-reference.v1",
+        "identity_namespace": "synthetic-role-binding-review-v1",
+        "identity_ref": "synthetic-scene-role-binding-checker-v1"
+      },
+      "first_party_synthetic_subject": true,
+      "maker_identity_record": {
+        "document_profile": "sdc.privacy-minimized-human-reference.v1",
+        "identity_namespace": "synthetic-role-binding-review-v1",
+        "identity_ref": "synthetic-scene-role-binding-maker-v1"
+      },
+      "promotion_case_id": "scene-successor-reconciliation-v1",
+      "requested_at_source": "USE_PROMOTION_AT",
+      "role_reviews": [
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is approved only for the selected fictional scene establishing-reference role under the reviewed non-exclusive boundary.",
+          "expected_decision": "APPROVE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected scene establishing-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected scene establishing-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive scene establishing-reference review without Provider or Runtime authority.",
+          "review_id": "scene-establishing-positive-v1",
+          "selected_reference_role": "SCENE_ESTABLISHING_REFERENCE"
+        },
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is approved only for the selected fictional scene lighting-reference role under the reviewed non-exclusive boundary.",
+          "expected_decision": "APPROVE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected scene lighting-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected scene lighting-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive scene lighting-reference review without Provider or Runtime authority.",
+          "review_id": "scene-lighting-positive-v1",
+          "selected_reference_role": "SCENE_LIGHTING_REFERENCE"
+        },
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is approved only for the selected fictional scene material-reference role under the reviewed non-exclusive boundary.",
+          "expected_decision": "APPROVE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected scene material-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected scene material-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive scene material-reference review without Provider or Runtime authority.",
+          "review_id": "scene-material-positive-v1",
+          "selected_reference_role": "SCENE_MATERIAL_REFERENCE"
+        },
+        {
+          "decision_basis": "The exact synthetic whole composite PNG is approved only for the selected fictional scene prop-placement-reference role under the reviewed non-exclusive boundary.",
+          "expected_decision": "APPROVE_ELIGIBLE_ASSET_ROLE_BINDING",
+          "human_gate_results": [
+            {
+              "basis": "The selected scene prop-placement-reference role and exact reviewed Rights scope were jointly presented without expansion.",
+              "gate": "HUMAN_EXACT_ROLE_AND_REVIEWED_RIGHTS_SCOPE_PRESENTED_WITHOUT_EXPANSION_ACKNOWLEDGED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The exact whole synthetic composite PNG is suitable for the selected scene prop-placement-reference role.",
+              "gate": "HUMAN_WHOLE_COMPOSITE_ROLE_SUITABILITY_APPROVED",
+              "result": "PASS"
+            },
+            {
+              "basis": "The non-exclusive whole-media and no-transform boundary is acknowledged.",
+              "gate": "HUMAN_NON_EXCLUSIVE_NO_TRANSFORM_BOUNDARY_ACKNOWLEDGED",
+              "result": "PASS"
+            }
+          ],
+          "request_basis": "Prepare one synthetic non-exclusive scene prop-placement-reference review without Provider or Runtime authority.",
+          "review_id": "scene-prop-placement-positive-v1",
+          "selected_reference_role": "SCENE_PROP_PLACEMENT_REFERENCE"
+        }
+      ],
+      "status_plan": "PROMOTION_FINAL_EQUALS_REQUEST_STATUS_EQUALS_BINDING_FINAL_STATUS_WITH_TWO_EXACT_REPLAYS"
+    }
+  ],
+  "known_answer_version": "1.0.0",
+  "source_packet_scope": "FIRST_PARTY_FICTIONAL_SYNTHETIC_GENERATED_REFERENCE_ROLE_BINDING_REVIEW_ONLY"
+}
