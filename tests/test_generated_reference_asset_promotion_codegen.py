@@ -675,6 +675,16 @@ def test_writer_leaf_replacement_race_cannot_modify_victim(
     if sys.platform == "win32":
         monkeypatch.setattr(os, "lstat", replace_leaf_after_lstat)
     else:
+        monkeypatch.setattr(
+            os,
+            "supports_dir_fd",
+            {*os.supports_dir_fd, replace_leaf_after_stat},
+        )
+        monkeypatch.setattr(
+            os,
+            "supports_follow_symlinks",
+            {*os.supports_follow_symlinks, replace_leaf_after_stat},
+        )
         monkeypatch.setattr(os, "stat", replace_leaf_after_stat)
     with pytest.raises(codegen.GeneratedReferenceAssetPromotionCodegenError):
         codegen._write_exact_derived(
@@ -744,6 +754,16 @@ def test_writer_ancestor_replacement_race_cannot_modify_victim(
     if sys.platform == "win32":
         monkeypatch.setattr(os, "lstat", windows_racing_lstat)
     else:
+        monkeypatch.setattr(
+            os,
+            "supports_dir_fd",
+            {*os.supports_dir_fd, posix_racing_stat},
+        )
+        monkeypatch.setattr(
+            os,
+            "supports_follow_symlinks",
+            {*os.supports_follow_symlinks, posix_racing_stat},
+        )
         monkeypatch.setattr(os, "stat", posix_racing_stat)
     with pytest.raises(codegen.GeneratedReferenceAssetPromotionCodegenError):
         codegen._write_exact_derived(
