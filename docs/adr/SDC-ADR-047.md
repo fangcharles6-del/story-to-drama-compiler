@@ -1,9 +1,9 @@
 # SDC-ADR-047: Generated Reference Bounded Supplied Role-Binding Set Boundary
 
-- Status: Accepted R2
+- Status: Accepted R3
 - Date: 2026-09-01
 - Acceptance date: 2026-09-01
-- Prior revision: Accepted R1 on 2026-08-31
+- Prior revisions: Accepted R2 on 2026-09-01; Accepted R1 on 2026-08-31
 - Depends on: SDC-ADR-039 / Deterministic Visual Prompt Profiles
 - Projection dependency: SDC-ADR-040 / Visual Prompt Profiles Phase 1 Projection Manifest
 - Compiler-boundary dependency: SDC-ADR-041 / Visual Prompt Profiles Compiler Integration
@@ -19,6 +19,7 @@
   Boundary
 - Accepted R1 drafting baseline: `0671b24b8c0c135228ed35d99df92364f517ae99`
 - Accepted R2 drafting authoritative-main baseline: `7bd96010f498d537e86e2eb2268d6df34a2e4c75`
+- Accepted R3 drafting authoritative-main baseline: `96dc22258044fb2dbdcbce1e8dfe185e340747a2`
 - Authority: `HUMAN_GATE / NOT_AUTHORIZED`
 - Data boundary: one explicitly supplied bounded tuple of exact positive ADR-046 Role-Binding
   occurrences under one exact common Artifact/Profile/subject/purpose/primary-binding/Rights frame;
@@ -26,6 +27,38 @@
   and privacy-minimized retained Set review records; first-party synthetic review data only
 - Network/spend boundary: zero network calls, zero credential reads, zero Provider requests, zero
   authorized Attempts and zero authorized cost
+
+## Accepted R3 executable-packet remediation record
+
+The separately authorized R2 BUILD remains uncommitted working material and has not received Human
+known-answer acceptance. Its final technical review found that the frozen 37-scenario source shape
+could express only one scalar expected outcome per scenario, covered only 11 of the closed 21 Set
+error codes and omitted the Selection-human-gate `FAIL` issue. It also found that sealed-policy and
+dominated resource guards are not honestly caller-input reachable, while injected Set-construction
+failure is not a generated-fixture public-input result.
+
+Accepted R3 carries forward every Accepted R2 Set Contract shape, 21-code priority tuple, 13-gate
+order, five-code issue tuple, resource limit, identity rule, 27-path BUILD allowlist, 89-Schema/
+20-fixture compatibility anchor, 92-Schema/22-fixture target and zero-authority value except where
+this revision explicitly replaces R2's known-answer evidence model and fixed support-case surface.
+It makes exactly these architecture changes:
+
+1. preserve the exact first 37 scenario IDs and their order, append 10 previously absent typed-error
+   scenarios and one Selection-human-gate `FAIL` scenario, and freeze exactly 48 top-level scenarios;
+2. replace the ambiguous scenario-level executable flag and scalar expected error with a complete
+   ordered probe ledger in which every independent evidence unit has its own stable identity,
+   evidence kind, input or mutation anchor and tagged expected outcome;
+3. distinguish public API execution, hermetic test-only fault injection and structural
+   unreachability proof without representing the latter two as public executable fixture results;
+4. retain exactly two public fixed-fixture support callable symbols while extending the Promotion
+   callable by one bounded first-party fictional equal-PNG/distinct-occurrence case; and
+5. assign a new policy version and identity because the exact support signature and known-answer
+   evidence policy change.
+
+Accepted R3 records Human architecture acceptance only. It does not resume or validate either
+partial BUILD worktree, authorize implementation or Schema/fixture generation, grant Human
+known-answer acceptance, or authorize Provider-input, Runtime, network, credentials, spend, Retry,
+asset use, publication, retention or training.
 
 ## Accepted R2 revision record and BUILD stop-gate resolution
 
@@ -133,7 +166,7 @@ authorized BUILD to:
 12. preserve complete zero Provider, Runtime, network, credential, cost, Retry, asset-use,
     publication, retention and training authority.
 
-A conforming positive R2 Set would mean only:
+A conforming positive R3 Set would mean only:
 
 > At one explicit historical `set_at`, one independent Set Checker approved that one explicitly
 > supplied canonical tuple contained exactly one revalidated positive atomic Binding for every
@@ -144,18 +177,23 @@ It would not mean that the Set is globally complete or exclusive, remains curren
 media per role, has Provider slot order, can become an `InputMaterial` or authorizes asset use,
 Provider execution, publication or training.
 
-## Accepted R1/R2 record and implementation gate
+## Accepted R1/R2/R3 record and implementation gate
 
 Accepted R1 records human acceptance of the architecture decisions frozen in that revision. Accepted
-R2 records human acceptance of exactly the two replacements and new policy identity frozen here.
+R2 records human acceptance of exactly the two replacements and new policy identity frozen in the
+Accepted R2 revision record below.
 Neither acceptance authorizes any Contract, Schema, Registry, fixture, source, test, codegen, CI,
 Makefile or implementation change, actual Set selection, media review, Provider input or execution.
 
-R2 acceptance does not authorize BUILD. Any restart requires Accepted R2 first to be merged into
-authoritative `main`, then separate explicit BUILD-restart authorization, a newly verified clean
-authoritative `main`, a new isolated `codex/` implementation branch and a newly recorded immutable
-89-Schema/20-fixture baseline. Human known-answer acceptance, Draft-to-Ready conversion and merge
-authorization remain later separate gates.
+Accepted R3 records Human architecture acceptance of exactly the 48-scenario/217-unit evidence
+model, bounded third Promotion support case and Policy `1.2.0` identity frozen in this revision.
+This acceptance is not Human known-answer acceptance and grants no BUILD or execution authority.
+
+R3 architecture acceptance does not authorize BUILD. Any R3 BUILD requires this exact Accepted R3
+first to be committed and merged into authoritative `main`, then separate explicit BUILD
+authorization, a newly verified clean authoritative `main`, a new isolated `codex/` implementation
+branch and a newly recorded immutable 89-Schema/20-fixture baseline. Human known-answer acceptance,
+Draft-to-Ready conversion and merge authorization remain later separate gates.
 
 The Accepted R1 review confirmed:
 
@@ -188,13 +226,38 @@ The R2 human acceptance confirms exactly:
 5. the stopped partial BUILD cannot restart except through the separately authorized clean-worktree
    gate frozen below.
 
-This section is the R1/R2 architecture acceptance record and complete zero-authority boundary. It is
-not a BUILD authorization.
+The R3 Human architecture acceptance confirms exactly:
+
+1. the first 37 scenario IDs and order remain exact and the 10 absent typed-error scenarios plus
+   `human-selection-fail-v1` append at the tail, producing exactly 48 top-level scenarios;
+2. the ordered evidence ledger contains exactly 217 independently identified probes: 137 public API
+   executions, 58 hermetic test-only fault injections and 22 structural unreachability proofs;
+3. every probe owns its input or mutation anchor, evidence kind and tagged expected outcome, while
+   the exact 21-row error-code and five-row issue-code ledgers remain closed;
+4. sealed Policy identity and dominated aggregate resource boundaries use explicit structural proof,
+   while reachable equality and narrower resource boundaries use public execution evidence;
+5. Set-construction failure evidence is test-local, deterministic, automatically restored and
+   confined to Set construction, with no production factory, callback or public test seam;
+6. exactly two support callable symbols remain; the Promotion callable adds only the fixed
+   first-party fictional in-memory equal-PNG/distinct-Candidate/Sidecar occurrence case, with no new
+   PNG path, private/dynamic access or third API;
+7. delegated PNG dual-fault evidence retains the two support APIs, the ADR-046 order anchor and
+   Set-call-site typed injection rules;
+8. the accepted Policy identity is version `1.2.0`, 227,888 canonical compact bytes and SHA-256
+   `4075b6e0bb6a5a5c1e2f949bfd640f94eda974c3f09987e56820a787dda7a308`;
+9. the future BUILD allowlist remains exactly 27 paths, the old 89 Schema and 20 fixture bytes remain
+   immutable, and any future R3 BUILD must regenerate and newly anchor the three Set Schemas and two
+   Set fixtures while both fixtures remain `human_known_answer_acceptance=NOT_GRANTED`; and
+10. Human known-answer, Provider-input, Runtime, rights, asset use, execution and commercial-use
+    permission remain independent and ungranted.
+
+This section is the R1/R2/R3 architecture acceptance record and complete zero-authority boundary.
+It is not a BUILD authorization.
 
 ## Frozen upstream compatibility boundary
 
-Neither Accepted R1 nor Accepted R2 narrows, supersedes or reinterprets ADR-039 through ADR-046. In
-particular:
+Neither Accepted R1, Accepted R2 nor Accepted R3 narrows, supersedes or reinterprets ADR-039 through
+ADR-046. In particular:
 
 - ADR-042 continues to admit only one complete Character three-role or Scene four-role reference
   Prompt Artifact; its roles remain Prompt/layout semantics, not pixel proof or Provider slots;
@@ -871,12 +934,12 @@ and positive Decision identities.
 No identity could depend on mutable storage, path, URL, ambient time, Provider response, Python
 object traversal or later document discovery.
 
-## Accepted R2 frozen policy projection
+## Accepted R3 frozen policy projection
 
-Accepted R2 freezes one new canonical compact JSON policy document and raw SHA-256. It carries every
-unchanged R1 policy field forward, changes the policy version, freezes the delegated ADR-046
-priority rule, freezes both support APIs and embeds the exact 27-path BUILD allowlist. The accepted
-semantic policy is:
+Accepted R3 carries every unchanged Accepted R2 policy field forward, changes only the exact
+known-answer evidence policy and the bounded Promotion support case surface described by this
+revision, retains the delegated ADR-046 priority rule and retains the exact 27-path BUILD allowlist.
+The accepted semantic policy is:
 
 ```json
 {
@@ -1193,8 +1256,41 @@ semantic policy is:
       "callable": "build_generated_reference_asset_promotion_fixed_fixture_support",
       "case_id_literals": [
         "character-same-status-record-v1",
-        "scene-successor-reconciliation-v1"
+        "scene-successor-reconciliation-v1",
+        "character-equal-png-distinct-occurrence-v1"
       ],
+      "case_rules": {
+        "character-equal-png-distinct-occurrence-v1": {
+          "base_case_id": "character-same-status-record-v1",
+          "construction": "FIXED_FIRST_PARTY_FICTIONAL_IN_MEMORY_COMPLETE_OUTCOME_CANDIDATE_QUALIFICATION_MANIFEST_STATUS_PROMOTION_SIDECAR_OCCURRENCE",
+          "distinct_identity_fields": [
+            "provider_attempt_outcome_id",
+            "candidate_id",
+            "promotion_request_id",
+            "promotion_decision_id",
+            "eligible_asset_sidecar_id"
+          ],
+          "equal_fields": [
+            "png_bytes",
+            "media_content_sha256",
+            "media_size_bytes",
+            "media_technical_record_sha256",
+            "reference_prompt_artifact_sha256",
+            "profile_id",
+            "profile_version",
+            "profile_sha256",
+            "catalog_version",
+            "catalog_sha256",
+            "subject_id",
+            "asset_purpose",
+            "primary_asset_binding",
+            "reviewed_rights_scope"
+          ],
+          "new_path_allowed": false,
+          "old_fixture_write_allowed": false,
+          "provider_or_runtime_authority": false
+        }
+      },
       "parameters": [
         {
           "kind": "POSITIONAL_OR_KEYWORD",
@@ -1204,12 +1300,12 @@ semantic policy is:
         {
           "kind": "KEYWORD_ONLY",
           "name": "case_id",
-          "type": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1]"
+          "type": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1,character-equal-png-distinct-occurrence-v1]"
         }
       ],
       "return_dataclass": "GeneratedReferenceAssetPromotionFixedFixtureSupportV1",
       "return_field_types": {
-        "case_id": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1]",
+        "case_id": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1,character-equal-png-distinct-occurrence-v1]",
         "checker_action_bytes": "bytes",
         "checker_identity_bytes": "bytes",
         "composite_unsplit_role_deferral_basis": "str",
@@ -1250,7 +1346,7 @@ semantic policy is:
         "composite_unsplit_role_deferral_basis",
         "promotion_basis"
       ],
-      "return_invariants": "FROZEN_SLOTS_EXACT_POSITIVE_ADR_045_REQUEST_DECISION_SIDECAR_PAIR_VERIFIED_SIDECAR_IS_RESULT_SIDECAR_PRIMARY_PAIR_USED_FOR_REQUESTED_AND_PROMOTION_FORMAL_BYTES_VERIFIED"
+      "return_invariants": "FROZEN_SLOTS_EXACT_POSITIVE_ADR_045_REQUEST_DECISION_SIDECAR_PAIR_VERIFIED_SIDECAR_IS_RESULT_SIDECAR_PRIMARY_PAIR_USED_FOR_REQUESTED_AND_PROMOTION_FORMAL_BYTES_VERIFIED_TWO_RELEASED_FIXTURE_CASES_BYTE_EXACT_ONE_FIXED_IN_MEMORY_EQUAL_PNG_DISTINCT_OCCURRENCE_CASE_NO_OLD_FIXTURE_WRITE"
     },
     "sdc.generated_reference_role_binding_codegen": {
       "callable": "build_generated_reference_role_binding_positive_fixed_fixture_support",
@@ -1353,10 +1449,5024 @@ semantic policy is:
       "return_invariants": "FROZEN_SLOTS_REQUESTED_AT_EQUALS_BINDING_AT_EQUALS_PROMOTION_AT_ROLE_BINDING_REQUEST_AND_FINAL_STATUS_EQUAL_PROMOTION_FINAL_STATUS_PRIMARY_PAIR_FROM_PROMOTION_SUPPORT_THREE_HUMAN_RESULTS_EXACT_PASS_IN_MEMORY_PNG_FROM_PROMOTION_SUPPORT_ONLY_REQUEST_AND_POSITIVE_DECISION_BINDING_PAIR_VERIFIED_BINDING_IS_RESULT_BINDING_FORMAL_BYTES_VERIFIED"
     }
   },
-  "known_answer_codegen_support_rule": "SET_CODEGEN_DIRECT_IMPORTS_ONLY_BUILD_GENERATED_REFERENCE_ASSET_PROMOTION_FIXED_FIXTURE_SUPPORT_AND_BUILD_GENERATED_REFERENCE_ROLE_BINDING_POSITIVE_FIXED_FIXTURE_SUPPORT_FROM_OLD_CODEGEN_NO_OLD_CODEGEN_MODULE_ALIAS_PRIVATE_DYNAMIC_REFLECTION_MAIN_PARSER_BUILD_EXPECTED_CLOSURE_UPDATE_OR_WRITER_ACCESS_SUPPORT_CALL_GRAPH_READS_ONLY_FROZEN_FIXTURE_PATHS_AND_NEVER_WRITES_NO_PRODUCTION_CORE_COMPILER_PROVIDER_RUNTIME_WORKER_QC_OR_PERSISTENCE_IMPORT",
+  "known_answer_codegen_support_rule": "EXACTLY_TWO_CALLABLE_SYMBOLS_SET_CODEGEN_DIRECT_IMPORTS_ONLY_BUILD_GENERATED_REFERENCE_ASSET_PROMOTION_FIXED_FIXTURE_SUPPORT_AND_BUILD_GENERATED_REFERENCE_ROLE_BINDING_POSITIVE_FIXED_FIXTURE_SUPPORT_FROM_OLD_CODEGEN_PROMOTION_SUPPORT_HAS_TWO_RELEASED_FIXTURE_CASES_AND_ONE_FIXED_IN_MEMORY_EQUAL_PNG_DISTINCT_OCCURRENCE_CASE_NO_OLD_CODEGEN_MODULE_ALIAS_PRIVATE_DYNAMIC_REFLECTION_MAIN_PARSER_BUILD_EXPECTED_CLOSURE_UPDATE_OR_WRITER_ACCESS_SUPPORT_CALL_GRAPH_READS_ONLY_FROZEN_PATHS_AND_NEVER_WRITES_NO_PRODUCTION_CORE_COMPILER_PROVIDER_RUNTIME_WORKER_QC_OR_PERSISTENCE_IMPORT",
+  "known_answer_compatibility_stop_rule": {
+    "packet_evidence_unit_count": 0,
+    "required_external_conformance_test_count": 2,
+    "rule": "UNKNOWN_OR_FUTURE_ADR_046_ERROR_CODE_AT_REQUEST_AND_FINALIZATION_CALL_SITES_IS_A_MODULE_COMPATIBILITY_STOP_NEVER_A_GUESSED_SET_ERROR_OR_PACKET_EXPECTED_OUTCOME"
+  },
+  "known_answer_coverage_ledger_rule": {
+    "error_row_count": 21,
+    "error_row_probe_selector": "Within each listed scenario select only probes tagged TYPED_ERROR:code, NO_RESULT_TYPED_ERROR:code or PROVED_UNREACHABLE:code. Zero matches or a different claimed code stops BUILD.",
+    "issue_row_count": 5,
+    "issue_row_probe_selector": "Within each listed scenario select only probes tagged DECISION_ONLY_REJECT:issue_code, optionally followed only by :FAIL_OVER_INDETERMINATE. Zero matches or a different first issue stops BUILD."
+  },
+  "known_answer_delegated_png_dual_fault_rule": {
+    "adr_046_order_anchor": "tests/test_generated_reference_role_binding.py::test_representative_promotion_png_role_primary_status_stage_priority",
+    "adr_046_selected_error_code": "PNG_ADMISSION_INVALID",
+    "fixed_post_png_fault": "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID_BY_SCENE_LIGHTING_REFERENCE_ON_CHARACTER_PURPOSE",
+    "set_call_site_probe_ids": [
+      "raw-media-mismatch-v1--006--request-png-plus-post-png-dual-fault",
+      "raw-media-mismatch-v1--007--finalization-png-plus-post-png-dual-fault"
+    ],
+    "set_mapping": "EXACT_TYPED_GENERATED_REFERENCE_ROLE_BINDING_ERROR_CODE_PNG_ADMISSION_INVALID_TO_RAW_MEDIA_MISMATCH_NO_MESSAGE_PARSE_PREFLIGHT_SECOND_CALL_OR_LATER_FAULT_SEARCH",
+    "support_callable_symbols": [
+      "build_generated_reference_asset_promotion_fixed_fixture_support",
+      "build_generated_reference_role_binding_positive_fixed_fixture_support"
+    ],
+    "third_private_or_dynamic_support_allowed": false
+  },
+  "known_answer_error_code_evidence_ledger": [
+    {
+      "code": "RESOURCE_LIMIT_EXCEEDED",
+      "scenario_ids": [
+        "resource-limit-exceeded-v1"
+      ]
+    },
+    {
+      "code": "CANONICAL_DOCUMENT_INVALID",
+      "scenario_ids": [
+        "canonical-document-invalid-v1"
+      ]
+    },
+    {
+      "code": "PROHIBITED_BOUNDARY_CONNECTION",
+      "scenario_ids": [
+        "prohibited-authority-injection-v1"
+      ]
+    },
+    {
+      "code": "CONTRACT_FIELD_INVALID",
+      "scenario_ids": [
+        "contract-field-invalid-v1"
+      ]
+    },
+    {
+      "code": "TIME_OR_VALIDITY_INVALID",
+      "scenario_ids": [
+        "request-expired-status-v1",
+        "final-expired-status-v1",
+        "expired-qualification-manifest-v1"
+      ]
+    },
+    {
+      "code": "POLICY_IDENTITY_MISMATCH",
+      "scenario_ids": [
+        "policy-identity-mismatch-v1"
+      ]
+    },
+    {
+      "code": "UPSTREAM_CLOSURE_MISMATCH",
+      "scenario_ids": [
+        "upstream-closure-mismatch-v1"
+      ]
+    },
+    {
+      "code": "ROLE_BINDING_FINALIZATION_INVALID",
+      "scenario_ids": [
+        "role-binding-finalization-invalid-v1"
+      ]
+    },
+    {
+      "code": "COMMON_FRAME_MISMATCH",
+      "scenario_ids": [
+        "cross-purpose-attack-v1",
+        "cross-artifact-attack-v1",
+        "cross-profile-attack-v1",
+        "cross-catalog-attack-v1",
+        "cross-subject-attack-v1"
+      ]
+    },
+    {
+      "code": "DUPLICATE_ROLE_OR_BINDING",
+      "scenario_ids": [
+        "duplicate-role-attack-v1",
+        "duplicate-binding-attack-v1"
+      ]
+    },
+    {
+      "code": "ROLE_SELECTION_INVALID",
+      "scenario_ids": [
+        "omitted-branch-member-attack-v1",
+        "favorable-subset-attack-v1",
+        "role-selection-invalid-v1"
+      ]
+    },
+    {
+      "code": "CANONICAL_ORDER_INVALID",
+      "scenario_ids": [
+        "member-reorder-attack-v1"
+      ]
+    },
+    {
+      "code": "RAW_MEDIA_MISMATCH",
+      "scenario_ids": [
+        "raw-media-mismatch-v1"
+      ]
+    },
+    {
+      "code": "CURRENT_STATUS_REPLAY_INVALID",
+      "scenario_ids": [
+        "request-stale-closure-attack-v1",
+        "final-stale-closure-attack-v1",
+        "omitted-branch-member-attack-v1"
+      ]
+    },
+    {
+      "code": "REQUEST_MEMBER_STATUS_NOT_CURRENT",
+      "scenario_ids": [
+        "request-non-current-status-v1"
+      ]
+    },
+    {
+      "code": "PRIMARY_BINDING_INVALID",
+      "scenario_ids": [
+        "request-primary-binding-attack-v1"
+      ]
+    },
+    {
+      "code": "RIGHTS_SCOPE_MISMATCH",
+      "scenario_ids": [
+        "unequal-rights-attack-v1"
+      ]
+    },
+    {
+      "code": "IDENTITY_RECORD_INVALID",
+      "scenario_ids": [
+        "identity-record-invalid-v1"
+      ]
+    },
+    {
+      "code": "ACTION_RECORD_INVALID",
+      "scenario_ids": [
+        "action-record-invalid-v1"
+      ]
+    },
+    {
+      "code": "IDENTITY_SEPARATION_INVALID",
+      "scenario_ids": [
+        "forbidden-identity-equality-v1"
+      ]
+    },
+    {
+      "code": "DECISION_OR_SET_REVALIDATION_FAILED",
+      "scenario_ids": [
+        "favorable-subset-attack-v1",
+        "positive-atomicity-injection-v1"
+      ]
+    }
+  ],
+  "known_answer_evidence_kind_order": [
+    "PUBLIC_API_EXECUTION",
+    "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+    "STRUCTURAL_UNREACHABILITY_PROOF"
+  ],
+  "known_answer_evidence_kind_unit_counts": {
+    "HERMETIC_TEST_ONLY_FAULT_INJECTION": 58,
+    "PUBLIC_API_EXECUTION": 137,
+    "STRUCTURAL_UNREACHABILITY_PROOF": 22
+  },
+  "known_answer_issue_code_evidence_ledger": [
+    {
+      "issue_code": "MEMBER_STATUS_NOT_CURRENT_AT_SET",
+      "scenario_ids": [
+        "final-revoked-held-status-v1"
+      ]
+    },
+    {
+      "issue_code": "COMMON_PRIMARY_BINDING_NO_LONGER_ACTIVE",
+      "scenario_ids": [
+        "final-primary-binding-drift-v1"
+      ]
+    },
+    {
+      "issue_code": "PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED",
+      "scenario_ids": [
+        "human-rights-fail-v1"
+      ]
+    },
+    {
+      "issue_code": "EXPLICIT_SELECTION_ORDER_AND_COVERAGE_NOT_ACKNOWLEDGED",
+      "scenario_ids": [
+        "human-selection-fail-v1"
+      ]
+    },
+    {
+      "issue_code": "NON_EXCLUSIVE_NO_PROVIDER_BOUNDARY_NOT_ACKNOWLEDGED",
+      "scenario_ids": [
+        "fail-over-indeterminate-v1"
+      ]
+    }
+  ],
+  "known_answer_packet_closure_rule": "COMPLETE_PACKET_EQUALS_REVIEWED_SOURCE_FIXTURE_DERIVED_PUBLIC_EXECUTION_AND_PROOF_DESCRIPTORS_EXACT_POLICY_EXACT_HERMETIC_TEST_NODES_AND_FINAL_VALIDATION_RESULTS_DERIVED_FIXTURE_MAY_NOT_CLAIM_A_HERMETIC_TEST_RAN_OR_HUMAN_ACCEPTANCE_WAS_GRANTED_SCENARIO_EVIDENCE_CLOSES_ONLY_WHEN_EVERY_REQUIRED_PUBLIC_RESULT_TEST_VECTOR_AND_STRUCTURAL_PROOF_MATCHES_AT_ONE_FROZEN_COMMIT",
+  "known_answer_packet_probe_shapes": {
+    "derived_probe_field_order": [
+      "probe_id",
+      "scenario_id",
+      "evidence_kind",
+      "operation",
+      "input_anchor",
+      "mutation_or_fault_vector",
+      "expected_outcome",
+      "actual_outcome_or_proof",
+      "evidence_anchor",
+      "descriptor_status",
+      "probe_sha256"
+    ],
+    "descriptor_status_order": [
+      "PUBLIC_EXECUTION_MATCHED",
+      "HERMETIC_TEST_NODE_ANCHORED_EXECUTION_REQUIRED",
+      "STRUCTURAL_PROOF_VALIDATED"
+    ],
+    "evidence_anchor_fields": [
+      "source_path_or_test_node",
+      "git_blob_or_source_sha256",
+      "size_bytes_or_call_count",
+      "result_document_sha256s_or_proof_sha256"
+    ],
+    "expected_outcome_rule": "Exactly one tagged string. DECISION_AND_SET_APPROVE and DECISION_ONLY_INDETERMINATE have no suffix. DECISION_ONLY_REJECT has one exact issue suffix, except the exact FAIL_OVER_INDETERMINATE suffix form. TYPED_ERROR, NO_RESULT_TYPED_ERROR and RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR have one exact Set error-code suffix. PROVED_UNREACHABLE has one exact proof-ID suffix. PROVED_PUBLIC_SURFACE_ABSENT has no suffix. The resource-guard tag proves only equality admission followed by the named fixed downstream error.",
+    "expected_outcome_tag_order": [
+      "DECISION_AND_SET_APPROVE",
+      "DECISION_ONLY_REJECT",
+      "DECISION_ONLY_INDETERMINATE",
+      "TYPED_ERROR",
+      "NO_RESULT_TYPED_ERROR",
+      "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR",
+      "PROVED_UNREACHABLE",
+      "PROVED_PUBLIC_SURFACE_ABSENT"
+    ],
+    "input_anchor_fields": [
+      "anchor_id",
+      "case_ids",
+      "source_paths_or_in_memory_case_ids",
+      "r2_source_fixture_baseline",
+      "future_r3_path_size_raw_sha256_and_semantic_identities"
+    ],
+    "source_probe_field_order": [
+      "probe_id",
+      "scenario_id",
+      "probe_slug",
+      "evidence_kind",
+      "operation_id",
+      "input_anchor_id",
+      "mutation_or_fault_vector",
+      "expected_outcome"
+    ]
+  },
+  "known_answer_probe_count": 217,
+  "known_answer_probe_ledger": [
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "character-cardinality-1"
+          ]
+        }
+      ],
+      "scenario_id": "character-singleton-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "character-cardinality-2-partial"
+          ]
+        }
+      ],
+      "scenario_id": "character-partial-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "character-cardinality-3-full"
+          ]
+        }
+      ],
+      "scenario_id": "character-full-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "scene-cardinality-1"
+          ]
+        }
+      ],
+      "scenario_id": "scene-singleton-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "scene-cardinality-3-partial"
+          ]
+        }
+      ],
+      "scenario_id": "scene-partial-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "scene-cardinality-4-full"
+          ]
+        }
+      ],
+      "scenario_id": "scene-full-positive-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "same-sidecar-two-roles-distinct-bindings"
+          ]
+        }
+      ],
+      "scenario_id": "same-sidecar-cross-role-distinct-bindings-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "equal-png-distinct-candidate-sidecar"
+          ]
+        }
+      ],
+      "scenario_id": "equal-bytes-distinct-candidate-sidecar-occurrences-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:DUPLICATE_ROLE_OR_BINDING",
+          "ordered_probe_slugs": [
+            "duplicate-requested-role"
+          ]
+        }
+      ],
+      "scenario_id": "duplicate-role-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:DUPLICATE_ROLE_OR_BINDING",
+          "ordered_probe_slugs": [
+            "duplicate-binding-identity"
+          ]
+        }
+      ],
+      "scenario_id": "duplicate-binding-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CANONICAL_ORDER_INVALID",
+          "ordered_probe_slugs": [
+            "reversed-member-tuple"
+          ]
+        }
+      ],
+      "scenario_id": "member-reorder-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:CALLER_SUPPLIED_SELECTION_ORDINAL",
+          "ordered_probe_slugs": [
+            "selection-ordinal-is-builder-owned"
+          ]
+        }
+      ],
+      "scenario_id": "ordinal-mutation-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+          "ordered_probe_slugs": [
+            "character-target-scene-role"
+          ]
+        }
+      ],
+      "scenario_id": "cross-purpose-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+          "ordered_probe_slugs": [
+            "cross-artifact"
+          ]
+        }
+      ],
+      "scenario_id": "cross-artifact-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+          "ordered_probe_slugs": [
+            "cross-profile"
+          ]
+        }
+      ],
+      "scenario_id": "cross-profile-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+          "ordered_probe_slugs": [
+            "cross-catalog"
+          ]
+        }
+      ],
+      "scenario_id": "cross-catalog-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+          "ordered_probe_slugs": [
+            "cross-subject"
+          ]
+        }
+      ],
+      "scenario_id": "cross-subject-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:PRIMARY_BINDING_INVALID",
+          "ordered_probe_slugs": [
+            "final-cross-subject-purpose-primary"
+          ]
+        }
+      ],
+      "scenario_id": "request-primary-binding-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_REJECT:COMMON_PRIMARY_BINDING_NO_LONGER_ACTIVE",
+          "ordered_probe_slugs": [
+            "final-active-binding-drift"
+          ]
+        }
+      ],
+      "scenario_id": "final-primary-binding-drift-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+          "ordered_probe_slugs": [
+            "substituted",
+            "expanded",
+            "narrowed",
+            "reordered",
+            "renewed",
+            "unioned",
+            "intersected"
+          ]
+        }
+      ],
+      "scenario_id": "unequal-rights-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+          "ordered_probe_slugs": [
+            "stale-closure",
+            "copied-receipt",
+            "copied-current"
+          ]
+        }
+      ],
+      "scenario_id": "request-stale-closure-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+          "ordered_probe_slugs": [
+            "request-expired"
+          ]
+        }
+      ],
+      "scenario_id": "request-expired-status-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:REQUEST_MEMBER_STATUS_NOT_CURRENT",
+          "ordered_probe_slugs": [
+            "request-revoked",
+            "request-held",
+            "request-indeterminate"
+          ]
+        }
+      ],
+      "scenario_id": "request-non-current-status-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+          "ordered_probe_slugs": [
+            "stale-closure",
+            "copied-receipt",
+            "copied-current"
+          ]
+        }
+      ],
+      "scenario_id": "final-stale-closure-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+          "ordered_probe_slugs": [
+            "final-expired"
+          ]
+        }
+      ],
+      "scenario_id": "final-expired-status-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_REJECT:MEMBER_STATUS_NOT_CURRENT_AT_SET",
+          "ordered_probe_slugs": [
+            "final-revoked",
+            "final-held"
+          ]
+        }
+      ],
+      "scenario_id": "final-revoked-held-status-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_INDETERMINATE",
+          "ordered_probe_slugs": [
+            "final-indeterminate"
+          ]
+        }
+      ],
+      "scenario_id": "final-indeterminate-status-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+          "ordered_probe_slugs": [
+            "qualification-expired",
+            "manifest-expired"
+          ]
+        }
+      ],
+      "scenario_id": "expired-qualification-manifest-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+          "ordered_probe_slugs": [
+            "omitted-prior-target-branch"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+          "ordered_probe_slugs": [
+            "omitted-member-from-original-request"
+          ]
+        }
+      ],
+      "scenario_id": "omitted-branch-member-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+          "ordered_probe_slugs": [
+            "omit-failed-member-from-original-request"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+          "ordered_probe_slugs": [
+            "replace-failed-member-on-original-request",
+            "attach-fabricated-subset-set-to-adverse-decision"
+          ]
+        }
+      ],
+      "scenario_id": "favorable-subset-attack-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+          "ordered_probe_slugs": [
+            "set-maker-selector",
+            "qualification-qualifier",
+            "manifest-checker",
+            "promotion-request-status-checker",
+            "promotion-final-status-checker",
+            "promotion-checker",
+            "role-binding-checker",
+            "role-binding-request-status-checker",
+            "role-binding-final-status-checker",
+            "set-request-status-checker",
+            "set-final-status-checker"
+          ]
+        }
+      ],
+      "scenario_id": "forbidden-identity-equality-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "qualification-request-preparer",
+            "qualification-qualifier",
+            "manifest-maker",
+            "manifest-checker",
+            "promotion-request-status-preparer",
+            "promotion-request-status-checker",
+            "promotion-final-status-preparer",
+            "promotion-final-status-checker",
+            "promotion-maker",
+            "promotion-checker",
+            "role-binding-request-status-preparer",
+            "role-binding-request-status-checker",
+            "role-binding-final-status-preparer",
+            "role-binding-final-status-checker",
+            "role-binding-maker",
+            "role-binding-checker",
+            "set-request-status-preparer",
+            "set-request-status-checker",
+            "set-final-status-preparer",
+            "set-final-status-checker"
+          ]
+        }
+      ],
+      "scenario_id": "permitted-maker-overlap-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_REJECT:PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED",
+          "ordered_probe_slugs": [
+            "rights-presentation-fail"
+          ]
+        }
+      ],
+      "scenario_id": "human-rights-fail-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_INDETERMINATE",
+          "ordered_probe_slugs": [
+            "selection-indeterminate"
+          ]
+        }
+      ],
+      "scenario_id": "human-selection-indeterminate-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_REJECT:NON_EXCLUSIVE_NO_PROVIDER_BOUNDARY_NOT_ACKNOWLEDGED:FAIL_OVER_INDETERMINATE",
+          "ordered_probe_slugs": [
+            "provider-boundary-fail-selection-indeterminate"
+          ]
+        }
+      ],
+      "scenario_id": "fail-over-indeterminate-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+          "ordered_probe_slugs": [
+            "positive-decision-without-set",
+            "adverse-decision-with-set"
+          ]
+        },
+        {
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "NO_RESULT_TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+          "ordered_probe_slugs": [
+            "set-construction-failure"
+          ]
+        }
+      ],
+      "scenario_id": "positive-atomicity-injection-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:PROHIBITED_BOUNDARY_CONNECTION",
+          "ordered_probe_slugs": [
+            "final-only-status-input-at-request"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+          "ordered_probe_slugs": [
+            "provider",
+            "input-material",
+            "provider-request",
+            "runtime",
+            "url",
+            "slot",
+            "order",
+            "idempotency",
+            "credential",
+            "cost",
+            "retry",
+            "publication",
+            "retention",
+            "training"
+          ]
+        }
+      ],
+      "scenario_id": "prohibited-authority-injection-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "member-count-1-admit",
+            "member-count-4-admit"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+          "ordered_probe_slugs": [
+            "member-count-5-error"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+          "ordered_probe_slugs": [
+            "per-member-png-exact-cap-guard-admit",
+            "aggregate-png-exact-cap-guard-admit"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+          "ordered_probe_slugs": [
+            "per-member-png-cap-plus-1-error"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:AGGREGATE_PNG_STRICT_EXCEED",
+          "ordered_probe_slugs": [
+            "aggregate-png-strict-exceed-dominated"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+          "ordered_probe_slugs": [
+            "raw-leaf-count-1780-guard-admit",
+            "aggregate-raw-exact-cap-guard-admit"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+          "ordered_probe_slugs": [
+            "raw-leaf-count-1781-error"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:AGGREGATE_RAW_STRICT_EXCEED",
+          "ordered_probe_slugs": [
+            "aggregate-raw-strict-exceed-dominated"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_AND_SET_APPROVE",
+          "ordered_probe_slugs": [
+            "semantic-capsules-31-admit"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+          "ordered_probe_slugs": [
+            "maker-action-bytes-cap-plus-1-error"
+          ]
+        }
+      ],
+      "scenario_id": "resource-limit-exceeded-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+          "ordered_probe_slugs": [
+            "utf8-bom",
+            "carriage-return",
+            "compact-retained-terminal-lf",
+            "invalid-utf8",
+            "nonfinite-json",
+            "duplicate-key",
+            "noncanonical-key-order",
+            "noncanonical-whitespace"
+          ]
+        }
+      ],
+      "scenario_id": "canonical-document-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+          "ordered_probe_slugs": [
+            "bindings-list",
+            "wrong-binding-model",
+            "binding-subclass",
+            "requested-roles-list",
+            "requested-role-non-string",
+            "zero-bindings",
+            "wrong-member-closure",
+            "maker-identity-nonbytes",
+            "empty-request-basis"
+          ]
+        }
+      ],
+      "scenario_id": "contract-field-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:POLICY_IDENTITY_MISMATCH",
+          "ordered_probe_slugs": [
+            "sealed-policy-no-caller-input"
+          ]
+        }
+      ],
+      "scenario_id": "policy-identity-mismatch-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+          "ordered_probe_slugs": [
+            "promotion-maker-action-canonical-drift",
+            "promotion-checker-action-canonical-drift"
+          ]
+        },
+        {
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+          "ordered_probe_slugs": [
+            "promotion-error-at-request-verifier",
+            "promotion-error-at-finalization-verifier"
+          ]
+        }
+      ],
+      "scenario_id": "upstream-closure-mismatch-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+          "ordered_probe_slugs": [
+            "positive-binding-rebuild-drift"
+          ]
+        },
+        {
+          "axis_order": [
+            "call_site",
+            "upstream_code"
+          ],
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+          "ordered_axis_product": {
+            "call_site": [
+              "request",
+              "finalization"
+            ],
+            "upstream_code": [
+              "INPUT_RESOURCE_LIMIT_EXCEEDED",
+              "INPUT_DOCUMENT_INVALID",
+              "CONTRACT_FIELD_INVALID",
+              "POLICY_IDENTITY_MISMATCH",
+              "FORMAL_IDENTITY_MISMATCH",
+              "UPSTREAM_CLOSURE_MISMATCH",
+              "PROMOTION_CLOSURE_INVALID",
+              "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID",
+              "PRIMARY_ASSET_BINDING_CLOSURE_INVALID",
+              "CURRENT_STATUS_REPLAY_INVALID",
+              "RIGHTS_SCOPE_MISMATCH",
+              "ROLE_SEPARATION_VIOLATION",
+              "ACTION_RECORD_INVALID",
+              "TIME_OR_VALIDITY_INVALID",
+              "AUTHORITY_SURFACE_NONZERO",
+              "PROHIBITED_BOUNDARY_CONNECTION",
+              "BINDING_GATE_NOT_PASS",
+              "ATOMIC_OUTPUT_INVARIANT_VIOLATION"
+            ]
+          },
+          "probe_slug_prefix": "role-binding-code"
+        },
+        {
+          "axis_order": [
+            "call_site",
+            "upstream_type"
+          ],
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+          "ordered_axis_product": {
+            "call_site": [
+              "request",
+              "finalization"
+            ],
+            "upstream_type": [
+              "GeneratedReferenceAsOfAssessmentError",
+              "GeneratedReferenceChainCoverageError",
+              "GeneratedReferenceChainReplayError",
+              "GeneratedReferenceJointReplayError",
+              "GeneratedReferenceReceiptError",
+              "GeneratedReferenceRightsCurrentStatusError"
+            ]
+          },
+          "probe_slug_prefix": "status-error-type"
+        },
+        {
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+          "ordered_probe_slugs": [
+            "decision-sha256-target",
+            "request-sha256-target",
+            "binding-sha256-target",
+            "contract-document-bytes-target",
+            "target-sha256-target"
+          ]
+        }
+      ],
+      "scenario_id": "role-binding-finalization-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+          "ordered_probe_slugs": [
+            "empty-requested-subset",
+            "outside-purpose-role",
+            "binding-count-role-count-mismatch"
+          ]
+        }
+      ],
+      "scenario_id": "role-selection-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:WHOLE_PNG_MUTATION_REACHES_SET_RAW_MEDIA",
+          "ordered_probe_slugs": [
+            "whole-png-mutation-dominated-by-promotion"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:SIZE_ANCHOR_MUTATION_REACHES_SET_RAW_MEDIA",
+          "ordered_probe_slugs": [
+            "size-anchor-mutation-dominated-by-adr046"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:CONTENT_SHA256_MUTATION_REACHES_SET_RAW_MEDIA",
+          "ordered_probe_slugs": [
+            "content-sha256-mutation-dominated-by-adr046"
+          ]
+        },
+        {
+          "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+          "expected_outcome": "PROVED_UNREACHABLE:SET_ADMITTED_PNG_CONSTRUCTION_FAILURE",
+          "ordered_probe_slugs": [
+            "admitted-png-construction-failure-unreachable"
+          ]
+        },
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:RAW_MEDIA_MISMATCH",
+          "ordered_probe_slugs": [
+            "technical-record-anchor-mismatch"
+          ]
+        },
+        {
+          "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+          "expected_outcome": "TYPED_ERROR:RAW_MEDIA_MISMATCH",
+          "ordered_probe_slugs": [
+            "request-png-plus-post-png-dual-fault",
+            "finalization-png-plus-post-png-dual-fault"
+          ]
+        }
+      ],
+      "scenario_id": "raw-media-mismatch-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+          "ordered_probe_slugs": [
+            "empty-object",
+            "missing-identity-ref",
+            "unknown-field",
+            "profile-mismatch",
+            "namespace-nonportable",
+            "identity-ref-nonportable",
+            "identity-ref-wrong-scalar"
+          ]
+        }
+      ],
+      "scenario_id": "identity-record-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+          "ordered_probe_slugs": [
+            "maker-requested-roles-wrong-scalar",
+            "maker-missing-target-sha256",
+            "maker-unknown-field",
+            "maker-target-sha256-drift",
+            "checker-gates-wrong-scalar",
+            "checker-missing-gate-results",
+            "checker-unknown-field",
+            "checker-request-sha256-drift",
+            "checker-gate-result-drift",
+            "checker-issue-codes-drift",
+            "checker-decision-drift"
+          ]
+        }
+      ],
+      "scenario_id": "action-record-invalid-v1"
+    },
+    {
+      "probe_families": [
+        {
+          "evidence_kind": "PUBLIC_API_EXECUTION",
+          "expected_outcome": "DECISION_ONLY_REJECT:EXPLICIT_SELECTION_ORDER_AND_COVERAGE_NOT_ACKNOWLEDGED",
+          "ordered_probe_slugs": [
+            "selection-gate-fail"
+          ]
+        }
+      ],
+      "scenario_id": "human-selection-fail-v1"
+    }
+  ],
+  "known_answer_probe_rule": "Expand scenarios in known_answer_scenario_id_order. Within a scenario expand families in list order; literal slugs retain list order; axis products use axis_order with leftmost axis outermost. Axis slug equals prefix plus hyphen plus hyphen-joined lower-ASCII axis values after underscore-to-hyphen conversion. Probe ID equals scenario_id, two hyphens, three-digit one-based local ordinal, two hyphens and slug. Each expanded ID occurs exactly once in probe_spec_by_id with exact repeated fields. Any invalid axis character, slug, ID, vector-ID or catalog collision stops BUILD.",
+  "known_answer_probe_spec_catalog": {
+    "input_anchor_catalog": {
+      "CHARACTER_EQUAL_PNG_PAIR_R3": {
+        "distinct_occurrence_case_ids": [
+          "character-same-status-record-v1",
+          "character-equal-png-distinct-occurrence-v1"
+        ],
+        "equal_relation": "PNG_BYTES_SIZE_CONTENT_SHA256_TECHNICAL_RECORD_SHA256_EQUAL_CANDIDATE_AND_SIDECAR_IDENTITIES_DISTINCT",
+        "future_r3_anchor_rule": "R3 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "r2_source_fixture_baseline": {
+          "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
+          "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
+          "size_bytes": 30668
+        },
+        "reference_roles": [
+          "CHARACTER_IDENTITY_SHEET",
+          "CHARACTER_POSE_REFERENCE"
+        ],
+        "role_binding_support_callable": "build_generated_reference_role_binding_positive_fixed_fixture_support",
+        "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
+      },
+      "CHARACTER_PRIMARY_R3": {
+        "future_r3_anchor_rule": "R3 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "promotion_support_case_ids": [
+          "character-same-status-record-v1"
+        ],
+        "r2_source_fixture_baseline": {
+          "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
+          "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
+          "size_bytes": 30668
+        },
+        "reference_roles": [
+          "CHARACTER_IDENTITY_SHEET",
+          "CHARACTER_POSE_REFERENCE",
+          "CHARACTER_EXPRESSION_REFERENCE"
+        ],
+        "role_binding_support_callable": "build_generated_reference_role_binding_positive_fixed_fixture_support",
+        "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
+      },
+      "POLICY_R3": {
+        "canonical_identity_source": "EXACT_EXTERNAL_POLICY_IDENTITY_RECORD_IMMEDIATELY_AFTER_THIS_JSON_CODE_BLOCK",
+        "policy_id": "sdc.generated-reference-bounded-supplied-role-binding-set-policy",
+        "policy_version": "1.2.0"
+      },
+      "RESOURCE_IN_MEMORY_R3": {
+        "base_anchor_id": "SCENE_PRIMARY_R3",
+        "construction": "FIRST_PARTY_FICTIONAL_IN_MEMORY_ONLY_NO_TRACKED_PNG_PATH_SHARED_IMMUTABLE_BYTE_OBJECTS_COUNT_BY_OCCURRENCE_TESTS_MAY_USE_RELEASED_PUBLIC_ADR039_TO_ADR046_BUILDERS_NO_THIRD_SUPPORT_CALLABLE",
+        "future_r3_anchor_rule": "R3 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "r2_source_fixture_baseline": {
+          "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
+          "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
+          "size_bytes": 30668
+        },
+        "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
+      },
+      "SCENE_PRIMARY_R3": {
+        "future_r3_anchor_rule": "R3 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "promotion_support_case_ids": [
+          "scene-successor-reconciliation-v1"
+        ],
+        "r2_source_fixture_baseline": {
+          "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
+          "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
+          "size_bytes": 30668
+        },
+        "reference_roles": [
+          "SCENE_ESTABLISHING_REFERENCE",
+          "SCENE_LIGHTING_REFERENCE",
+          "SCENE_MATERIAL_REFERENCE",
+          "SCENE_PROP_PLACEMENT_REFERENCE"
+        ],
+        "role_binding_support_callable": "build_generated_reference_role_binding_positive_fixed_fixture_support",
+        "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
+      }
+    },
+    "operation_catalog": {
+      "HERMETIC_FINAL_ROLE_VERIFIER": {
+        "automatic_restore": true,
+        "patch_scope": "tests/test_generated_reference_role_binding_set.py::pytest.MonkeyPatch.context",
+        "patch_target": "sdc.generated_reference_role_binding_set.verify_generated_reference_eligible_asset_role_binding_finalization",
+        "positive_byte_replay_after_restore": true,
+        "public_entry": "PUBLIC_REVIEW_PAYLOAD"
+      },
+      "HERMETIC_REQUEST_ROLE_VERIFIER": {
+        "automatic_restore": true,
+        "patch_scope": "tests/test_generated_reference_role_binding_set.py::pytest.MonkeyPatch.context",
+        "patch_target": "sdc.generated_reference_role_binding_set.verify_generated_reference_eligible_asset_role_binding_request",
+        "positive_byte_replay_after_restore": true,
+        "public_entry": "PUBLIC_REVIEW_PAYLOAD"
+      },
+      "HERMETIC_ROLE_HELPER_REVALIDATION": {
+        "automatic_restore": true,
+        "patch_scope": "tests/test_generated_reference_role_binding_set.py::pytest.MonkeyPatch.context",
+        "patch_target_from_probe": true,
+        "positive_byte_replay_after_restore": true,
+        "public_entry": "PUBLIC_REVIEW_PAYLOAD"
+      },
+      "HERMETIC_SET_CONSTRUCTION": {
+        "automatic_restore": true,
+        "patch_scope": "tests/test_generated_reference_role_binding_set.py::pytest.MonkeyPatch.context",
+        "patch_target": "sdc.generated_reference_role_binding_set._build_identity",
+        "positive_byte_replay_after_restore": true,
+        "production_seam_allowed": false,
+        "public_entry": "PUBLIC_FINALIZE",
+        "trigger_exact_model_type": "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1"
+      },
+      "PUBLIC_FINALIZATION_VERIFY": {
+        "callable": "sdc.generated_reference_role_binding_set.verify_generated_reference_eligible_asset_role_binding_set_finalization",
+        "patching_allowed": false
+      },
+      "PUBLIC_FINALIZE": {
+        "callable": "sdc.generated_reference_role_binding_set.finalize_generated_reference_eligible_asset_role_binding_set",
+        "patching_allowed": false
+      },
+      "PUBLIC_REQUEST_PREPARE": {
+        "callable": "sdc.generated_reference_role_binding_set.prepare_generated_reference_eligible_asset_role_binding_set_request",
+        "patching_allowed": false
+      },
+      "PUBLIC_REVIEW_PAYLOAD": {
+        "callable": "sdc.generated_reference_role_binding_set.build_generated_reference_role_binding_set_review_payload_projection",
+        "patching_allowed": false
+      },
+      "PUBLIC_TARGET_BUILD": {
+        "callable": "sdc.generated_reference_role_binding_set.build_generated_reference_eligible_asset_role_binding_set_target",
+        "patching_allowed": false
+      },
+      "STRUCTURAL_AUTHORITY_PROOF": {
+        "private_or_dynamic_execution_allowed": false,
+        "proof_inputs": [
+          "exact R3 Set-core Git blob",
+          "public signatures and return types",
+          "imports and calls",
+          "exact zero-authority inventory"
+        ]
+      },
+      "STRUCTURAL_ORDINAL_PROOF": {
+        "private_or_dynamic_execution_allowed": false,
+        "proof_inputs": [
+          "exact R3 Set-core Git blob",
+          "target-builder signature and enumerate call",
+          "public target validation behavior"
+        ]
+      },
+      "STRUCTURAL_POLICY_PROOF": {
+        "private_or_dynamic_execution_allowed": false,
+        "proof_inputs": [
+          "exact R3 Set-core Git blob",
+          "public signatures",
+          "Contract Policy literals",
+          "compiled Policy canonical bytes and SHA",
+          "self-check call graph"
+        ]
+      },
+      "STRUCTURAL_RAW_MEDIA_DOMINANCE_PROOF": {
+        "private_or_dynamic_execution_allowed": false,
+        "proof_inputs": [
+          "exact ADR-045 and ADR-046 verifier order",
+          "Set _admitted_png_from_member derivation",
+          "exact public signatures and call graph"
+        ]
+      },
+      "STRUCTURAL_RESOURCE_DOMINANCE_PROOF": {
+        "private_or_dynamic_execution_allowed": false,
+        "proof_inputs": [
+          "exact resource constants",
+          "closed ownership/cardinality ledger",
+          "integer dominance equation",
+          "named public equality-guard result"
+        ]
+      }
+    },
+    "probe_spec_by_id": {
+      "action-record-invalid-v1--001--maker-requested-roles-wrong-scalar": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "maker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace requested_reference_roles array by string",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "maker-requested-roles-wrong-scalar",
+          "vector_id": "action-record-invalid-v1::maker-requested-roles-wrong-scalar"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-requested-roles-wrong-scalar",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--002--maker-missing-target-sha256": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "maker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "remove target_sha256",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "maker-missing-target-sha256",
+          "vector_id": "action-record-invalid-v1::maker-missing-target-sha256"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-missing-target-sha256",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--003--maker-unknown-field": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "maker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "add x_r3_unknown=false",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "maker-unknown-field",
+          "vector_id": "action-record-invalid-v1::maker-unknown-field"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-unknown-field",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--004--maker-target-sha256-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "maker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace target_sha256 by 64 zeros",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "maker-target-sha256-drift",
+          "vector_id": "action-record-invalid-v1::maker-target-sha256-drift"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-target-sha256-drift",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--005--checker-gates-wrong-scalar": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace gate_results array by string",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-gates-wrong-scalar",
+          "vector_id": "action-record-invalid-v1::checker-gates-wrong-scalar"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-gates-wrong-scalar",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--006--checker-missing-gate-results": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "remove gate_results",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-missing-gate-results",
+          "vector_id": "action-record-invalid-v1::checker-missing-gate-results"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-missing-gate-results",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--007--checker-unknown-field": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "add x_r3_unknown=false",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-unknown-field",
+          "vector_id": "action-record-invalid-v1::checker-unknown-field"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-unknown-field",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--008--checker-request-sha256-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace request_sha256 by 64 zeros",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-request-sha256-drift",
+          "vector_id": "action-record-invalid-v1::checker-request-sha256-drift"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-request-sha256-drift",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--009--checker-gate-result-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace gate_results[0].basis by R3_DRIFT",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-gate-result-drift",
+          "vector_id": "action-record-invalid-v1::checker-gate-result-drift"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-gate-result-drift",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--010--checker-issue-codes-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace set_issue_codes by MEMBER_STATUS_NOT_CURRENT_AT_SET",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-issue-codes-drift",
+          "vector_id": "action-record-invalid-v1::checker-issue-codes-drift"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-issue-codes-drift",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "action-record-invalid-v1--011--checker-decision-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ACTION_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "action_role": "checker",
+          "codec": "compact canonical JSON without terminal LF",
+          "definition": "replace decision by REJECT_BOUNDED_SUPPLIED_ROLE_BINDING_SET",
+          "kind": "SET_ACTION_CANONICAL_OBJECT_MUTATION",
+          "probe_slug": "checker-decision-drift",
+          "vector_id": "action-record-invalid-v1::checker-decision-drift"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "checker-decision-drift",
+        "scenario_id": "action-record-invalid-v1"
+      },
+      "canonical-document-invalid-v1--001--utf8-bom": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "prepend EFBBBF",
+          "probe_slug": "utf8-bom",
+          "vector_id": "canonical-document-invalid-v1::utf8-bom"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "utf8-bom",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--002--carriage-return": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "append 0D",
+          "probe_slug": "carriage-return",
+          "vector_id": "canonical-document-invalid-v1::carriage-return"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "carriage-return",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--003--compact-retained-terminal-lf": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "append 0A",
+          "probe_slug": "compact-retained-terminal-lf",
+          "vector_id": "canonical-document-invalid-v1::compact-retained-terminal-lf"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "compact-retained-terminal-lf",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--004--invalid-utf8": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "replace first ASCII byte by FF",
+          "probe_slug": "invalid-utf8",
+          "vector_id": "canonical-document-invalid-v1::invalid-utf8"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "invalid-utf8",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--005--nonfinite-json": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "replace identity_ref string token by unquoted NaN",
+          "probe_slug": "nonfinite-json",
+          "vector_id": "canonical-document-invalid-v1::nonfinite-json"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "nonfinite-json",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--006--duplicate-key": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "duplicate first object member",
+          "probe_slug": "duplicate-key",
+          "vector_id": "canonical-document-invalid-v1::duplicate-key"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "duplicate-key",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--007--noncanonical-key-order": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "swap first two object members",
+          "probe_slug": "noncanonical-key-order",
+          "vector_id": "canonical-document-invalid-v1::noncanonical-key-order"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "noncanonical-key-order",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "canonical-document-invalid-v1--008--noncanonical-whitespace": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_DOCUMENT_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_identity_bytes",
+          "kind": "MAKER_IDENTITY_RAW_BYTES_MUTATION",
+          "mutation": "insert one ASCII space after first colon",
+          "probe_slug": "noncanonical-whitespace",
+          "vector_id": "canonical-document-invalid-v1::noncanonical-whitespace"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "noncanonical-whitespace",
+        "scenario_id": "canonical-document-invalid-v1"
+      },
+      "character-full-positive-v1--001--character-cardinality-3-full": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact three-role Character tuple in canonical order with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "character-cardinality-3-full",
+          "vector_id": "character-full-positive-v1::character-cardinality-3-full"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "character-cardinality-3-full",
+        "scenario_id": "character-full-positive-v1"
+      },
+      "character-partial-positive-v1--001--character-cardinality-2-partial": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact first two Character roles/members in canonical order with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "character-cardinality-2-partial",
+          "vector_id": "character-partial-positive-v1::character-cardinality-2-partial"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "character-cardinality-2-partial",
+        "scenario_id": "character-partial-positive-v1"
+      },
+      "character-singleton-positive-v1--001--character-cardinality-1": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact first Character role/member with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "character-cardinality-1",
+          "vector_id": "character-singleton-positive-v1::character-cardinality-1"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "character-cardinality-1",
+        "scenario_id": "character-singleton-positive-v1"
+      },
+      "contract-field-invalid-v1--001--bindings-list": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "bindings",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "bindings-list",
+          "value": "list instead of tuple",
+          "vector_id": "contract-field-invalid-v1::bindings-list"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "bindings-list",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--002--wrong-binding-model": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "bindings[0]",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "wrong-binding-model",
+          "value": "exact Set target model",
+          "vector_id": "contract-field-invalid-v1::wrong-binding-model"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "wrong-binding-model",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--003--binding-subclass": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "bindings[0]",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "binding-subclass",
+          "value": "Binding model subclass instance",
+          "vector_id": "contract-field-invalid-v1::binding-subclass"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "binding-subclass",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--004--requested-roles-list": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "requested_reference_roles",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "requested-roles-list",
+          "value": "list instead of tuple",
+          "vector_id": "contract-field-invalid-v1::requested-roles-list"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "requested-roles-list",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--005--requested-role-non-string": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "requested_reference_roles[0]",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "requested-role-non-string",
+          "value": "integer 0",
+          "vector_id": "contract-field-invalid-v1::requested-role-non-string"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "requested-role-non-string",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--006--zero-bindings": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_TARGET_BUILD",
+          "field_or_argument": "bindings",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "zero-bindings",
+          "value": "empty tuple",
+          "vector_id": "contract-field-invalid-v1::zero-bindings"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "zero-bindings",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--007--wrong-member-closure": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_REVIEW_PAYLOAD",
+          "field_or_argument": "members[0]",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "wrong-member-closure",
+          "value": "exact positive Binding instead of Set closure input",
+          "vector_id": "contract-field-invalid-v1::wrong-member-closure"
+        },
+        "operation_id": "PUBLIC_REVIEW_PAYLOAD",
+        "probe_slug": "wrong-member-closure",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--008--maker-identity-nonbytes": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_REQUEST_PREPARE",
+          "field_or_argument": "set_maker_identity_bytes",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "maker-identity-nonbytes",
+          "value": "string",
+          "vector_id": "contract-field-invalid-v1::maker-identity-nonbytes"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-identity-nonbytes",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "contract-field-invalid-v1--009--empty-request-basis": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CONTRACT_FIELD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "entry": "PUBLIC_REQUEST_PREPARE",
+          "field_or_argument": "request_basis",
+          "kind": "EXACT_PUBLIC_CONTRACT_INPUT",
+          "probe_slug": "empty-request-basis",
+          "value": "empty string",
+          "vector_id": "contract-field-invalid-v1::empty-request-basis"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "empty-request-basis",
+        "scenario_id": "contract-field-invalid-v1"
+      },
+      "cross-artifact-attack-v1--001--cross-artifact": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Replace only member 1 reference_prompt_artifact_sha256 from the other fixed case.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "cross-artifact",
+          "vector_id": "cross-artifact-attack-v1::cross-artifact"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "cross-artifact",
+        "scenario_id": "cross-artifact-attack-v1"
+      },
+      "cross-catalog-attack-v1--001--cross-catalog": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Replace only member 1 Catalog version/digest from the other fixed case.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "cross-catalog",
+          "vector_id": "cross-catalog-attack-v1::cross-catalog"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "cross-catalog",
+        "scenario_id": "cross-catalog-attack-v1"
+      },
+      "cross-profile-attack-v1--001--cross-profile": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Replace only member 1 Profile ID/version/digest from the other fixed case.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "cross-profile",
+          "vector_id": "cross-profile-attack-v1::cross-profile"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "cross-profile",
+        "scenario_id": "cross-profile-attack-v1"
+      },
+      "cross-purpose-attack-v1--001--character-target-scene-role": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Combine a Character Binding and Scene Binding so asset_purpose is the first common-frame difference.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "character-target-scene-role",
+          "vector_id": "cross-purpose-attack-v1::character-target-scene-role"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "character-target-scene-role",
+        "scenario_id": "cross-purpose-attack-v1"
+      },
+      "cross-subject-attack-v1--001--cross-subject": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Replace only member 1 subject_id from the other fixed case.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "cross-subject",
+          "vector_id": "cross-subject-attack-v1::cross-subject"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "cross-subject",
+        "scenario_id": "cross-subject-attack-v1"
+      },
+      "duplicate-binding-attack-v1--001--duplicate-binding-identity": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DUPLICATE_ROLE_OR_BINDING",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Make member 1 reuse member 0 Binding ID and digest before requested-role processing.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "duplicate-binding-identity",
+          "vector_id": "duplicate-binding-attack-v1::duplicate-binding-identity"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "duplicate-binding-identity",
+        "scenario_id": "duplicate-binding-attack-v1"
+      },
+      "duplicate-role-attack-v1--001--duplicate-requested-role": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DUPLICATE_ROLE_OR_BINDING",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Pass the Character identity role twice with two supplied positive Bindings.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "duplicate-requested-role",
+          "vector_id": "duplicate-role-attack-v1::duplicate-requested-role"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "duplicate-requested-role",
+        "scenario_id": "duplicate-role-attack-v1"
+      },
+      "equal-bytes-distinct-candidate-sidecar-occurrences-v1--001--equal-png-distinct-candidate-sidecar": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Use base and auxiliary Character occurrences: PNG anchors equal; Candidate, Sidecar and Binding identities distinct.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "equal-png-distinct-candidate-sidecar",
+          "vector_id": "equal-bytes-distinct-candidate-sidecar-occurrences-v1::equal-png-distinct-candidate-sidecar"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "equal-png-distinct-candidate-sidecar",
+        "scenario_id": "equal-bytes-distinct-candidate-sidecar-occurrences-v1"
+      },
+      "expired-qualification-manifest-v1--001--qualification-expired": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set only the Qualification or Manifest bound named by probe_slug equal to set_at.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "qualification-expired",
+          "vector_id": "expired-qualification-manifest-v1::qualification-expired"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "qualification-expired",
+        "scenario_id": "expired-qualification-manifest-v1"
+      },
+      "expired-qualification-manifest-v1--002--manifest-expired": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set only the Qualification or Manifest bound named by probe_slug equal to set_at.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "manifest-expired",
+          "vector_id": "expired-qualification-manifest-v1::manifest-expired"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "manifest-expired",
+        "scenario_id": "expired-qualification-manifest-v1"
+      },
+      "fail-over-indeterminate-v1--001--provider-boundary-fail-selection-indeterminate": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:NON_EXCLUSIVE_NO_PROVIDER_BOUNDARY_NOT_ACKNOWLEDGED:FAIL_OVER_INDETERMINATE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set gate 10 INDETERMINATE and gate 11 FAIL with distinct fixed nonempty fictional bases.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "provider-boundary-fail-selection-indeterminate",
+          "vector_id": "fail-over-indeterminate-v1::provider-boundary-fail-selection-indeterminate"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "provider-boundary-fail-selection-indeterminate",
+        "scenario_id": "fail-over-indeterminate-v1"
+      },
+      "favorable-subset-attack-v1--001--omit-failed-member-from-original-request": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Call finalization with the original three-role Request and omit the failed member.",
+          "kind": "NO_FAVORABLE_REPAIR",
+          "probe_slug": "omit-failed-member-from-original-request",
+          "vector_id": "favorable-subset-attack-v1::omit-failed-member-from-original-request"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "omit-failed-member-from-original-request",
+        "scenario_id": "favorable-subset-attack-v1"
+      },
+      "favorable-subset-attack-v1--002--replace-failed-member-on-original-request": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Keep the original Request, replace the failed member with one fixed distinct positive same-role occurrence and rebuild supplied Maker action for the replacement input.",
+          "kind": "NO_FAVORABLE_REPAIR",
+          "probe_slug": "replace-failed-member-on-original-request",
+          "vector_id": "favorable-subset-attack-v1::replace-failed-member-on-original-request"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "replace-failed-member-on-original-request",
+        "scenario_id": "favorable-subset-attack-v1"
+      },
+      "favorable-subset-attack-v1--003--attach-fabricated-subset-set-to-adverse-decision": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Call public finalization verifier with the exact adverse Decision and an exact-type fabricated positive subset Set attached.",
+          "kind": "NO_FAVORABLE_REPAIR",
+          "probe_slug": "attach-fabricated-subset-set-to-adverse-decision",
+          "vector_id": "favorable-subset-attack-v1::attach-fabricated-subset-set-to-adverse-decision"
+        },
+        "operation_id": "PUBLIC_FINALIZATION_VERIFY",
+        "probe_slug": "attach-fabricated-subset-set-to-adverse-decision",
+        "scenario_id": "favorable-subset-attack-v1"
+      },
+      "final-expired-status-v1--001--final-expired": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set member 0 final status_valid_until equal to set_at.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "final-expired",
+          "vector_id": "final-expired-status-v1::final-expired"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-expired",
+        "scenario_id": "final-expired-status-v1"
+      },
+      "final-indeterminate-status-v1--001--final-indeterminate": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_INDETERMINATE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 final replay INDETERMINATE; all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "final-indeterminate",
+          "vector_id": "final-indeterminate-status-v1::final-indeterminate"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-indeterminate",
+        "scenario_id": "final-indeterminate-status-v1"
+      },
+      "final-primary-binding-drift-v1--001--final-active-binding-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:COMMON_PRIMARY_BINDING_NO_LONGER_ACTIVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Keep the exact Request primary pair and supply the fixed active same-subject/purpose successor pair only at finalization.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "final-active-binding-drift",
+          "vector_id": "final-primary-binding-drift-v1::final-active-binding-drift"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-active-binding-drift",
+        "scenario_id": "final-primary-binding-drift-v1"
+      },
+      "final-revoked-held-status-v1--001--final-revoked": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:MEMBER_STATUS_NOT_CURRENT_AT_SET",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 final replay with the exact state named by probe_slug; all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "final-revoked",
+          "vector_id": "final-revoked-held-status-v1::final-revoked"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-revoked",
+        "scenario_id": "final-revoked-held-status-v1"
+      },
+      "final-revoked-held-status-v1--002--final-held": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:MEMBER_STATUS_NOT_CURRENT_AT_SET",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 final replay with the exact state named by probe_slug; all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "final-held",
+          "vector_id": "final-revoked-held-status-v1::final-held"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-held",
+        "scenario_id": "final-revoked-held-status-v1"
+      },
+      "final-stale-closure-attack-v1--001--stale-closure": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the final replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "stale-closure",
+          "vector_id": "final-stale-closure-attack-v1::stale-closure"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "stale-closure",
+        "scenario_id": "final-stale-closure-attack-v1"
+      },
+      "final-stale-closure-attack-v1--002--copied-receipt": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the final replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "copied-receipt",
+          "vector_id": "final-stale-closure-attack-v1::copied-receipt"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "copied-receipt",
+        "scenario_id": "final-stale-closure-attack-v1"
+      },
+      "final-stale-closure-attack-v1--003--copied-current": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the final replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "copied-current",
+          "vector_id": "final-stale-closure-attack-v1::copied-current"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "copied-current",
+        "scenario_id": "final-stale-closure-attack-v1"
+      },
+      "forbidden-identity-equality-v1--001--set-maker-selector": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-maker-selector",
+          "vector_id": "forbidden-identity-equality-v1::set-maker-selector"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-maker-selector",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--002--qualification-qualifier": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "qualification-qualifier",
+          "vector_id": "forbidden-identity-equality-v1::qualification-qualifier"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "qualification-qualifier",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--003--manifest-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "manifest-checker",
+          "vector_id": "forbidden-identity-equality-v1::manifest-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "manifest-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--004--promotion-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-request-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::promotion-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-request-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--005--promotion-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-final-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::promotion-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-final-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--006--promotion-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-checker",
+          "vector_id": "forbidden-identity-equality-v1::promotion-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--007--role-binding-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-checker",
+          "vector_id": "forbidden-identity-equality-v1::role-binding-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--008--role-binding-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-request-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::role-binding-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-request-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--009--role-binding-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-final-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::role-binding-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-final-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--010--set-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-request-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::set-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-request-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "forbidden-identity-equality-v1--011--set-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_SEPARATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Checker identity equal to the exact member-0 actor named by probe_slug; rebuild only Checker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-final-status-checker",
+          "vector_id": "forbidden-identity-equality-v1::set-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-final-status-checker",
+        "scenario_id": "forbidden-identity-equality-v1"
+      },
+      "human-rights-fail-v1--001--rights-presentation-fail": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set human gate 9 FAIL with fixed nonempty fictional basis; gates 10/11 PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "rights-presentation-fail",
+          "vector_id": "human-rights-fail-v1::rights-presentation-fail"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "rights-presentation-fail",
+        "scenario_id": "human-rights-fail-v1"
+      },
+      "human-selection-fail-v1--001--selection-gate-fail": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_REJECT:EXPLICIT_SELECTION_ORDER_AND_COVERAGE_NOT_ACKNOWLEDGED",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set human gate 10 FAIL with fixed nonempty fictional basis; gates 9/11 PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "selection-gate-fail",
+          "vector_id": "human-selection-fail-v1::selection-gate-fail"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "selection-gate-fail",
+        "scenario_id": "human-selection-fail-v1"
+      },
+      "human-selection-indeterminate-v1--001--selection-indeterminate": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_ONLY_INDETERMINATE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set human gate 10 INDETERMINATE with fixed nonempty fictional basis; gates 9/11 PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "selection-indeterminate",
+          "vector_id": "human-selection-indeterminate-v1::selection-indeterminate"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "selection-indeterminate",
+        "scenario_id": "human-selection-indeterminate-v1"
+      },
+      "identity-record-invalid-v1--001--empty-object": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {},
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "empty-object",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::empty-object"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "empty-object",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--002--missing-identity-ref": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "r3-reviewer"
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "missing-identity-ref",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::missing-identity-ref"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "missing-identity-ref",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--003--unknown-field": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "r3-reviewer",
+            "identity_ref": "r3-maker",
+            "x_r3_unknown": false
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "unknown-field",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::unknown-field"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "unknown-field",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--004--profile-mismatch": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "x.r3.invalid",
+            "identity_namespace": "r3-reviewer",
+            "identity_ref": "r3-maker"
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "profile-mismatch",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::profile-mismatch"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "profile-mismatch",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--005--namespace-nonportable": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "",
+            "identity_ref": "r3-maker"
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "namespace-nonportable",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::namespace-nonportable"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "namespace-nonportable",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--006--identity-ref-nonportable": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "r3-reviewer",
+            "identity_ref": ""
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "identity-ref-nonportable",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::identity-ref-nonportable"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "identity-ref-nonportable",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "identity-record-invalid-v1--007--identity-ref-wrong-scalar": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:IDENTITY_RECORD_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "compact_canonical_object": {
+            "document_profile": "sdc.privacy-minimized-human-reference.v1",
+            "identity_namespace": "r3-reviewer",
+            "identity_ref": 0
+          },
+          "kind": "SET_MAKER_IDENTITY_CANONICAL_OBJECT",
+          "probe_slug": "identity-ref-wrong-scalar",
+          "terminal_lf": false,
+          "vector_id": "identity-record-invalid-v1::identity-ref-wrong-scalar"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "identity-ref-wrong-scalar",
+        "scenario_id": "identity-record-invalid-v1"
+      },
+      "member-reorder-attack-v1--001--reversed-member-tuple": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CANONICAL_ORDER_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Reverse the first two Scene Bindings while requested roles remain canonical.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "reversed-member-tuple",
+          "vector_id": "member-reorder-attack-v1::reversed-member-tuple"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "reversed-member-tuple",
+        "scenario_id": "member-reorder-attack-v1"
+      },
+      "omitted-branch-member-attack-v1--001--omitted-prior-target-branch": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Remove the fixed predecessor target branch from member 0 Request replay.",
+          "kind": "OMISSION",
+          "probe_slug": "omitted-prior-target-branch",
+          "vector_id": "omitted-branch-member-attack-v1::omitted-prior-target-branch"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "omitted-prior-target-branch",
+        "scenario_id": "omitted-branch-member-attack-v1"
+      },
+      "omitted-branch-member-attack-v1--002--omitted-member-from-original-request": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Call finalization with the original two-role Request and truncate the supplied members to ordinal 0.",
+          "kind": "OMISSION",
+          "probe_slug": "omitted-member-from-original-request",
+          "vector_id": "omitted-branch-member-attack-v1::omitted-member-from-original-request"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "omitted-member-from-original-request",
+        "scenario_id": "omitted-branch-member-attack-v1"
+      },
+      "ordinal-mutation-attack-v1--001--selection-ordinal-is-builder-owned": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:CALLER_SUPPLIED_SELECTION_ORDINAL",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "conclusion": "caller-supplied ordinal cannot reach CANONICAL_ORDER_INVALID",
+          "kind": "CALLER_SURFACE_PROOF",
+          "premises": [
+            "target builder accepts only exact positive Binding tuple and requested-role tuple",
+            "selection_ordinal is generated by enumerate",
+            "constructed invalid target is only admitted to public validation as CONTRACT_FIELD_INVALID"
+          ],
+          "probe_slug": "selection-ordinal-is-builder-owned",
+          "vector_id": "ordinal-mutation-attack-v1::selection-ordinal-is-builder-owned"
+        },
+        "operation_id": "STRUCTURAL_ORDINAL_PROOF",
+        "probe_slug": "selection-ordinal-is-builder-owned",
+        "scenario_id": "ordinal-mutation-attack-v1"
+      },
+      "permitted-maker-overlap-v1--001--qualification-request-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "qualification-request-preparer",
+          "vector_id": "permitted-maker-overlap-v1::qualification-request-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "qualification-request-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--002--qualification-qualifier": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "qualification-qualifier",
+          "vector_id": "permitted-maker-overlap-v1::qualification-qualifier"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "qualification-qualifier",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--003--manifest-maker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "manifest-maker",
+          "vector_id": "permitted-maker-overlap-v1::manifest-maker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "manifest-maker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--004--manifest-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "manifest-checker",
+          "vector_id": "permitted-maker-overlap-v1::manifest-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "manifest-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--005--promotion-request-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-request-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::promotion-request-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-request-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--006--promotion-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-request-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::promotion-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-request-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--007--promotion-final-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-final-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::promotion-final-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-final-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--008--promotion-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-final-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::promotion-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-final-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--009--promotion-maker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-maker",
+          "vector_id": "permitted-maker-overlap-v1::promotion-maker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-maker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--010--promotion-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "promotion-checker",
+          "vector_id": "permitted-maker-overlap-v1::promotion-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "promotion-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--011--role-binding-request-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-request-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-request-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-request-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--012--role-binding-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-request-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-request-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--013--role-binding-final-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-final-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-final-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-final-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--014--role-binding-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-final-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-final-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--015--role-binding-maker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-maker",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-maker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-maker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--016--role-binding-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "role-binding-checker",
+          "vector_id": "permitted-maker-overlap-v1::role-binding-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "role-binding-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--017--set-request-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-request-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::set-request-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-request-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--018--set-request-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-request-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::set-request-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-request-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--019--set-final-status-preparer": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-final-status-preparer",
+          "vector_id": "permitted-maker-overlap-v1::set-final-status-preparer"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-final-status-preparer",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "permitted-maker-overlap-v1--020--set-final-status-checker": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set Maker identity equal to the exact member-0 actor named by probe_slug; rebuild only Maker action.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "set-final-status-checker",
+          "vector_id": "permitted-maker-overlap-v1::set-final-status-checker"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "set-final-status-checker",
+        "scenario_id": "permitted-maker-overlap-v1"
+      },
+      "policy-identity-mismatch-v1--001--sealed-policy-no-caller-input": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:POLICY_IDENTITY_MISMATCH",
+        "input_anchor_id": "POLICY_R3",
+        "mutation_or_fault_vector": {
+          "kind": "SEALED_POLICY_PROOF",
+          "premises": [
+            "no public Policy argument",
+            "Contract Policy fields are fixed literals",
+            "compiled Policy ID/version/bytes/SHA self-check"
+          ],
+          "private_dynamic_or_human_substitution": false,
+          "probe_slug": "sealed-policy-no-caller-input",
+          "vector_id": "policy-identity-mismatch-v1::sealed-policy-no-caller-input"
+        },
+        "operation_id": "STRUCTURAL_POLICY_PROOF",
+        "probe_slug": "sealed-policy-no-caller-input",
+        "scenario_id": "policy-identity-mismatch-v1"
+      },
+      "positive-atomicity-injection-v1--001--positive-decision-without-set": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "construction": "exact GeneratedReferenceRoleBindingSetFinalizationResult instance assembled without invoking its guard",
+          "decision": "positive",
+          "kind": "INVALID_ATOMIC_PAIR",
+          "probe_slug": "positive-decision-without-set",
+          "role_binding_set": "None",
+          "vector_id": "positive-atomicity-injection-v1::positive-decision-without-set"
+        },
+        "operation_id": "PUBLIC_FINALIZATION_VERIFY",
+        "probe_slug": "positive-decision-without-set",
+        "scenario_id": "positive-atomicity-injection-v1"
+      },
+      "positive-atomicity-injection-v1--002--adverse-decision-with-set": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "construction": "exact GeneratedReferenceRoleBindingSetFinalizationResult instance assembled without invoking its guard",
+          "decision": "adverse",
+          "kind": "INVALID_ATOMIC_PAIR",
+          "probe_slug": "adverse-decision-with-set",
+          "role_binding_set": "fixed exact positive Set",
+          "vector_id": "positive-atomicity-injection-v1::adverse-decision-with-set"
+        },
+        "operation_id": "PUBLIC_FINALIZATION_VERIFY",
+        "probe_slug": "adverse-decision-with-set",
+        "scenario_id": "positive-atomicity-injection-v1"
+      },
+      "positive-atomicity-injection-v1--003--set-construction-failure": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "NO_RESULT_TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "kind": "TEST_LOCAL_SET_CONSTRUCTION_FAULT",
+          "message": "injected exact R3 Set construction failure",
+          "patch_target": "sdc.generated_reference_role_binding_set._build_identity",
+          "post_restore_positive_bytes_equal": true,
+          "probe_slug": "set-construction-failure",
+          "raise_type": "ValueError",
+          "trigger_exact_model_type": "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1",
+          "vector_id": "positive-atomicity-injection-v1::set-construction-failure"
+        },
+        "operation_id": "HERMETIC_SET_CONSTRUCTION",
+        "probe_slug": "set-construction-failure",
+        "scenario_id": "positive-atomicity-injection-v1"
+      },
+      "prohibited-authority-injection-v1--001--final-only-status-input-at-request": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:PROHIBITED_BOUNDARY_CONNECTION",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "field": "members[0].set_final_status",
+          "kind": "REQUEST_FINAL_ONLY_INPUT",
+          "probe_slug": "final-only-status-input-at-request",
+          "value": "EXACT_NON_NONE_FIXED_FINAL_STATUS",
+          "vector_id": "prohibited-authority-injection-v1::final-only-status-input-at-request"
+        },
+        "operation_id": "PUBLIC_REVIEW_PAYLOAD",
+        "probe_slug": "final-only-status-input-at-request",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--002--provider": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "provider",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "provider",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::provider"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "provider",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--003--input-material": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "input-material",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "input-material",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::input-material"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "input-material",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--004--provider-request": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "provider-request",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "provider-request",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::provider-request"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "provider-request",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--005--runtime": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "runtime",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "runtime",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::runtime"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "runtime",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--006--url": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "url",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "url",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::url"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "url",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--007--slot": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "slot",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "slot",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::slot"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "slot",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--008--order": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "order",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "order",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::order"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "order",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--009--idempotency": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "idempotency",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "idempotency",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::idempotency"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "idempotency",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--010--credential": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "credential",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "credential",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::credential"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "credential",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--011--cost": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "cost",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "cost",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::cost"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "cost",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--012--retry": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "retry",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "retry",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::retry"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "retry",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--013--publication": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "publication",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "publication",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::publication"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "publication",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--014--retention": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "retention",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "retention",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::retention"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "retention",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "prohibited-authority-injection-v1--015--training": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_PUBLIC_SURFACE_ABSENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "allow_exact_zero_boundary_fields_and_tokens": true,
+          "capability": "training",
+          "kind": "NONEXECUTING_AUTHORITY_SURFACE_PROOF",
+          "probe_slug": "training",
+          "prove_absent": [
+            "authority-bearing public parameter",
+            "authority-bearing return",
+            "production import or call",
+            "positive executable value"
+          ],
+          "vector_id": "prohibited-authority-injection-v1::training"
+        },
+        "operation_id": "STRUCTURAL_AUTHORITY_PROOF",
+        "probe_slug": "training",
+        "scenario_id": "prohibited-authority-injection-v1"
+      },
+      "raw-media-mismatch-v1--001--whole-png-mutation-dominated-by-promotion": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:WHOLE_PNG_MUTATION_REACHES_SET_RAW_MEDIA",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "conclusion": "whole-PNG change fails Promotion closure before Set RAW mapping",
+          "kind": "RAW_MEDIA_DOMINANCE_PROOF",
+          "premise": "ADR045_PREDECESSOR_DOMINANCE",
+          "probe_slug": "whole-png-mutation-dominated-by-promotion",
+          "vector_id": "raw-media-mismatch-v1::whole-png-mutation-dominated-by-promotion"
+        },
+        "operation_id": "STRUCTURAL_RAW_MEDIA_DOMINANCE_PROOF",
+        "probe_slug": "whole-png-mutation-dominated-by-promotion",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--002--size-anchor-mutation-dominated-by-adr046": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:SIZE_ANCHOR_MUTATION_REACHES_SET_RAW_MEDIA",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "conclusion": "size anchor change fails ADR046 formal/rebuild before Set RAW mapping",
+          "kind": "RAW_MEDIA_DOMINANCE_PROOF",
+          "premise": "ADR046_FORMAL_REBUILD_DOMINANCE",
+          "probe_slug": "size-anchor-mutation-dominated-by-adr046",
+          "vector_id": "raw-media-mismatch-v1::size-anchor-mutation-dominated-by-adr046"
+        },
+        "operation_id": "STRUCTURAL_RAW_MEDIA_DOMINANCE_PROOF",
+        "probe_slug": "size-anchor-mutation-dominated-by-adr046",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--003--content-sha256-mutation-dominated-by-adr046": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:CONTENT_SHA256_MUTATION_REACHES_SET_RAW_MEDIA",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "conclusion": "content SHA change fails ADR046 formal/rebuild before Set RAW mapping",
+          "kind": "RAW_MEDIA_DOMINANCE_PROOF",
+          "premise": "ADR046_FORMAL_REBUILD_DOMINANCE",
+          "probe_slug": "content-sha256-mutation-dominated-by-adr046",
+          "vector_id": "raw-media-mismatch-v1::content-sha256-mutation-dominated-by-adr046"
+        },
+        "operation_id": "STRUCTURAL_RAW_MEDIA_DOMINANCE_PROOF",
+        "probe_slug": "content-sha256-mutation-dominated-by-adr046",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--004--admitted-png-construction-failure-unreachable": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:SET_ADMITTED_PNG_CONSTRUCTION_FAILURE",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "conclusion": "Set derives raw size/SHA and accepts only a syntactically valid target technical SHA, so constructor failure is unreachable after preflight",
+          "kind": "RAW_MEDIA_DOMINANCE_PROOF",
+          "premise": "SET_DERIVATION_PROOF",
+          "probe_slug": "admitted-png-construction-failure-unreachable",
+          "vector_id": "raw-media-mismatch-v1::admitted-png-construction-failure-unreachable"
+        },
+        "operation_id": "STRUCTURAL_RAW_MEDIA_DOMINANCE_PROOF",
+        "probe_slug": "admitted-png-construction-failure-unreachable",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--005--technical-record-anchor-mismatch": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RAW_MEDIA_MISMATCH",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "field": "role_binding_request.requested_role_binding_target.media_technical_record_sha256",
+          "kind": "PUBLIC_ADR046_TECHNICAL_ANCHOR_MUTATION",
+          "probe_slug": "technical-record-anchor-mismatch",
+          "reanchor": "exact ADR046 Request self identity",
+          "retained": "verified Promotion Sidecar technical record",
+          "value": "1111111111111111111111111111111111111111111111111111111111111111",
+          "vector_id": "raw-media-mismatch-v1::technical-record-anchor-mismatch"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "technical-record-anchor-mismatch",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--006--request-png-plus-post-png-dual-fault": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:RAW_MEDIA_MISMATCH",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "adr046_order_anchor": "tests/test_generated_reference_role_binding.py::test_representative_promotion_png_role_primary_status_stage_priority",
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "ADR046_DELEGATED_PNG_DUAL_FAULT",
+          "later_fault": "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID by Scene-lighting role on Character purpose",
+          "probe_slug": "request-png-plus-post-png-dual-fault",
+          "selected_fault": "GeneratedReferenceRoleBindingError:PNG_ADMISSION_INVALID",
+          "vector_id": "raw-media-mismatch-v1::request-png-plus-post-png-dual-fault"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "request-png-plus-post-png-dual-fault",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "raw-media-mismatch-v1--007--finalization-png-plus-post-png-dual-fault": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:RAW_MEDIA_MISMATCH",
+        "input_anchor_id": "CHARACTER_EQUAL_PNG_PAIR_R3",
+        "mutation_or_fault_vector": {
+          "adr046_order_anchor": "tests/test_generated_reference_role_binding.py::test_representative_promotion_png_role_primary_status_stage_priority",
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "ADR046_DELEGATED_PNG_DUAL_FAULT",
+          "later_fault": "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID by Scene-lighting role on Character purpose",
+          "probe_slug": "finalization-png-plus-post-png-dual-fault",
+          "selected_fault": "GeneratedReferenceRoleBindingError:PNG_ADMISSION_INVALID",
+          "vector_id": "raw-media-mismatch-v1::finalization-png-plus-post-png-dual-fault"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "finalization-png-plus-post-png-dual-fault",
+        "scenario_id": "raw-media-mismatch-v1"
+      },
+      "request-expired-status-v1--001--request-expired": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:TIME_OR_VALIDITY_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Set member 0 Request status_valid_until equal to requested_at.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "request-expired",
+          "vector_id": "request-expired-status-v1::request-expired"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "request-expired",
+        "scenario_id": "request-expired-status-v1"
+      },
+      "request-non-current-status-v1--001--request-revoked": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:REQUEST_MEMBER_STATUS_NOT_CURRENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 Request replay with the exact state named by probe_slug.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "request-revoked",
+          "vector_id": "request-non-current-status-v1::request-revoked"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "request-revoked",
+        "scenario_id": "request-non-current-status-v1"
+      },
+      "request-non-current-status-v1--002--request-held": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:REQUEST_MEMBER_STATUS_NOT_CURRENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 Request replay with the exact state named by probe_slug.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "request-held",
+          "vector_id": "request-non-current-status-v1::request-held"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "request-held",
+        "scenario_id": "request-non-current-status-v1"
+      },
+      "request-non-current-status-v1--003--request-indeterminate": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:REQUEST_MEMBER_STATUS_NOT_CURRENT",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Rebuild member 0 Request replay with the exact state named by probe_slug.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "request-indeterminate",
+          "vector_id": "request-non-current-status-v1::request-indeterminate"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "request-indeterminate",
+        "scenario_id": "request-non-current-status-v1"
+      },
+      "request-primary-binding-attack-v1--001--final-cross-subject-purpose-primary": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:PRIMARY_BINDING_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "final_primary_pair": "FIXED_SCENE_PAIR_CROSS_SUBJECT_OR_PURPOSE",
+          "kind": "FINAL_PRIMARY_PAIR_REPLACEMENT",
+          "probe_slug": "final-cross-subject-purpose-primary",
+          "request": "ORIGINAL_EXACT_CHARACTER_REQUEST",
+          "requested_primary_pair": "ORIGINAL_CHARACTER_PAIR",
+          "vector_id": "request-primary-binding-attack-v1::final-cross-subject-purpose-primary"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "final-cross-subject-purpose-primary",
+        "scenario_id": "request-primary-binding-attack-v1"
+      },
+      "request-stale-closure-attack-v1--001--stale-closure": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the Request replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "stale-closure",
+          "vector_id": "request-stale-closure-attack-v1::stale-closure"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "stale-closure",
+        "scenario_id": "request-stale-closure-attack-v1"
+      },
+      "request-stale-closure-attack-v1--002--copied-receipt": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the Request replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "copied-receipt",
+          "vector_id": "request-stale-closure-attack-v1::copied-receipt"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "copied-receipt",
+        "scenario_id": "request-stale-closure-attack-v1"
+      },
+      "request-stale-closure-attack-v1--003--copied-current": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:CURRENT_STATUS_REPLAY_INVALID",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the Request replay mutation named by probe_slug to member 0.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "copied-current",
+          "vector_id": "request-stale-closure-attack-v1::copied-current"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "copied-current",
+        "scenario_id": "request-stale-closure-attack-v1"
+      },
+      "resource-limit-exceeded-v1--001--member-count-1-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "human_gates": "ALL_PASS",
+          "kind": "RESOURCE_EXECUTION",
+          "members": 1,
+          "probe_slug": "member-count-1-admit",
+          "vector_id": "resource-limit-exceeded-v1::member-count-1-admit"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "member-count-1-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--002--member-count-4-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "human_gates": "ALL_PASS",
+          "kind": "RESOURCE_EXECUTION",
+          "members": 4,
+          "probe_slug": "member-count-4-admit",
+          "vector_id": "resource-limit-exceeded-v1::member-count-4-admit"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "member-count-4-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--003--member-count-5-error": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "kind": "RESOURCE_EXECUTION",
+          "members": 5,
+          "probe_slug": "member-count-5-error",
+          "vector_id": "resource-limit-exceeded-v1::member-count-5-error"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "member-count-5-error",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--004--per-member-png-exact-cap-guard-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "guard": "ADMIT",
+          "kind": "GUARD_THEN_ERROR",
+          "members": 1,
+          "next_fixed_fault": "ADR045_PREDECESSOR_LINK_DRIFT",
+          "png": "fixed first-party fictional in-memory PNG; no path",
+          "png_bytes_each": 67108864,
+          "probe_slug": "per-member-png-exact-cap-guard-admit",
+          "vector_id": "resource-limit-exceeded-v1::per-member-png-exact-cap-guard-admit"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "per-member-png-exact-cap-guard-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--005--aggregate-png-exact-cap-guard-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "guard": "ADMIT",
+          "kind": "GUARD_THEN_ERROR",
+          "logical_aggregate_png_bytes": 268435456,
+          "members": 4,
+          "next_fixed_fault": "ADR045_PREDECESSOR_LINK_DRIFT",
+          "occurrences_count_independently": true,
+          "png": "fixed first-party fictional in-memory PNG; no path",
+          "probe_slug": "aggregate-png-exact-cap-guard-admit",
+          "shared_immutable_png_bytes": 67108864,
+          "vector_id": "resource-limit-exceeded-v1::aggregate-png-exact-cap-guard-admit"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "aggregate-png-exact-cap-guard-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--006--per-member-png-cap-plus-1-error": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "kind": "RESOURCE_EXECUTION",
+          "members": 1,
+          "png_bytes_each": 67108865,
+          "probe_slug": "per-member-png-cap-plus-1-error",
+          "vector_id": "resource-limit-exceeded-v1::per-member-png-cap-plus-1-error"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "per-member-png-cap-plus-1-error",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--007--aggregate-png-strict-exceed-dominated": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:AGGREGATE_PNG_STRICT_EXCEED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "equation": "4*67108864=268435456",
+          "kind": "DOMINANCE_PROOF",
+          "premises": [
+            "members<=4",
+            "PNG bytes/member<=67108864"
+          ],
+          "probe_slug": "aggregate-png-strict-exceed-dominated",
+          "rejection_operator": ">",
+          "vector_id": "resource-limit-exceeded-v1::aggregate-png-strict-exceed-dominated"
+        },
+        "operation_id": "STRUCTURAL_RESOURCE_DOMINANCE_PROOF",
+        "probe_slug": "aggregate-png-strict-exceed-dominated",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--008--raw-leaf-count-1780-guard-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "closed_filler_construction": "FOUR_FIRST_PARTY_FICTIONAL_IN_MEMORY_MEMBER_CLOSURES_PLUS_THE_FOUR_SET_LEVEL_MAKER_CHECKER_IDENTITY_ACTION_RECORDS_POPULATE_EVERY_FROZEN_RAW_LEAF_OWNER_SLOT_TO_EXACTLY_1780_OCCURRENCES_WITH_EACH_BYTES_VALUE_NONEMPTY_AND_AT_OR_BELOW_ITS_OWNER_MAXIMUM",
+          "expected_nested_code": "INPUT_DOCUMENT_INVALID",
+          "expected_nested_type": "GeneratedReferenceRoleBindingError",
+          "field": "members[0].role_binding_maker_identity_bytes",
+          "fill_byte_hex": "78",
+          "guard": "ADMIT",
+          "kind": "GUARD_THEN_ERROR",
+          "next_fixed_fault": "ADR046_REQUEST_RETAINED_MAKER_IDENTITY_DOCUMENT_INVALID_BEFORE_PROMOTION_OR_STATUS_REPLAY",
+          "probe_slug": "raw-leaf-count-1780-guard-admit",
+          "raw_leaf_occurrences": 1780,
+          "replacement_size_bytes": 1,
+          "vector_id": "resource-limit-exceeded-v1::raw-leaf-count-1780-guard-admit"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "raw-leaf-count-1780-guard-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--009--aggregate-raw-exact-cap-guard-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "RESOURCE_GUARD_ADMITTED_THEN_TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "closed_filler_construction": "FOUR_FIRST_PARTY_FICTIONAL_IN_MEMORY_MEMBER_CLOSURES_PLUS_THE_FOUR_SET_LEVEL_MAKER_CHECKER_IDENTITY_ACTION_RECORDS_POPULATE_ALL_1780_FROZEN_RAW_LEAF_OWNER_SLOTS_AND_SET_EACH_BYTES_VALUE_TO_ITS_EXACT_OWNER_MAXIMUM_SO_THE_LOGICAL_SUM_IS_EXACTLY_512524288",
+          "expected_nested_code": "INPUT_DOCUMENT_INVALID",
+          "expected_nested_type": "GeneratedReferenceRoleBindingError",
+          "field": "members[0].role_binding_maker_identity_bytes",
+          "fill_byte_hex": "78",
+          "guard": "ADMIT",
+          "kind": "GUARD_THEN_ERROR",
+          "logical_aggregate_raw_bytes": 512524288,
+          "next_fixed_fault": "ADR046_REQUEST_RETAINED_MAKER_IDENTITY_DOCUMENT_INVALID_BEFORE_PROMOTION_OR_STATUS_REPLAY",
+          "probe_slug": "aggregate-raw-exact-cap-guard-admit",
+          "replacement_size_bytes": 16384,
+          "vector_id": "resource-limit-exceeded-v1::aggregate-raw-exact-cap-guard-admit"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "aggregate-raw-exact-cap-guard-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--010--raw-leaf-count-1781-error": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "construction": "add exact eleventh Qualification evidence leaf within the closed four-member process graph",
+          "kind": "RESOURCE_EXECUTION",
+          "probe_slug": "raw-leaf-count-1781-error",
+          "raw_leaf_occurrences": 1781,
+          "vector_id": "resource-limit-exceeded-v1::raw-leaf-count-1781-error"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "raw-leaf-count-1781-error",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--011--aggregate-raw-strict-exceed-dominated": {
+        "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+        "expected_outcome": "PROVED_UNREACHABLE:AGGREGATE_RAW_STRICT_EXCEED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "kind": "DOMINANCE_PROOF",
+          "maximum_logical_raw_bytes": 512524288,
+          "premises": [
+            "all 1780 owner slots closed",
+            "every leaf at or below exact owner maximum"
+          ],
+          "probe_slug": "aggregate-raw-strict-exceed-dominated",
+          "rejection_operator": ">",
+          "vector_id": "resource-limit-exceeded-v1::aggregate-raw-strict-exceed-dominated"
+        },
+        "operation_id": "STRUCTURAL_RESOURCE_DOMINANCE_PROOF",
+        "probe_slug": "aggregate-raw-strict-exceed-dominated",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--012--semantic-capsules-31-admit": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "callgraph_ledger": "frozen positive finalization",
+          "human_gates": "ALL_PASS",
+          "kind": "RESOURCE_EXECUTION",
+          "members": 4,
+          "probe_slug": "semantic-capsules-31-admit",
+          "semantic_capsules": 31,
+          "vector_id": "resource-limit-exceeded-v1::semantic-capsules-31-admit"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "semantic-capsules-31-admit",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "resource-limit-exceeded-v1--013--maker-action-bytes-cap-plus-1-error": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RESOURCE_LIMIT_EXCEEDED",
+        "input_anchor_id": "RESOURCE_IN_MEMORY_R3",
+        "mutation_or_fault_vector": {
+          "field": "set_maker_action_bytes",
+          "kind": "RESOURCE_EXECUTION",
+          "probe_slug": "maker-action-bytes-cap-plus-1-error",
+          "size_bytes": 262145,
+          "vector_id": "resource-limit-exceeded-v1::maker-action-bytes-cap-plus-1-error"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "maker-action-bytes-cap-plus-1-error",
+        "scenario_id": "resource-limit-exceeded-v1"
+      },
+      "role-binding-finalization-invalid-v1--001--positive-binding-rebuild-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "exact_outer_process_types_retained": true,
+          "field": "role_binding_result.decision.decision_sha256",
+          "kind": "ADR046_EXPECTED_RESULT_TAMPER",
+          "probe_slug": "positive-binding-rebuild-drift",
+          "value": "0000000000000000000000000000000000000000000000000000000000000000",
+          "vector_id": "role-binding-finalization-invalid-v1::positive-binding-rebuild-drift"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "positive-binding-rebuild-drift",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--002--role-binding-code-request-input-resource-limit-exceeded": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-input-resource-limit-exceeded",
+          "raise_code": "INPUT_RESOURCE_LIMIT_EXCEEDED",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-input-resource-limit-exceeded"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-input-resource-limit-exceeded",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--003--role-binding-code-request-input-document-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-input-document-invalid",
+          "raise_code": "INPUT_DOCUMENT_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-input-document-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-input-document-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--004--role-binding-code-request-contract-field-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-contract-field-invalid",
+          "raise_code": "CONTRACT_FIELD_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-contract-field-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-contract-field-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--005--role-binding-code-request-policy-identity-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-policy-identity-mismatch",
+          "raise_code": "POLICY_IDENTITY_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-policy-identity-mismatch"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-policy-identity-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--006--role-binding-code-request-formal-identity-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-formal-identity-mismatch",
+          "raise_code": "FORMAL_IDENTITY_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-formal-identity-mismatch"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-formal-identity-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--007--role-binding-code-request-upstream-closure-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-upstream-closure-mismatch",
+          "raise_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-upstream-closure-mismatch"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-upstream-closure-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--008--role-binding-code-request-promotion-closure-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-promotion-closure-invalid",
+          "raise_code": "PROMOTION_CLOSURE_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-promotion-closure-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-promotion-closure-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--009--role-binding-code-request-role-purpose-or-membership-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-role-purpose-or-membership-invalid",
+          "raise_code": "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-role-purpose-or-membership-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-role-purpose-or-membership-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--010--role-binding-code-request-primary-asset-binding-closure-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-primary-asset-binding-closure-invalid",
+          "raise_code": "PRIMARY_ASSET_BINDING_CLOSURE_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-primary-asset-binding-closure-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-primary-asset-binding-closure-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--011--role-binding-code-request-current-status-replay-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-current-status-replay-invalid",
+          "raise_code": "CURRENT_STATUS_REPLAY_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-current-status-replay-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-current-status-replay-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--012--role-binding-code-request-rights-scope-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-rights-scope-mismatch",
+          "raise_code": "RIGHTS_SCOPE_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-rights-scope-mismatch"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-rights-scope-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--013--role-binding-code-request-role-separation-violation": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-role-separation-violation",
+          "raise_code": "ROLE_SEPARATION_VIOLATION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-role-separation-violation"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-role-separation-violation",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--014--role-binding-code-request-action-record-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-action-record-invalid",
+          "raise_code": "ACTION_RECORD_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-action-record-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-action-record-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--015--role-binding-code-request-time-or-validity-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-time-or-validity-invalid",
+          "raise_code": "TIME_OR_VALIDITY_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-time-or-validity-invalid"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-time-or-validity-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--016--role-binding-code-request-authority-surface-nonzero": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-authority-surface-nonzero",
+          "raise_code": "AUTHORITY_SURFACE_NONZERO",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-authority-surface-nonzero"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-authority-surface-nonzero",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--017--role-binding-code-request-prohibited-boundary-connection": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-prohibited-boundary-connection",
+          "raise_code": "PROHIBITED_BOUNDARY_CONNECTION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-prohibited-boundary-connection"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-prohibited-boundary-connection",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--018--role-binding-code-request-binding-gate-not-pass": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-binding-gate-not-pass",
+          "raise_code": "BINDING_GATE_NOT_PASS",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-binding-gate-not-pass"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-binding-gate-not-pass",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--019--role-binding-code-request-atomic-output-invariant-violation": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-request-atomic-output-invariant-violation",
+          "raise_code": "ATOMIC_OUTPUT_INVARIANT_VIOLATION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-request-atomic-output-invariant-violation"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-request-atomic-output-invariant-violation",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--020--role-binding-code-finalization-input-resource-limit-exceeded": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-input-resource-limit-exceeded",
+          "raise_code": "INPUT_RESOURCE_LIMIT_EXCEEDED",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-input-resource-limit-exceeded"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-input-resource-limit-exceeded",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--021--role-binding-code-finalization-input-document-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-input-document-invalid",
+          "raise_code": "INPUT_DOCUMENT_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-input-document-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-input-document-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--022--role-binding-code-finalization-contract-field-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-contract-field-invalid",
+          "raise_code": "CONTRACT_FIELD_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-contract-field-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-contract-field-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--023--role-binding-code-finalization-policy-identity-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-policy-identity-mismatch",
+          "raise_code": "POLICY_IDENTITY_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-policy-identity-mismatch"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-policy-identity-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--024--role-binding-code-finalization-formal-identity-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-formal-identity-mismatch",
+          "raise_code": "FORMAL_IDENTITY_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-formal-identity-mismatch"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-formal-identity-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--025--role-binding-code-finalization-upstream-closure-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-upstream-closure-mismatch",
+          "raise_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-upstream-closure-mismatch"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-upstream-closure-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--026--role-binding-code-finalization-promotion-closure-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-promotion-closure-invalid",
+          "raise_code": "PROMOTION_CLOSURE_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-promotion-closure-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-promotion-closure-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--027--role-binding-code-finalization-role-purpose-or-membership-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-role-purpose-or-membership-invalid",
+          "raise_code": "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-role-purpose-or-membership-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-role-purpose-or-membership-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--028--role-binding-code-finalization-primary-asset-binding-closure-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-primary-asset-binding-closure-invalid",
+          "raise_code": "PRIMARY_ASSET_BINDING_CLOSURE_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-primary-asset-binding-closure-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-primary-asset-binding-closure-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--029--role-binding-code-finalization-current-status-replay-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-current-status-replay-invalid",
+          "raise_code": "CURRENT_STATUS_REPLAY_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-current-status-replay-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-current-status-replay-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--030--role-binding-code-finalization-rights-scope-mismatch": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-rights-scope-mismatch",
+          "raise_code": "RIGHTS_SCOPE_MISMATCH",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-rights-scope-mismatch"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-rights-scope-mismatch",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--031--role-binding-code-finalization-role-separation-violation": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-role-separation-violation",
+          "raise_code": "ROLE_SEPARATION_VIOLATION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-role-separation-violation"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-role-separation-violation",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--032--role-binding-code-finalization-action-record-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-action-record-invalid",
+          "raise_code": "ACTION_RECORD_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-action-record-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-action-record-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--033--role-binding-code-finalization-time-or-validity-invalid": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-time-or-validity-invalid",
+          "raise_code": "TIME_OR_VALIDITY_INVALID",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-time-or-validity-invalid"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-time-or-validity-invalid",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--034--role-binding-code-finalization-authority-surface-nonzero": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-authority-surface-nonzero",
+          "raise_code": "AUTHORITY_SURFACE_NONZERO",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-authority-surface-nonzero"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-authority-surface-nonzero",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--035--role-binding-code-finalization-prohibited-boundary-connection": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-prohibited-boundary-connection",
+          "raise_code": "PROHIBITED_BOUNDARY_CONNECTION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-prohibited-boundary-connection"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-prohibited-boundary-connection",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--036--role-binding-code-finalization-binding-gate-not-pass": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-binding-gate-not-pass",
+          "raise_code": "BINDING_GATE_NOT_PASS",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-binding-gate-not-pass"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-binding-gate-not-pass",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--037--role-binding-code-finalization-atomic-output-invariant-violation": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 typed verifier failure",
+          "probe_slug": "role-binding-code-finalization-atomic-output-invariant-violation",
+          "raise_code": "ATOMIC_OUTPUT_INVARIANT_VIOLATION",
+          "raise_type": "GeneratedReferenceRoleBindingError",
+          "vector_id": "role-binding-finalization-invalid-v1::role-binding-code-finalization-atomic-output-invariant-violation"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "role-binding-code-finalization-atomic-output-invariant-violation",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--038--status-error-type-request-generatedreferenceasofassessmenterror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferenceasofassessmenterror",
+          "raise_code": "AS_OF_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceAsOfAssessmentError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferenceasofassessmenterror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferenceasofassessmenterror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--039--status-error-type-request-generatedreferencechaincoverageerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferencechaincoverageerror",
+          "raise_code": "CHAIN_COLLECTION_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceChainCoverageError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferencechaincoverageerror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferencechaincoverageerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--040--status-error-type-request-generatedreferencechainreplayerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferencechainreplayerror",
+          "raise_code": "COUNT_OUT_OF_RANGE",
+          "raise_type": "GeneratedReferenceChainReplayError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferencechainreplayerror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferencechainreplayerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--041--status-error-type-request-generatedreferencejointreplayerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferencejointreplayerror",
+          "raise_code": "RECORD_CHAIN_COVERAGE_REPLAY_FAILED",
+          "raise_type": "GeneratedReferenceJointReplayError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferencejointreplayerror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferencejointreplayerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--042--status-error-type-request-generatedreferencereceipterror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferencereceipterror",
+          "raise_code": "RECEIPT_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceReceiptError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferencereceipterror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferencereceipterror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--043--status-error-type-request-generatedreferencerightscurrentstatuserror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-request-generatedreferencerightscurrentstatuserror",
+          "raise_code": "EXACT_INPUT_TYPE_REQUIRED",
+          "raise_type": "GeneratedReferenceRightsCurrentStatusError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-request-generatedreferencerightscurrentstatuserror"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-request-generatedreferencerightscurrentstatuserror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--044--status-error-type-finalization-generatedreferenceasofassessmenterror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferenceasofassessmenterror",
+          "raise_code": "AS_OF_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceAsOfAssessmentError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferenceasofassessmenterror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferenceasofassessmenterror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--045--status-error-type-finalization-generatedreferencechaincoverageerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferencechaincoverageerror",
+          "raise_code": "CHAIN_COLLECTION_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceChainCoverageError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferencechaincoverageerror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferencechaincoverageerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--046--status-error-type-finalization-generatedreferencechainreplayerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferencechainreplayerror",
+          "raise_code": "COUNT_OUT_OF_RANGE",
+          "raise_type": "GeneratedReferenceChainReplayError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferencechainreplayerror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferencechainreplayerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--047--status-error-type-finalization-generatedreferencejointreplayerror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferencejointreplayerror",
+          "raise_code": "RECORD_CHAIN_COVERAGE_REPLAY_FAILED",
+          "raise_type": "GeneratedReferenceJointReplayError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferencejointreplayerror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferencejointreplayerror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--048--status-error-type-finalization-generatedreferencereceipterror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferencereceipterror",
+          "raise_code": "RECEIPT_CONTRACT_INVALID",
+          "raise_type": "GeneratedReferenceReceiptError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferencereceipterror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferencereceipterror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--049--status-error-type-finalization-generatedreferencerightscurrentstatuserror": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 status verifier failure",
+          "probe_slug": "status-error-type-finalization-generatedreferencerightscurrentstatuserror",
+          "raise_code": "EXACT_INPUT_TYPE_REQUIRED",
+          "raise_type": "GeneratedReferenceRightsCurrentStatusError",
+          "vector_id": "role-binding-finalization-invalid-v1::status-error-type-finalization-generatedreferencerightscurrentstatuserror"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "status-error-type-finalization-generatedreferencerightscurrentstatuserror",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--050--decision-sha256-target": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "behavior": {
+            "return": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "call_count": 1,
+          "kind": "TEST_LOCAL_IMPORTED_HELPER_FAULT",
+          "patch_target": "sdc.generated_reference_role_binding_set.creative_sample_generated_reference_eligible_asset_role_binding_decision_sha256",
+          "probe_slug": "decision-sha256-target",
+          "vector_id": "role-binding-finalization-invalid-v1::decision-sha256-target"
+        },
+        "operation_id": "HERMETIC_ROLE_HELPER_REVALIDATION",
+        "probe_slug": "decision-sha256-target",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--051--request-sha256-target": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "behavior": {
+            "return": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "call_count": 1,
+          "kind": "TEST_LOCAL_IMPORTED_HELPER_FAULT",
+          "patch_target": "sdc.generated_reference_role_binding_set.creative_sample_generated_reference_eligible_asset_role_binding_request_sha256",
+          "probe_slug": "request-sha256-target",
+          "vector_id": "role-binding-finalization-invalid-v1::request-sha256-target"
+        },
+        "operation_id": "HERMETIC_ROLE_HELPER_REVALIDATION",
+        "probe_slug": "request-sha256-target",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--052--binding-sha256-target": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "behavior": {
+            "return": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "call_count": 1,
+          "kind": "TEST_LOCAL_IMPORTED_HELPER_FAULT",
+          "patch_target": "sdc.generated_reference_role_binding_set.creative_sample_generated_reference_eligible_asset_role_binding_sha256",
+          "probe_slug": "binding-sha256-target",
+          "vector_id": "role-binding-finalization-invalid-v1::binding-sha256-target"
+        },
+        "operation_id": "HERMETIC_ROLE_HELPER_REVALIDATION",
+        "probe_slug": "binding-sha256-target",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--053--contract-document-bytes-target": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "behavior": {
+            "message": "injected exact R3 contract-document revalidation failure",
+            "raise_code": "FORMAL_IDENTITY_MISMATCH",
+            "raise_type": "GeneratedReferenceRoleBindingError"
+          },
+          "call_count": 1,
+          "kind": "TEST_LOCAL_IMPORTED_HELPER_FAULT",
+          "patch_target": "sdc.generated_reference_role_binding_set.generated_reference_role_binding_contract_document_bytes",
+          "probe_slug": "contract-document-bytes-target",
+          "vector_id": "role-binding-finalization-invalid-v1::contract-document-bytes-target"
+        },
+        "operation_id": "HERMETIC_ROLE_HELPER_REVALIDATION",
+        "probe_slug": "contract-document-bytes-target",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-binding-finalization-invalid-v1--054--target-sha256-target": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_BINDING_FINALIZATION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "behavior": {
+            "return": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "call_count": 1,
+          "kind": "TEST_LOCAL_IMPORTED_HELPER_FAULT",
+          "patch_target": "sdc.generated_reference_role_binding_set.generated_reference_role_binding_target_sha256",
+          "probe_slug": "target-sha256-target",
+          "vector_id": "role-binding-finalization-invalid-v1::target-sha256-target"
+        },
+        "operation_id": "HERMETIC_ROLE_HELPER_REVALIDATION",
+        "probe_slug": "target-sha256-target",
+        "scenario_id": "role-binding-finalization-invalid-v1"
+      },
+      "role-selection-invalid-v1--001--empty-requested-subset": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Invoke target builder with exactly the requested-role mutation named by probe_slug and otherwise positive Bindings.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "empty-requested-subset",
+          "vector_id": "role-selection-invalid-v1::empty-requested-subset"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "empty-requested-subset",
+        "scenario_id": "role-selection-invalid-v1"
+      },
+      "role-selection-invalid-v1--002--outside-purpose-role": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Invoke target builder with exactly the requested-role mutation named by probe_slug and otherwise positive Bindings.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "outside-purpose-role",
+          "vector_id": "role-selection-invalid-v1::outside-purpose-role"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "outside-purpose-role",
+        "scenario_id": "role-selection-invalid-v1"
+      },
+      "role-selection-invalid-v1--003--binding-count-role-count-mismatch": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:ROLE_SELECTION_INVALID",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Invoke target builder with exactly the requested-role mutation named by probe_slug and otherwise positive Bindings.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "binding-count-role-count-mismatch",
+          "vector_id": "role-selection-invalid-v1::binding-count-role-count-mismatch"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "binding-count-role-count-mismatch",
+        "scenario_id": "role-selection-invalid-v1"
+      },
+      "same-sidecar-cross-role-distinct-bindings-v1--001--same-sidecar-two-roles-distinct-bindings": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Use one exact Sidecar occurrence for two Character roles through distinct positive Binding identities.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "same-sidecar-two-roles-distinct-bindings",
+          "vector_id": "same-sidecar-cross-role-distinct-bindings-v1::same-sidecar-two-roles-distinct-bindings"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "same-sidecar-two-roles-distinct-bindings",
+        "scenario_id": "same-sidecar-cross-role-distinct-bindings-v1"
+      },
+      "scene-full-positive-v1--001--scene-cardinality-4-full": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact four-role Scene tuple in canonical order with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "scene-cardinality-4-full",
+          "vector_id": "scene-full-positive-v1::scene-cardinality-4-full"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "scene-cardinality-4-full",
+        "scenario_id": "scene-full-positive-v1"
+      },
+      "scene-partial-positive-v1--001--scene-cardinality-3-partial": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact first three Scene roles/members in canonical order with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "scene-cardinality-3-partial",
+          "vector_id": "scene-partial-positive-v1::scene-cardinality-3-partial"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "scene-cardinality-3-partial",
+        "scenario_id": "scene-partial-positive-v1"
+      },
+      "scene-singleton-positive-v1--001--scene-cardinality-1": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "DECISION_AND_SET_APPROVE",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Finalize the exact first Scene role/member with all human gates PASS.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "scene-cardinality-1",
+          "vector_id": "scene-singleton-positive-v1::scene-cardinality-1"
+        },
+        "operation_id": "PUBLIC_FINALIZE",
+        "probe_slug": "scene-cardinality-1",
+        "scenario_id": "scene-singleton-positive-v1"
+      },
+      "unequal-rights-attack-v1--001--substituted": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "substituted",
+          "vector_id": "unequal-rights-attack-v1::substituted"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "substituted",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--002--expanded": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "expanded",
+          "vector_id": "unequal-rights-attack-v1::expanded"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "expanded",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--003--narrowed": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "narrowed",
+          "vector_id": "unequal-rights-attack-v1::narrowed"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "narrowed",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--004--reordered": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "reordered",
+          "vector_id": "unequal-rights-attack-v1::reordered"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "reordered",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--005--renewed": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "renewed",
+          "vector_id": "unequal-rights-attack-v1::renewed"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "renewed",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--006--unioned": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "unioned",
+          "vector_id": "unequal-rights-attack-v1::unioned"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "unioned",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "unequal-rights-attack-v1--007--intersected": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:RIGHTS_SCOPE_MISMATCH",
+        "input_anchor_id": "SCENE_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "definition": "Apply only the rights-scope relation named by probe_slug to member 1; retain every other common-frame value.",
+          "kind": "EXACT_RELATIONAL_VECTOR",
+          "probe_slug": "intersected",
+          "vector_id": "unequal-rights-attack-v1::intersected"
+        },
+        "operation_id": "PUBLIC_TARGET_BUILD",
+        "probe_slug": "intersected",
+        "scenario_id": "unequal-rights-attack-v1"
+      },
+      "upstream-closure-mismatch-v1--001--promotion-maker-action-canonical-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "expected_nested_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "expected_nested_type": "GeneratedReferenceAssetPromotionError",
+          "field": "role_binding_promotion_closure.maker_action_bytes",
+          "kind": "PROMOTION_ACTION_PERSISTENT_CANONICAL_TARGET_DRIFT",
+          "mutation_steps": [
+            "decode the exact baseline Promotion Maker action object",
+            "replace only promotion_review_payload_sha256 with 64 lower-case zero characters",
+            "re-encode with ADR-045 persistent canonical JSON: UTF-8, sorted keys, two-space indent and exactly one terminal LF"
+          ],
+          "probe_slug": "promotion-maker-action-canonical-drift",
+          "replacement_value": "0000000000000000000000000000000000000000000000000000000000000000",
+          "vector_id": "upstream-closure-mismatch-v1::promotion-maker-action-canonical-drift"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "promotion-maker-action-canonical-drift",
+        "scenario_id": "upstream-closure-mismatch-v1"
+      },
+      "upstream-closure-mismatch-v1--002--promotion-checker-action-canonical-drift": {
+        "evidence_kind": "PUBLIC_API_EXECUTION",
+        "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "expected_nested_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "expected_nested_type": "GeneratedReferenceAssetPromotionError",
+          "field": "role_binding_promotion_closure.checker_action_bytes",
+          "kind": "PROMOTION_ACTION_PERSISTENT_CANONICAL_TARGET_DRIFT",
+          "mutation_steps": [
+            "decode the exact baseline Promotion Checker action object",
+            "replace only request_sha256 with 64 lower-case zero characters",
+            "re-encode with ADR-045 persistent canonical JSON: UTF-8, sorted keys, two-space indent and exactly one terminal LF"
+          ],
+          "probe_slug": "promotion-checker-action-canonical-drift",
+          "replacement_value": "0000000000000000000000000000000000000000000000000000000000000000",
+          "vector_id": "upstream-closure-mismatch-v1::promotion-checker-action-canonical-drift"
+        },
+        "operation_id": "PUBLIC_REQUEST_PREPARE",
+        "probe_slug": "promotion-checker-action-canonical-drift",
+        "scenario_id": "upstream-closure-mismatch-v1"
+      },
+      "upstream-closure-mismatch-v1--003--promotion-error-at-request-verifier": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "request",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 Promotion closure failure",
+          "probe_slug": "promotion-error-at-request-verifier",
+          "raise_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "raise_type": "GeneratedReferenceAssetPromotionError",
+          "vector_id": "upstream-closure-mismatch-v1::promotion-error-at-request-verifier"
+        },
+        "operation_id": "HERMETIC_REQUEST_ROLE_VERIFIER",
+        "probe_slug": "promotion-error-at-request-verifier",
+        "scenario_id": "upstream-closure-mismatch-v1"
+      },
+      "upstream-closure-mismatch-v1--004--promotion-error-at-finalization-verifier": {
+        "evidence_kind": "HERMETIC_TEST_ONLY_FAULT_INJECTION",
+        "expected_outcome": "TYPED_ERROR:UPSTREAM_CLOSURE_MISMATCH",
+        "input_anchor_id": "CHARACTER_PRIMARY_R3",
+        "mutation_or_fault_vector": {
+          "automatic_restore": true,
+          "call_count": 1,
+          "call_site": "finalization",
+          "kind": "TEST_LOCAL_TYPED_FAULT",
+          "message": "injected exact R3 Promotion closure failure",
+          "probe_slug": "promotion-error-at-finalization-verifier",
+          "raise_code": "UPSTREAM_CLOSURE_MISMATCH",
+          "raise_type": "GeneratedReferenceAssetPromotionError",
+          "vector_id": "upstream-closure-mismatch-v1::promotion-error-at-finalization-verifier"
+        },
+        "operation_id": "HERMETIC_FINAL_ROLE_VERIFIER",
+        "probe_slug": "promotion-error-at-finalization-verifier",
+        "scenario_id": "upstream-closure-mismatch-v1"
+      }
+    },
+    "spec_closure_rule": "The key set of probe_spec_by_id must equal the 217 IDs expanded from known_answer_probe_ledger in scenario/family/axis order. Each record repeats exact scenario_id, probe_slug, evidence_kind and expected_outcome; names one catalog input and operation; and owns one probe-local vector. Missing, extra, duplicate or mismatched records stop BUILD. No selector, scenario-level expected_error_code or free-text mapping DSL is evaluated."
+  },
+  "known_answer_scenario_count": 48,
+  "known_answer_scenario_id_order": [
+    "character-singleton-positive-v1",
+    "character-partial-positive-v1",
+    "character-full-positive-v1",
+    "scene-singleton-positive-v1",
+    "scene-partial-positive-v1",
+    "scene-full-positive-v1",
+    "same-sidecar-cross-role-distinct-bindings-v1",
+    "equal-bytes-distinct-candidate-sidecar-occurrences-v1",
+    "duplicate-role-attack-v1",
+    "duplicate-binding-attack-v1",
+    "member-reorder-attack-v1",
+    "ordinal-mutation-attack-v1",
+    "cross-purpose-attack-v1",
+    "cross-artifact-attack-v1",
+    "cross-profile-attack-v1",
+    "cross-catalog-attack-v1",
+    "cross-subject-attack-v1",
+    "request-primary-binding-attack-v1",
+    "final-primary-binding-drift-v1",
+    "unequal-rights-attack-v1",
+    "request-stale-closure-attack-v1",
+    "request-expired-status-v1",
+    "request-non-current-status-v1",
+    "final-stale-closure-attack-v1",
+    "final-expired-status-v1",
+    "final-revoked-held-status-v1",
+    "final-indeterminate-status-v1",
+    "expired-qualification-manifest-v1",
+    "omitted-branch-member-attack-v1",
+    "favorable-subset-attack-v1",
+    "forbidden-identity-equality-v1",
+    "permitted-maker-overlap-v1",
+    "human-rights-fail-v1",
+    "human-selection-indeterminate-v1",
+    "fail-over-indeterminate-v1",
+    "positive-atomicity-injection-v1",
+    "prohibited-authority-injection-v1",
+    "resource-limit-exceeded-v1",
+    "canonical-document-invalid-v1",
+    "contract-field-invalid-v1",
+    "policy-identity-mismatch-v1",
+    "upstream-closure-mismatch-v1",
+    "role-binding-finalization-invalid-v1",
+    "role-selection-invalid-v1",
+    "raw-media-mismatch-v1",
+    "identity-record-invalid-v1",
+    "action-record-invalid-v1",
+    "human-selection-fail-v1"
+  ],
+  "known_answer_structural_unreachability_rules": {
+    "aggregate_raw_bytes_strict_exceed": {
+      "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+      "premises": [
+        "closed raw-leaf owners and counts",
+        "each leaf at or below exact owner maximum",
+        "sum of all owner maxima=512524288",
+        "rejection_operator=>"
+      ],
+      "proof": "Strict aggregate exceed must first violate a narrower owner/count bound.",
+      "required_public_boundary_probe": "resource-limit-exceeded-v1--009--aggregate-raw-exact-cap-guard-admit"
+    },
+    "aggregate_supplied_png_strict_exceed": {
+      "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+      "premises": [
+        "member_count<=4",
+        "each_member_png_bytes<=67108864",
+        "aggregate_limit=268435456",
+        "rejection_operator=>"
+      ],
+      "proof": "4*67108864=268435456; strict exceed cannot survive the per-member limit.",
+      "required_public_boundary_probe": "resource-limit-exceeded-v1--005--aggregate-png-exact-cap-guard-admit"
+    },
+    "caller_supplied_selection_ordinal": {
+      "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+      "proof": "Target builder owns selection_ordinal through enumerate; no caller ordinal parameter exists. Invalid constructed targets reach public validation as CONTRACT_FIELD_INVALID.",
+      "required_public_order_probe": "member-reorder-attack-v1--001--reversed-member-tuple"
+    },
+    "policy_identity_mismatch": {
+      "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+      "human_acceptance_substitution_allowed": false,
+      "private_or_dynamic_execution_allowed": false,
+      "proof": "No public Policy argument exists; Contract Policy fields are fixed literals; module ID, version, canonical bytes and SHA are compiled and self-checked."
+    },
+    "raw_media_direct_mutations": {
+      "evidence_kind": "STRUCTURAL_UNREACHABILITY_PROOF",
+      "proof": "Whole-PNG mutation is selected by ADR-045 predecessor verification; size/content target mutations are selected by ADR-046 formal/rebuild verification; Set derives admitted raw size/SHA and receives a syntactically valid technical SHA after preflight. These four structures cannot independently reach Set RAW_MEDIA_MISMATCH.",
+      "required_public_mapping_probe": "raw-media-mismatch-v1--005--technical-record-anchor-mismatch"
+    }
+  },
+  "known_answer_test_only_fault_injection_rule": {
+    "allowed_path": "tests/test_generated_reference_role_binding_set.py",
+    "codegen_or_fixture_private_access_allowed": false,
+    "production_factory_callback_or_seam_allowed": false,
+    "rule": "PYTEST_MONKEYPATCH_CONTEXT_AUTOMATICALLY_RESTORES_EXACT_MODULE_LOCAL_BUILD_IDENTITY_BINDING_WRAPPER_DELEGATES_ALL_CALLS_EXCEPT_MODEL_TYPE_EXACTLY_CREATIVE_SAMPLE_GENERATED_REFERENCE_ELIGIBLE_ASSET_ROLE_BINDING_SET_V1_WHERE_ONE_FIXED_VALUE_ERROR_IS_RAISED_AFTER_DECISION_CONSTRUCTION_PUBLIC_FINALIZER_MAPS_TO_DECISION_OR_SET_REVALIDATION_FAILED_NO_RESULT_OR_PLACEHOLDER_ESCAPES_CALL_COUNT_EXACT_RESTORED_POSITIVE_DECISION_AND_SET_FORMAL_BYTES_EQUAL_BASELINE"
+  },
   "member_cardinality": {
-    "CHARACTER_REFERENCE_ASSET": [1, 3],
-    "SCENE_REFERENCE_ASSET": [1, 4]
+    "CHARACTER_REFERENCE_ASSET": [
+      1,
+      3
+    ],
+    "SCENE_REFERENCE_ASSET": [
+      1,
+      4
+    ]
   },
   "member_rule": "EXACTLY_ONE_DISTINCT_POSITIVE_ATOMIC_BINDING_PER_EXPLICIT_REQUESTED_ROLE",
   "module_import_allowlist": {
@@ -1418,7 +6528,7 @@ semantic policy is:
   "module_isolation_rule": "CORE_IMPORTS_ONLY_EXACT_NAMED_PUBLIC_UPSTREAM_SYMBOLS_NO_OTHER_SDC_PRIVATE_DYNAMIC_OR_REVERSE_COMPILER_PROVIDER_RUNTIME_IMPORT",
   "opaque_upstream_resource_rule": "RELEASED_HIGH_LEVEL_VERIFIER_AND_FROZEN_UPSTREAM_POLICY_OWNS_MODEL_RESOURCE_VALIDATION_NO_SET_RESOURCE_RESERIALIZATION_OR_RESOURCE_REMEASUREMENT",
   "policy_id": "sdc.generated-reference-bounded-supplied-role-binding-set-policy",
-  "policy_version": "1.1.0",
+  "policy_version": "1.2.0",
   "positive_atomicity_rule": "POSITIVE_DECISION_AND_SET_SAME_PURE_CALL_NO_PARTIAL_OUTPUT",
   "primary_binding_rule": "ONE_COMMON_IMPORTED_PRIMARY_BINDING_REBUILT_AT_REQUEST_AND_FINAL_NO_MUTATION_POSITIVE_REQUIRES_EQUALITY",
   "provider_input_rule": "NO_INPUT_MATERIAL_PROVIDER_SLOT_PROVIDER_ORDER_ROUTE_REQUEST_IDEMPOTENCY_OR_EXECUTION_CLAIM",
@@ -1837,21 +6947,165 @@ semantic policy is:
 }
 ```
 
-The canonical compact encoding of the exact JSON object above has the byte count and raw SHA-256
-recorded below. This acceptance freezes that exact policy identity. The policy digest cannot be
-invented during BUILD or derived from a runtime serializer.
+The canonical compact UTF-8 encoding of the exact JSON object above uses sorted keys and separators
+`,` and `:` with no terminal LF. Its accepted byte count and raw SHA-256 are:
 
 ```text
-policy_document_bytes=38481
-policy_document_sha256=77bdbb2f8845af02ab72e70ad1c74276e218f27410ff4384547d3868ec1a8c9e
+policy_document_bytes=227888
+policy_document_sha256=4075b6e0bb6a5a5c1e2f949bfd640f94eda974c3f09987e56820a787dda7a308
 ```
 
-The policy ID remains
-`sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the accepted version is exactly
-`1.1.0`. Accepted R1's historical identity remains `1.0.0`, 28,797 compact bytes and
-`7b22f26df2a6ab31ee45e8a10dc83c56e22a065d87ee099ef3e678d72511f1d6`; it is not silently
-relabelled. A Request, Decision or Set carrying the R1 version or digest would fail the R2 exact
-policy-identity gate.
+The Policy ID remains
+`sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the Accepted R3 version is
+exactly `1.2.0`. Accepted R2 remains the historical `1.1.0`, 38,481 compact bytes and
+`77bdbb2f8845af02ab72e70ad1c74276e218f27410ff4384547d3868ec1a8c9e`. Accepted R1 remains the
+historical `1.0.0`, 28,797 compact bytes and
+`7b22f26df2a6ab31ee45e8a10dc83c56e22a065d87ee099ef3e678d72511f1d6`. Neither historical policy
+is relabelled. If Accepted R3 is separately implemented, a Request, Decision or Set carrying either
+historical version or digest would fail the exact current policy-identity gate. The R3 digest cannot
+be invented during BUILD or derived from a runtime serializer.
+
+## Accepted R3 complete known-answer evidence model
+
+The `known_answer_scenario_id_order` and `known_answer_probe_ledger` inside the accepted policy are
+the authoritative ordered ledger. The first 37 scenario IDs remain byte-for-byte and ordinal-exact.
+R3 appends these IDs, in this order:
+
+```text
+38 resource-limit-exceeded-v1
+39 canonical-document-invalid-v1
+40 contract-field-invalid-v1
+41 policy-identity-mismatch-v1
+42 upstream-closure-mismatch-v1
+43 role-binding-finalization-invalid-v1
+44 role-selection-invalid-v1
+45 raw-media-mismatch-v1
+46 identity-record-invalid-v1
+47 action-record-invalid-v1
+48 human-selection-fail-v1
+```
+
+The ledger expands to exactly 217 required evidence units:
+
+```text
+PUBLIC_API_EXECUTION=137
+HERMETIC_TEST_ONLY_FAULT_INJECTION=58
+STRUCTURAL_UNREACHABILITY_PROOF=22
+required_evidence_unit_count=217
+declared_scenario_count=48
+evidence_complete_scenario_count=48
+```
+
+One evidence unit is exactly one independent public invocation, one isolated typed-fault vector or
+one closed structural proof. Every source probe must have its own stable `probe_id`, operation,
+evidence kind, input byte anchor or exact mutation/fault vector and complete tagged expected
+outcome. Every derived probe must add the actual outcome or proof object, relevant byte/source/test
+anchors and its semantic SHA-256. A scenario is evidence-complete only when every required expanded
+probe is present and satisfied. No scenario-level `expected_error_code`, aggregate `executable`
+boolean or shared outcome may stand in for multiple probes.
+
+The Policy's `known_answer_probe_spec_catalog` closes the ledger rather than leaving BUILD to choose
+evidence. Its exact `probe_spec_by_id` key set equals all 217 IDs expanded from the 48 scenarios and
+binds each ID directly to one catalog input, one exact public operation, test-local call site or
+proof operation, one probe-local relational mutation or typed fault and one tagged outcome. The literal probe ID uses the exact ASCII
+formula frozen by `known_answer_probe_rule`; axis components use one hyphen and the scenario-local
+ordinal uses exactly three zero-padded digits. No selector or mini-DSL is interpreted. Any missing,
+extra or mismatched keyed spec, invalid axis character, slug collision or full probe-ID collision
+stops BUILD.
+
+The catalog input IDs freeze the two released support cases, the one new in-memory equal-PNG case,
+their exact role tuples and the one source-fixture path. A future R3 BUILD must add the newly
+generated source path/size/SHA-256 and semantic identities to every copied input anchor. That later
+byte anchoring is mechanical evidence, not permission to select a different input or vector. The
+current R2 source fixture remains an exact 30,668-byte /
+`f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76` construction baseline only;
+it is not relabelled as an R3 generated-fixture byte anchor.
+
+The exact 21-row error-code ledger follows the existing Set error priority. The exact five-row issue
+ledger follows the final gate/issue order. Every row points to at least one exact scenario whose
+probes carry the relevant tagged outcome. `human-selection-indeterminate-v1` remains a pure
+INDETERMINATE Decision without a FAIL issue. `fail-over-indeterminate-v1` retains FAIL priority, and
+the new `human-selection-fail-v1` supplies the previously absent
+`EXPLICIT_SELECTION_ORDER_AND_COVERAGE_NOT_ACKNOWLEDGED` FAIL issue.
+
+Unknown or future ADR-046 error codes are deliberately outside the 217-unit accepted-outcome ledger.
+Two mandatory hermetic conformance tests, one at each exact verifier call site, must prove they stop
+as a module compatibility error. They may never be guessed, mapped to a portable Set code or counted
+as known-answer evidence.
+
+### Structural unreachability evidence
+
+`POLICY_IDENTITY_MISMATCH` is a sealed integrity guard, not a caller-selected scenario input. Public
+APIs have no Policy parameter; Contract Policy fields are fixed literals; and the module validates
+its compiled Policy ID, version, canonical bytes and digest. Its evidence unit must therefore bind
+the exact public signatures, Contract literals, module call graph, source Git blob and accepted
+Policy bytes/hash in one structural proof. Private mutation, dynamic access or Human acceptance may
+not substitute for that proof or be described as public execution.
+
+An independently reachable aggregate-PNG strict exceed is algebraically impossible under the
+unchanged limits:
+
+```text
+member_count <= 4
+each member PNG <= 67,108,864 bytes
+4 * 67,108,864 = 268,435,456 bytes
+aggregate rejection condition: sum > 268,435,456
+```
+
+R3 therefore requires one dominance proof and one public equality-boundary probe. The latter may
+reuse one immutable 67,108,864-byte synthetic PNG buffer across four independently counted member
+occurrences; no new PNG path or tracked byte asset is allowed. Other reachable resource failures, including a five-member input, a per-member PNG cap plus one
+byte, a 1,781st raw leaf and a 262,145-byte Maker action, remain actual public executions returning
+`RESOURCE_LIMIT_EXCEEDED`. Exact per-member/aggregate PNG, raw-leaf and logical raw-byte equality
+probes record guard admission followed by one named downstream typed error; they do not claim full
+positive finalization. Strict aggregate raw exceed is separately dominated by the closed owner
+limits. A structural proof is separately counted and can never be marked executable.
+
+### Hermetic Set-construction failure evidence
+
+R3 rejects a production factory, callback parameter, public test seam and third support API. The one
+allowed construction-failure probe is confined to
+`tests/test_generated_reference_role_binding_set.py` and an automatically restored
+`monkeypatch.context()`. Its wrapper delegates every `_build_identity` call except the call whose
+model type is exactly `CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1`; that exact
+Set-construction call raises one fixed `ValueError` after Decision construction. The public
+finalizer must map it to `DECISION_OR_SET_REVALIDATION_FAILED`, return no result or placeholder, make
+the injected call exactly once and expose no mutation. After restoration, the same positive input
+must reproduce baseline Decision and Set formal bytes exactly.
+
+This test-local exception does not authorize Set codegen, either fixture or any production caller to
+import, reflect on or call `_build_identity`. Public positive-Decision-without-Set and adverse-Decision-with-Set verification remain two
+separate public atomicity probes; neither can be used to claim that Set construction itself failed.
+
+The other 57 hermetic units are also closed. They patch only the exact Set-module local binding of a
+released public verifier or SHA/document helper under one automatically restored
+`monkeypatch.context()`. The Policy freezes both verifier call sites, all 18 released ADR-046 codes,
+all six named status exception types and their fixed first-priority constructor codes, all five
+named SHA/document targets, fixed messages or returns, exact call counts, and the no-second-call/
+no-later-fault-search rule. Baseline positive formal bytes must match again after every restoration.
+
+The two delegated PNG dual-fault units additionally bind the exact existing ADR-046 priority test
+node, its changed-PNG plus Character-purpose/Scene-role fault, the two existing support callable
+symbols and the Request/final Set call-site typed injections. ADR-046 must select
+`PNG_ADMISSION_INVALID`; Set maps only that exact typed code to `RAW_MEDIA_MISMATCH`. This evidence
+does not add an API, permit private/dynamic support access or re-run a Set-side probe for the later
+fault.
+
+### Packet and Human-review separation
+
+The reviewed source and derived fixture remain first-party fictional synthetic packets. Both must
+retain `human_known_answer_acceptance=NOT_GRANTED` until a later independent Human acceptance task.
+The complete review packet is composite: those two fixtures, the exact Policy, the frozen hermetic
+test nodes, the structural proof descriptors and validation results at one frozen commit. The
+derived fixture may record `PUBLIC_EXECUTION_MATCHED` or `STRUCTURAL_PROOF_VALIDATED`; for a
+test-only unit it may record only `HERMETIC_TEST_NODE_ANCHORED_EXECUTION_REQUIRED`. It must not claim
+that a test ran. Test execution and final evidence closure remain review-time facts and are never
+written back as Human acceptance by codegen.
+
+Deterministic bytes, tests, public executions, hermetic injections and structural proofs establish
+only implementation conformance to the bounded supplied-input policy. They do not prove real asset
+selection, legal Rights, present currentness, Provider eligibility, execution authority or
+commercial-use permission.
 
 ## Gate derivation and result mapping
 
@@ -2023,7 +7277,7 @@ request_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_S
 request_id: PortableId
 request_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.1.0
+policy_version=1.2.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 requested_set_target: GeneratedReferenceEligibleAssetRoleBindingSetTargetV1
@@ -2063,7 +7317,7 @@ decision_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_
 decision_id: PortableId
 decision_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.1.0
+policy_version=1.2.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 request_id: PortableId
@@ -2105,7 +7359,7 @@ set_scope=POST_ROLE_BINDING_BOUNDED_SUPPLIED_SET_HISTORICAL_EVIDENCE_ONLY
 set_id: PortableId
 set_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.1.0
+policy_version=1.2.0
 policy_document_sha256: exact frozen policy LowerSha256
 request_id: PortableId
 request_sha256: LowerSha256
@@ -2649,7 +7903,7 @@ schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.sc
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json
 ```
 
-Schema generation would remain explicit. This Accepted R2 generates nothing.
+Schema generation would remain explicit. Accepted R3 generates nothing.
 
 ## Validation and future implementation gates
 
@@ -2851,6 +8105,45 @@ prove exact signatures, dataclass field order/types, fixed positive invariants, 
 allowlists and absence of private, alias, dynamic, CLI, update and writer access. No third codegen
 support API or additional test path is allowed.
 
+### Accepted R3 fixed support-case replacement
+
+Accepted R3 retains exactly the same two callable symbols and leaves the Role-Binding callable
+signature, both return dataclass names and both return field orders unchanged. It replaces only the
+Promotion callable's closed `case_id` Literal with:
+
+```python
+def build_generated_reference_asset_promotion_fixed_fixture_support(
+    repository_root: Path,
+    *,
+    case_id: Literal[
+        "character-same-status-record-v1",
+        "scene-successor-reconciliation-v1",
+        "character-equal-png-distinct-occurrence-v1",
+    ],
+) -> GeneratedReferenceAssetPromotionFixedFixtureSupportV1
+```
+
+The first two literals remain the exact released fixture reconstructions. The third is a fixed
+in-memory derivative of `character-same-status-record-v1`; it must:
+
+- reuse the exact same Character PNG bytes, raw SHA-256, size and technical record;
+- retain the same Artifact, Profile, Catalog, subject, purpose, primary binding and field-equal
+  reviewed Rights frame;
+- construct a complete first-party fictional Outcome, Candidate, Qualification, Manifest, status,
+  Promotion and Sidecar closure;
+- differ from the base in at least Outcome, Candidate, Promotion Request, Promotion Decision and
+  Sidecar semantic identities; and
+- write no fixture, add no PNG or path, return no writer or authority value and make no Provider or
+  Runtime call.
+
+Equal output bytes do not require a different `output_set_sha256` when the frozen descriptor is
+itself equal. Occurrence distinction must instead be proved by the exact formal identities above.
+The Set codegen may invoke the new literal only for the frozen equal-byte/distinct-occurrence probe,
+then pass the typed result to the unchanged Role-Binding support callable. It still may not use an
+old-codegen module alias, private or dynamic name, reflection, CLI, update or writer. The test-local
+Set-construction injection described above is not a support API exception and is unreachable from
+codegen and production code.
+
 The frozen future fixture paths are:
 
 ```text
@@ -2862,8 +8155,11 @@ tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/
 The codegen would freeze the complete 20-path pre-BUILD fixture map and append only those two paths,
 increasing the tracked fixture count from 20 to 22.
 
-The source packet would contain at least one first-party fictional Character case and one
-first-party fictional Scene case. The derived packet would cover:
+The source packet would retain exactly two primary first-party fictional cases, one Character and one
+Scene, plus the fixed auxiliary equal-PNG/distinct-occurrence support identity described above. The
+auxiliary occurrence is evidence input, not a third target case or tracked fixture. Under Accepted
+R3, the derived packet would materialize every public probe in the 217-unit ledger and reference the
+separately anchored test-only and structural-proof units. It would cover:
 
 - Character and Scene singleton, canonical proper-subset and exact full-tuple cases;
 - same Sidecar under different roles through distinct positive Bindings;
@@ -2916,22 +8212,31 @@ tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/revie
 tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/generated-known-answer-v1.json
 ```
 
-The Accepted R2 future allowlist has exactly 27 unique paths. The two paths added to Accepted R1's
+Accepted R3 retains the Accepted R2 future allowlist at exactly 27 unique paths. The two paths added
+to Accepted R1's
 25-path list are only `src/sdc/generated_reference_asset_promotion_codegen.py` and
 `src/sdc/generated_reference_role_binding_codegen.py`. Changes in those old modules would be limited
-to the exact support APIs above and their internal deterministic read-only reuse; their frozen
+to the exact R3 support surfaces above and their internal deterministic read-only reuse; their frozen
 fixtures, derived bytes, fingerprints and existing CLI behavior must not change. Workflow and
 Makefile changes would be limited to the new offline read-only Set codegen check. Historical test
 changes would be limited to support-API/isolation enforcement, new 89/20 prefix protection and exact
 92/22 append assertions. The ADR itself is deliberately absent from a future BUILD allowlist.
 
 Any need for another path, top-level model, Registry order, fixture or policy rule would stop BUILD
-and require a separately reviewed ADR revision or architecture decision. Accepted R2 does not
-authorize any allowlist path to change without separate BUILD authorization.
+and require a separately reviewed ADR revision or architecture decision. The third support case must
+reuse the existing frozen synthetic Character PNG bytes in memory. No new PNG or 28th path is
+authorized. Accepted R3 itself does not authorize any allowlist path to change.
+
+Any later separately authorized R3 BUILD must keep all pre-ADR-047 89 Schema paths and bytes and all
+20 prior fixture paths and bytes exact. Registry and fixture counts remain 92 and 22. Because the
+Set Policy literal, probe packet and support case surface change, the three uncommitted R2 Set
+Schemas and two uncommitted R2 Set fixtures are not R3 byte anchors; they would have to be regenerated
+offline and receive new path/size/SHA-256 anchors. Both Set fixtures must still retain
+`human_known_answer_acceptance=NOT_GRANTED`. No historical ADR-045 or ADR-046 fixture may change.
 
 ## Rejected alternatives
 
-Accepted R2 carries forward Accepted R1's rejected alternatives and continues to reject:
+Accepted R3 carries forward Accepted R2's rejected alternatives and additionally rejects:
 
 - treating one atomic Binding as a complete or executable set;
 - defining supplied-set rules only inside current `InputMaterial` or `ProviderRequest`;
@@ -2955,7 +8260,12 @@ Accepted R2 carries forward Accepted R1's rejected alternatives and continues to
 - adding fixed-fixture reconstruction authority to the production Set core or weakening the complete
   executable known-answer packet into a declarative scenario matrix;
 - Set-side preflight/retry/probing that attempts to reorder an ADR-046 verifier's selected failure;
-  and
+- reusing one scenario-level `expected_error_code` for multiple independent probes or treating a
+  declaration-only scenario as evidence-complete;
+- claiming a sealed or dominated guard was publicly executed, or replacing a technical
+  unreachability proof with Human boundary acceptance;
+- adding a public Set-construction factory/callback seam, a third support API, a new PNG path or a
+  28th BUILD path for packet remediation; and
 - treating synthetic known answers as real assets, Rights, Provider or execution authority.
 
 ## Risks and treatment
@@ -2988,7 +8298,7 @@ Accepted R2 carries forward Accepted R1's rejected alternatives and continues to
 
 ## Non-goals
 
-Accepted R2 does not approve or specify:
+Neither Accepted R2 nor Accepted R3 approves or specifies:
 
 - implementation through this architecture acceptance alone;
 - any current Contract, Schema, Registry, fixture, source, test, codegen, CI or Makefile change;
@@ -3014,10 +8324,11 @@ Accepted R2 does not approve or specify:
 
 ## Permitted claims and explicit non-proofs
 
-At this Accepted R2 documentation state, SDC may claim only that the exact R2 error-mapping remedy,
-27-path allowlist, support-API boundary, restart gate and policy identity recorded here received
-human architecture acceptance. It may not claim that any R2-conforming Contract, Schema,
-implementation, known-answer packet or actual Set output exists or is available.
+At this Accepted R3 architecture-only state, SDC may claim only that Accepted R2 remains historical
+and that the exact R3 executable-packet remediation, 217-unit mixed-evidence ledger, bounded
+support-case change and Policy identity received Human architecture acceptance. It may not claim
+that any current Contract, Schema, implementation, fixture, known-answer packet or actual Set output
+conforms to R3.
 
 Only after separate BUILD authorization, implementation, first-party synthetic known-answer
 acceptance and merge could SDC claim that:
@@ -3045,11 +8356,13 @@ Even then, SDC could not claim that:
 
 ## Consequences
 
-Positive consequences of Accepted R2, if separately authorized and implemented, would include:
+Positive consequences of Accepted R3, only if separately authorized and implemented, would include:
 
 - explicit finite selection would replace implicit discovery or one-Binding completeness guesses;
 - canonical role coverage, duplicate behavior and occurrence identity would become portable and
   deterministic;
+- each error, issue, hermetic fault and structural proof would have a distinct auditable evidence
+  identity rather than an ambiguous scenario-level declaration;
 - PARTIAL/FULL could be stated narrowly without granting global completeness;
 - every member would retain exact whole-media, Rights, primary-binding and fresh-status closure;
 - one failing member could not be hidden through favorable-subset repair;
@@ -3062,7 +8375,7 @@ Costs and limitations would include:
 
 - every member requires complete ADR-046 reconstruction, exact PNG re-admission and two new status
   replays;
-- R2 cannot combine different Artifacts, Profiles, Rights scopes or primary bindings;
+- R3 could not combine different Artifacts, Profiles, Rights scopes or primary bindings;
 - same-Sidecar cross-role reuse means FULL does not imply distinct media;
 - no active/latest/best Set resolver or supersession exists;
 - no Provider slot/order/materialization or Runtime path exists;
@@ -3090,13 +8403,37 @@ authorize it. BUILD could restart only after all of the following separate gates
 The dirty partial branch must not be rebased, merged, amended or used to continue BUILD implicitly.
 Its existence grants no authority and no partial test result may be represented as R2 conformance.
 
-## Accepted R2 acceptance-record task boundary
+## Accepted R3 BUILD restart stop gate
 
-The current authorized Accepted-R2 acceptance-record documentation work is confined to the isolated
-worktree on this branch, and only this file may be modified:
+The current uncommitted 25-path R2 BUILD worktree on
+`codex/generated-reference-role-binding-set-r2` remains frozen working material only. Accepted R3
+does not validate, adopt, resume, merge, amend, regenerate or authorize it. A future R3 BUILD could
+begin only after all of these independent gates close:
+
+1. this exact Accepted R3 architecture record remains content-exact through document promotion;
+2. the Accepted R3 document is separately staged, committed, pushed, reviewed and merged under
+   explicit authorizations;
+3. a separate R3 BUILD authorization is granted from newly verified authoritative `main`;
+4. a new clean isolated R3 BUILD worktree records the complete 89-Schema/20-fixture byte baseline;
+5. any reuse from either partial BUILD is reviewed and ported hunk-by-hunk only within the unchanged
+   27-path allowlist;
+6. the exact implemented Policy identity equals Accepted R3 version `1.2.0`, 227,888 canonical bytes
+   and SHA-256 `4075b6e0bb6a5a5c1e2f949bfd640f94eda974c3f09987e56820a787dda7a308` frozen by this acceptance;
+7. all 217 packet units and two separate unknown-code compatibility-stop tests close without
+   mislabelling injection or structural proof as public execution; and
+8. any 28th path, old 89/20 byte change, third API, new PNG, production construction seam,
+   private/dynamic codegen access or authority expansion stops BUILD.
+
+No current R2 Schema or Set fixture byte is an R3 acceptance anchor, and neither partial worktree may
+be silently rebased or used as the R3 branch.
+
+## Accepted R3 document-acceptance task boundary
+
+The current authorized Accepted-R3 document update is confined to the isolated worktree on this
+branch, and only this file may be modified:
 
 ```text
-codex/adr-047-r2-role-binding-set-boundary
+codex/adr-047-r3-executable-packet-remediation
 docs/adr/SDC-ADR-047.md
 ```
 
@@ -3104,12 +8441,12 @@ It must not:
 
 - claim this architecture acceptance authorizes staging, commit, push, PR, Ready, merge, BUILD,
   implementation or Human known-answer acceptance;
-- alter Accepted R1 history outside the explicit R2 replacements, weaken the 89-Schema/20-fixture
-  compatibility gate, future 92-Schema/22-fixture target or any zero-authority rule;
+- alter Accepted R1/R2 history or any Accepted R3 technical constraint, weaken the 89-Schema/
+  20-fixture compatibility gate, future 92-Schema/22-fixture target or any zero-authority rule;
 - modify ADR-039 through ADR-046 or any current Contract, Schema, Registry, fixture, source, test,
   codegen, CI, Makefile or README file;
 - calculate implementation outputs, run Schema generation, code generation or fixture update;
-- modify or resume the current partial BUILD worktree;
+- modify or resume either current partial BUILD worktree;
 - stage, commit, push, create a PR, request review, mark Ready or merge;
 - create or review a real Set, Binding, Sidecar, Provider input or asset;
 - connect Compiler, Provider, Runtime, network, credentials, cost, Retry or persistence; or
