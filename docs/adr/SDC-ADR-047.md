@@ -1,7 +1,9 @@
 # SDC-ADR-047: Generated Reference Bounded Supplied Role-Binding Set Boundary
 
-- Status: Accepted
-- Date: 2026-08-31
+- Status: Accepted R2
+- Date: 2026-09-01
+- Acceptance date: 2026-09-01
+- Prior revision: Accepted R1 on 2026-08-31
 - Depends on: SDC-ADR-039 / Deterministic Visual Prompt Profiles
 - Projection dependency: SDC-ADR-040 / Visual Prompt Profiles Phase 1 Projection Manifest
 - Compiler-boundary dependency: SDC-ADR-041 / Visual Prompt Profiles Compiler Integration
@@ -15,7 +17,8 @@
   Boundary
 - Atomic Role-Binding dependency: SDC-ADR-046 / Generated Reference Eligible-Asset Role-Binding
   Boundary
-- Baseline: `0671b24b8c0c135228ed35d99df92364f517ae99`
+- Accepted R1 drafting baseline: `0671b24b8c0c135228ed35d99df92364f517ae99`
+- Accepted R2 drafting authoritative-main baseline: `7bd96010f498d537e86e2eb2268d6df34a2e4c75`
 - Authority: `HUMAN_GATE / NOT_AUTHORIZED`
 - Data boundary: one explicitly supplied bounded tuple of exact positive ADR-046 Role-Binding
   occurrences under one exact common Artifact/Profile/subject/purpose/primary-binding/Rights frame;
@@ -23,6 +26,35 @@
   and privacy-minimized retained Set review records; first-party synthetic review data only
 - Network/spend boundary: zero network calls, zero credential reads, zero Provider requests, zero
   authorized Attempts and zero authorized cost
+
+## Accepted R2 revision record and BUILD stop-gate resolution
+
+Accepted R1 remains the historical record of the bounded supplied Set architecture. During the
+separately authorized first partial BUILD, two frozen R1 constraints proved unable to close together:
+
+1. the R1 Set error tuple claimed an exceptionless global first-failure order, while each released
+   ADR-046 Request/finalization verifier already selects one failure in its own frozen internal order,
+   including PNG admission before later Role/Purpose, primary-binding, current-status, Rights,
+   separation, action, time, authority and atomicity checks; and
+2. the R1 25-path allowlist required a complete executable Set known-answer packet while permitting
+   Set codegen to import only the Set core and standard library, even though the fixed upstream
+   technical fixtures can be reconstructed without private cross-module access only through the two
+   released upstream codegen modules.
+
+Accepted R2 carries forward every Accepted R1 decision, Contract shape, Registry target, 89-Schema/
+20-fixture compatibility anchor, future 92-Schema/22-fixture target, resource limit, identity rule and
+zero-authority value except where this revision explicitly replaces R1. It makes exactly these two
+semantic boundary changes:
+
+- the closed 21-code Set tuple remains unchanged, but it is the Set-owned/direct-call-site order, not
+  an instruction to reorder a failure already selected inside an ADR-046 verifier; and
+- the future BUILD changed-file allowlist expands from 25 to 27 paths solely to add one typed,
+  read-only fixed-fixture support API to each of the ADR-045 Promotion and ADR-046 Role-Binding
+  codegen modules.
+
+This Accepted R2 records architecture acceptance only. It does not resume the stopped partial BUILD,
+authorize reuse of its outputs or authorize any Contract, Schema, Registry, fixture, source, test,
+codegen, CI, Makefile, Provider-input or Runtime change.
 
 ## Context
 
@@ -64,13 +96,15 @@ Sidecar, Rights, fresh-status, primary-binding, selection-order or authority clo
 each `reference` directly as an `image_url`. Neither current type can truthfully represent or consume
 an ADR-046 Binding or the bounded set defined here.
 
-This Accepted ADR closes only the missing portable supplied-set boundary. It deliberately stops
+Accepted R1, carried forward by Accepted R2 except for the two explicit revisions above, closes only
+the missing portable supplied-set boundary. It deliberately stops
 before role-aware Provider materialization, Provider-specific slot/order/duplicate rules, final
 request authorization or execution.
 
 ## Decision summary
 
-This Accepted decision constrains any separately authorized first BUILD to:
+Accepted R1, as carried forward and narrowly revised by Accepted R2, constrains any separately
+authorized BUILD to:
 
 1. represent one immutable historical bounded Set over one explicitly supplied canonical non-empty
    tuple of exact positive ADR-046 Bindings;
@@ -99,7 +133,7 @@ This Accepted decision constrains any separately authorized first BUILD to:
 12. preserve complete zero Provider, Runtime, network, credential, cost, Retry, asset-use,
     publication, retention and training authority.
 
-A conforming positive R1 Set would mean only:
+A conforming positive R2 Set would mean only:
 
 > At one explicit historical `set_at`, one independent Set Checker approved that one explicitly
 > supplied canonical tuple contained exactly one revalidated positive atomic Binding for every
@@ -110,19 +144,20 @@ It would not mean that the Set is globally complete or exclusive, remains curren
 media per role, has Provider slot order, can become an `InputMaterial` or authorizes asset use,
 Provider execution, publication or training.
 
-## Acceptance record and implementation gate
+## Accepted R1/R2 record and implementation gate
 
-This ADR records human acceptance of exactly the architecture decisions explicitly recorded here.
-This acceptance authorizes no Contract, Schema, Registry, fixture, source, test, codegen, CI,
-Makefile or implementation change. It authorizes no actual Set selection, media review, Provider
-input or execution.
+Accepted R1 records human acceptance of the architecture decisions frozen in that revision. Accepted
+R2 records human acceptance of exactly the two replacements and new policy identity frozen here.
+Neither acceptance authorizes any Contract, Schema, Registry, fixture, source, test, codegen, CI,
+Makefile or implementation change, actual Set selection, media review, Provider input or execution.
 
-Acceptance does not authorize BUILD. A BUILD would require separate explicit authorization, a
-newly verified clean authoritative `main`, a new isolated `codex/` implementation branch and a newly
-recorded immutable 89-Schema/20-fixture baseline. Human known-answer acceptance, Draft-to-Ready
-conversion and merge authorization remain later separate gates.
+R2 acceptance does not authorize BUILD. Any restart requires Accepted R2 first to be merged into
+authoritative `main`, then separate explicit BUILD-restart authorization, a newly verified clean
+authoritative `main`, a new isolated `codex/` implementation branch and a newly recorded immutable
+89-Schema/20-fixture baseline. Human known-answer acceptance, Draft-to-Ready conversion and merge
+authorization remain later separate gates.
 
-Human review confirms:
+The Accepted R1 review confirmed:
 
 1. the bounded supplied historical Set representation and conservative common-frame restriction;
 2. the exact three-model top-level family and inline target/member/gate shapes;
@@ -139,12 +174,27 @@ Human review confirms:
 13. the 89-Schema/20-fixture compatibility gate and frozen future 92-Schema/22-fixture target; and
 14. the exact future BUILD changed-file allowlist.
 
-This section is the acceptance record for the 14 choices above, the exact frozen policy projection
-and the complete zero-authority boundary. It is not a BUILD authorization.
+The R2 human acceptance confirms exactly:
+
+1. each exact ADR-046 Request/finalization verifier remains one atomic delegated stage that inherits
+   the released ADR-046 internal first-failure order;
+2. only exact `GeneratedReferenceRoleBindingError.code == "PNG_ADMISSION_INVALID"` at either exact
+   verifier call site maps to `RAW_MEDIA_MISMATCH`, while the other 18 frozen ADR-046 codes map to
+   `ROLE_BINDING_FINALIZATION_INVALID` without message parsing;
+3. Accepted R1's 25-path BUILD allowlist expands to exactly 27 paths solely for the two frozen typed,
+   read-only fixed-fixture codegen support APIs;
+4. the exact policy identity is version `1.1.0`, 38,481 canonical compact bytes and SHA-256
+   `77bdbb2f8845af02ab72e70ad1c74276e218f27410ff4384547d3868ec1a8c9e`; and
+5. the stopped partial BUILD cannot restart except through the separately authorized clean-worktree
+   gate frozen below.
+
+This section is the R1/R2 architecture acceptance record and complete zero-authority boundary. It is
+not a BUILD authorization.
 
 ## Frozen upstream compatibility boundary
 
-This Accepted ADR does not narrow, supersede or reinterpret ADR-039 through ADR-046. In particular:
+Neither Accepted R1 nor Accepted R2 narrows, supersedes or reinterprets ADR-039 through ADR-046. In
+particular:
 
 - ADR-042 continues to admit only one complete Character three-role or Scene four-role reference
   Prompt Artifact; its roles remain Prompt/layout semantics, not pixel proof or Provider slots;
@@ -181,7 +231,7 @@ duck-typed compatibility route.
 
 ## Terminology and lifecycle
 
-This Accepted decision uses these terms narrowly:
+Accepted R1 and Accepted R2 use these terms narrowly:
 
 1. **Atomic Binding**: one exact positive ADR-046 association between one Sidecar occurrence's whole
    PNG and one exact role.
@@ -225,7 +275,8 @@ refreshed, superseded or deleted.
 
 ## Bounded supplied-set representation choice
 
-R1 would choose one portable ordered Set, not a database view, filesystem directory, query result,
+Accepted R2 carries forward R1's choice of one portable ordered Set, not a database view, filesystem
+directory, query result,
 mutable pack or active pointer. The complete set boundary would be carried by the formal values and
 their explicitly supplied predecessors.
 
@@ -272,9 +323,9 @@ primary_asset_binding
 ```
 
 The full `reference_asset_types` tuple would equal the exact complete Character or Scene tuple. The
-exact ADR-042 Artifact SHA, rather than only Profile identity, would also be common. R1 would reject
-cross-Artifact, cross-Profile, cross-Catalog, cross-subject, cross-purpose, mixed-primary-binding or
-different-Rights-scope tuples.
+exact ADR-042 Artifact SHA, rather than only Profile identity, would also be common. Accepted R2 would
+reject cross-Artifact, cross-Profile, cross-Catalog, cross-subject, cross-purpose,
+mixed-primary-binding or different-Rights-scope tuples.
 
 Different members could still carry different Provider Attempt Outcome, Candidate, Sidecar,
 Promotion and Role-Binding identities, provided all common-frame fields match exactly. Requiring
@@ -357,7 +408,7 @@ member.selected_reference_role == requested_reference_roles[ordinal]
 member Binding target selected_reference_role == member.selected_reference_role
 ```
 
-R1 would apply these exact duplicate rules:
+Accepted R2 retains these exact duplicate rules:
 
 - each requested role occurs exactly once;
 - each exact `binding_id`/`binding_sha256` pair occurs exactly once;
@@ -466,9 +517,9 @@ One valid same-subject/purpose active-binding drift at finalization would produc
 no positive Set. A malformed, cross-subject, cross-purpose, forged or ambiguous snapshot would be
 structural failure. Set construction would never replace or mutate an AssetVersion or Bible.
 
-Every member's exact Manifest identity and reviewed Rights scope would be retained. R1 would also
-require all reviewed scope objects to be field-for-field equal as a common-frame admission rule. Code
-could not union, intersect, narrow, reorder, renew, extend or reinterpret scopes. Set Checker
+Every member's exact Manifest identity and reviewed Rights scope would be retained. Accepted R2 would
+also require all reviewed scope objects to be field-for-field equal as a common-frame admission rule.
+Code could not union, intersect, narrow, reorder, renew, extend or reinterpret scopes. Set Checker
 acknowledgement would mean only that the unchanged per-member scopes and exact member tuple were
 jointly presented; it would not decide that a role lies within a legal scope or grant Rights.
 
@@ -489,7 +540,7 @@ revalidated there; they would not be duplicated as Set top-level fields.
 
 ## Human review and retained identity separation
 
-Set selection would be an explicit Set Maker/Selector responsibility. R1 would not create a
+Set selection would be an explicit Set Maker/Selector responsibility. Accepted R2 would not create a
 free-floating selector decision, recommendation record or automatic selector. The Maker/Selector
 action would bind the
 exact target, ordered requested roles, ordered member tuple, coverage literal, common primary
@@ -549,7 +600,7 @@ SET_FINAL_STATUS_CHECKER
 One status Preparer or Checker identity could be reused across members and across Request/final
 Set stages when all relevant upstream role rules permit that reuse. Every reused status Checker
 would still have to differ from the Set Checker. The Set Maker/Selector permission list and the
-status-reuse rule are exhaustive for R1; a later role would require an ADR revision.
+status-reuse rule are exhaustive for R2; a later role would require an ADR revision.
 
 Maker/Selector and Checker action-record raw digests would have to differ from one another and from
 every formal semantic digest, raw Prompt/PNG digest and external evidence digest. An identity-record
@@ -820,13 +871,45 @@ and positive Decision identities.
 No identity could depend on mutable storage, path, URL, ambient time, Provider response, Python
 object traversal or later document discovery.
 
-## Frozen accepted policy projection
+## Accepted R2 frozen policy projection
 
-This Accepted revision freezes one canonical compact JSON policy document and its raw SHA-256. The
-frozen semantic policy is:
+Accepted R2 freezes one new canonical compact JSON policy document and raw SHA-256. It carries every
+unchanged R1 policy field forward, changes the policy version, freezes the delegated ADR-046
+priority rule, freezes both support APIs and embeds the exact 27-path BUILD allowlist. The accepted
+semantic policy is:
 
 ```json
 {
+  "adr_046_verifier_priority_rule": "EACH_EXACT_ADR_046_REQUEST_OR_FINALIZATION_VERIFIER_CALL_INHERITS_RELEASED_ADR_046_INTERNAL_FIRST_FAILURE_ORDER_WITH_NO_SET_LEVEL_PREFLIGHT_REORDERING_SECOND_PROBE_OR_LATER_FAULT_SEARCH",
+  "build_changed_file_allowlist": [
+    ".github/workflows/ci.yml",
+    "Makefile",
+    "schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetRequestV1.schema.json",
+    "schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.schema.json",
+    "schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json",
+    "src/sdc/generated_reference_asset_promotion_codegen.py",
+    "src/sdc/generated_reference_role_binding_codegen.py",
+    "src/sdc/generated_reference_role_binding_set.py",
+    "src/sdc/generated_reference_role_binding_set_codegen.py",
+    "src/sdc/schemas.py",
+    "tests/test_generated_reference_role_binding_set.py",
+    "tests/test_generated_reference_role_binding_set_codegen.py",
+    "tests/test_generated_reference_role_binding.py",
+    "tests/test_generated_reference_candidate.py",
+    "tests/test_generated_reference_rights_current_status_codegen.py",
+    "tests/test_real_asset_fresh_status_chain_replay_v30.py",
+    "tests/test_real_asset_fresh_status_record_as_of_assessment_receipt_codec_v30.py",
+    "tests/test_real_asset_fresh_status_record_as_of_assessment_receipt_v30.py",
+    "tests/test_real_asset_fresh_status_record_as_of_assessment_v30.py",
+    "tests/test_real_asset_fresh_status_record_chain_coverage_v30.py",
+    "tests/test_real_asset_fresh_status_record_joint_replay_v30.py",
+    "tests/test_schemas.py",
+    "tests/test_visual_prompt_compiler_integration.py",
+    "tests/test_visual_prompt_profile_codegen.py",
+    "tests/test_visual_reference_prompt_compiler.py",
+    "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
+    "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/generated-known-answer-v1.json"
+  ],
   "codec_rule": {
     "formal_documents": "UTF8_NFC_SORTED_KEYS_TWO_SPACE_INDENT_EXACTLY_ONE_TERMINAL_LF",
     "semantic_and_retained_records": "UTF8_NFC_SORTED_KEYS_COMPACT_NO_TERMINAL_LF"
@@ -911,7 +994,7 @@ frozen semantic policy is:
     },
     {
       "code": "ROLE_BINDING_FINALIZATION_INVALID",
-      "condition": "ADR_046_REQUEST_OR_FINALIZATION_VERIFIER_FAILED_OR_SUPPLIED_POSITIVE_REQUEST_DECISION_BINDING_RESULT_DID_NOT_REBUILD_EXACTLY"
+      "condition": "AT_EXACT_ADR_046_REQUEST_OR_FINALIZATION_VERIFIER_CALL_SITE_ANY_FROZEN_NON_PNG_GENERATED_REFERENCE_ROLE_BINDING_ERROR_OR_ANY_ALLOWLISTED_RIGHTS_CURRENT_STATUS_ERROR_OR_SUPPLIED_POSITIVE_REQUEST_DECISION_BINDING_RESULT_DID_NOT_REBUILD_EXACTLY"
     },
     {
       "code": "COMMON_FRAME_MISMATCH",
@@ -931,7 +1014,7 @@ frozen semantic policy is:
     },
     {
       "code": "RAW_MEDIA_MISMATCH",
-      "condition": "WHOLE_PNG_BYTES_SIZE_TECHNICAL_OR_RAW_DIGEST_OR_OUTCOME_CANDIDATE_SIDECAR_BINDING_MEMBER_MEDIA_ANCHOR_DIFFERS"
+      "condition": "AT_EXACT_ADR_046_REQUEST_OR_FINALIZATION_VERIFIER_CALL_SITE_GENERATED_REFERENCE_ROLE_BINDING_ERROR_CODE_EQUALS_PNG_ADMISSION_INVALID_OR_DIRECT_WHOLE_PNG_BYTES_SIZE_TECHNICAL_RAW_DIGEST_OUTCOME_CANDIDATE_SIDECAR_BINDING_OR_MEMBER_MEDIA_ANCHOR_DIFFERS"
     },
     {
       "code": "CURRENT_STATUS_REPLAY_INVALID",
@@ -966,7 +1049,7 @@ frozen semantic policy is:
       "condition": "CALLER_DECISION_OR_SET_IDENTITY_PROJECTION_DOCUMENT_LINKAGE_OR_POSITIVE_PAIR_ATOMIC_MATERIALIZATION_REVALIDATION_INVARIANT_FAILED"
     }
   ],
-  "error_tie_break_rule": "FIRST_APPLICABLE_ERROR_CODE_ORDER_THEN_COMMON_INPUTS_THEN_MEMBER_SELECTION_ORDINAL_THEN_FROZEN_PREDECESSOR_ORDER_STOP_AT_FIRST_REQUEST_SKIPS_FINAL_ONLY_CHECKS",
+  "error_tie_break_rule": "SET_OWNED_AND_DIRECT_CALL_SITES_USE_FIRST_APPLICABLE_ERROR_CODE_ORDER_THEN_COMMON_INPUTS_THEN_MEMBER_SELECTION_ORDINAL_THEN_FROZEN_PREDECESSOR_ORDER_ADR_046_VERIFIER_CALLS_INHERIT_RELEASED_INTERNAL_FIRST_FAILURE_STOP_AT_FIRST_REQUEST_SKIPS_FINAL_ONLY_CHECKS",
   "final_status_mapping": {
     "CURRENT": "PASS",
     "EXPIRED": "TIME_OR_VALIDITY_INVALID_NO_DECISION",
@@ -1105,6 +1188,172 @@ frozen semantic policy is:
     "HUMAN_NON_EXCLUSIVE_NO_PROVIDER_BOUNDARY_ACKNOWLEDGED": "NON_EXCLUSIVE_NO_PROVIDER_BOUNDARY_NOT_ACKNOWLEDGED",
     "HUMAN_PER_MEMBER_RIGHTS_SCOPES_AND_EXACT_MEMBER_TUPLE_PRESENTED_WITHOUT_AGGREGATION_ACKNOWLEDGED": "PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED"
   },
+  "known_answer_codegen_support_apis": {
+    "sdc.generated_reference_asset_promotion_codegen": {
+      "callable": "build_generated_reference_asset_promotion_fixed_fixture_support",
+      "case_id_literals": [
+        "character-same-status-record-v1",
+        "scene-successor-reconciliation-v1"
+      ],
+      "parameters": [
+        {
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "name": "repository_root",
+          "type": "pathlib.Path"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "case_id",
+          "type": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1]"
+        }
+      ],
+      "return_dataclass": "GeneratedReferenceAssetPromotionFixedFixtureSupportV1",
+      "return_field_types": {
+        "case_id": "Literal[character-same-status-record-v1,scene-successor-reconciliation-v1]",
+        "checker_action_bytes": "bytes",
+        "checker_identity_bytes": "bytes",
+        "composite_unsplit_role_deferral_basis": "str",
+        "composite_unsplit_role_deferral_result": "GateResult",
+        "final_status": "GeneratedReferenceAssetPromotionStatusClosureInput",
+        "maker_action_bytes": "bytes",
+        "maker_identity_bytes": "bytes",
+        "primary_asset_version": "CharacterAssetVersion|SceneAssetVersion",
+        "primary_bible": "CharacterBible|SceneBible",
+        "primary_sidecar_association_basis": "str",
+        "primary_sidecar_association_result": "GateResult",
+        "promotion_at": "str",
+        "promotion_basis": "str",
+        "request": "CreativeSampleGeneratedReferenceAssetPromotionRequestV1",
+        "request_status": "GeneratedReferenceAssetPromotionStatusClosureInput",
+        "result": "GeneratedReferenceAssetPromotionFinalizationResult",
+        "sidecar": "CreativeSampleGeneratedReferenceEligibleAssetSidecarV1",
+        "upstream": "GeneratedReferenceAssetPromotionUpstreamClosureInput"
+      },
+      "return_fields": [
+        "case_id",
+        "upstream",
+        "request_status",
+        "final_status",
+        "primary_bible",
+        "primary_asset_version",
+        "request",
+        "result",
+        "sidecar",
+        "maker_identity_bytes",
+        "maker_action_bytes",
+        "checker_identity_bytes",
+        "checker_action_bytes",
+        "promotion_at",
+        "primary_sidecar_association_result",
+        "primary_sidecar_association_basis",
+        "composite_unsplit_role_deferral_result",
+        "composite_unsplit_role_deferral_basis",
+        "promotion_basis"
+      ],
+      "return_invariants": "FROZEN_SLOTS_EXACT_POSITIVE_ADR_045_REQUEST_DECISION_SIDECAR_PAIR_VERIFIED_SIDECAR_IS_RESULT_SIDECAR_PRIMARY_PAIR_USED_FOR_REQUESTED_AND_PROMOTION_FORMAL_BYTES_VERIFIED"
+    },
+    "sdc.generated_reference_role_binding_codegen": {
+      "callable": "build_generated_reference_role_binding_positive_fixed_fixture_support",
+      "parameters": [
+        {
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "name": "promotion_support",
+          "type": "GeneratedReferenceAssetPromotionFixedFixtureSupportV1"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "selected_reference_role",
+          "type": "Literal[CHARACTER_IDENTITY_SHEET,CHARACTER_POSE_REFERENCE,CHARACTER_EXPRESSION_REFERENCE,SCENE_ESTABLISHING_REFERENCE,SCENE_LIGHTING_REFERENCE,SCENE_MATERIAL_REFERENCE,SCENE_PROP_PLACEMENT_REFERENCE]"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "maker_identity_bytes",
+          "type": "bytes"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "checker_identity_bytes",
+          "type": "bytes"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "request_basis",
+          "type": "str"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "exact_role_and_reviewed_rights_scope_presented_without_expansion_basis",
+          "type": "str"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "whole_composite_role_suitability_basis",
+          "type": "str"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "non_exclusive_no_transform_boundary_basis",
+          "type": "str"
+        },
+        {
+          "kind": "KEYWORD_ONLY",
+          "name": "decision_basis",
+          "type": "str"
+        }
+      ],
+      "return_dataclass": "GeneratedReferenceRoleBindingPositiveFixedFixtureSupportV1",
+      "return_field_types": {
+        "admitted_png": "GeneratedReferenceRoleBindingAdmittedPng",
+        "binding": "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingV1",
+        "checker_action_bytes": "bytes",
+        "checker_identity_bytes": "bytes",
+        "exact_role_and_reviewed_rights_scope_presented_without_expansion_basis": "str",
+        "exact_role_and_reviewed_rights_scope_presented_without_expansion_result": "Literal[PASS]",
+        "maker_action_bytes": "bytes",
+        "maker_identity_bytes": "bytes",
+        "non_exclusive_no_transform_boundary_basis": "str",
+        "non_exclusive_no_transform_boundary_result": "Literal[PASS]",
+        "primary_asset_version": "CharacterAssetVersion|SceneAssetVersion",
+        "primary_bible": "CharacterBible|SceneBible",
+        "promotion": "GeneratedReferenceRoleBindingPromotionClosureInput",
+        "role_binding_at": "str",
+        "role_binding_decision_basis": "str",
+        "role_binding_final_status": "GeneratedReferenceAssetPromotionStatusClosureInput",
+        "role_binding_request": "CreativeSampleGeneratedReferenceEligibleAssetRoleBindingRequestV1",
+        "role_binding_request_status": "GeneratedReferenceAssetPromotionStatusClosureInput",
+        "role_binding_result": "GeneratedReferenceRoleBindingFinalizationResult",
+        "selected_reference_role": "Literal[CHARACTER_IDENTITY_SHEET,CHARACTER_POSE_REFERENCE,CHARACTER_EXPRESSION_REFERENCE,SCENE_ESTABLISHING_REFERENCE,SCENE_LIGHTING_REFERENCE,SCENE_MATERIAL_REFERENCE,SCENE_PROP_PLACEMENT_REFERENCE]",
+        "whole_composite_role_suitability_basis": "str",
+        "whole_composite_role_suitability_result": "Literal[PASS]"
+      },
+      "return_fields": [
+        "selected_reference_role",
+        "promotion",
+        "admitted_png",
+        "role_binding_request",
+        "role_binding_result",
+        "binding",
+        "role_binding_request_status",
+        "role_binding_final_status",
+        "primary_bible",
+        "primary_asset_version",
+        "maker_identity_bytes",
+        "maker_action_bytes",
+        "checker_identity_bytes",
+        "checker_action_bytes",
+        "role_binding_at",
+        "exact_role_and_reviewed_rights_scope_presented_without_expansion_result",
+        "exact_role_and_reviewed_rights_scope_presented_without_expansion_basis",
+        "whole_composite_role_suitability_result",
+        "whole_composite_role_suitability_basis",
+        "non_exclusive_no_transform_boundary_result",
+        "non_exclusive_no_transform_boundary_basis",
+        "role_binding_decision_basis"
+      ],
+      "return_invariants": "FROZEN_SLOTS_REQUESTED_AT_EQUALS_BINDING_AT_EQUALS_PROMOTION_AT_ROLE_BINDING_REQUEST_AND_FINAL_STATUS_EQUAL_PROMOTION_FINAL_STATUS_PRIMARY_PAIR_FROM_PROMOTION_SUPPORT_THREE_HUMAN_RESULTS_EXACT_PASS_IN_MEMORY_PNG_FROM_PROMOTION_SUPPORT_ONLY_REQUEST_AND_POSITIVE_DECISION_BINDING_PAIR_VERIFIED_BINDING_IS_RESULT_BINDING_FORMAL_BYTES_VERIFIED"
+    }
+  },
+  "known_answer_codegen_support_rule": "SET_CODEGEN_DIRECT_IMPORTS_ONLY_BUILD_GENERATED_REFERENCE_ASSET_PROMOTION_FIXED_FIXTURE_SUPPORT_AND_BUILD_GENERATED_REFERENCE_ROLE_BINDING_POSITIVE_FIXED_FIXTURE_SUPPORT_FROM_OLD_CODEGEN_NO_OLD_CODEGEN_MODULE_ALIAS_PRIVATE_DYNAMIC_REFLECTION_MAIN_PARSER_BUILD_EXPECTED_CLOSURE_UPDATE_OR_WRITER_ACCESS_SUPPORT_CALL_GRAPH_READS_ONLY_FROZEN_FIXTURE_PATHS_AND_NEVER_WRITES_NO_PRODUCTION_CORE_COMPILER_PROVIDER_RUNTIME_WORKER_QC_OR_PERSISTENCE_IMPORT",
   "member_cardinality": {
     "CHARACTER_REFERENCE_ASSET": [1, 3],
     "SCENE_REFERENCE_ASSET": [1, 4]
@@ -1169,7 +1418,7 @@ frozen semantic policy is:
   "module_isolation_rule": "CORE_IMPORTS_ONLY_EXACT_NAMED_PUBLIC_UPSTREAM_SYMBOLS_NO_OTHER_SDC_PRIVATE_DYNAMIC_OR_REVERSE_COMPILER_PROVIDER_RUNTIME_IMPORT",
   "opaque_upstream_resource_rule": "RELEASED_HIGH_LEVEL_VERIFIER_AND_FROZEN_UPSTREAM_POLICY_OWNS_MODEL_RESOURCE_VALIDATION_NO_SET_RESOURCE_RESERIALIZATION_OR_RESOURCE_REMEASUREMENT",
   "policy_id": "sdc.generated-reference-bounded-supplied-role-binding-set-policy",
-  "policy_version": "1.0.0",
+  "policy_version": "1.1.0",
   "positive_atomicity_rule": "POSITIVE_DECISION_AND_SET_SAME_PURE_CALL_NO_PARTIAL_OUTPUT",
   "primary_binding_rule": "ONE_COMMON_IMPORTED_PRIMARY_BINDING_REBUILT_AT_REQUEST_AND_FINAL_NO_MUTATION_POSITIVE_REQUIRES_EQUALITY",
   "provider_input_rule": "NO_INPUT_MATERIAL_PROVIDER_SLOT_PROVIDER_ORDER_ROUTE_REQUEST_IDEMPOTENCY_OR_EXECUTION_CLAIM",
@@ -1430,7 +1679,45 @@ frozen semantic policy is:
       "verify_generated_reference_eligible_asset_role_binding_request"
     ]
   },
+  "upstream_role_binding_error_code_rule": "ONLY_EXACT_TYPED_GENERATED_REFERENCE_ROLE_BINDING_ERROR_CODE_EQUALITY_NO_MESSAGE_PARSE_PNG_ADMISSION_INVALID_MAPS_RAW_MEDIA_MISMATCH_EACH_OTHER_FROZEN_RELEASED_CODE_MAPS_ROLE_BINDING_FINALIZATION_INVALID_UNKNOWN_OR_FUTURE_CODE_IS_COMPATIBILITY_STOP_MODULE_BUG",
   "upstream_typed_cause_rules": [
+    {
+      "call_site": "ADR_046_REQUEST_OR_FINALIZATION_VERIFIER",
+      "set_code": "RAW_MEDIA_MISMATCH",
+      "upstream_codes": [
+        "PNG_ADMISSION_INVALID"
+      ],
+      "upstream_types": [
+        "GeneratedReferenceRoleBindingError"
+      ]
+    },
+    {
+      "call_site": "ADR_046_REQUEST_OR_FINALIZATION_VERIFIER",
+      "set_code": "ROLE_BINDING_FINALIZATION_INVALID",
+      "upstream_codes": [
+        "INPUT_RESOURCE_LIMIT_EXCEEDED",
+        "INPUT_DOCUMENT_INVALID",
+        "CONTRACT_FIELD_INVALID",
+        "POLICY_IDENTITY_MISMATCH",
+        "FORMAL_IDENTITY_MISMATCH",
+        "UPSTREAM_CLOSURE_MISMATCH",
+        "PROMOTION_CLOSURE_INVALID",
+        "ROLE_PURPOSE_OR_MEMBERSHIP_INVALID",
+        "PRIMARY_ASSET_BINDING_CLOSURE_INVALID",
+        "CURRENT_STATUS_REPLAY_INVALID",
+        "RIGHTS_SCOPE_MISMATCH",
+        "ROLE_SEPARATION_VIOLATION",
+        "ACTION_RECORD_INVALID",
+        "TIME_OR_VALIDITY_INVALID",
+        "AUTHORITY_SURFACE_NONZERO",
+        "PROHIBITED_BOUNDARY_CONNECTION",
+        "BINDING_GATE_NOT_PASS",
+        "ATOMIC_OUTPUT_INVARIANT_VIOLATION"
+      ],
+      "upstream_types": [
+        "GeneratedReferenceRoleBindingError"
+      ]
+    },
     {
       "call_site": "ADR_046_REQUEST_OR_FINALIZATION_VERIFIER",
       "set_code": "ROLE_BINDING_FINALIZATION_INVALID",
@@ -1440,8 +1727,7 @@ frozen semantic policy is:
         "GeneratedReferenceChainReplayError",
         "GeneratedReferenceJointReplayError",
         "GeneratedReferenceReceiptError",
-        "GeneratedReferenceRightsCurrentStatusError",
-        "GeneratedReferenceRoleBindingError"
+        "GeneratedReferenceRightsCurrentStatusError"
       ]
     },
     {
@@ -1552,13 +1838,20 @@ frozen semantic policy is:
 ```
 
 The canonical compact encoding of the exact JSON object above has the byte count and raw SHA-256
-recorded below. This acceptance freezes that exact policy identity. The policy digest could not be
+recorded below. This acceptance freezes that exact policy identity. The policy digest cannot be
 invented during BUILD or derived from a runtime serializer.
 
 ```text
-policy_document_bytes=28797
-policy_document_sha256=7b22f26df2a6ab31ee45e8a10dc83c56e22a065d87ee099ef3e678d72511f1d6
+policy_document_bytes=38481
+policy_document_sha256=77bdbb2f8845af02ab72e70ad1c74276e218f27410ff4384547d3868ec1a8c9e
 ```
+
+The policy ID remains
+`sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the accepted version is exactly
+`1.1.0`. Accepted R1's historical identity remains `1.0.0`, 28,797 compact bytes and
+`7b22f26df2a6ab31ee45e8a10dc83c56e22a065d87ee099ef3e678d72511f1d6`; it is not silently
+relabelled. A Request, Decision or Set carrying the R1 version or digest would fail the R2 exact
+policy-identity gate.
 
 ## Gate derivation and result mapping
 
@@ -1685,7 +1978,7 @@ duplicate.
 
 ## Future Role-Binding Set Contract family
 
-Only under a separately authorized future BUILD would R1 add exactly these top-level models in this
+Only under a separately authorized future BUILD would R2 add exactly these top-level models in this
 exact Registry order:
 
 ```text
@@ -1730,7 +2023,7 @@ request_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_S
 request_id: PortableId
 request_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.0.0
+policy_version=1.1.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 requested_set_target: GeneratedReferenceEligibleAssetRoleBindingSetTargetV1
@@ -1770,7 +2063,7 @@ decision_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_
 decision_id: PortableId
 decision_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.0.0
+policy_version=1.1.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 request_id: PortableId
@@ -1812,7 +2105,7 @@ set_scope=POST_ROLE_BINDING_BOUNDED_SUPPLIED_SET_HISTORICAL_EVIDENCE_ONLY
 set_id: PortableId
 set_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.0.0
+policy_version=1.1.0
 policy_document_sha256: exact frozen policy LowerSha256
 request_id: PortableId
 request_sha256: LowerSha256
@@ -2021,8 +2314,10 @@ sdc.generated_reference_role_binding:
 No other `sdc` module or private underscore-prefixed upstream symbol would be imported by the core
 module. The four `sdc.contracts` types are allowed only to rebuild and compare the existing imported
 primary binding; `InputMaterial`, `ProviderRequest` and every Compiler/Job/Provider type remain
-outside the allowlist. A future codegen module could import the core Set module plus standard-library
-filesystem primitives solely for the fixed offline fixture check/update workflow.
+outside the allowlist. Under Accepted R2, the future Set codegen module could import the core Set
+module, standard-library filesystem primitives solely for its fixed offline fixture check/update
+workflow, and exactly the two public fixed-fixture support callables frozen below. It could import no
+other symbol from either old codegen module.
 
 The three allowlisted `build_*`/`process_*` callables are limited to deterministic in-memory
 reconstruction of the already supplied primary binding, status subject closure and fresh as-of
@@ -2106,7 +2401,7 @@ self-field exclusion and cross-domain non-aliasing.
 
 ## Resource and privacy boundary
 
-The frozen accepted policy projection above defines these exact R1 limits:
+The Accepted R2 frozen policy projection above defines these exact limits:
 
 ```text
 members per Set: Character 1..3; Scene 1..4
@@ -2135,7 +2430,8 @@ serializers would still be called where required for canonical value/byte equali
 would not enter the Set resource-byte ledger. This avoids additional deep serializer imports and
 keeps historical upstream policy responsible for its own model resources.
 
-Instead of wrapper- or function-argument slots, R1 would use this exact semantic-owner capsule ledger:
+Instead of wrapper- or function-argument slots, Accepted R2 would use this exact semantic-owner
+capsule ledger:
 
 ```text
 common owner order:
@@ -2216,9 +2512,9 @@ or authenticated identity claim.
 ## Failure behavior and priority
 
 The future module would expose one typed error family with stable machine-readable error codes.
-Human-readable messages would not be compatibility interfaces. R1 would expose exactly this closed
-21-code ordered tuple and no other public code. The added Request-status code is deliberate: it
-separates a valid fail-closed non-current Request outcome from malformed replay.
+Human-readable messages would not be compatibility interfaces. Accepted R2 retains exactly the
+closed R1 21-code ordered tuple and no other public code. The Request-status code remains deliberate:
+it separates a valid fail-closed non-current Request outcome from malformed replay.
 
 ```text
 RESOURCE_LIMIT_EXCEEDED
@@ -2244,7 +2540,11 @@ IDENTITY_SEPARATION_INVALID
 DECISION_OR_SET_REVALIDATION_FAILED
 ```
 
-That tuple is also the exact first-failure priority. The closed condition assignment is:
+That tuple is the exact first-failure priority only for Set-owned validation and direct allowlisted
+call sites. It does not reorder a failure already selected inside either released ADR-046 Request or
+finalization verifier. Each invocation of either exact verifier is one atomic delegated validation
+stage and inherits ADR-046's released internal first-failure order. The closed portable condition
+assignment is:
 
 | Code | First applicable condition after exclusions |
 | --- | --- |
@@ -2255,12 +2555,12 @@ That tuple is also the exact first-failure priority. The closed condition assign
 | `TIME_OR_VALIDITY_INVALID` | Canonical UTC seconds, required equality/order, half-open upper bound, Qualification/Manifest validity or final `EXPIRED` rule fails; copied/mismatched Receipt is excluded |
 | `POLICY_IDENTITY_MISMATCH` | Policy ID, version, exact policy bytes or policy SHA-256 differs |
 | `UPSTREAM_CLOSURE_MISMATCH` | ADR-042 through ADR-045 formal/projection/linkage/predecessor replay fails outside the Set-fresh-status, common-primary, raw-media and ADR-046 specializations below |
-| `ROLE_BINDING_FINALIZATION_INVALID` | Either ADR-046 Request/finalization verifier fails or the supplied positive Request/Decision/Binding/result does not rebuild exactly |
+| `ROLE_BINDING_FINALIZATION_INVALID` | At either exact ADR-046 verifier call site, a frozen non-`PNG_ADMISSION_INVALID` `GeneratedReferenceRoleBindingError` or one of the six allowed Rights/current-status error classes is selected, or the supplied positive Request/Decision/Binding/result does not rebuild exactly |
 | `COMMON_FRAME_MISMATCH` | Artifact, Profile, Catalog, subject, purpose or full role vocabulary differs; primary binding and Rights use their specialized codes |
 | `DUPLICATE_ROLE_OR_BINDING` | A requested role or exact `binding_id`/`binding_sha256` identity pair repeats |
 | `ROLE_SELECTION_INVALID` | Non-empty purpose subset, cardinality, member-role or derived coverage closure fails outside duplicate/order rules |
 | `CANONICAL_ORDER_INVALID` | Requested roles are not the frozen subsequence or member tuple/ordinal/role order differs; no sorting or repair occurs |
-| `RAW_MEDIA_MISMATCH` | Whole PNG bytes/size/technical/raw digest or Outcome/Candidate/Sidecar/Binding/member media anchors differ |
+| `RAW_MEDIA_MISMATCH` | Either exact ADR-046 verifier selects `GeneratedReferenceRoleBindingError.code == "PNG_ADMISSION_INVALID"`, or direct Set whole-PNG bytes/size/technical/raw digest or Outcome/Candidate/Sidecar/Binding/member media anchors differ |
 | `CURRENT_STATUS_REPLAY_INVALID` | Set Request/final fresh replay build, coverage, linkage or Receipt exact value/byte equality fails; valid `REVOKED`/`HELD`/`INDETERMINATE` is a policy outcome |
 | `REQUEST_MEMBER_STATUS_NOT_CURRENT` | A valid complete Request-time replay is `REVOKED`, `HELD` or `INDETERMINATE`; no Request is created |
 | `PRIMARY_BINDING_INVALID` | Request/final Bible+AssetVersion rebuild, digest, active-state or required equality fails; one otherwise valid active final drift remains gate 7 `FAIL` |
@@ -2274,7 +2574,9 @@ Released upstream typed failures would be wrapped at their exact call sites, nev
 
 | Call site | Exact Set code |
 | --- | --- |
-| Either ADR-046 verifier raising `GeneratedReferenceRoleBindingError` or any of the six allowlisted Rights/current-status error classes while reconstructing its historical Promotion/Role-Binding status closures | `ROLE_BINDING_FINALIZATION_INVALID` |
+| Either exact ADR-046 verifier raising exact `GeneratedReferenceRoleBindingError` with exact `.code == "PNG_ADMISSION_INVALID"` | `RAW_MEDIA_MISMATCH` |
+| Either exact ADR-046 verifier raising exact `GeneratedReferenceRoleBindingError` with any one of the other 18 frozen released ADR-046 codes | `ROLE_BINDING_FINALIZATION_INVALID` |
+| Either exact ADR-046 verifier raising any of the six allowlisted Rights/current-status error classes while reconstructing its historical Promotion/Role-Binding status closures | `ROLE_BINDING_FINALIZATION_INVALID` |
 | Either ADR-046 verifier raising `GeneratedReferenceAssetPromotionError` from its historical ADR-045 Promotion closure | `UPSTREAM_CLOSURE_MISMATCH` |
 | Direct ADR-046 Request/Decision/Binding/target SHA helper or Role-Binding document-byte serializer raising `GeneratedReferenceRoleBindingError` during exact revalidation | `ROLE_BINDING_FINALIZATION_INVALID` |
 | `GeneratedReferenceRoleBindingAdmittedPng` construction or Set whole-PNG comparison | `RAW_MEDIA_MISMATCH` |
@@ -2283,9 +2585,10 @@ Released upstream typed failures would be wrapped at their exact call sites, nev
 
 The five exact target groups above partition all 15 names in the upstream call-target allowlist:
 two common-primary targets, five fresh-status targets and eight Role-Binding targets. No name may
-appear in two groups or remain outside them. The two ADR-046 verifiers deliberately have different
-portable codes for different allowlisted exception classes; grouping call targets therefore does
-not collapse the typed-cause rows.
+appear in two target groups or remain outside them. The two ADR-046 verifier targets deliberately
+have different portable mappings by exact exception type and, only for
+`GeneratedReferenceRoleBindingError`, exact frozen `.code`; grouping target names therefore does not
+collapse the typed-cause rows.
 
 The six status classes in both call-site rows are exactly
 `GeneratedReferenceRightsCurrentStatusError`, `GeneratedReferenceChainReplayError`,
@@ -2294,27 +2597,38 @@ The six status classes in both call-site rows are exactly
 maps by frozen direct call site, not by class alone.
 
 The wrapper would be `GeneratedReferenceRoleBindingSetError(SetErrorCode, stable_message)` with the
-exact original exception retained only as `__cause__`; upstream `.code` and message would not enter
-Set identity. An unlisted call target or reflected call would be
-`PROHIBITED_BOUNDARY_CONNECTION`; any other unexpected internal exception would be a module bug and
-could not be guessed into a portable code.
+exact original exception retained only as `__cause__`. No message would be parsed. The exact
+ADR-046 `.code` is inspected only at the two verifier call sites for the frozen PNG/non-PNG split and
+does not enter Set identity. An unknown or future ADR-046 code, unlisted call target or reflected call
+is a compatibility stop/module bug and cannot fall through to a guessed portable code; the boundary
+connection itself remains `PROHIBITED_BOUNDARY_CONNECTION` when that condition is detected by a
+Set-owned check.
 
-Validation priority would be:
+Set-owned/direct-call validation priority would be:
 
 1. resource limits;
 2. canonical documents/records;
 3. prohibited boundary, Contract-field and time/validity checks;
-4. policy identity, ADR-042..045 predecessor closure and ADR-046 Request/finalization;
+4. policy identity, ADR-042..045 predecessor closure and one atomic delegated ADR-046
+   Request/finalization verifier invocation;
 5. common frame, duplicates, role selection and canonical order;
 6. exact whole-PNG occurrence verification;
 7. Set fresh status, primary binding and Rights scope;
 8. identity record, action record and identity separation; and
 9. complete Decision/Set revalidation and positive atomicity.
 
-Within one stage the code order above wins, followed by common inputs, then canonical member
-`selection_ordinal`, then that member's frozen predecessor order. Validation stops at the first
-failure and does not collect or reorder errors. Request preparation skips final-only checks without
-changing the remaining order.
+Within one Set-owned/direct-call stage the code order above wins, followed by common inputs, then
+canonical member `selection_ordinal`, then that member's frozen predecessor order. Validation stops
+at the first failure and does not collect or reorder errors. Request preparation skips final-only
+checks without changing the remaining order.
+
+At the delegated ADR-046 stage, Set code must call the exact released verifier once and map the one
+exception it selected. It must not run a Set-side preflight before the call, call the verifier again,
+probe for a later fault or otherwise impose the Set tuple inside the verifier. ADR-046 retains its
+released Promotion-closure then PNG then Role/Purpose, primary-binding, current-status, Rights,
+separation, action, time, authority and atomicity order. Consequently a dual fault consisting of PNG
+admission failure plus any post-PNG ADR-046 failure maps to `RAW_MEDIA_MISMATCH`, because ADR-046
+selects `PNG_ADMISSION_INVALID` first.
 
 Any exception, mismatch or resource failure would return no partial value, mutate no object and
 perform no external action. Only a structurally valid policy evaluation could create a negative or
@@ -2322,10 +2636,10 @@ indeterminate Decision.
 
 ## Contract and Schema Registry impact
 
-This Accepted ADR changes no current Contract, Schema or Registry entry. If separately authorized
-for BUILD, it would append exactly three top-level models at indices 89 through 91 and increase the
-Registry from 89 to 92. It would not modify current model fields, `$defs`, titles, required sets,
-enum values, references or bytes.
+Accepted R2 changes no current Contract, Schema or Registry entry. If separately authorized for
+BUILD, it would append exactly three top-level models at indices 89 through 91 and
+increase the Registry from 89 to 92. It would not modify current model fields, `$defs`, titles,
+required sets, enum values, references or bytes.
 
 The future committed Schema paths would be exactly:
 
@@ -2335,7 +2649,7 @@ schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.sc
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json
 ```
 
-Schema generation would remain explicit. This acceptance generates nothing.
+Schema generation would remain explicit. This Accepted R2 generates nothing.
 
 ## Validation and future implementation gates
 
@@ -2366,8 +2680,9 @@ A future BUILD could proceed only under separate explicit authorization. It woul
 15. test every prohibited Set Checker equality, every exact permitted Set Maker/Selector overlap and
     every allowed/forbidden cross-member status reuse by semantic identity tuple;
 16. test the exact Request-admission order, final 13-gate order, five-code FAIL-only issue mapping,
-    human Rights gate, FAIL-over-INDETERMINATE priority, closed first-error order, every call-site
-    typed-cause mapping and Decision mapping; enumerate every narrower allowlisted callable by exact
+    human Rights gate, FAIL-over-INDETERMINATE priority, closed Set-owned/direct-call order, inherited
+    ADR-046 verifier order, PNG-plus-post-PNG dual faults, every call-site typed-cause mapping and
+    Decision mapping; enumerate every narrower allowlisted callable by exact
     symbol name and prove each of its allowlisted typed failures maps to exactly one portable Set code;
 17. test positive Decision+Set atomicity, injected Set-construction failure and no placeholder Set;
 18. test every semantic projection field, self-field exclusion, full/short identity agreement and
@@ -2383,14 +2698,17 @@ A future BUILD could proceed only under separate explicit authorization. It woul
 22. prove by AST/import inspection that the core Set module imports only the exact allowed upstream
     modules/symbol classes and never imports `InputMaterial`, `ProviderRequest`, Provider, Compiler,
     Runtime, Worker, QC or persistence code;
-23. prove current Compiler, Provider, Runtime, Worker, QC and persistence modules do not import the
+23. prove the two support callable signatures, typed return dataclass fields/invariants and complete
+    public call graph; prove Set codegen imports exactly those two old-codegen function symbols and
+    never accesses an old-codegen module alias, private/dynamic/reflected name, CLI, update or writer;
+24. prove current Compiler, Provider, Runtime, Worker, QC and persistence modules do not import the
     future Set module;
-24. prohibit wall clock, filesystem/database discovery, environment selection, randomness and
+25. prohibit wall clock, filesystem/database discovery, environment selection, randomness and
     network state in identity or selection;
-25. use only first-party fictional synthetic Prompt, PNG, evidence and human-reference material;
-26. create a complete human known-answer packet and obtain separate explicit acceptance before
+26. use only first-party fictional synthetic Prompt, PNG, evidence and human-reference material;
+27. create a complete human known-answer packet and obtain separate explicit acceptance before
     Draft-to-Ready; and
-27. run full repository validation in a frozen or isolated worktree and compare final Git blobs with
+28. run full repository validation in a frozen or isolated worktree and compare final Git blobs with
     the start baseline before review or merge.
 
 Passing those gates would prove only deterministic implementation conformance over supplied values
@@ -2403,6 +2721,135 @@ If separately authorized, one isolated codegen CLI would require exactly one of 
 `--update`. `--check` would be read-only. `--update` would write only one fixed derived fixture after
 the reviewed source fixture received a separate byte-size/SHA-256 anchor. It would never alter old
 fixtures, Schemas, ADRs, source fixtures or PNGs.
+
+### Accepted R2 public fixed-fixture support APIs
+
+Accepted R2 adds exactly one public typed support callable to each of two already released codegen
+modules. The Promotion codegen callable and signature would be exactly:
+
+```python
+def build_generated_reference_asset_promotion_fixed_fixture_support(
+    repository_root: Path,
+    *,
+    case_id: Literal[
+        "character-same-status-record-v1",
+        "scene-successor-reconciliation-v1",
+    ],
+) -> GeneratedReferenceAssetPromotionFixedFixtureSupportV1
+```
+
+`GeneratedReferenceAssetPromotionFixedFixtureSupportV1` would be an exact frozen `slots` dataclass
+with these fields in this order:
+
+```text
+case_id
+upstream
+request_status
+final_status
+primary_bible
+primary_asset_version
+request
+result
+sidecar
+maker_identity_bytes
+maker_action_bytes
+checker_identity_bytes
+checker_action_bytes
+promotion_at
+primary_sidecar_association_result
+primary_sidecar_association_basis
+composite_unsplit_role_deferral_result
+composite_unsplit_role_deferral_basis
+promotion_basis
+```
+
+The callable would read only the Promotion codegen module's already frozen paths and exact
+fingerprints, rebuild and verify one positive ADR-045 Request/Decision/Sidecar closure and verify its
+formal bytes before returning. `sidecar` would be non-optional and would be the exact Sidecar in
+`result`; `primary_bible` and `primary_asset_version` would be the exact pair used in both requested
+and Promotion-final closure positions. It would return no dictionary, path, file handle or writer.
+
+The Role-Binding codegen callable and signature would be exactly:
+
+```python
+def build_generated_reference_role_binding_positive_fixed_fixture_support(
+    promotion_support: GeneratedReferenceAssetPromotionFixedFixtureSupportV1,
+    *,
+    selected_reference_role: Literal[
+        "CHARACTER_IDENTITY_SHEET",
+        "CHARACTER_POSE_REFERENCE",
+        "CHARACTER_EXPRESSION_REFERENCE",
+        "SCENE_ESTABLISHING_REFERENCE",
+        "SCENE_LIGHTING_REFERENCE",
+        "SCENE_MATERIAL_REFERENCE",
+        "SCENE_PROP_PLACEMENT_REFERENCE",
+    ],
+    maker_identity_bytes: bytes,
+    checker_identity_bytes: bytes,
+    request_basis: str,
+    exact_role_and_reviewed_rights_scope_presented_without_expansion_basis: str,
+    whole_composite_role_suitability_basis: str,
+    non_exclusive_no_transform_boundary_basis: str,
+    decision_basis: str,
+) -> GeneratedReferenceRoleBindingPositiveFixedFixtureSupportV1
+```
+
+`GeneratedReferenceRoleBindingPositiveFixedFixtureSupportV1` would be an exact frozen `slots`
+dataclass with these fields in this order:
+
+```text
+selected_reference_role
+promotion
+admitted_png
+role_binding_request
+role_binding_result
+binding
+role_binding_request_status
+role_binding_final_status
+primary_bible
+primary_asset_version
+maker_identity_bytes
+maker_action_bytes
+checker_identity_bytes
+checker_action_bytes
+role_binding_at
+exact_role_and_reviewed_rights_scope_presented_without_expansion_result
+exact_role_and_reviewed_rights_scope_presented_without_expansion_basis
+whole_composite_role_suitability_result
+whole_composite_role_suitability_basis
+non_exclusive_no_transform_boundary_result
+non_exclusive_no_transform_boundary_basis
+role_binding_decision_basis
+```
+
+The Role-Binding callable would derive `requested_at == binding_at ==
+promotion_support.promotion_at`; fix all three human result fields to exact `PASS`; construct the
+in-memory admitted PNG only from `promotion_support.upstream.png_bytes`; prepare and verify the exact
+Request; finalize and verify the exact positive Decision/Binding pair; verify formal bytes; and fail
+unless the non-optional `binding` is the exact Binding in `role_binding_result`. It would accept no
+path, second PNG, caller-selected gate result, current time, environment value or authority input.
+Both Role-Binding status fields would be the exact `promotion_support.final_status`, and its primary
+pair would be the exact Promotion support primary pair.
+
+The Set codegen module could direct-import from the two old codegen modules only these two function
+symbols. It would call the Promotion support function, pass that exact typed result into the
+Role-Binding support function and explicitly construct Set-owned member inputs from the returned
+typed fields. Static return typing would propagate without directly importing either return dataclass.
+The Set codegen must not import either old codegen module as an alias, access any private or
+underscore-prefixed name, use dynamic import/`getattr`/reflection, or call `main`, an argument parser,
+`_build_expected_closure`, `--update` or any writer. Its remaining imports would be the Set core and
+standard library only.
+
+No production/core, Compiler, Provider, Runtime, Worker, QC or persistence module may import either
+support callable or either old codegen module. The Role-Binding codegen support implementation may
+consume the exact typed Promotion support value but may not expose or call a Set type.
+
+Both support call graphs would be deterministic and read-only. They would perform no recursive
+discovery and no write, would leave both old codegen CLIs and old derived fixtures byte-exact, and
+would expose no production Runtime or core construction authority. The existing Set test paths would
+prove exact signatures, dataclass field order/types, fixed positive invariants, direct-import/call
+allowlists and absence of private, alias, dynamic, CLI, update and writer access. No third codegen
+support API or additional test path is allowed.
 
 The frozen future fixture paths are:
 
@@ -2445,6 +2892,8 @@ Makefile
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetRequestV1.schema.json
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.schema.json
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json
+src/sdc/generated_reference_asset_promotion_codegen.py
+src/sdc/generated_reference_role_binding_codegen.py
 src/sdc/generated_reference_role_binding_set.py
 src/sdc/generated_reference_role_binding_set_codegen.py
 src/sdc/schemas.py
@@ -2467,25 +2916,29 @@ tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/revie
 tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/generated-known-answer-v1.json
 ```
 
-The frozen future allowlist has 25 unique paths. Workflow and Makefile changes would be limited to
-the new offline read-only codegen check. Historical test changes would be limited to new module
-isolation, new 89/20 prefix protection and exact 92/22 append assertions. The ADR itself is
-deliberately absent from a future BUILD allowlist.
+The Accepted R2 future allowlist has exactly 27 unique paths. The two paths added to Accepted R1's
+25-path list are only `src/sdc/generated_reference_asset_promotion_codegen.py` and
+`src/sdc/generated_reference_role_binding_codegen.py`. Changes in those old modules would be limited
+to the exact support APIs above and their internal deterministic read-only reuse; their frozen
+fixtures, derived bytes, fingerprints and existing CLI behavior must not change. Workflow and
+Makefile changes would be limited to the new offline read-only Set codegen check. Historical test
+changes would be limited to support-API/isolation enforcement, new 89/20 prefix protection and exact
+92/22 append assertions. The ADR itself is deliberately absent from a future BUILD allowlist.
 
 Any need for another path, top-level model, Registry order, fixture or policy rule would stop BUILD
-and require a separately reviewed ADR revision or architecture decision. This Accepted decision does
-not authorize any allowlist path to change now.
+and require a separately reviewed ADR revision or architecture decision. Accepted R2 does not
+authorize any allowlist path to change without separate BUILD authorization.
 
 ## Rejected alternatives
 
-This Accepted decision rejects:
+Accepted R2 carries forward Accepted R1's rejected alternatives and continues to reject:
 
 - treating one atomic Binding as a complete or executable set;
 - defining supplied-set rules only inside current `InputMaterial` or `ProviderRequest`;
 - a database query, filesystem scan, active pointer, latest/best ranking or mutable pack;
 - machine or agent selection, role inference, sorting repair or automatic missing-role completion;
 - cross-Artifact, cross-Profile, cross-Catalog, cross-subject, cross-purpose, mixed-primary-binding or
-  unequal-Rights-scope Sets in R1;
+  unequal-Rights-scope Sets in R2;
 - duplicate roles or reuse of the same exact Binding under multiple members;
 - rejecting same-Sidecar cross-role use when separate positive revalidated atomic Bindings exist;
 - deduplicating equal PNG bytes across different Candidate/Sidecar occurrences;
@@ -2497,6 +2950,11 @@ This Accepted decision rejects:
 - Provider slots, order, model, route, locator, URL, upload, request fingerprint or idempotency;
 - current `InputMaterial`, `ProviderRequest`, AssetVersion, Bible or Compiler model reuse;
 - Runtime, network, credentials, environment, cost, Retry, persistence or paid-service integration;
+- copying the ADR-042 through ADR-046 reconstruction chain into Set codegen to preserve the old
+  25-path allowlist;
+- adding fixed-fixture reconstruction authority to the production Set core or weakening the complete
+  executable known-answer packet into a declarative scenario matrix;
+- Set-side preflight/retry/probing that attempts to reorder an ADR-046 verifier's selected failure;
   and
 - treating synthetic known answers as real assets, Rights, Provider or execution authority.
 
@@ -2504,6 +2962,8 @@ This Accepted decision rejects:
 
 | Severity | Risk | Required treatment |
 | --- | --- | --- |
+| Blocking | Set error order attempts to reorder an ADR-046 atomic verifier | Inherit the released verifier order and map exact `PNG_ADMISSION_INVALID` by typed `.code` only |
+| Blocking | Complete known answers require private upstream codegen access | Add only the two frozen typed read-only support APIs and stop on any private/dynamic/third API access |
 | Blocking | One atomic Binding is treated as a complete Set | Require explicit finite target, exact requested roles and one member per role |
 | Blocking | Members are discovered, ranked or repaired implicitly | Require Maker-supplied exact canonical tuple and reject storage/latest/best/sorting behavior |
 | Blocking | A failing member is omitted to obtain a favorable partial result | Bind the original requested tuple into every identity and fail or decide that exact tuple only |
@@ -2528,9 +2988,9 @@ This Accepted decision rejects:
 
 ## Non-goals
 
-This Accepted ADR does not approve or specify:
+Accepted R2 does not approve or specify:
 
-- implementation through this acceptance alone;
+- implementation through this architecture acceptance alone;
 - any current Contract, Schema, Registry, fixture, source, test, codegen, CI or Makefile change;
 - creation or review of a real Request, Decision, Set, Binding, Sidecar or asset;
 - Provider Input Material V2 or any `InputMaterial`/`ProviderRequest` conversion;
@@ -2554,9 +3014,10 @@ This Accepted ADR does not approve or specify:
 
 ## Permitted claims and explicit non-proofs
 
-At this Accepted documentation state, SDC may claim only that the exact bounded supplied-set
-architecture boundary and policy bytes recorded here received human acceptance. It may not claim
-that any Contract, Schema, implementation or actual Set output exists or is available.
+At this Accepted R2 documentation state, SDC may claim only that the exact R2 error-mapping remedy,
+27-path allowlist, support-API boundary, restart gate and policy identity recorded here received
+human architecture acceptance. It may not claim that any R2-conforming Contract, Schema,
+implementation, known-answer packet or actual Set output exists or is available.
 
 Only after separate BUILD authorization, implementation, first-party synthetic known-answer
 acceptance and merge could SDC claim that:
@@ -2584,7 +3045,7 @@ Even then, SDC could not claim that:
 
 ## Consequences
 
-Positive consequences of the Accepted decision, if separately implemented, would include:
+Positive consequences of Accepted R2, if separately authorized and implemented, would include:
 
 - explicit finite selection would replace implicit discovery or one-Binding completeness guesses;
 - canonical role coverage, duplicate behavior and occurrence identity would become portable and
@@ -2601,7 +3062,7 @@ Costs and limitations would include:
 
 - every member requires complete ADR-046 reconstruction, exact PNG re-admission and two new status
   replays;
-- R1 cannot combine different Artifacts, Profiles, Rights scopes or primary bindings;
+- R2 cannot combine different Artifacts, Profiles, Rights scopes or primary bindings;
 - same-Sidecar cross-role reuse means FULL does not imply distinct media;
 - no active/latest/best Set resolver or supersession exists;
 - no Provider slot/order/materialization or Runtime path exists;
@@ -2609,25 +3070,47 @@ Costs and limitations would include:
   and
 - every later consumer would still need its own fresh replay and authority decision.
 
-## Accepted R1 task boundary
+## Accepted R2 partial-BUILD restart gate
 
-The current authorized acceptance-only documentation work is confined to this existing isolated
-branch, and only this file may be created or modified:
+The dirty partial BUILD on `codex/generated-reference-role-binding-set-r1` is preserved historical
+working material only. This R2 acceptance does not validate, adopt, resume, rebase, merge, amend or
+authorize it. BUILD could restart only after all of the following separate gates close:
+
+1. this exact Accepted R2 is committed and merged into authoritative `main`;
+2. a separate explicit BUILD-restart authorization is granted;
+3. a new clean isolated BUILD worktree/branch is created from authoritative `main` containing R2;
+4. the complete 89-Schema/20-fixture path, Git blob, size and SHA-256 baseline is recorded again;
+5. the current partial 22-path worktree is audited read-only and only individually reviewed changes
+   conforming to the R2 27-path allowlist are ported into the new clean BUILD worktree;
+6. all old 89 Schema and 20 fixture bytes remain exact and the implemented policy identity equals
+   the Accepted R2 identity frozen above; and
+7. any 28th path, historical-byte change, private/dynamic codegen access or support-API authority
+   expansion stops BUILD and requires another architecture decision.
+
+The dirty partial branch must not be rebased, merged, amended or used to continue BUILD implicitly.
+Its existence grants no authority and no partial test result may be represented as R2 conformance.
+
+## Accepted R2 acceptance-record task boundary
+
+The current authorized Accepted-R2 acceptance-record documentation work is confined to the isolated
+worktree on this branch, and only this file may be modified:
 
 ```text
-codex/adr-047-bounded-supplied-role-binding-set
+codex/adr-047-r2-role-binding-set-boundary
 docs/adr/SDC-ADR-047.md
 ```
 
 It must not:
 
-- alter the Accepted status, any accepted architecture decision, the frozen policy JSON or digest,
-  the 89-Schema/20-fixture compatibility gate, the future 92-Schema/22-fixture target, the 25-path
-  future BUILD allowlist or any zero-authority rule;
+- claim this architecture acceptance authorizes staging, commit, push, PR, Ready, merge, BUILD,
+  implementation or Human known-answer acceptance;
+- alter Accepted R1 history outside the explicit R2 replacements, weaken the 89-Schema/20-fixture
+  compatibility gate, future 92-Schema/22-fixture target or any zero-authority rule;
 - modify ADR-039 through ADR-046 or any current Contract, Schema, Registry, fixture, source, test,
   codegen, CI, Makefile or README file;
 - calculate implementation outputs, run Schema generation, code generation or fixture update;
-- commit, push, create a PR, request review, mark Ready or merge;
+- modify or resume the current partial BUILD worktree;
+- stage, commit, push, create a PR, request review, mark Ready or merge;
 - create or review a real Set, Binding, Sidecar, Provider input or asset;
 - connect Compiler, Provider, Runtime, network, credentials, cost, Retry or persistence; or
 - begin BUILD, Provider-input, publication, retention or training work.
