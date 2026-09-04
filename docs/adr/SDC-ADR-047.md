@@ -1,9 +1,9 @@
 # SDC-ADR-047: Generated Reference Bounded Supplied Role-Binding Set Boundary
 
-- Status: Accepted R5
-- Date: 2026-09-03
-- Latest accepted revision: Accepted R5 on 2026-09-03
-- Prior revisions: Accepted R4 on 2026-09-02; Accepted R3 on 2026-09-01; Accepted R2 on 2026-09-01; Accepted R1 on 2026-08-31
+- Status: Accepted R6
+- Date: 2026-09-04
+- Latest accepted revision: Accepted R6 on 2026-09-04
+- Prior revisions: Accepted R5 on 2026-09-03; Accepted R4 on 2026-09-02; Accepted R3 on 2026-09-01; Accepted R2 on 2026-09-01; Accepted R1 on 2026-08-31
 - Depends on: SDC-ADR-039 / Deterministic Visual Prompt Profiles
 - Projection dependency: SDC-ADR-040 / Visual Prompt Profiles Phase 1 Projection Manifest
 - Compiler-boundary dependency: SDC-ADR-041 / Visual Prompt Profiles Compiler Integration
@@ -22,6 +22,7 @@
 - Accepted R3 drafting authoritative-main baseline: `96dc22258044fb2dbdcbce1e8dfe185e340747a2`
 - Accepted R4 drafting authoritative-main baseline: `bd0a40ef7625c272a0b9d91f1dcbd31ac37a6383`
 - Accepted R5 drafting authoritative-main baseline: `8737c49bb949900432ed86074a7dff2c90769ace`
+- Accepted R6 drafting authoritative-main baseline: `db0d554119ab4045aed791faa1c5d3d8666cfe5d`
 - Authority: `HUMAN_GATE / NOT_AUTHORIZED`
 - Data boundary: one explicitly supplied bounded tuple of exact positive ADR-046 Role-Binding
   occurrences under one exact common Artifact/Profile/subject/purpose/primary-binding/Rights frame;
@@ -29,6 +30,95 @@
   and privacy-minimized retained Set review records; first-party synthetic review data only
 - Network/spend boundary: zero network calls, zero credential reads, zero Provider requests, zero
   authorized Attempts and zero authorized cost
+
+## Accepted R6 executable-evidence closure remediation record
+
+Accepted R6 supersedes Accepted R5 only for the architecture corrections recorded in this revision.
+The separately authorized R5 BUILD remains uncommitted working material, has no derived Set fixture
+and has not received Human known-answer acceptance. Its executable-packet closure stopped because:
+
+1. the frozen cross-purpose vector cannot combine complete Character and Scene Bindings while making
+   `asset_purpose` the first common-frame difference: the public Target builder compares
+   `reference_prompt_artifact_sha256` first;
+2. the cross-artifact, cross-profile and cross-subject vectors do not yet freeze exact leaf-only,
+   validation-free, no-reanchor construction directions, and the stopped implementation used the
+   wrong Scene-family baseline for cross-subject;
+3. the favorable-subset verifier vector and the adverse-Decision-with-Set atomicity vector do not
+   yet isolate their named Scene-prefix and Character-singleton relations; and
+4. thirteen units classified as `PUBLIC_API_EXECUTION` were described by codegen through test-node
+   and expected-tag bindings rather than direct calls to their named public operations.
+
+Accepted R6 carries forward every Accepted R5 Contract shape, all 48 scenario IDs and their order,
+all 217 probe IDs and their order, the 135/58/24 evidence-kind counts, the 15-operation ledger, the
+21-code error ledger, the five-code issue ledger, the five input-anchor categories, the exact two
+support callable symbols, all resource ceilings, the 27-path total allowlist and nine-path
+Set-specific ceiling, the immutable old 89-Schema/20-fixture compatibility anchor, the future
+92-Schema/22-fixture target and the complete zero-authority boundary. It records only these exact
+closure corrections and the Policy identity necessarily changed by them:
+
+1. `cross-artifact-attack-v1--001--cross-artifact` starts from the exact two-member Scene baseline
+   under `SCENE_PRIMARY_R3`; it makes a validation-free exact-type copy of member ordinal 1 and
+   replaces only `role_binding_target.reference_prompt_artifact_sha256` with the exact Character
+   donor value. `cross-profile-attack-v1--001--cross-profile` uses the same Scene baseline and
+   replaces only member 1's `profile_id`, `profile_version` and `profile_sha256` leaves with the
+   exact Character donor tuple. `cross-subject-attack-v1--001--cross-subject` instead remains on the
+   exact two-member Character baseline under `CHARACTER_PRIMARY_R3` and replaces only member 1's
+   `subject_id` with the exact Scene donor value. Each vector performs no validation and no
+   `target_sha256`, `binding_id` or `binding_sha256` recomputation; member 0, requested roles and all
+   other member-1 fields and identity anchors remain byte-for-byte exact. The Accepted R4
+   cross-Catalog two-leaf/no-reanchor vector remains unchanged.
+2. `cross-purpose-attack-v1--001--character-target-scene-role` starts from the first two complete
+   frozen Character Bindings under `CHARACTER_PRIMARY_R3`, makes one probe-local validation-free
+   exact-type copy of member ordinal 1 and replaces only
+   `role_binding_target.asset_purpose` with exact `SCENE_REFERENCE_ASSET`. It performs no identity
+   rehash and preserves member 0, the Character requested-role tuple and every other member-1 field
+   and identity anchor byte-for-byte, so `asset_purpose` is the first and only common-frame semantic
+   difference. One `PUBLIC_TARGET_BUILD` call must produce
+   `TYPED_ERROR:COMMON_FRAME_MISMATCH`. This deliberately malformed Character-derived adversarial
+   copy is neither a Scene Binding nor a valid positive Binding construction.
+3. `favorable-subset-attack-v1--003--attach-fabricated-subset-set-to-adverse-decision` uses the exact
+   `SCENE_PRIMARY_R3` canonical three-role prefix: `SCENE_ESTABLISHING_REFERENCE`,
+   `SCENE_LIGHTING_REFERENCE`, `SCENE_MATERIAL_REFERENCE`, cardinality three and `PARTIAL`. Final
+   human results `(FAIL,PASS,PASS)` produce the exact Rights-presentation REJECT Decision with
+   `PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED` and no Set. Its positive subset is the exact
+   two-role/two-member canonical prefix, also `PARTIAL`, with all human gates PASS and its exact
+   positive Set. Before one public finalization-verifier call, requested roles, Target members and
+   final replays must each prove that same 3-to-2 prefix relation. The unchecked exact-type outer
+   pair attaches the two-member Set to the three-member adverse Decision and must produce
+   `TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED`. This proves only generic adverse-Decision/Set
+   atomicity rejection, not a deeper favorable-subset guard branch.
+4. `positive-atomicity-injection-v1--002--adverse-decision-with-set` uses one exact Character
+   `CHARACTER_IDENTITY_SHEET` singleton, cardinality one and `PARTIAL`. The adverse Rights-FAIL
+   Decision and the all-PASS exact positive singleton Set share the identical Request, Target and
+   member. An unchecked exact-type outer pair is passed once to the public finalization verifier and
+   must produce `TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED`. The other two atomicity probe IDs,
+   operations, evidence kinds and outcomes remain unchanged.
+5. The thirteen exact source-dependent public probe IDs frozen in the Policy must each be constructed
+   from their reviewed source catalog input and executed once by Set codegen through the named public
+   callable. The actual return or typed exception, call count and relevant formal-document/message
+   hashes must be observed from that call. Copying an expected tag, binding a test AST node or
+   restating a test case cannot produce `PUBLIC_EXECUTION_MATCHED`; tests remain independently
+   required corroboration of the same vector.
+6. The Policy ID remains
+   `sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the accepted version is
+   `1.5.0`. Its exact compact canonical byte count and SHA-256 are recorded with the complete Policy
+   projection below. Stable `POLICY_R3` and `*_R3` strings remain historical anchor identifiers;
+   only their carried future-stage values are mechanically retargeted from R5 to R6.
+7. A future separately authorized R6 BUILD must regenerate and newly anchor only the three existing
+   Set Schemas and the reviewed source and derived Set fixtures while keeping all old 89 Schema and
+   old 20 fixture bytes exact. Both Set fixtures must remain
+   `human_known_answer_acceptance=NOT_GRANTED`. This acceptance generates or accepts no fixture byte.
+8. No 28th path, tenth Set-specific path, third/private/dynamic support API, production fault seam,
+   new PNG, Contract or Schema shape, input-anchor category, unknown-error guess or authority
+   expansion is permitted. The exact two support callable symbols remain unchanged.
+
+Accepted R6 records Human architecture acceptance only. It accepts none of the R5, R4 or R3 partial
+BUILD bytes and does not resume, repair, regenerate or validate them; authorize Contract, Schema,
+Registry, fixture, source, test, generator, staging, commit, push, PR, review, Ready or merge action;
+grant Human known-answer acceptance; or grant Provider-input, Runtime, network, credentials, spend,
+Retry, rights, asset use, execution, publication, retention, training or commercial authority. Until
+this Accepted R6 is separately staged, committed, pushed, reviewed and merged under explicit
+authorizations, authoritative `main` remains Accepted R5.
 
 ## Accepted R5 executable-evidence contradiction remediation record
 
@@ -300,8 +390,8 @@ authorized BUILD to:
 12. preserve complete zero Provider, Runtime, network, credential, cost, Retry, asset-use,
     publication, retention and training authority.
 
-A conforming positive R5 Set, only after separate BUILD authorization and conforming
-implementation, would mean only:
+A conforming positive R6 Set, only after separate BUILD authorization, conforming implementation,
+separate Human known-answer acceptance and implementation merge, would mean only:
 
 > At one explicit historical `set_at`, one independent Set Checker approved that one explicitly
 > supplied canonical tuple contained exactly one revalidated positive atomic Binding for every
@@ -438,10 +528,37 @@ immutable 89-Schema/20-fixture revalidation, and an expressly selected clean or 
 implementation worktree. Human known-answer acceptance and every Provider/Runtime or rights/use
 authority remain later independent gates.
 
+## Accepted R6 architecture record and future implementation gate
+
+Accepted R6 accepts none of the stopped R5 BUILD bytes. It supersedes Accepted R5 only for, and
+records Human architecture acceptance of, the closed evidence-construction corrections recorded
+above:
+
+1. exact leaf-only, validation-free, no-reanchor directions for the cross-artifact, cross-profile,
+   cross-subject and cross-purpose probes, including the Character baseline and malformed
+   Character-derived nature of the cross-purpose vector;
+2. the exact Scene canonical three-member adverse to two-member positive-prefix relation for the
+   favorable-subset verifier probe;
+3. one same-Request/Target/member Character singleton for the adverse-Decision-with-positive-Set
+   atomicity probe;
+4. direct codegen execution of all 13 named source-dependent public probes, with their independent
+   tests retained only as corroboration; and
+5. Policy version `1.5.0` and the exact canonical identity recorded below, without changing any
+   scenario, probe, evidence-kind, operation, error, issue, input-anchor, support-API, allowlist,
+   Contract, Schema or authority count or shape.
+
+Accepted R6 records Human architecture acceptance only and does not authorize BUILD. A future R6
+implementation can begin only after this exact Accepted R6 is separately staged, committed, pushed,
+reviewed and merged under explicit authorizations, followed by a separate BUILD
+authorization, authoritative-main and immutable 89-Schema/20-fixture revalidation, and an expressly
+selected clean or hunk-reviewed implementation worktree. Human known-answer acceptance and every
+Provider/Runtime, rights, asset-use, execution and commercial authority remain later independent
+gates.
+
 ## Frozen upstream compatibility boundary
 
-Neither Accepted R1, Accepted R2, Accepted R3 nor Accepted R4 narrows, supersedes or reinterprets
-ADR-039 through ADR-046. In particular:
+Neither Accepted R1, Accepted R2, Accepted R3, Accepted R4, Accepted R5 nor Accepted R6 narrows,
+supersedes or reinterprets ADR-039 through ADR-046. In particular:
 
 - ADR-042 continues to admit only one complete Character three-role or Scene four-role reference
   Prompt Artifact; its roles remain Prompt/layout semantics, not pixel proof or Provider slots;
@@ -461,7 +578,7 @@ ADR-039 through ADR-046. In particular:
 - historical 83-Schema/16-fixture and 86-Schema/18-fixture prefix assertions remain in force in
   addition to the new 89/20 baseline.
 
-Accepted R5 does not change, narrow or reinterpret any of those upstream boundaries.
+Accepted R6 does not change, narrow or reinterpret any of those upstream boundaries.
 
 The dependency order remains:
 
@@ -1120,14 +1237,15 @@ and positive Decision identities.
 No identity could depend on mutable storage, path, URL, ambient time, Provider response, Python
 object traversal or later document discovery.
 
-## Accepted R5 frozen policy projection
+## Accepted R6 frozen policy projection
 
-Accepted R5 carries every unchanged Accepted R4 policy field forward, changes only the two
-final-bound evidence classifications and proof vectors, their shared structural rule and operation,
-the 31-capsule probe operation/callgraph label, the directly affected evidence/error ledgers, the
-Policy identity required by those semantic changes, and seven mechanical R4-to-R5 stage labels. It
-retains the delegated ADR-046 priority rule, all 48 scenario IDs, all 217 probe IDs, the exact two-
-callable support surface and the exact 27-path BUILD allowlist. The accepted semantic policy is:
+Accepted R6 carries every unchanged Accepted R5 policy field forward. It changes only the four
+common-frame mutation vectors, the Scene favorable-subset vector, the Character-singleton adverse
+atomic-pair vector, the direct-public-execution closure rule, the Policy identity required by those
+semantic changes and eight mechanical R5-to-R6 future-stage labels. It retains the delegated
+ADR-046 priority rule, all 48 scenario IDs, all 217 probe IDs, all evidence/operation/error/issue
+counts and orders, the exact two-callable support surface and the exact 27-path BUILD allowlist. The
+accepted semantic policy is:
 
 ```json
 {
@@ -1845,7 +1963,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       ]
     }
   ],
-  "known_answer_packet_closure_rule": "COMPLETE_PACKET_EQUALS_REVIEWED_SOURCE_FIXTURE_DERIVED_PUBLIC_EXECUTION_AND_PROOF_DESCRIPTORS_EXACT_POLICY_EXACT_HERMETIC_TEST_NODES_AND_FINAL_VALIDATION_RESULTS_DERIVED_FIXTURE_MAY_NOT_CLAIM_A_HERMETIC_TEST_RAN_OR_HUMAN_ACCEPTANCE_WAS_GRANTED_SCENARIO_EVIDENCE_CLOSES_ONLY_WHEN_EVERY_REQUIRED_PUBLIC_RESULT_TEST_VECTOR_AND_STRUCTURAL_PROOF_MATCHES_AT_ONE_FROZEN_COMMIT",
+  "known_answer_packet_closure_rule": "COMPLETE_PACKET_EQUALS_REVIEWED_SOURCE_FIXTURE_DERIVED_PUBLIC_EXECUTION_AND_PROOF_DESCRIPTORS_EXACT_POLICY_EXACT_HERMETIC_TEST_NODES_AND_FINAL_VALIDATION_RESULTS_EVERY_PUBLIC_API_EXECUTION_UNIT_REQUIRES_ONE_PROBE_LOCAL_DIRECT_CALL_TO_ITS_NAMED_PUBLIC_CALLABLE_AND_AN_OBSERVED_ACTUAL_RESULT_DERIVED_FIXTURE_MAY_NOT_COPY_AN_EXPECTED_TAG_AS_ACTUAL_CLAIM_A_TEST_NODE_IS_PUBLIC_EXECUTION_CLAIM_A_HERMETIC_TEST_RAN_OR_CLAIM_HUMAN_ACCEPTANCE_WAS_GRANTED_SCENARIO_EVIDENCE_CLOSES_ONLY_WHEN_EVERY_REQUIRED_PUBLIC_RESULT_TEST_VECTOR_AND_STRUCTURAL_PROOF_MATCHES_AT_ONE_FROZEN_COMMIT",
   "known_answer_packet_probe_shapes": {
     "derived_probe_field_order": [
       "probe_id",
@@ -2793,7 +2911,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
           "character-equal-png-distinct-occurrence-v1"
         ],
         "equal_relation": "PNG_BYTES_SIZE_CONTENT_SHA256_TECHNICAL_RECORD_SHA256_EQUAL_CANDIDATE_AND_SIDECAR_IDENTITIES_DISTINCT",
-        "future_r3_anchor_rule": "R5 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "future_r3_anchor_rule": "R6 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
         "r2_source_fixture_baseline": {
           "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
           "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
@@ -2807,7 +2925,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
       },
       "CHARACTER_PRIMARY_R3": {
-        "future_r3_anchor_rule": "R5 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "future_r3_anchor_rule": "R6 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
         "promotion_support_case_ids": [
           "character-same-status-record-v1"
         ],
@@ -2827,12 +2945,12 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       "POLICY_R3": {
         "canonical_identity_source": "EXACT_EXTERNAL_POLICY_IDENTITY_RECORD_IMMEDIATELY_AFTER_THIS_JSON_CODE_BLOCK",
         "policy_id": "sdc.generated-reference-bounded-supplied-role-binding-set-policy",
-        "policy_version": "1.4.0"
+        "policy_version": "1.5.0"
       },
       "RESOURCE_IN_MEMORY_R3": {
         "base_anchor_id": "SCENE_PRIMARY_R3",
         "construction": "FIRST_PARTY_FICTIONAL_IN_MEMORY_ONLY_NO_TRACKED_PNG_PATH_SHARED_IMMUTABLE_BYTE_OBJECTS_COUNT_BY_OCCURRENCE_TESTS_MAY_USE_RELEASED_PUBLIC_ADR039_TO_ADR046_BUILDERS_NO_THIRD_SUPPORT_CALLABLE",
-        "future_r3_anchor_rule": "R5 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "future_r3_anchor_rule": "R6 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
         "r2_source_fixture_baseline": {
           "path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json",
           "raw_sha256": "f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76",
@@ -2841,7 +2959,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "source_fixture_path": "tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/reviewed-known-answer-source-v1.json"
       },
       "SCENE_PRIMARY_R3": {
-        "future_r3_anchor_rule": "R5 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
+        "future_r3_anchor_rule": "R6 BUILD records generated source path, exact size, raw SHA-256 and referenced semantic identities; absence or mismatch stops BUILD.",
         "promotion_support_case_ids": [
           "scene-successor-reconciliation-v1"
         ],
@@ -2914,7 +3032,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       "STRUCTURAL_AUTHORITY_PROOF": {
         "private_or_dynamic_execution_allowed": false,
         "proof_inputs": [
-          "exact R5 Set-core Git blob",
+          "exact R6 Set-core Git blob",
           "public signatures and return types",
           "imports and calls",
           "exact zero-authority inventory"
@@ -2923,7 +3041,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       "STRUCTURAL_ORDINAL_PROOF": {
         "private_or_dynamic_execution_allowed": false,
         "proof_inputs": [
-          "exact R5 Set-core Git blob",
+          "exact R6 Set-core Git blob",
           "target-builder signature and enumerate call",
           "public target validation behavior"
         ]
@@ -2931,7 +3049,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       "STRUCTURAL_POLICY_PROOF": {
         "private_or_dynamic_execution_allowed": false,
         "proof_inputs": [
-          "exact R5 Set-core Git blob",
+          "exact R6 Set-core Git blob",
           "public signatures",
           "Contract Policy literals",
           "compiled Policy canonical bytes and SHA",
@@ -2958,7 +3076,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
       "STRUCTURAL_TIME_VALIDITY_DOMINANCE_PROOF": {
         "private_or_dynamic_execution_allowed": false,
         "proof_inputs": [
-          "exact R5 Set-core Git blob",
+          "exact R6 Set-core Git blob",
           "request_valid_until minimum rule",
           "PUBLIC_FINALIZE guard order",
           "named Qualification and Manifest equality vectors"
@@ -3453,9 +3571,35 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
         "input_anchor_id": "SCENE_PRIMARY_R3",
         "mutation_or_fault_vector": {
-          "definition": "Replace only member 1 reference_prompt_artifact_sha256 from the other fixed case.",
+          "base_case_id": "scene-successor-reconciliation-v1",
+          "base_member_ordinals": [
+            0,
+            1
+          ],
+          "binding_tuple_index": 1,
+          "changed_fields_ledger": {
+            "direct_mutations": [
+              "supplied_bindings[1].role_binding_target.reference_prompt_artifact_sha256"
+            ],
+            "every_other_field": "EXACTLY_PRESERVED_INCLUDING_TARGET_SHA256_BINDING_ID_AND_BINDING_SHA256"
+          },
+          "construction_kind": "TEST_SIDE_EXACT_TYPE_MODEL_COPY_NO_REVALIDATION_NO_IDENTITY_REHASH",
+          "definition": "Starting from the exact two-member Scene baseline, replace only member ordinal 1 reference_prompt_artifact_sha256 with the exact Character donor value and preserve every other field including all pre-mutation identities.",
+          "donor_case_id": "character-same-status-record-v1",
+          "donor_member_ordinal": 0,
+          "expected_first_common_frame_difference": "role_binding_target.reference_prompt_artifact_sha256",
+          "identity_rehash_performed": false,
           "kind": "EXACT_RELATIONAL_VECTOR",
+          "member_ordinal": 1,
+          "member_ordinal_basis": "ZERO_BASED_SECOND_MEMBER",
           "probe_slug": "cross-artifact",
+          "recomputed_identity_fields": [],
+          "replacement_value": "595576f1a18dae01275efc88132497299a1572f454c6aea20d6d714a1676b152",
+          "requested_reference_roles": [
+            "SCENE_ESTABLISHING_REFERENCE",
+            "SCENE_LIGHTING_REFERENCE"
+          ],
+          "validation_performed": false,
           "vector_id": "cross-artifact-attack-v1::cross-artifact"
         },
         "operation_id": "PUBLIC_TARGET_BUILD",
@@ -3606,9 +3750,41 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
         "input_anchor_id": "SCENE_PRIMARY_R3",
         "mutation_or_fault_vector": {
-          "definition": "Replace only member 1 Profile ID/version/digest from the other fixed case.",
+          "base_case_id": "scene-successor-reconciliation-v1",
+          "base_member_ordinals": [
+            0,
+            1
+          ],
+          "binding_tuple_index": 1,
+          "changed_fields_ledger": {
+            "direct_mutations": [
+              "supplied_bindings[1].role_binding_target.profile_id",
+              "supplied_bindings[1].role_binding_target.profile_version",
+              "supplied_bindings[1].role_binding_target.profile_sha256"
+            ],
+            "every_other_field": "EXACTLY_PRESERVED_INCLUDING_TARGET_SHA256_BINDING_ID_AND_BINDING_SHA256"
+          },
+          "construction_kind": "TEST_SIDE_EXACT_TYPE_MODEL_COPY_NO_REVALIDATION_NO_IDENTITY_REHASH",
+          "definition": "Starting from the exact two-member Scene baseline, replace only member ordinal 1 Profile ID, version and digest with the exact Character donor tuple and preserve every other field including all pre-mutation identities.",
+          "donor_case_id": "character-same-status-record-v1",
+          "donor_member_ordinal": 0,
+          "expected_first_common_frame_difference": "role_binding_target.profile_id",
+          "identity_rehash_performed": false,
           "kind": "EXACT_RELATIONAL_VECTOR",
+          "member_ordinal": 1,
+          "member_ordinal_basis": "ZERO_BASED_SECOND_MEMBER",
           "probe_slug": "cross-profile",
+          "recomputed_identity_fields": [],
+          "replacement_value": {
+            "profile_id": "sdc.character-reference.cinematic.v1",
+            "profile_sha256": "54901f50bc718eb6f51d866c842c70791c7d341e7f9c20c37281ee0bc840434d",
+            "profile_version": "1.0.0"
+          },
+          "requested_reference_roles": [
+            "SCENE_ESTABLISHING_REFERENCE",
+            "SCENE_LIGHTING_REFERENCE"
+          ],
+          "validation_performed": false,
           "vector_id": "cross-profile-attack-v1::cross-profile"
         },
         "operation_id": "PUBLIC_TARGET_BUILD",
@@ -3620,9 +3796,36 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
         "input_anchor_id": "CHARACTER_PRIMARY_R3",
         "mutation_or_fault_vector": {
-          "definition": "Combine a Character Binding and Scene Binding so asset_purpose is the first common-frame difference.",
+          "base_case_id": "character-same-status-record-v1",
+          "base_member_ordinals": [
+            0,
+            1
+          ],
+          "binding_tuple_index": 1,
+          "changed_fields_ledger": {
+            "direct_mutations": [
+              "supplied_bindings[1].role_binding_target.asset_purpose"
+            ],
+            "every_other_field": "EXACTLY_PRESERVED_INCLUDING_TARGET_SHA256_BINDING_ID_AND_BINDING_SHA256"
+          },
+          "construction_kind": "TEST_SIDE_EXACT_TYPE_MODEL_COPY_NO_REVALIDATION_NO_IDENTITY_REHASH",
+          "definition": "Starting from the exact first two Character Bindings, make a validation-free exact-type copy of member ordinal 1, replace only asset_purpose with the exact Scene value and preserve every other field and pre-mutation identity so purpose is the first and only common-frame semantic difference; the result is malformed Character-derived adversarial input, not a Scene Binding or valid positive Binding.",
+          "donor_case_id": "scene-successor-reconciliation-v1",
+          "donor_member_ordinal": 0,
+          "expected_first_common_frame_difference": "role_binding_target.asset_purpose",
+          "identity_rehash_performed": false,
           "kind": "EXACT_RELATIONAL_VECTOR",
+          "member_ordinal": 1,
+          "member_ordinal_basis": "ZERO_BASED_SECOND_MEMBER",
+          "positive_binding_status": "NOT_A_SCENE_BINDING_NOT_A_VALID_POSITIVE_BINDING",
           "probe_slug": "character-target-scene-role",
+          "recomputed_identity_fields": [],
+          "replacement_value": "SCENE_REFERENCE_ASSET",
+          "requested_reference_roles": [
+            "CHARACTER_IDENTITY_SHEET",
+            "CHARACTER_POSE_REFERENCE"
+          ],
+          "validation_performed": false,
           "vector_id": "cross-purpose-attack-v1::character-target-scene-role"
         },
         "operation_id": "PUBLIC_TARGET_BUILD",
@@ -3634,9 +3837,35 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:COMMON_FRAME_MISMATCH",
         "input_anchor_id": "CHARACTER_PRIMARY_R3",
         "mutation_or_fault_vector": {
-          "definition": "Replace only member 1 subject_id from the other fixed case.",
+          "base_case_id": "character-same-status-record-v1",
+          "base_member_ordinals": [
+            0,
+            1
+          ],
+          "binding_tuple_index": 1,
+          "changed_fields_ledger": {
+            "direct_mutations": [
+              "supplied_bindings[1].role_binding_target.subject_id"
+            ],
+            "every_other_field": "EXACTLY_PRESERVED_INCLUDING_TARGET_SHA256_BINDING_ID_AND_BINDING_SHA256"
+          },
+          "construction_kind": "TEST_SIDE_EXACT_TYPE_MODEL_COPY_NO_REVALIDATION_NO_IDENTITY_REHASH",
+          "definition": "Starting from the exact two-member Character baseline, replace only member ordinal 1 subject_id with the exact Scene donor value and preserve every other field including all pre-mutation identities.",
+          "donor_case_id": "scene-successor-reconciliation-v1",
+          "donor_member_ordinal": 0,
+          "expected_first_common_frame_difference": "role_binding_target.subject_id",
+          "identity_rehash_performed": false,
           "kind": "EXACT_RELATIONAL_VECTOR",
+          "member_ordinal": 1,
+          "member_ordinal_basis": "ZERO_BASED_SECOND_MEMBER",
           "probe_slug": "cross-subject",
+          "recomputed_identity_fields": [],
+          "replacement_value": "scene_6e3883315d2859761ff8",
+          "requested_reference_roles": [
+            "CHARACTER_IDENTITY_SHEET",
+            "CHARACTER_POSE_REFERENCE"
+          ],
+          "validation_performed": false,
           "vector_id": "cross-subject-attack-v1::cross-subject"
         },
         "operation_id": "PUBLIC_TARGET_BUILD",
@@ -3772,9 +4001,52 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
         "input_anchor_id": "SCENE_PRIMARY_R3",
         "mutation_or_fault_vector": {
-          "definition": "Call public finalization verifier with the exact adverse Decision and an exact-type fabricated positive subset Set attached.",
+          "adverse_case": {
+            "coverage": "PARTIAL",
+            "decision": "REJECT",
+            "final_human_results": [
+              "FAIL",
+              "PASS",
+              "PASS"
+            ],
+            "issue_codes": [
+              "PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED"
+            ],
+            "member_count": 3,
+            "reference_roles": [
+              "SCENE_ESTABLISHING_REFERENCE",
+              "SCENE_LIGHTING_REFERENCE",
+              "SCENE_MATERIAL_REFERENCE"
+            ],
+            "role_binding_set": null
+          },
+          "construction": "exact GeneratedReferenceRoleBindingSetFinalizationResult instance assembled without invoking its guard",
+          "definition": "Attach the exact all-PASS two-member Scene canonical-prefix Set to the exact three-member Rights-FAIL adverse Decision, then call the public finalization verifier with the adverse three-role Request, Target and replay context.",
           "kind": "NO_FAVORABLE_REPAIR",
+          "outcome_scope": "GENERIC_ADVERSE_DECISION_WITH_SET_ATOMICITY_REJECTION_ONLY_NOT_A_DEEPER_FAVORABLE_SUBSET_BRANCH_PROOF",
+          "positive_subset_case": {
+            "coverage": "PARTIAL",
+            "decision": "APPROVE",
+            "final_human_results": [
+              "PASS",
+              "PASS",
+              "PASS"
+            ],
+            "member_count": 2,
+            "reference_roles": [
+              "SCENE_ESTABLISHING_REFERENCE",
+              "SCENE_LIGHTING_REFERENCE"
+            ],
+            "role_binding_set": "EXACT_POSITIVE_TWO_MEMBER_SET"
+          },
+          "prefix_relations": {
+            "final_replays": "POSITIVE_EXACT_FIRST_TWO_OF_ADVERSE_THREE",
+            "requested_reference_roles": "POSITIVE_EXACT_FIRST_TWO_OF_ADVERSE_THREE",
+            "target_members": "POSITIVE_EXACT_FIRST_TWO_OF_ADVERSE_THREE"
+          },
           "probe_slug": "attach-fabricated-subset-set-to-adverse-decision",
+          "public_verifier_context": "EXACT_ADVERSE_THREE_ROLE_REQUEST_TARGET_AND_FINAL_REPLAYS",
+          "selected_guard": "POSITIVE_DECISION_SET_ATOMICITY",
           "vector_id": "favorable-subset-attack-v1::attach-fabricated-subset-set-to-adverse-decision"
         },
         "operation_id": "PUBLIC_FINALIZATION_VERIFY",
@@ -4599,11 +4871,29 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
         "expected_outcome": "TYPED_ERROR:DECISION_OR_SET_REVALIDATION_FAILED",
         "input_anchor_id": "CHARACTER_PRIMARY_R3",
         "mutation_or_fault_vector": {
+          "cardinality": 1,
           "construction": "exact GeneratedReferenceRoleBindingSetFinalizationResult instance assembled without invoking its guard",
-          "decision": "adverse",
+          "coverage": "PARTIAL",
+          "decision": "adverse Rights-FAIL REJECT Decision",
+          "decision_issue_codes": [
+            "PER_MEMBER_RIGHTS_PRESENTATION_NOT_ACKNOWLEDGED"
+          ],
+          "final_human_results": [
+            "FAIL",
+            "PASS",
+            "PASS"
+          ],
           "kind": "INVALID_ATOMIC_PAIR",
+          "positive_and_adverse_share_exact_inputs": [
+            "request",
+            "target",
+            "member"
+          ],
           "probe_slug": "adverse-decision-with-set",
-          "role_binding_set": "fixed exact positive Set",
+          "reference_roles": [
+            "CHARACTER_IDENTITY_SHEET"
+          ],
+          "role_binding_set": "exact all-PASS positive Character singleton Set from the same Request, Target and member",
           "vector_id": "positive-atomicity-injection-v1::adverse-decision-with-set"
         },
         "operation_id": "PUBLIC_FINALIZATION_VERIFY",
@@ -6700,6 +6990,39 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
     },
     "spec_closure_rule": "The key set of probe_spec_by_id must equal the 217 IDs expanded from known_answer_probe_ledger in scenario/family/axis order. Each record repeats exact scenario_id, probe_slug, evidence_kind and expected_outcome; names one catalog input and operation; and owns one probe-local vector. Missing, extra, duplicate or mismatched records stop BUILD. No selector, scenario-level expected_error_code or free-text mapping DSL is evaluated."
   },
+  "known_answer_public_execution_rule": {
+    "actual_outcome_source": "OBSERVED_FROM_THE_PROBE_LOCAL_DIRECT_CALL_NEVER_COPIED_OR_DERIVED_FROM_EXPECTED_OUTCOME",
+    "all_public_evidence_unit_count": 135,
+    "all_public_unit_execution_rule": "DURING_DERIVED_PACKET_GENERATION_EACH_PUBLIC_API_EXECUTION_UNIT_CALLS_THE_PUBLIC_CALLABLE_NAMED_BY_ITS_OPERATION_CATALOG_ENTRY_EXACTLY_ONCE_WITH_ITS_PROBE_LOCAL_SOURCE_INPUT_AND_VECTOR",
+    "corroborating_test_node_role": "INDEPENDENTLY_EXECUTES_THE_SAME_VECTOR_AND_CLOSES_TEST_COVERAGE_BUT_NEVER_SUBSTITUTES_FOR_CODEGEN_PUBLIC_EXECUTION",
+    "direct_execution_required": true,
+    "forbidden_execution_substitutes": [
+      "COPY_EXPECTED_OUTCOME_TAG",
+      "AST_NODE_EXISTENCE",
+      "TEST_NODE_OR_CASE_TABLE_BINDING",
+      "SOURCE_HASH_WITHOUT_PUBLIC_CALL",
+      "CONSTRUCTED_DESCRIPTOR_WITHOUT_OBSERVED_RESULT"
+    ],
+    "public_call_count_per_probe": 1,
+    "source_dependent_probe_id_order": [
+      "final-primary-binding-drift-v1--001--final-active-binding-drift",
+      "request-expired-status-v1--001--request-expired",
+      "request-non-current-status-v1--001--request-revoked",
+      "request-non-current-status-v1--002--request-held",
+      "request-non-current-status-v1--003--request-indeterminate",
+      "final-expired-status-v1--001--final-expired",
+      "final-revoked-held-status-v1--001--final-revoked",
+      "final-revoked-held-status-v1--002--final-held",
+      "final-indeterminate-status-v1--001--final-indeterminate",
+      "resource-limit-exceeded-v1--008--raw-leaf-count-1780-guard-admit",
+      "resource-limit-exceeded-v1--009--aggregate-raw-exact-cap-guard-admit",
+      "resource-limit-exceeded-v1--010--raw-leaf-count-1781-error",
+      "raw-media-mismatch-v1--005--technical-record-anchor-mismatch"
+    ],
+    "source_input_role": "REVIEWED_SOURCE_CATALOG_SUPPLIES_EXACT_INPUT_AND_VECTOR_ONLY_NOT_ACTUAL_OUTCOME",
+    "successful_return_evidence_rule": "RECORD_EXACT_TAGGED_OBSERVED_OUTCOME_CALL_COUNT_AND_ORDERED_SHA256_VALUES_OF_EVERY_RETURNED_FORMAL_DOCUMENT",
+    "typed_error_evidence_rule": "RECORD_EXACT_OBSERVED_TYPED_ERROR_CODE_AND_SHA256_OF_THE_EXACT_UTF8_ERROR_MESSAGE_WITH_CALL_COUNT_ONE"
+  },
   "known_answer_scenario_count": 48,
   "known_answer_scenario_id_order": [
     "character-singleton-positive-v1",
@@ -6880,7 +7203,7 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
   "module_isolation_rule": "CORE_IMPORTS_ONLY_EXACT_NAMED_PUBLIC_UPSTREAM_SYMBOLS_NO_OTHER_SDC_PRIVATE_DYNAMIC_OR_REVERSE_COMPILER_PROVIDER_RUNTIME_IMPORT",
   "opaque_upstream_resource_rule": "RELEASED_HIGH_LEVEL_VERIFIER_AND_FROZEN_UPSTREAM_POLICY_OWNS_MODEL_RESOURCE_VALIDATION_NO_SET_RESOURCE_RESERIALIZATION_OR_RESOURCE_REMEASUREMENT",
   "policy_id": "sdc.generated-reference-bounded-supplied-role-binding-set-policy",
-  "policy_version": "1.4.0",
+  "policy_version": "1.5.0",
   "positive_atomicity_rule": "POSITIVE_DECISION_AND_SET_SAME_PURE_CALL_NO_PARTIAL_OUTPUT",
   "primary_binding_rule": "ONE_COMMON_IMPORTED_PRIMARY_BINDING_REBUILT_AT_REQUEST_AND_FINAL_NO_MUTATION_POSITIVE_REQUIRES_EQUALITY",
   "provider_input_rule": "NO_INPUT_MATERIAL_PROVIDER_SLOT_PROVIDER_ORDER_ROUTE_REQUEST_IDEMPOTENCY_OR_EXECUTION_CLAIM",
@@ -7301,16 +7624,18 @@ callable support surface and the exact 27-path BUILD allowlist. The accepted sem
 
 The canonical compact UTF-8 `json.dumps` encoding of the exact JSON object above uses
 `sort_keys=True`, separators `,` and `:`, `ensure_ascii=False` and `allow_nan=False`, with no BOM and
-no terminal LF. Its accepted R5 byte count and raw SHA-256 are:
+no terminal LF. Its accepted R6 byte count and raw SHA-256 are:
 
 ```text
-policy_document_bytes=234946
-policy_document_sha256=e2b9aacd7eb3de7e54c238b5d698e7a5abf48fee2931300576309eec4ec5dac0
+policy_document_bytes=243245
+policy_document_sha256=dde877fc4ecd6fde8e7918b95b5c050dd82269982abba8fa729871397002c741
 ```
 
 The Policy ID remains
-`sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the Accepted R5 version is
-exactly `1.4.0`. Accepted R4 remains the historical `1.3.0`, 233,029 compact bytes and
+`sdc.generated-reference-bounded-supplied-role-binding-set-policy`; the Accepted R6 version is
+exactly `1.5.0`. Accepted R5 remains the historical `1.4.0`, 234,946 compact bytes and
+`e2b9aacd7eb3de7e54c238b5d698e7a5abf48fee2931300576309eec4ec5dac0`. Accepted R4 remains the
+historical `1.3.0`, 233,029 compact bytes and
 `5186be89ed0de72dac55ae7f363291225998a41dd7082a12db848c914152dce8`. Accepted R3 remains the
 historical `1.2.0`, 227,888 compact bytes and
 `4075b6e0bb6a5a5c1e2f949bfd640f94eda974c3f09987e56820a787dda7a308`. Accepted R2 remains the
@@ -7318,14 +7643,15 @@ historical `1.1.0`, 38,481 compact bytes and
 `77bdbb2f8845af02ab72e70ad1c74276e218f27410ff4384547d3868ec1a8c9e`. Accepted R1 remains the
 historical `1.0.0`, 28,797 compact bytes and
 `7b22f26df2a6ab31ee45e8a10dc83c56e22a065d87ee099ef3e678d72511f1d6`. No historical policy is
-relabelled. If Accepted R5 is later separately implemented, a Request, Decision or
-Set carrying any historical version or digest would fail the exact current policy-identity gate.
-The R5 digest cannot be invented during BUILD or derived from a runtime serializer.
+relabelled. If Accepted R6 is later separately implemented, a Request,
+Decision or Set carrying any historical version or digest would fail the exact current
+policy-identity gate. The R6 digest cannot be invented during BUILD or derived from a runtime
+serializer.
 
-## Accepted R5 complete known-answer evidence model
+## Accepted R6 complete known-answer evidence model
 
 The `known_answer_scenario_id_order` and `known_answer_probe_ledger` inside the accepted policy are
-the authoritative ordered ledger. Accepted R5 preserves every Accepted R4
+the authoritative ordered ledger. Accepted R6 preserves every Accepted R5
 scenario and probe identity; the
 first 37 scenario IDs remain byte-for-byte and ordinal-exact, followed by the same R3-appended IDs
 in this order:
@@ -7373,14 +7699,14 @@ extra or mismatched keyed spec, invalid axis character, slug collision or full p
 stops BUILD.
 
 The catalog input IDs freeze the two released support cases, the one new in-memory equal-PNG case,
-their exact role tuples and the one source-fixture path. A future R5 BUILD must add the newly
+their exact role tuples and the one source-fixture path. A future R6 BUILD must add the newly
 generated source path/size/SHA-256 and semantic identities to every copied input anchor. That later
 byte anchoring is mechanical evidence, not permission to select a different input or vector. The
 current R2 source fixture remains an exact 30,668-byte /
 `f27d6dd3ccf03b405f4fffd35ea7af7a83e2c2ebe18c33e726b49d911cf7bb76` construction baseline only;
-it is not relabelled as an R3, R4 or R5 generated-fixture byte anchor.
+it is not relabelled as an R3, R4, R5 or R6 generated-fixture byte anchor.
 
-### Accepted R5 time-validity dominance and capsule-verifier evidence
+### Accepted R5 time-validity dominance and capsule-verifier evidence carried into Accepted R6
 
 The two expired-bound probes retain their scenario/probe IDs, order and Character input anchor but
 become separate structural families. For each valid member Request:
@@ -7415,7 +7741,7 @@ PUBLIC_FINALIZE: C01..C09 + 4 * (M01..M05) = 29
 PUBLIC_FINALIZATION_VERIFY positive: C01..C11 + 4 * (M01..M05) = 31
 ```
 
-The exact R5 operation ledger is:
+The exact Accepted R6 operation ledger remains:
 
 ```text
 HERMETIC_FINAL_ROLE_VERIFIER=26
@@ -7443,8 +7769,8 @@ is inferred or shared at scenario scope.
 ### Accepted R4 cross-Catalog probe execution
 
 The Accepted R4 cross-Catalog probe remains one public Target-build execution over
-`SCENE_PRIMARY_R3`; Accepted R5 does not change its vector and does not create another input-anchor
-category. A future separately authorized R5 BUILD would have to:
+`SCENE_PRIMARY_R3`; Accepted R6 does not change its vector and does not create another input-anchor
+category. A future separately authorized R6 BUILD would have to:
 
 1. reconstruct the two exact positive Scene Bindings through the same released support callables;
 2. prove that both released fixed cases and Scene member ordinals 0 and 1 carry the frozen baseline
@@ -7474,6 +7800,76 @@ No codegen constant outside the Policy/source vector may supply the mutation. No
 input category, sixth anchor, support callable, production parameter, callback, private/dynamic
 lookup, filesystem Catalog path or network input is permitted.
 
+### Accepted R6 leaf-only common-frame and atomicity vectors
+
+The four corrected common-frame probes use exact released fixed-case values only as donor leaves;
+they never combine one complete Character Binding with one complete Scene Binding. Cross-artifact
+and cross-profile start from Scene member ordinals 0 and 1. Cross-subject and cross-purpose start
+from Character member ordinals 0 and 1. In each case only member ordinal 1 is copied without model
+validation; only the Policy-listed target leaf or leaves are directly replaced; and no formal
+identity is recomputed. The pre-mutation `target_sha256`, `binding_id` and `binding_sha256` therefore
+remain deliberately stale so the public Target builder reaches the named common-frame comparison
+before downstream formal-identity revalidation. The exact donor directions are:
+
+```text
+cross-artifact: Scene baseline <- Character reference_prompt_artifact_sha256
+cross-profile: Scene baseline <- Character profile_id/profile_version/profile_sha256
+cross-subject: Character baseline <- Scene subject_id
+cross-purpose: Character baseline <- Scene asset_purpose only
+```
+
+For cross-purpose, the resulting member remains a malformed Character-derived test object; it is not
+a Scene Binding and cannot be reused as a positive Binding. Member 0, requested roles and all
+nonlisted member-1 fields remain exact in all four vectors. Each probe makes exactly one public
+Target-builder call and retains its existing `COMMON_FRAME_MISMATCH` outcome.
+
+The corrected favorable-subset unit freezes one Scene canonical 3-to-2 prefix relation. The adverse
+three-role `PARTIAL` Request, Target and final replay use the exact first three Scene roles and
+`(FAIL,PASS,PASS)` final human results, producing a Rights-presentation REJECT Decision and no Set.
+The positive two-role `PARTIAL` Request, Target and replay are the exact first-two prefix with all
+PASS results and an exact positive Set. The exact-type unchecked outer pair attaches that positive
+Set to the adverse Decision and invokes the public verifier in the original three-role context.
+Only the generic positive-Decision/Set atomicity guard is claimed.
+
+The corrected adverse-Decision-with-Set atomicity unit instead uses one Character
+`CHARACTER_IDENTITY_SHEET` singleton under one identical Request, Target and member. The adverse
+Rights-FAIL REJECT Decision and all-PASS positive singleton Set differ only in final human results.
+The unchecked outer pair invokes the public verifier once and retains its existing typed outcome.
+Neither correction changes a probe ID, evidence kind, operation count, error row or issue row.
+
+### Accepted R6 direct public-execution closure
+
+Every one of the 135 `PUBLIC_API_EXECUTION` units requires one probe-local call to the callable named
+by its `operation_id`, with actual outcome recorded from that call. Accepted R6 specifically closes
+the following 13 source-dependent units, in authoritative source-ledger order:
+
+```text
+final-primary-binding-drift-v1--001--final-active-binding-drift
+request-expired-status-v1--001--request-expired
+request-non-current-status-v1--001--request-revoked
+request-non-current-status-v1--002--request-held
+request-non-current-status-v1--003--request-indeterminate
+final-expired-status-v1--001--final-expired
+final-revoked-held-status-v1--001--final-revoked
+final-revoked-held-status-v1--002--final-held
+final-indeterminate-status-v1--001--final-indeterminate
+resource-limit-exceeded-v1--008--raw-leaf-count-1780-guard-admit
+resource-limit-exceeded-v1--009--aggregate-raw-exact-cap-guard-admit
+resource-limit-exceeded-v1--010--raw-leaf-count-1781-error
+raw-media-mismatch-v1--005--technical-record-anchor-mismatch
+```
+
+Set codegen must construct each input from the reviewed source catalog, call the named public API
+once in the generator process and compare the observed result with the tagged expected outcome. A
+typed exception records the exact typed code and SHA-256 of its exact UTF-8 message. A returned
+result records the ordered SHA-256 values of every returned formal document. Call count is exactly
+one. Only a complete match may yield `PUBLIC_EXECUTION_MATCHED`.
+
+The corresponding test node must still execute the same vector independently. Its source location,
+Git blob and test result corroborate public behavior but never supply the derived actual outcome.
+Copying the source expected tag, inspecting an AST, or binding only a test name/case table is not
+public execution. These rules add no evidence kind, descriptor status, probe, operation or path.
+
 The exact 21-row error-code ledger follows the existing Set error priority. The exact five-row issue
 ledger follows the final gate/issue order. Every row points to at least one exact scenario whose
 probes carry the relevant tagged outcome. `human-selection-indeterminate-v1` remains a pure
@@ -7500,8 +7896,8 @@ named final guards. `request_valid_until` is the minimum of the Request lifetime
 Qualification, Manifest and Request-status bounds, while the public finalizer checks
 `set_at < request_valid_until` before reading any named final bound. Setting either named bound equal
 to `set_at` therefore guarantees the Request guard wins. The two independently identified proof
-units retain their exact vectors and must bind the exact R5 Set-core source, minimum rule and guard
-order; they may not be described as public execution of the later guard.
+units retain their exact vectors and must bind the exact R6 Set-core source, minimum rule and guard
+order after R6 implementation; they may not be described as public execution of the later guard.
 
 An independently reachable aggregate-PNG strict exceed is algebraically impossible under the
 unchanged limits:
@@ -7513,7 +7909,8 @@ each member PNG <= 67,108,864 bytes
 aggregate rejection condition: sum > 268,435,456
 ```
 
-Accepted R5 carries forward the requirement for one dominance proof and one public equality-boundary
+Accepted R6 carries forward Accepted R5's requirement for one dominance proof and one public
+equality-boundary
 probe. The latter may
 reuse one immutable 67,108,864-byte synthetic PNG buffer across four independently counted member
 occurrences; no new PNG path or tracked byte asset is allowed. Other reachable resource failures, including a five-member input, a per-member PNG cap plus one
@@ -7525,7 +7922,7 @@ limits. A structural proof is separately counted and can never be marked executa
 
 ### Hermetic Set-construction failure evidence
 
-Accepted R5 carries forward R3's rejection of a production factory, callback parameter, public test
+Accepted R6 carries forward R3's rejection of a production factory, callback parameter, public test
 seam and third support API. The one
 allowed construction-failure probe is confined to
 `tests/test_generated_reference_role_binding_set.py` and an automatically restored
@@ -7740,7 +8137,7 @@ request_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_S
 request_id: PortableId
 request_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.4.0
+policy_version=1.5.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 requested_set_target: GeneratedReferenceEligibleAssetRoleBindingSetTargetV1
@@ -7780,7 +8177,7 @@ decision_scope=GENERATED_REFERENCE_ELIGIBLE_ASSET_BOUNDED_SUPPLIED_ROLE_BINDING_
 decision_id: PortableId
 decision_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.4.0
+policy_version=1.5.0
 policy_document_sha256: exact frozen policy LowerSha256
 set_review_payload_sha256: LowerSha256
 request_id: PortableId
@@ -7822,7 +8219,7 @@ set_scope=POST_ROLE_BINDING_BOUNDED_SUPPLIED_SET_HISTORICAL_EVIDENCE_ONLY
 set_id: PortableId
 set_sha256: LowerSha256
 policy_id=sdc.generated-reference-bounded-supplied-role-binding-set-policy
-policy_version=1.4.0
+policy_version=1.5.0
 policy_document_sha256: exact frozen policy LowerSha256
 request_id: PortableId
 request_sha256: LowerSha256
@@ -8366,11 +8763,12 @@ schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.sc
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json
 ```
 
-Schema generation would remain explicit. This R5 Human architecture acceptance generates nothing.
+Schema generation would remain explicit. This Accepted R6 Human architecture acceptance generates
+nothing.
 
 ## Validation and future implementation gates
 
-A future R5 BUILD could proceed only after this exact Accepted R5 is separately staged, committed,
+A future R6 BUILD could proceed only after this exact Accepted R6 is separately staged, committed,
 pushed, reviewed and merged under explicit authorizations, followed by a separate explicit BUILD
 authorization. It would have to:
 
@@ -8383,13 +8781,16 @@ authorization. It would have to:
 5. keep target/member/replay/gate helpers inline rather than Registry entries;
 6. fully reconstruct every supplied ADR-046 finalization and verify exact original whole PNG bytes;
 7. test common Artifact/Profile/Catalog/subject/purpose/primary-binding/Rights equality, including
-   the exact R4 cross-Catalog fixed-case baseline assertions, canonical mutation-document digest,
-   two-field mutation ledger, no identity rehash, all-other-fields equality and exact public
-   `COMMON_FRAME_MISMATCH` result;
+   the exact R4 cross-Catalog fixed-case baseline assertions and the exact R6 cross-artifact,
+   cross-profile, cross-subject and cross-purpose baseline/donor directions, leaf-only mutation
+   ledgers, validation-free copies, no identity rehash, all-other-fields equality and exact public
+   `COMMON_FRAME_MISMATCH` results;
 8. test Character `1..3`, Scene `1..4`, canonical subsets, singleton, PARTIAL and FULL;
 9. test duplicate roles, duplicate Bindings, member reorder, ordinal mutation, same-Sidecar
    cross-role allowance and equal-bytes distinct occurrences;
-10. test that one bad member cannot be omitted, replaced or converted into a favorable subset;
+10. test that one bad member cannot be omitted, replaced or converted into a favorable subset,
+    including the exact Scene canonical three-role Rights-FAIL adverse to two-role all-PASS positive
+    prefix verifier vector without claiming a deeper subset guard;
 11. test Request-time and final per-member replay, all prior-target/branch coverage, copied Receipt,
     copied `CURRENT`, stale closure attacks, Request-time expired/non-current no-Request outcomes,
     exact Request `TIME_OR_VALIDITY_INVALID`/`REQUEST_MEMBER_STATUS_NOT_CURRENT` codes, final expired
@@ -8409,7 +8810,9 @@ authorization. It would have to:
     ADR-046 verifier order, PNG-plus-post-PNG dual faults, every call-site typed-cause mapping and
     Decision mapping; enumerate every narrower allowlisted callable by exact
     symbol name and prove each of its allowlisted typed failures maps to exactly one portable Set code;
-17. test positive Decision+Set atomicity, injected Set-construction failure and no placeholder Set;
+17. test positive Decision+Set atomicity, including the same-Request/Target/member Character
+    singleton adverse-Decision-with-positive-Set vector, injected Set-construction failure and no
+    placeholder Set;
 18. test every semantic projection field, self-field exclusion, full/short identity agreement and
     cross-domain non-aliasing;
 19. test compact semantic/retained JSON and two-space-plus-terminal-LF formal JSON independently,
@@ -8428,7 +8831,8 @@ authorization. It would have to:
     public call graph; prove Set codegen imports exactly those two old-codegen function symbols and
     never accesses an old-codegen module alias, private/dynamic/reflected name, CLI, update or writer;
     repair and test the `scene_singleton_baseline` call/signature mismatch only inside the existing
-    Set-codegen path;
+    Set-codegen path; and prove each of the 13 Policy-listed source-dependent public probes is called
+    directly once by Set codegen with observed results while its test node remains corroborative only;
 24. prove current Compiler, Provider, Runtime, Worker, QC and persistence modules do not import the
     future Set module;
 25. prohibit wall clock, filesystem/database discovery, environment selection, randomness and
@@ -8633,8 +9037,9 @@ The source packet would retain exactly two primary first-party fictional cases, 
 Scene, plus the fixed auxiliary equal-PNG/distinct-occurrence support identity described above. The
 auxiliary occurrence is evidence input, not a third target case or tracked fixture. Under Accepted
 R4 it was intended to materialize every public probe in the 217-unit ledger and reference the
-separately anchored test-only and structural-proof units. Under Accepted R5 it must instead follow
-the corrected 135/58/24 classification and exact 15-operation ledger. It would cover:
+separately anchored test-only and structural-proof units. Under Accepted R6 it must follow Accepted
+R5's 135/58/24 classification and exact 15-operation ledger while applying the R6 direct-execution
+and exact-vector corrections. It would cover:
 
 - Character and Scene singleton, canonical proper-subset and exact full-tuple cases;
 - same Sidecar under different roles through distinct positive Bindings;
@@ -8688,7 +9093,7 @@ tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/revie
 tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/generated-known-answer-v1.json
 ```
 
-Accepted R5 retains the Accepted R4 future allowlist at exactly 27 unique paths. The two paths added
+Accepted R6 retains the Accepted R5 future allowlist at exactly 27 unique paths. The two paths added
 to Accepted R1's
 25-path list are only `src/sdc/generated_reference_asset_promotion_codegen.py` and
 `src/sdc/generated_reference_role_binding_codegen.py`. Changes in those old modules would be limited
@@ -8699,14 +9104,14 @@ changes would be limited to support-API/isolation enforcement, new 89/20 prefix 
 92/22 append assertions. The ADR itself is deliberately absent from a future BUILD allowlist.
 
 Accepted R4 defined a nine-path Set-specific delta inside that unchanged 27-path ceiling. Accepted
-R5 retains the same nine-path ceiling. Its additional remediation is limited to the Set core Policy
-literal/constants, Set codegen proof/verifier dispatch and dead-recipe/signature correction, the
+R6 retains Accepted R5's same nine-path ceiling. Its additional remediation is limited to the Set
+core Policy literal/constants, Set codegen exact-vector and direct-public-execution dispatch, the
 three regenerated Set Schemas, the reviewed source and derived Set fixtures, and the Set core/codegen
 tests that bind those bytes. The Promotion and Role-Binding support callables and their modules
-receive no R5-specific change. Any claimed need to alter a support case or API, add another source-
+receive no R6-specific change. Any claimed need to alter a support case or API, add another source-
 input category or modify another upstream module stops BUILD for a new architecture decision.
 
-The exact shared R4/R5 Set-specific synchronization paths within that ceiling are:
+The exact shared R4/R5/R6 Set-specific synchronization paths within that ceiling are:
 
 ```text
 schemas/CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetRequestV1.schema.json
@@ -8720,27 +9125,27 @@ tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/revie
 tests/fixtures/visual_prompt_profiles/generated-reference-role-binding-set/generated-known-answer-v1.json
 ```
 
-These nine paths constrain both the historical R4 delta and any future R5 remediation delta. They do
+These nine paths constrain the historical R4/R5 deltas and any future R6 remediation delta. They do
 not authorize reuse of either partial BUILD or reduce the complete 27-path ceiling needed to build
 the entire feature from authoritative `main`. A need for a tenth Set-specific path must stop.
 
 Any need for another path, top-level model, Registry order, fixture or policy rule would stop BUILD
 and require a separately reviewed ADR revision or architecture decision. The third support case must
 reuse the existing frozen synthetic Character PNG bytes in memory. No new PNG or 28th path is
-authorized. Neither Accepted R4 nor Accepted R5 itself authorizes any allowlist path to change.
+authorized. Neither Accepted R5 nor Accepted R6 itself authorizes any allowlist path to change.
 
-Any later separately authorized R5 BUILD must keep all pre-ADR-047 89 Schema paths and bytes and all
+Any later separately authorized R6 BUILD must keep all pre-ADR-047 89 Schema paths and bytes and all
 20 prior fixture paths and bytes exact. Registry and fixture counts remain 92 and 22. Because the
-Set Policy, two proof units and one verifier operation change, neither the current R4 Set Schemas nor
-the R4 source-fixture byte nor the unmaterialized R4 derived-fixture expectation is an R5 byte anchor;
-all three Schemas and both fixtures would have to be regenerated offline and receive new path/size/
-SHA-256 anchors. The old 89 Schema and old
+Set Policy, exact vectors and public-execution closure rule change, neither the current R5 partial Set
+Schemas nor its reviewed source fixture nor its absent derived-fixture expectation is an R6 byte
+anchor; all three Schemas and both fixtures would have to be regenerated offline and receive new
+path/size/SHA-256 anchors. The old 89 Schema and old
 20 fixture manifests remain immutable. Both Set fixtures must still retain
 `human_known_answer_acceptance=NOT_GRANTED`. No historical ADR-045 or ADR-046 fixture may change.
 
 ## Rejected alternatives
 
-Accepted R5 carries forward all Accepted R4 rejected alternatives and additionally rejects:
+Accepted R6 carries forward all Accepted R5 rejected alternatives and additionally rejects:
 
 - treating one atomic Binding as a complete or executable set;
 - defining supplied-set rules only inside current `InputMaterial` or `ProviderRequest`;
@@ -8778,6 +9183,14 @@ Accepted R5 carries forward all Accepted R4 rejected alternatives and additional
   a redundant 218th evidence unit instead of correcting the frozen operation; and
 - changing a support case/API, adding a tenth Set-specific path or introducing private/dynamic or
   production test access to repair either evidence contradiction;
+- combining one complete Character Binding and one complete Scene Binding while claiming purpose is
+  their first common-frame difference;
+- revalidating or rehashing a common-frame mutation, changing a nonlisted leaf, or substituting a
+  Scene baseline for the frozen Character cross-subject baseline;
+- substituting a singleton or unrelated baseline for the exact Scene 3-to-2 favorable-subset vector
+  or the exact Character-singleton adverse atomic-pair vector;
+- copying an expected outcome, inspecting only AST/test metadata, or binding a test-node name and
+  calling it `PUBLIC_EXECUTION_MATCHED`; and
 - treating synthetic known answers as real assets, Rights, Provider or execution authority.
 
 ## Risks and treatment
@@ -8789,6 +9202,9 @@ Accepted R5 carries forward all Accepted R4 rejected alternatives and additional
 | Blocking | Cross-Catalog evidence copies an equal pair or uses an unanchored digest | Verify both exact baseline pairs, derive the distinct pair from the frozen canonical probe-local Catalog projection and retain the complete changed-field ledger |
 | Blocking | A returned time error is attributed to a later named final bound that the Request guard dominates | Use the two exact structural dominance proofs and never equate error-code equality with named-guard execution |
 | Blocking | The 31-capsule positive vector is assigned to the 29-capsule finalizer | Invoke the released public finalization verifier and retain the existing 31-capsule vector and 217-unit total |
+| Blocking | Cross-purpose reaches Artifact mismatch before purpose | Use the Character two-member validation-free leaf-only purpose injection; never combine complete Character and Scene Bindings |
+| Blocking | Common-frame evidence rehashes identity or uses the wrong family baseline | Freeze the exact baseline/donor directions, mutate only listed leaves and preserve every pre-mutation formal identity |
+| Blocking | A public descriptor copies its expected tag or cites only a test node | Execute the named public callable once in codegen, record the observed result and keep tests corroborative only |
 | Blocking | One atomic Binding is treated as a complete Set | Require explicit finite target, exact requested roles and one member per role |
 | Blocking | Members are discovered, ranked or repaired implicitly | Require Maker-supplied exact canonical tuple and reject storage/latest/best/sorting behavior |
 | Blocking | A failing member is omitted to obtain a favorable partial result | Bind the original requested tuple into every identity and fail or decide that exact tuple only |
@@ -8813,7 +9229,7 @@ Accepted R5 carries forward all Accepted R4 rejected alternatives and additional
 
 ## Non-goals
 
-Neither Accepted R2, Accepted R3, Accepted R4 nor Accepted R5 approves or specifies:
+Neither Accepted R2, Accepted R3, Accepted R4, Accepted R5 nor Accepted R6 approves or specifies:
 
 - implementation through this architecture acceptance alone;
 - any current Contract, Schema, Registry, fixture, source, test, codegen, CI or Makefile change;
@@ -8839,16 +9255,14 @@ Neither Accepted R2, Accepted R3, Accepted R4 nor Accepted R5 approves or specif
 
 ## Permitted claims and explicit non-proofs
 
-At this Accepted R5 architecture-only state, SDC may claim only that Accepted R1 through Accepted R5
-are Human-accepted architecture records; that the separately authorized R3 and R4 BUILDs remain
-stopped, uncommitted working material without derived fixtures or Human known-answer acceptance; and
-that Accepted R5 freezes the exact remediation and Policy identity recorded here. No current
-Contract, Schema, implementation, fixture, known-answer packet or actual Set output may be claimed
-to conform to R5.
+At this Accepted R6 architecture-only state, SDC may claim only that Accepted R1 through Accepted R6
+are Human-accepted architecture records; that the separately authorized R3, R4 and R5 BUILDs remain
+stopped, uncommitted working material without Human known-answer acceptance; and that Accepted R6
+freezes the accepted remediation and Policy identity recorded here. No current Contract, Schema,
+implementation, fixture, known-answer packet or actual Set output may be claimed to conform to R6.
 
-Only after separate R5 document promotion, a separate BUILD authorization, conforming
-implementation, first-party synthetic known-answer acceptance and implementation merge could SDC
-claim that:
+Only after separate R6 document promotion, separate BUILD authorization, conforming implementation,
+first-party synthetic known-answer acceptance and implementation merge could SDC claim that:
 
 - one pure offline operation fully revalidated an explicitly supplied bounded tuple of positive
   atomic Bindings and their original whole PNG occurrences;
@@ -8876,13 +9290,15 @@ Even then, SDC could not claim that:
 
 ## Consequences
 
-Positive consequences of Accepted R5, only if separately authorized and implemented, would include:
+Positive consequences of Accepted R6, only if separately authorized and implemented, would include:
 
 - explicit finite selection would replace implicit discovery or one-Binding completeness guesses;
 - canonical role coverage, duplicate behavior and occurrence identity would become portable and
   deterministic;
 - each error, issue, hermetic fault and structural proof would have a distinct auditable evidence
   identity rather than an ambiguous scenario-level declaration;
+- each public descriptor would be backed by one observed codegen public call rather than an expected
+  tag or test-node citation;
 - PARTIAL/FULL could be stated narrowly without granting global completeness;
 - every member would retain exact whole-media, Rights, primary-binding and fresh-status closure;
 - one failing member could not be hidden through favorable-subset repair;
@@ -8895,7 +9311,7 @@ Costs and limitations would include:
 
 - every member requires complete ADR-046 reconstruction, exact PNG re-admission and two new status
   replays;
-- R5 could not combine different Artifacts, Profiles, Rights scopes or primary bindings;
+- R6 could not combine different Artifacts, Profiles, Rights scopes or primary bindings;
 - same-Sidecar cross-role reuse means FULL does not imply distinct media;
 - no active/latest/best Set resolver or supersession exists;
 - no Provider slot/order/materialization or Runtime path exists;
@@ -9105,3 +9521,99 @@ It must not:
 - create or review a real Set, Binding, Sidecar, Provider input or asset;
 - connect Compiler, Provider, Runtime, network, credentials, cost, Retry or persistence; or
 - begin BUILD, Provider-input, publication, retention or training work.
+
+## Accepted R6 future BUILD restart stop gate
+
+The separately authorized R5 BUILD remains frozen in
+`C:\Users\Administrator\Documents\Codex\story-to-drama-compiler-generated-reference-role-binding-set-r5`
+on `codex/generated-reference-role-binding-set-r5` at
+`db0d554119ab4045aed791faa1c5d3d8666cfe5d`. At R6 drafting entry it has exactly 24 changed paths
+inside the 27-path allowlist, outside `0`, staged `0`, and eight of the nine Set-specific paths. It
+retains 92 Schema files and 21 fixture files because no derived Set fixture was written. Its old
+89-Schema and old 20-fixture manifests remain respectively:
+
+```text
+f10c0249b02638b4f5d34aaffdaf0244f9b2e8f25fa1b33a2f24f1ca2b83cdb1
+64b0d9c6dc84418be2c97a6dbb679a29a19d16338f23135ab346531a31bf8e3f
+```
+
+Its partial Policy remains Accepted R5 `1.4.0`, 234,946 canonical bytes and SHA-256
+`e2b9aacd7eb3de7e54c238b5d698e7a5abf48fee2931300576309eec4ec5dac0`. Its three partial Set Schema
+bytes remain:
+
+```text
+CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetDecisionV1.schema.json 33021 a5213e06bb14e82b0ef192dd9108580a78c91e294c3b79657d3dc2a8a0218a00
+CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetRequestV1.schema.json 30373 abb4a05ca4b16daf4716b6aef03f41677aa68c4e370bba6864e0d6a8d90a8338
+CreativeSampleGeneratedReferenceEligibleAssetRoleBindingSetV1.schema.json 30139 eee71a59828174da08162b86684f53251be5f6345f5c83859fce77b5d6ae5be8
+```
+
+Its reviewed source fixture remains `human_known_answer_acceptance=NOT_GRANTED` at 1,588,566 bytes /
+SHA-256 `7cd0f6abed27db39589f653f321967a50e102a2916b5a4dabf24f9a49db2194e`; the derived fixture is
+absent. None of those partial bytes is an Accepted R6 implementation byte anchor. Accepted R6 does
+not authorize modifying, resuming, repairing, staging or deleting anything in that worktree. The R4
+and R3 partial BUILDs likewise remain frozen at their previously recorded states and byte anchors.
+
+A future R6 BUILD could begin only after all of these independent gates close:
+
+1. this exact Human-accepted R6 remains semantically unchanged through document promotion;
+2. the accepted R6 document is separately staged, committed, pushed, reviewed and merged under
+   explicit authorizations;
+3. a separate R6 BUILD authorization identifies a clean isolated implementation worktree and any
+   individually reviewed hunk reuse from the stopped R5 worktree;
+4. authoritative `main`, branch/worktree cleanliness and the complete 89-Schema/20-fixture path,
+   Git blob, size and SHA-256 baselines are reverified before any implementation write;
+5. the exact implemented Policy identity equals R6 version `1.5.0`, 243,245 canonical bytes and
+   SHA-256 `dde877fc4ecd6fde8e7918b95b5c050dd82269982abba8fa729871397002c741`;
+6. all 48 scenarios and 217 evidence units close under the exact 135/58/24 evidence-kind and
+   15-operation ledgers, with the 21-code and five-code row orders exact;
+7. the four common-frame vectors, Scene 3-to-2 favorable-subset vector and Character-singleton
+   adverse atomic-pair vector match the exact Policy directions, and all 13 Policy-listed
+   source-dependent public units are executed directly once by Set codegen with observed outcomes;
+8. the `scene_singleton_baseline` call/signature mismatch is repaired and tested only in the existing
+   Set-codegen path without changing any public or support API;
+9. all three Set Schemas and both Set fixtures are regenerated from R6 and receive new exact
+   path/size/SHA-256 anchors; both fixtures retain
+   `human_known_answer_acceptance=NOT_GRANTED`;
+10. all old 89 Schema and old 20 fixture bytes remain exact, overall changed paths remain within the
+    existing 27-path allowlist and the R6 delta remains within the same exact nine Set-specific
+    paths; and
+11. any sixth input anchor, tenth Set-specific path, 28th overall path, third support API, support-
+    case change, new PNG, production seam, private/dynamic access, unknown-code guess or authority
+    expansion stops BUILD for a new architecture decision.
+
+Human known-answer acceptance, Draft-to-Ready conversion and merge remain later independent gates.
+No architecture acceptance, partial worktree, passing test or deterministic byte result grants
+Provider-input, Runtime, rights, asset-use, execution or commercial authority.
+
+## Accepted R6 document-acceptance task boundary
+
+The current authorized Accepted-R6 document update is confined to the isolated worktree
+`C:\Users\Administrator\Documents\Codex\story-to-drama-compiler-adr-047-r6-executable-evidence-closure`
+on this branch, and only this file may be modified:
+
+```text
+codex/adr-047-r6-executable-evidence-closure
+docs/adr/SDC-ADR-047.md
+```
+
+It must not:
+
+- treat this Human architecture acceptance as authorization for staging, commit, amend, push, PR,
+  review request, Ready, merge, BUILD, implementation, partial-worktree reuse or Human known-answer
+  acceptance;
+- alter Accepted R1/R2/R3/R4/R5 history, the exact Accepted R6 closure corrections and Policy
+  identity, any scenario/probe/evidence/operation/error/issue identity or count outside those exact
+  R6 corrections, the 27-path/nine-path ceilings, the two-support-
+  callable boundary, the 89-Schema/20-fixture compatibility gate, future 92-Schema/22-fixture target
+  or any zero-authority rule;
+- modify ADR-039 through ADR-046 or any Contract, Schema, Registry, fixture, source, test, codegen,
+  CI, Makefile or README file;
+- calculate or generate Contract/Schema/fixture implementation outputs, run Schema generation, code
+  generation, fixture update or any test that writes cache/output;
+- modify, repair, resume, stage or delete anything in the R5, R4, R3, R2 or R1 partial BUILD
+  worktrees;
+- stage, commit, amend, push, create or update a PR, request review, mark Ready or merge;
+- create or review a real Set, Binding, Sidecar, Provider input or asset;
+- connect Compiler, Provider, Runtime, network, credentials, cost, Retry or persistence; or
+- begin BUILD, Provider-input, rights, asset-use, execution, publication, retention, training or
+  commercial-use work.
